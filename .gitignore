@@ -1,0 +1,13 @@
+#archivos a los que no se les dará seguimiento
+#
+#archivos txt y de seguimiento
+
+*.txt
+
+#ficheros generados por vim
+#
+.gitignore~
+*.txt
+*.txt~
+*.gitignore.un~
+/target/
