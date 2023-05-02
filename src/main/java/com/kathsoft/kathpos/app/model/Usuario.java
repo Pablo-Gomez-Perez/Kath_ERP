@@ -43,7 +43,7 @@ public class Usuario implements Serializable {
 		this.setId(id);
 		this.setRfc(rfc);
 		this.setIdCuentaContable(idCuentaContable);
-		this.setNombre(nombre);
+		this.setNombre(nombre); 
 		this.setFechaNacimiento(fechaNacimiento);
 		this.setEmail(email);
 		this.setEstado(estado);
