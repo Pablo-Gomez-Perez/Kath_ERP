@@ -21,9 +21,10 @@ public class Proveedor extends Usuario {
 	 * 
 	 */
 	
-	private String descripcion;	
+	private String descripcion;
 	
 	/**
+	 * 
 	 * @param id
 	 * @param rfc
 	 * @param idCuentaContable
@@ -43,6 +44,7 @@ public class Proveedor extends Usuario {
 	}
 
 	/**
+	 * 
 	 * @param id
 	 * @param rfc
 	 * @param idCuentaContable
@@ -57,7 +59,9 @@ public class Proveedor extends Usuario {
 	public Proveedor(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal) {
 		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
-		// TODO Auto-generated constructor stub
+		
+		
+		
 	}
 
 	/**

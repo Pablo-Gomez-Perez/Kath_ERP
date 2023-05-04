@@ -13,8 +13,7 @@ public class Ventas implements Serializable {
 	 * 
 	 * 
 	 * 
-	 */
-	
+	 */	
 	private int idVenta;
 	private Date fechaVenta;
 	private boolean tipoVenta; //para describir si la venta es a contado o credito;
