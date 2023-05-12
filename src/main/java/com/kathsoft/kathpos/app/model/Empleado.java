@@ -20,6 +20,7 @@ public class Empleado extends Usuario {
 	 */
 	private String curp;
 	private String nombreCorto;
+	private String password;
 	
 	/**
 	 * constructor propio de la clase
@@ -95,6 +96,20 @@ public class Empleado extends Usuario {
 	 */
 	public void setNombreCorto(String nombreCorto) {
 		this.nombreCorto = nombreCorto;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	@Override
