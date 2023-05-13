@@ -1,7 +1,6 @@
 package com.kathsoft.kathpos.app.view;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -15,6 +14,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,6 +26,7 @@ import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.model.Empleado;
+import javax.swing.SwingConstants;
 
 public class Fr_LogIn extends JFrame {
 
@@ -41,11 +42,13 @@ public class Fr_LogIn extends JFrame {
 	private JPasswordField pswfContrasenia = new JPasswordField();
 	private JComboBox<String> jcmbUsuarios = new JComboBox<String>();
 	private JLabel lblNewLabel = new JLabel("Usuario");
-	private Button btn_cancelar = new Button("Cancelar");
-	private Button btn_ingresar = new Button("Ingresar");
+	private JButton btn_cancelar = new JButton("Cancelar");
+	private JButton btn_ingresar = new JButton("Ingresar");
 	private EmpleadoController emplController = new EmpleadoController();
 	private Empleado empl = new Empleado();
-
+	
+	//============================================================================================	
+	//============================================================================================
 	// panel que agrega una imagen al formulario
 	private JPanel panelImagen = new JPanel() {
 		/**
@@ -67,7 +70,9 @@ public class Fr_LogIn extends JFrame {
 		}
 
 	};
-
+	//============================================================================================
+	//============================================================================================
+	
 	/**
 	 * Launch the application.
 	 */
@@ -102,6 +107,7 @@ public class Fr_LogIn extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 
 		JPanel panelCentral = new JPanel();
+		panelCentral.setBackground(new Color(255, 204, 0));
 		panelCentral.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(panelCentral, BorderLayout.CENTER);
 		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.X_AXIS));
@@ -139,6 +145,7 @@ public class Fr_LogIn extends JFrame {
 
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_1);
+		pswfContrasenia.setBackground(new Color(204, 255, 255));
 
 		horizontalBox_1.add(pswfContrasenia);
 
@@ -149,14 +156,23 @@ public class Fr_LogIn extends JFrame {
 		verticalBox.add(horizontalStrut_4);
 
 		JPanel panelInferior = new JPanel();
+		panelInferior.setBackground(new Color(51, 153, 255));
 		FlowLayout flowLayout = (FlowLayout) panelInferior.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panelInferior, BorderLayout.SOUTH);
+		btn_cancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cerrarForm();
+			}
+		});
+		btn_cancelar.setBackground(new Color(205, 92, 92));
+		
 
 		panelInferior.add(btn_cancelar);
 
 		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
 		panelInferior.add(horizontalStrut_2);
+		btn_ingresar.setBackground(new Color(0, 204, 51));
 		btn_ingresar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -167,10 +183,15 @@ public class Fr_LogIn extends JFrame {
 		panelInferior.add(btn_ingresar);
 
 		this.emplController.consultaNombresCortosEmpleados(this.jcmbUsuarios);
+		
+		this.setLocationRelativeTo(null);
 
 		this.pack();
 	}
-
+	
+	/**
+	 * validación de credeciales de acceso y entrada al sistema
+	 */
 	private void logIngFrPrincipal() {
 		
 		String contra = "";
@@ -200,7 +221,16 @@ public class Fr_LogIn extends JFrame {
 					}
 				}
 			});
+			
+			this.dispose();
 		}
 	}
-
+	
+	/**
+	 * cierra el formulario y sale del sistema por completo
+	 */
+	private void cerrarForm() {
+		System.exit(0);
+	}
+	
 }
