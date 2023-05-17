@@ -1,0 +1,132 @@
+package com.kathsoft.kathpos.app.controller;
+
+import java.io.Serializable;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import com.kathsoft.kathpos.app.model.Categoria;
+
+public class CategoriaController implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6835247986143695345L;
+	/**
+	 * 
+	 */
+	private Categoria categoria;
+	private static Connection cn;
+	
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
+	
+	public Categoria getCategoria() {
+		return this.categoria;
+	}
+	
+	/**
+	 * conecta a la base de datos e imprime en un JTable de un formulario
+	 * todos los datos recolectados.
+	 * @param tabla
+	 */
+	public void verCategoriasEnTabla(DefaultTableModel tabla) {
+		
+		try {
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			CallableStatement stm = cn.prepareCall("CALL ver_marcas()");
+			ResultSet rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				Object[] fila = {rset.getInt(1), rset.getString(2), rset.getString(3)};
+				tabla.addRow(fila);
+			}
+			
+		}catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void obtenerIndicesDeCategorias(JComboBox<Integer> jcmb) {
+		try {
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			CallableStatement stm = cn.prepareCall("CALL ver_indices_categorias()");
+			ResultSet rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				jcmb.addItem(rset.getInt(1));
+			}
+			
+		}catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	/**
+	 * busca el nombre y la descripción de una categoria en concreto en función del indice
+	 * y coloca los valores en sus respetivos campos de fomulario
+	 * @param txf
+	 * @param txa
+	 */
+	public void buscarCategoriaPorIndice(JTextField txf, JTextArea txa) {
+		try {
+			
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			CallableStatement stm = cn.prepareCall("CALL buscar_categoria_por_indice(?)");
+			stm.setInt(1, this.categoria.getIdCategoria());
+			
+			ResultSet rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				txf.setText(rset.getString(1));
+				txa.setText(rset.getString(2));
+			}
+			
+		}catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void insertarNuevaCategoria() {
+		
+		if(this.categoria.getNombre().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Campo Vacio", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			CallableStatement stm = cn.prepareCall("CALL insertar_nva_categoria(?,?);");
+			stm.setString(1, this.categoria.getNombre());
+			stm.setString(2, this.categoria.getDescripcion());
+			stm.execute();
+			
+		}catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+}

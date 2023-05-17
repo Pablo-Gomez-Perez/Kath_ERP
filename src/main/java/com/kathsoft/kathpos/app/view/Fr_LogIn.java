@@ -26,7 +26,6 @@ import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.model.Empleado;
-import javax.swing.SwingConstants;
 
 public class Fr_LogIn extends JFrame {
 
