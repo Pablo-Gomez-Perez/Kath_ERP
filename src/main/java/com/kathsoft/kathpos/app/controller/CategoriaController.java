@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Categoria;
+import com.mysql.cj.xdevapi.StreamingSqlResultBuilder;
 
 public class CategoriaController implements Serializable {
 	
@@ -41,10 +42,13 @@ public class CategoriaController implements Serializable {
 	 */
 	public void verCategoriasEnTabla(DefaultTableModel tabla) {
 		
+		ResultSet rset = null;
+		CallableStatement stm = null;
+		
 		try {
 			cn = Conexion.establecerConexionLocal("Kath_erp");
-			CallableStatement stm = cn.prepareCall("CALL ver_marcas()");
-			ResultSet rset = stm.executeQuery();
+			stm = cn.prepareCall("CALL ver_marcas()");
+			rset = stm.executeQuery();
 			
 			while(rset.next()) {
 				Object[] fila = {rset.getInt(1), rset.getString(2), rset.getString(3)};
@@ -54,14 +58,32 @@ public class CategoriaController implements Serializable {
 		}catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+				if(rset != null) {
+					rset.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	public void obtenerIndicesDeCategorias(JComboBox<Integer> jcmb) {
+		ResultSet rset = null;
+		CallableStatement stm = null;
 		try {
 			cn = Conexion.establecerConexionLocal("Kath_erp");
-			CallableStatement stm = cn.prepareCall("CALL ver_indices_categorias()");
-			ResultSet rset = stm.executeQuery();
+			stm = cn.prepareCall("CALL ver_indices_categorias()");
+			rset = stm.executeQuery();
 			
 			while(rset.next()) {
 				jcmb.addItem(rset.getInt(1));
@@ -73,6 +95,22 @@ public class CategoriaController implements Serializable {
 		}catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+				if(rset != null) {
+					rset.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -83,13 +121,16 @@ public class CategoriaController implements Serializable {
 	 * @param txa
 	 */
 	public void buscarCategoriaPorIndice(JTextField txf, JTextArea txa) {
+		CallableStatement stm = null; 
+		ResultSet rset= null;
+		
 		try {
 			
 			cn = Conexion.establecerConexionLocal("Kath_erp");
-			CallableStatement stm = cn.prepareCall("CALL buscar_categoria_por_indice(?)");
+			stm = cn.prepareCall("CALL buscar_categoria_por_indice(?)");
 			stm.setInt(1, this.categoria.getIdCategoria());
 			
-			ResultSet rset = stm.executeQuery();
+			rset = stm.executeQuery();
 			
 			if(rset.next()) {
 				txf.setText(rset.getString(1));
@@ -102,10 +143,28 @@ public class CategoriaController implements Serializable {
 		}catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+				if(rset != null) {
+					rset.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	public void insertarNuevaCategoria() {
+		
+		CallableStatement stm= null;
 		
 		if(this.categoria.getNombre().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Campo Vacio", "Error", JOptionPane.ERROR_MESSAGE);
@@ -115,7 +174,7 @@ public class CategoriaController implements Serializable {
 		try {
 			
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			CallableStatement stm = cn.prepareCall("CALL insertar_nva_categoria(?,?);");
+			stm = cn.prepareCall("CALL insertar_nva_categoria(?,?);");
 			stm.setString(1, this.categoria.getNombre());
 			stm.setString(2, this.categoria.getDescripcion());
 			stm.execute();
@@ -126,6 +185,19 @@ public class CategoriaController implements Serializable {
 		}catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}				
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

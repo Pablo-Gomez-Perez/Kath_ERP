@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import java.awt.Color;
 import java.awt.Font;
@@ -126,7 +127,7 @@ public class Fr_principal extends JFrame {
 	private Box horizontalBox_3;
 	private JScrollPane scrollPane;
 	private JTable tablaCategorias;
-	private DefaultTableModel model;
+	private DefaultTableModel modelTablaCategoriaArticulo;
 	private Component verticalStrut_2;
 	private Component verticalStrut_3;
 	private Box horizontalBox_4;
@@ -144,6 +145,32 @@ public class Fr_principal extends JFrame {
 	private Component verticalStrut_7;
 	private Component horizontalStrut_2;
 	private JButton btnBuscarCategoriaEnTabla;
+	private JPanel panelProveedorEtiqueta;
+	private JPanel panelEmpleadosEtiqueta;
+	private JLabel lblNewLabel_6;
+	private JPanel panelEmpleadosCentral;
+	private Box boxVerticalEmpleadosFormulario;
+	private Box horizontalBox_6;
+	private JLabel lblNewLabel_7;
+	private JComboBox<String> cmbRFCEmpleado;
+	private Component verticalStrut_8;
+	private Box horizontalBox_7;
+	private JLabel lblNewLabel_8;
+	private JTextField txfCurpEmpleado;
+	private Component horizontalStrut_3;
+	private JLabel lblNewLabel_9;
+	private JTextField txfNombreCortoEmpleado;
+	private Component verticalStrut_9;
+	private Box horizontalBox_8;
+	private JLabel lblNewLabel_10;
+	private JTextField txfNombreCompletoEmpleado;
+	private Component verticalStrut_10;
+	private Box horizontalBox_9;
+	private JLabel lblNewLabel_11;
+	private JTextField txfFechaNacEmpleado;
+	private Component horizontalStrut_4;
+	private JLabel lblNewLabel_12;
+	private JTextField txfEmailEmpleado;
 
 	/**
 	 * Launch the application.
@@ -203,6 +230,15 @@ public class Fr_principal extends JFrame {
 		menuConsultar.add(opcionClientes);
 
 		opcionEmpleados = new JMenuItem("Empleados");
+		opcionEmpleados.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelEmpleados");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+		});
 		opcionEmpleados.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/empleados.jpg")));
 		menuConsultar.add(opcionEmpleados);
@@ -217,9 +253,11 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/iconoMarca.png")));
 		opcionMarcas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
+				
 			}
 		});
 		menuConsultar.add(opcionMarcas);
@@ -278,9 +316,65 @@ public class Fr_principal extends JFrame {
 
 		panelEmpleados = new JPanel();
 		panelPrincipalContenedor.add(panelEmpleados, "panelEmpleados");
+		panelEmpleados.setLayout(new BorderLayout(0, 0));
+		
+		panelEmpleadosEtiqueta = new JPanel();
+		panelEmpleadosEtiqueta.setBackground(new Color(0, 0, 128));
+		panelEmpleados.add(panelEmpleadosEtiqueta, BorderLayout.NORTH);
+		
+		lblNewLabel_6 = new JLabel("Modulo de Empleados");
+		lblNewLabel_6.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblNewLabel_6.setForeground(new Color(255, 255, 255));
+		panelEmpleadosEtiqueta.add(lblNewLabel_6);
+		
+		panelEmpleadosCentral = new JPanel();
+		panelEmpleadosCentral.setBackground(new Color(255, 215, 0));
+		panelEmpleados.add(panelEmpleadosCentral, BorderLayout.CENTER);
+		panelEmpleadosCentral.setLayout(new BoxLayout(panelEmpleadosCentral, BoxLayout.X_AXIS));
+		
+		boxVerticalEmpleadosFormulario = Box.createVerticalBox();
+		panelEmpleadosCentral.add(boxVerticalEmpleadosFormulario);
+		
+		horizontalBox_6 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_6);
+		
+		lblNewLabel_7 = new JLabel("RFC Empleado");
+		horizontalBox_6.add(lblNewLabel_7);
+		
+		cmbRFCEmpleado = new JComboBox<String>();
+		horizontalBox_6.add(cmbRFCEmpleado);
+		
+		verticalStrut_8 = Box.createVerticalStrut(20);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_8);
+		
+		horizontalBox_7 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_7);
+		
+		lblNewLabel_8 = new JLabel("CURP");
+		horizontalBox_7.add(lblNewLabel_8);
+		
+		txfCurpEmpleado = new JTextField();
+		horizontalBox_7.add(txfCurpEmpleado);
+		txfCurpEmpleado.setColumns(15);
+		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
+		
+		horizontalStrut_3 = Box.createHorizontalStrut(10);
+		horizontalBox_7.add(horizontalStrut_3);
+		
+		lblNewLabel_9 = new JLabel("Nombre Corto");
+		horizontalBox_7.add(lblNewLabel_9);
+		
+		txfNombreCortoEmpleado = new JTextField();
+		horizontalBox_7.add(txfNombreCortoEmpleado);
+		txfNombreCortoEmpleado.setColumns(8);
+		this.txfNombreCortoEmpleado.setMaximumSize(this.txfNombreCortoEmpleado.getPreferredSize());
 
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
+		panelProveedor.setLayout(new BorderLayout(0, 0));
+		
+		panelProveedorEtiqueta = new JPanel();
+		panelProveedor.add(panelProveedorEtiqueta, BorderLayout.NORTH);
 
 		panelMarcas = new JPanel();
 		panelPrincipalContenedor.add(panelMarcas, "panelMarcas");
@@ -339,6 +433,46 @@ public class Fr_principal extends JFrame {
 		txtNombreCategoria.setColumns(28);
 		this.txtNombreCategoria.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
 		cmbIndiceDeCategoria.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
+		cmbRFCEmpleado.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
+		
+		verticalStrut_9 = Box.createVerticalStrut(20);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_9);
+		
+		horizontalBox_8 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_8);
+		
+		lblNewLabel_10 = new JLabel("Nombre completo");
+		horizontalBox_8.add(lblNewLabel_10);
+		
+		txfNombreCompletoEmpleado = new JTextField();
+		horizontalBox_8.add(txfNombreCompletoEmpleado);
+		txfNombreCompletoEmpleado.setColumns(28);
+		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
+		
+		verticalStrut_10 = Box.createVerticalStrut(20);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_10);
+		
+		horizontalBox_9 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_9);
+		
+		lblNewLabel_11 = new JLabel("Fecha de nacimiento");
+		horizontalBox_9.add(lblNewLabel_11);
+		
+		txfFechaNacEmpleado = new JTextField();
+		horizontalBox_9.add(txfFechaNacEmpleado);
+		txfFechaNacEmpleado.setColumns(8);
+		this.txfFechaNacEmpleado.setMaximumSize(this.txfFechaNacEmpleado.getPreferredSize());
+		
+		horizontalStrut_4 = Box.createHorizontalStrut(10);
+		horizontalBox_9.add(horizontalStrut_4);
+		
+		lblNewLabel_12 = new JLabel("Email");
+		horizontalBox_9.add(lblNewLabel_12);
+		
+		txfEmailEmpleado = new JTextField();
+		horizontalBox_9.add(txfEmailEmpleado);
+		txfEmailEmpleado.setColumns(15);
+		this.txfEmailEmpleado.setMaximumSize(this.txfEmailEmpleado.getPreferredSize());
 
 		verticalStrut = Box.createVerticalStrut(20);
 		boxVerticalMarcasFormulario.add(verticalStrut);
@@ -430,17 +564,17 @@ public class Fr_principal extends JFrame {
 		scrollPane = new JScrollPane();
 		horizontalBox_3.add(scrollPane);
 
-		model = new DefaultTableModel();
-		tablaCategorias = new JTable(this.model);
+		modelTablaCategoriaArticulo = new DefaultTableModel();
+		tablaCategorias = new JTable(this.modelTablaCategoriaArticulo);
 		scrollPane.setViewportView(tablaCategorias);
-		
-		model.addColumn("id Categoria");
-		model.addColumn("Nombre");
-		model.addColumn("Descripcion");
-		
+
+		modelTablaCategoriaArticulo.addColumn("id Categoria");
+		modelTablaCategoriaArticulo.addColumn("Nombre");
+		modelTablaCategoriaArticulo.addColumn("Descripcion");
+
 		this.llenarTablaCategoria();
 		this.llenarComboBoxCategoria();
-		
+
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
 		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
@@ -466,31 +600,35 @@ public class Fr_principal extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
-	
+
 	/**
-	 * llena el JTable del panel de categorias con todos los registros encontrados en la bd
+	 * llena el JTable del panel de categorias con todos los registros encontrados
+	 * en la bd
 	 */
 	private void llenarTablaCategoria() {
 		this.borrarElementosDeLaTabla();
-		categoriaController.verCategoriasEnTabla(this.model);
+		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
 	}
-	
+
 	/**
-	 * llena el JCombobox del panel de categorias con todos los indices encontrados en la bd
+	 * llena el JCombobox del panel de categorias con todos los indices encontrados
+	 * en la bd
 	 */
 	private void llenarComboBoxCategoria() {
+		this.cmbIndiceDeCategoria.removeAllItems();
+		this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
 	}
-	
+
 	/**
 	 * coloca los valores de la consulta en sus respectivos campos de texto
 	 */
 	private void consultarCategoriaPorID() {
 		categoria.setIdCategoria(Integer.parseInt(this.cmbIndiceDeCategoria.getSelectedItem().toString()));
 		categoriaController.setCategoria(this.categoria);
-		categoriaController.buscarCategoriaPorIndice(this.txtNombreCategoria,this.txaDescripcionCategoria);
+		categoriaController.buscarCategoriaPorIndice(this.txtNombreCategoria, this.txaDescripcionCategoria);
 	}
-	
+
 	/**
 	 * inserta un nuevo registro en la bd
 	 */
@@ -499,15 +637,27 @@ public class Fr_principal extends JFrame {
 		this.categoria.setDescripcion(this.txaDescripcionCategoria.getText());
 		this.categoriaController.setCategoria(this.categoria);
 		this.categoriaController.insertarNuevaCategoria();
-		
+
+		this.llenarComboBoxCategoria();
 		this.llenarTablaCategoria();
+		this.limpiarCampos();
+
+		JOptionPane.showMessageDialog(this, "Registro agregado", "Kath POS", JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	/**
 	 * borra todos los elementos contenidos en la tabla categorias
 	 */
 	private void borrarElementosDeLaTabla() {
-		this.model.getDataVector().removeAllElements();
+		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
+	}
+
+	/**
+	 * limpia los campos te texto del formulario
+	 */
+	private void limpiarCampos() {
+		this.txtNombreCategoria.setText("");
+		this.txaDescripcionCategoria.setText("");
 	}
 }
