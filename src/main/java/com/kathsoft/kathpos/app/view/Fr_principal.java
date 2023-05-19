@@ -42,6 +42,7 @@ import com.kathsoft.kathpos.app.model.Categoria;
 import javax.swing.border.LineBorder;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.JPasswordField;
 
 public class Fr_principal extends JFrame {
 
@@ -171,6 +172,46 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_4;
 	private JLabel lblNewLabel_12;
 	private JTextField txfEmailEmpleado;
+	private Component verticalStrut_11;
+	private Box horizontalBox_10;
+	private JLabel lblNewLabel_13;
+	private JTextField txfEstadoEmpleado;
+	private Component horizontalStrut_5;
+	private JLabel lblNewLabel_14;
+	private JTextField txfCiudadEmpleado;
+	private Component verticalStrut_12;
+	private Box horizontalBox_11;
+	private JLabel lblNewLabel_15;
+	private JTextField txfDireccionEmpleado;
+	private Component horizontalStrut_6;
+	private JLabel lblNewLabel_16;
+	private JTextField txfCodigoPostalEmpleado;
+	private Component verticalStrut_13;
+	private Box horizontalBox_12;
+	private JLabel lblNewLabel_17;
+	private JPasswordField txpsContraseniaEmpleado;
+	private Component horizontalStrut_7;
+	private JButton btnNuevaContraseniaEmpleado;
+	private Box boxVerticalEmpleadosTabla;
+	private Component verticalStrut_14;
+	private Component verticalStrut_15;
+	private Box horizontalBox_13;
+	private JLabel lblNewLabel_18;
+	private JTextField txfbuscarEmpleadoEnTabla;
+	private Component horizontalStrut_8;
+	private JButton btnBuscarEmpleadoEnTabla;
+	private Component verticalStrut_16;
+	private Box horizontalBox_14;
+	private JScrollPane scrollPane_2;
+	private JTable tableEmpleadosRegistro;
+	private DefaultTableModel modelTablaEmpleados;
+	private Component verticalStrut_17;
+	private Box horizontalBox_15;
+	private Component verticalStrut_18;
+	private JButton btnActualizarEmpleado;
+	private Component horizontalStrut_9;
+	private JButton btnAgregarEmpleado;
+	private Component verticalStrut_19;
 
 	/**
 	 * Launch the application.
@@ -196,7 +237,7 @@ public class Fr_principal extends JFrame {
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/1643231.png")));
 		setTitle("Kath POS");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 889, 567);
+		setBounds(100, 100, 1000, 567);
 
 		BarraMenu = new JMenuBar();
 		BarraMenu.setBackground(new Color(255, 153, 0));
@@ -232,11 +273,11 @@ public class Fr_principal extends JFrame {
 		opcionEmpleados = new JMenuItem("Empleados");
 		opcionEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelEmpleados");
 				panelPrincipalContenedor.updateUI();
-				
+
 			}
 		});
 		opcionEmpleados.setIcon(
@@ -253,11 +294,11 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/iconoMarca.png")));
 		opcionMarcas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
-				
+
 			}
 		});
 		menuConsultar.add(opcionMarcas);
@@ -317,53 +358,59 @@ public class Fr_principal extends JFrame {
 		panelEmpleados = new JPanel();
 		panelPrincipalContenedor.add(panelEmpleados, "panelEmpleados");
 		panelEmpleados.setLayout(new BorderLayout(0, 0));
-		
+
 		panelEmpleadosEtiqueta = new JPanel();
 		panelEmpleadosEtiqueta.setBackground(new Color(0, 0, 128));
 		panelEmpleados.add(panelEmpleadosEtiqueta, BorderLayout.NORTH);
-		
+
 		lblNewLabel_6 = new JLabel("Modulo de Empleados");
 		lblNewLabel_6.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_6.setForeground(new Color(255, 255, 255));
 		panelEmpleadosEtiqueta.add(lblNewLabel_6);
-		
+
 		panelEmpleadosCentral = new JPanel();
 		panelEmpleadosCentral.setBackground(new Color(255, 215, 0));
 		panelEmpleados.add(panelEmpleadosCentral, BorderLayout.CENTER);
 		panelEmpleadosCentral.setLayout(new BoxLayout(panelEmpleadosCentral, BoxLayout.X_AXIS));
-		
+
 		boxVerticalEmpleadosFormulario = Box.createVerticalBox();
+		boxVerticalEmpleadosFormulario.setBorder(
+				new CompoundBorder(new EmptyBorder(0, 5, 0, 5), new TitledBorder(new LineBorder(new Color(0, 0, 0)),
+						"Datos y Actualizacion", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
 		panelEmpleadosCentral.add(boxVerticalEmpleadosFormulario);
-		
+
+		verticalStrut_14 = Box.createVerticalStrut(20);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_14);
+
 		horizontalBox_6 = Box.createHorizontalBox();
 		boxVerticalEmpleadosFormulario.add(horizontalBox_6);
-		
+
 		lblNewLabel_7 = new JLabel("RFC Empleado");
 		horizontalBox_6.add(lblNewLabel_7);
-		
+
 		cmbRFCEmpleado = new JComboBox<String>();
 		horizontalBox_6.add(cmbRFCEmpleado);
-		
-		verticalStrut_8 = Box.createVerticalStrut(20);
+
+		verticalStrut_8 = Box.createVerticalStrut(5);
 		boxVerticalEmpleadosFormulario.add(verticalStrut_8);
-		
+
 		horizontalBox_7 = Box.createHorizontalBox();
 		boxVerticalEmpleadosFormulario.add(horizontalBox_7);
-		
+
 		lblNewLabel_8 = new JLabel("CURP");
 		horizontalBox_7.add(lblNewLabel_8);
-		
+
 		txfCurpEmpleado = new JTextField();
 		horizontalBox_7.add(txfCurpEmpleado);
-		txfCurpEmpleado.setColumns(15);
+		txfCurpEmpleado.setColumns(18);
 		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
-		
+
 		horizontalStrut_3 = Box.createHorizontalStrut(10);
 		horizontalBox_7.add(horizontalStrut_3);
-		
+
 		lblNewLabel_9 = new JLabel("Nombre Corto");
 		horizontalBox_7.add(lblNewLabel_9);
-		
+
 		txfNombreCortoEmpleado = new JTextField();
 		horizontalBox_7.add(txfNombreCortoEmpleado);
 		txfNombreCortoEmpleado.setColumns(8);
@@ -372,7 +419,7 @@ public class Fr_principal extends JFrame {
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
 		panelProveedor.setLayout(new BorderLayout(0, 0));
-		
+
 		panelProveedorEtiqueta = new JPanel();
 		panelProveedor.add(panelProveedorEtiqueta, BorderLayout.NORTH);
 
@@ -434,45 +481,198 @@ public class Fr_principal extends JFrame {
 		this.txtNombreCategoria.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
 		cmbIndiceDeCategoria.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
 		cmbRFCEmpleado.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
-		
-		verticalStrut_9 = Box.createVerticalStrut(20);
+
+		verticalStrut_9 = Box.createVerticalStrut(5);
 		boxVerticalEmpleadosFormulario.add(verticalStrut_9);
-		
+
 		horizontalBox_8 = Box.createHorizontalBox();
 		boxVerticalEmpleadosFormulario.add(horizontalBox_8);
-		
+
 		lblNewLabel_10 = new JLabel("Nombre completo");
 		horizontalBox_8.add(lblNewLabel_10);
-		
+
 		txfNombreCompletoEmpleado = new JTextField();
 		horizontalBox_8.add(txfNombreCompletoEmpleado);
 		txfNombreCompletoEmpleado.setColumns(28);
 		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
-		
-		verticalStrut_10 = Box.createVerticalStrut(20);
+
+		verticalStrut_10 = Box.createVerticalStrut(5);
 		boxVerticalEmpleadosFormulario.add(verticalStrut_10);
-		
+
 		horizontalBox_9 = Box.createHorizontalBox();
 		boxVerticalEmpleadosFormulario.add(horizontalBox_9);
-		
+
 		lblNewLabel_11 = new JLabel("Fecha de nacimiento");
 		horizontalBox_9.add(lblNewLabel_11);
-		
+
 		txfFechaNacEmpleado = new JTextField();
 		horizontalBox_9.add(txfFechaNacEmpleado);
 		txfFechaNacEmpleado.setColumns(8);
 		this.txfFechaNacEmpleado.setMaximumSize(this.txfFechaNacEmpleado.getPreferredSize());
-		
+
 		horizontalStrut_4 = Box.createHorizontalStrut(10);
 		horizontalBox_9.add(horizontalStrut_4);
-		
+
 		lblNewLabel_12 = new JLabel("Email");
 		horizontalBox_9.add(lblNewLabel_12);
-		
+
 		txfEmailEmpleado = new JTextField();
 		horizontalBox_9.add(txfEmailEmpleado);
 		txfEmailEmpleado.setColumns(15);
 		this.txfEmailEmpleado.setMaximumSize(this.txfEmailEmpleado.getPreferredSize());
+
+		verticalStrut_11 = Box.createVerticalStrut(5);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_11);
+
+		horizontalBox_10 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_10);
+
+		lblNewLabel_13 = new JLabel("Estado");
+		horizontalBox_10.add(lblNewLabel_13);
+
+		txfEstadoEmpleado = new JTextField();
+		horizontalBox_10.add(txfEstadoEmpleado);
+		txfEstadoEmpleado.setColumns(15);
+		this.txfEstadoEmpleado.setMaximumSize(this.txfEstadoEmpleado.getPreferredSize());
+
+		horizontalStrut_5 = Box.createHorizontalStrut(20);
+		horizontalBox_10.add(horizontalStrut_5);
+
+		lblNewLabel_14 = new JLabel("Ciudad");
+		horizontalBox_10.add(lblNewLabel_14);
+
+		txfCiudadEmpleado = new JTextField();
+		horizontalBox_10.add(txfCiudadEmpleado);
+		txfCiudadEmpleado.setColumns(15);
+		this.txfCiudadEmpleado.setMaximumSize(this.txfCiudadEmpleado.getPreferredSize());
+
+		verticalStrut_12 = Box.createVerticalStrut(5);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_12);
+
+		horizontalBox_11 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_11);
+
+		lblNewLabel_15 = new JLabel("Direccion");
+		horizontalBox_11.add(lblNewLabel_15);
+
+		txfDireccionEmpleado = new JTextField();
+		horizontalBox_11.add(txfDireccionEmpleado);
+		txfDireccionEmpleado.setColumns(20);
+		this.txfDireccionEmpleado.setMaximumSize(this.txfDireccionEmpleado.getPreferredSize());
+
+		horizontalStrut_6 = Box.createHorizontalStrut(20);
+		horizontalBox_11.add(horizontalStrut_6);
+
+		lblNewLabel_16 = new JLabel("Codigo Postal");
+		horizontalBox_11.add(lblNewLabel_16);
+
+		txfCodigoPostalEmpleado = new JTextField();
+		horizontalBox_11.add(txfCodigoPostalEmpleado);
+		txfCodigoPostalEmpleado.setColumns(8);
+		this.txfCodigoPostalEmpleado.setMaximumSize(this.txfCodigoPostalEmpleado.getPreferredSize());
+
+		verticalStrut_13 = Box.createVerticalStrut(5);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_13);
+
+		horizontalBox_12 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_12);
+
+		lblNewLabel_17 = new JLabel("Contraseña");
+		horizontalBox_12.add(lblNewLabel_17);
+
+		txpsContraseniaEmpleado = new JPasswordField();
+		txpsContraseniaEmpleado.setColumns(20);
+		horizontalBox_12.add(txpsContraseniaEmpleado);
+		this.txpsContraseniaEmpleado.setMaximumSize(this.txpsContraseniaEmpleado.getPreferredSize());
+
+		horizontalStrut_7 = Box.createHorizontalStrut(20);
+		horizontalBox_12.add(horizontalStrut_7);
+
+		btnNuevaContraseniaEmpleado = new JButton("Nueva");
+		btnNuevaContraseniaEmpleado.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
+		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
+		horizontalBox_12.add(btnNuevaContraseniaEmpleado);
+
+		verticalStrut_17 = Box.createVerticalStrut(5);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_17);
+
+		horizontalBox_15 = Box.createHorizontalBox();
+		boxVerticalEmpleadosFormulario.add(horizontalBox_15);
+
+		verticalStrut_18 = Box.createVerticalStrut(20);
+		horizontalBox_15.add(verticalStrut_18);
+
+		btnActualizarEmpleado = new JButton("Actualizar");
+		btnActualizarEmpleado.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		horizontalBox_15.add(btnActualizarEmpleado);
+
+		horizontalStrut_9 = Box.createHorizontalStrut(20);
+		horizontalBox_15.add(horizontalStrut_9);
+
+		btnAgregarEmpleado = new JButton("Agregar");
+		btnAgregarEmpleado.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		horizontalBox_15.add(btnAgregarEmpleado);
+
+		verticalStrut_19 = Box.createVerticalStrut(80);
+		boxVerticalEmpleadosFormulario.add(verticalStrut_19);
+
+		boxVerticalEmpleadosTabla = Box.createVerticalBox();
+		boxVerticalEmpleadosTabla.setBorder(
+				new CompoundBorder(new EmptyBorder(0, 5, 0, 5), new TitledBorder(new LineBorder(new Color(0, 0, 0)),
+						"Registros", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
+		panelEmpleadosCentral.add(boxVerticalEmpleadosTabla);
+
+		verticalStrut_15 = Box.createVerticalStrut(20);
+		boxVerticalEmpleadosTabla.add(verticalStrut_15);
+
+		horizontalBox_13 = Box.createHorizontalBox();
+		boxVerticalEmpleadosTabla.add(horizontalBox_13);
+
+		lblNewLabel_18 = new JLabel("Buscar");
+		horizontalBox_13.add(lblNewLabel_18);
+
+		txfbuscarEmpleadoEnTabla = new JTextField();
+		horizontalBox_13.add(txfbuscarEmpleadoEnTabla);
+		txfbuscarEmpleadoEnTabla.setColumns(80);
+		this.txfbuscarEmpleadoEnTabla.setMaximumSize(this.txfbuscarEmpleadoEnTabla.getPreferredSize());
+
+		horizontalStrut_8 = Box.createHorizontalStrut(20);
+		horizontalBox_13.add(horizontalStrut_8);
+
+		btnBuscarEmpleadoEnTabla = new JButton("Buscar");
+		btnBuscarEmpleadoEnTabla.setBackground(new Color(205, 133, 63));
+		btnBuscarEmpleadoEnTabla.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		horizontalBox_13.add(btnBuscarEmpleadoEnTabla);
+
+		verticalStrut_16 = Box.createVerticalStrut(20);
+		boxVerticalEmpleadosTabla.add(verticalStrut_16);
+
+		horizontalBox_14 = Box.createHorizontalBox();
+		boxVerticalEmpleadosTabla.add(horizontalBox_14);
+
+		scrollPane_2 = new JScrollPane();
+		horizontalBox_14.add(scrollPane_2);
+
+		modelTablaEmpleados = new DefaultTableModel();
+		tableEmpleadosRegistro = new JTable();
+		scrollPane_2.setViewportView(tableEmpleadosRegistro);
+		tableEmpleadosRegistro.setModel(modelTablaEmpleados);
+
+		modelTablaEmpleados.addColumn("id");
+		modelTablaEmpleados.addColumn("RFC");
+		modelTablaEmpleados.addColumn("CURP");
+		modelTablaEmpleados.addColumn("Nombre");
+		modelTablaEmpleados.addColumn("Nick");
+		modelTablaEmpleados.addColumn("Fecha na");
+		modelTablaEmpleados.addColumn("Email");
+		modelTablaEmpleados.addColumn("Estado");
+		modelTablaEmpleados.addColumn("Ciudad");
+		modelTablaEmpleados.addColumn("Direccion");
+		modelTablaEmpleados.addColumn("Codigo P.");
 
 		verticalStrut = Box.createVerticalStrut(20);
 		boxVerticalMarcasFormulario.add(verticalStrut);
