@@ -815,8 +815,8 @@ public class Fr_principal extends JFrame {
 	 * en la bd
 	 */
 	private void llenarComboBoxCategoria() {
-		this.cmbIndiceDeCategoria.removeAllItems();
-		this.cmbIndiceDeCategoria.updateUI();
+		//this.cmbIndiceDeCategoria.removeAllItems();
+		//this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
 	}
 
@@ -837,7 +837,7 @@ public class Fr_principal extends JFrame {
 		this.categoria.setDescripcion(this.txaDescripcionCategoria.getText());
 		this.categoriaController.setCategoria(this.categoria);
 		this.categoriaController.insertarNuevaCategoria();
-
+		this.cmbIndiceDeCategoria.addItem(this.cmbIndiceDeCategoria.getSelectedIndex()+1);
 		this.llenarComboBoxCategoria();
 		this.llenarTablaCategoria();
 		this.limpiarCampos();
