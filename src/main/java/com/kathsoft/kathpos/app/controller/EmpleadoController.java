@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Empleado;
 import java.sql.CallableStatement;
@@ -112,4 +113,36 @@ public class EmpleadoController implements Serializable {
 			er.printStackTrace();
 		}
 	}
+	
+	public void verEmpleadosEnTabla(DefaultTableModel tabla) {
+		ResultSet rset = null;
+		CallableStatement stm = null;
+		
+		try {
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			stm = cn.prepareCall("CALL spGetListadoEmpleados");
+			rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				Object[] fila = {
+					rset.getInt(1),			//id
+					rset.getString(2),		//rfc
+					rset.getString(3),		//curp
+					rset.getString(4),		//nombre completo
+					rset.getString(5),		//nombre corto
+					rset.getDate(6),		//fecha nacimiento
+					rset.getString(7),		//correo
+					rset.getString(8),		//estado
+					rset.getString(9),		//ciudad
+					rset.getString(10),		//direccion
+					rset.getString(11)		//codigo postal
+				};
+				tabla.addRow(fila);
+			}
+		}catch(SQLException er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
+		}
+	}
+	
 }

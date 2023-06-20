@@ -37,12 +37,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.CategoriaController;
+import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.model.Categoria;
 
 import javax.swing.border.LineBorder;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 import javax.swing.JPasswordField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Fr_principal extends JFrame {
 
@@ -56,6 +57,7 @@ public class Fr_principal extends JFrame {
 	 * 
 	 */
 	private CategoriaController categoriaController = new CategoriaController();
+	private EmpleadoController empleadoController = new EmpleadoController();
 	private Categoria categoria = new Categoria();
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -203,7 +205,7 @@ public class Fr_principal extends JFrame {
 	private Component verticalStrut_16;
 	private Box horizontalBox_14;
 	private JScrollPane scrollPane_2;
-	private JTable tableEmpleadosRegistro;
+	private JTable tableEmpleados;
 	private DefaultTableModel modelTablaEmpleados;
 	private Component verticalStrut_17;
 	private Box horizontalBox_15;
@@ -277,7 +279,8 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelEmpleados");
 				panelPrincipalContenedor.updateUI();
-
+				
+				llenarTablaEmpleados();
 			}
 		});
 		opcionEmpleados.setIcon(
@@ -298,7 +301,9 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
-
+				
+				llenarComboBoxCategoria();
+				llenarTablaCategoria();
 			}
 		});
 		menuConsultar.add(opcionMarcas);
@@ -459,11 +464,16 @@ public class Fr_principal extends JFrame {
 		horizontalBox_5.add(lblNewLabel_5);
 
 		cmbIndiceDeCategoria = new JComboBox<Integer>();
-		cmbIndiceDeCategoria.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
+		cmbIndiceDeCategoria.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() != KeyEvent.VK_ENTER) {
+					return;
+				}
 				consultarCategoriaPorID();
 			}
 		});
+		
 		horizontalBox_5.add(cmbIndiceDeCategoria);
 
 		verticalStrut_5 = Box.createVerticalStrut(20);
@@ -658,9 +668,9 @@ public class Fr_principal extends JFrame {
 		horizontalBox_14.add(scrollPane_2);
 
 		modelTablaEmpleados = new DefaultTableModel();
-		tableEmpleadosRegistro = new JTable();
-		scrollPane_2.setViewportView(tableEmpleadosRegistro);
-		tableEmpleadosRegistro.setModel(modelTablaEmpleados);
+		tableEmpleados = new JTable();
+		scrollPane_2.setViewportView(tableEmpleados);
+		tableEmpleados.setModel(modelTablaEmpleados);
 
 		modelTablaEmpleados.addColumn("id");
 		modelTablaEmpleados.addColumn("RFC");
@@ -772,8 +782,8 @@ public class Fr_principal extends JFrame {
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
 
-		this.llenarTablaCategoria();
-		this.llenarComboBoxCategoria();
+		//this.llenarTablaCategoria();
+		//this.llenarComboBoxCategoria();
 
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
@@ -806,17 +816,26 @@ public class Fr_principal extends JFrame {
 	 * en la bd
 	 */
 	private void llenarTablaCategoria() {
-		this.borrarElementosDeLaTabla();
+		this.borrarElementosDeLaTablaCategorias();
 		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
 	}
-
+	
+	/**
+	 * llena el jTable del panel de empleados con todos los registros encontrados
+	 * en la bd
+	 */
+	private void llenarTablaEmpleados() {
+		this.borrarElementosDeLaTablaEmpleados();
+		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
+	}
+	
 	/**
 	 * llena el JCombobox del panel de categorias con todos los indices encontrados
 	 * en la bd
 	 */
 	private void llenarComboBoxCategoria() {
-		//this.cmbIndiceDeCategoria.removeAllItems();
-		//this.cmbIndiceDeCategoria.updateUI();
+		this.cmbIndiceDeCategoria.removeAllItems();
+		this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
 	}
 
@@ -833,24 +852,33 @@ public class Fr_principal extends JFrame {
 	 * inserta un nuevo registro en la bd
 	 */
 	private void insertarCategoria() {
+		
 		this.categoria.setNombre(this.txtNombreCategoria.getText());
 		this.categoria.setDescripcion(this.txaDescripcionCategoria.getText());
 		this.categoriaController.setCategoria(this.categoria);
 		this.categoriaController.insertarNuevaCategoria();
-		this.cmbIndiceDeCategoria.addItem(this.cmbIndiceDeCategoria.getSelectedIndex()+1);
+		//this.cmbIndiceDeCategoria.addItem(this.cmbIndiceDeCategoria.getSelectedIndex()+1);
 		this.llenarComboBoxCategoria();
 		this.llenarTablaCategoria();
 		this.limpiarCampos();
 
-		JOptionPane.showMessageDialog(this, "Registro agregado", "Kath POS", JOptionPane.INFORMATION_MESSAGE);
+		//JOptionPane.showMessageDialog(this, "Registro agregado", "Kath POS", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
 	 * borra todos los elementos contenidos en la tabla categorias
 	 */
-	private void borrarElementosDeLaTabla() {
+	private void borrarElementosDeLaTablaCategorias() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
+	}
+	
+	/**
+	 * borra todos los elementos contenidos en la tabla empleados
+	 */
+	private void borrarElementosDeLaTablaEmpleados() {
+		this.modelTablaEmpleados.getDataVector().removeAllElements();
+		this.tableEmpleados.updateUI();
 	}
 
 	/**
