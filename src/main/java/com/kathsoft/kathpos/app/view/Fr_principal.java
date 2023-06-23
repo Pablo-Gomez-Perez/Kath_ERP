@@ -45,6 +45,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.JPasswordField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 
 public class Fr_principal extends JFrame {
 
@@ -395,14 +399,16 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_7 = new JLabel("RFC Empleado");
 		horizontalBox_6.add(lblNewLabel_7);
 
-		cmbRFCEmpleado = new JComboBox<String>();
+		cmbRFCEmpleado = new JComboBox<String>();		
 		cmbRFCEmpleado.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() != KeyEvent.VK_ENTER) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
+					consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
+				}else {
 					return;
 				}
-				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
+				
 			}
 		});
 		horizontalBox_6.add(cmbRFCEmpleado);
@@ -514,7 +520,7 @@ public class Fr_principal extends JFrame {
 
 		txfNombreCompletoEmpleado = new JTextField();
 		horizontalBox_8.add(txfNombreCompletoEmpleado);
-		txfNombreCompletoEmpleado.setColumns(28);
+		txfNombreCompletoEmpleado.setColumns(29);
 		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
 
 		verticalStrut_10 = Box.createVerticalStrut(5);
@@ -523,12 +529,12 @@ public class Fr_principal extends JFrame {
 		horizontalBox_9 = Box.createHorizontalBox();
 		boxVerticalEmpleadosFormulario.add(horizontalBox_9);
 
-		lblNewLabel_11 = new JLabel("Fecha de nacimiento");
+		lblNewLabel_11 = new JLabel("Fecha de n.");
 		horizontalBox_9.add(lblNewLabel_11);
 
 		txfFechaNacEmpleado = new JTextField();
 		horizontalBox_9.add(txfFechaNacEmpleado);
-		txfFechaNacEmpleado.setColumns(8);
+		txfFechaNacEmpleado.setColumns(10);
 		this.txfFechaNacEmpleado.setMaximumSize(this.txfFechaNacEmpleado.getPreferredSize());
 
 		horizontalStrut_4 = Box.createHorizontalStrut(10);
@@ -539,7 +545,7 @@ public class Fr_principal extends JFrame {
 
 		txfEmailEmpleado = new JTextField();
 		horizontalBox_9.add(txfEmailEmpleado);
-		txfEmailEmpleado.setColumns(15);
+		txfEmailEmpleado.setColumns(18);
 		this.txfEmailEmpleado.setMaximumSize(this.txfEmailEmpleado.getPreferredSize());
 
 		verticalStrut_11 = Box.createVerticalStrut(5);
