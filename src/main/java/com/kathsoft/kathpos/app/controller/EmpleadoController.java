@@ -114,6 +114,79 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 	
+	/**
+	 * consulta una vista almacenada en la base de datos que retorna unicamente el campo
+	 * RFC de la tabla de mpleados, estos datos son cargados al combobox que se le pasa
+	 * como parámetro
+	 * @param jcmb
+	 */
+	public void consultarRfcEmpleado(JComboBox<String> jcmb) {
+		try {
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			Statement stm = cn.createStatement();
+			ResultSet rset = stm.executeQuery("SELECT * FROM vw_rfcempleados"); 
+			
+			while(rset.next()) {
+				jcmb.addItem(rset.getString(1));
+			}
+			
+		}catch (SQLException er) {
+			er.printStackTrace();
+		}catch (Exception er) {
+			er.printStackTrace();
+		}
+	}
+	
+	public Empleado consultarEmpleadoPorRfc(String rfc) {
+		Empleado empl = new Empleado();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		try {
+			
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			stm = cn.prepareCall("CALL sp_consultarEmpleadoPorRFC(?)");
+			stm.setString(1, rfc);
+			
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				empl.setCurp(rset.getString(1));
+				empl.setNombre(rset.getString(2));
+				empl.setNombreCorto(rset.getString(3));
+				empl.setFechaNacimiento(rset.getDate(4));
+				empl.setEmail(rset.getString(5));
+				empl.setEstado(rset.getString(6));
+				empl.setCiudad(rset.getString(7));
+				empl.setDireccion(rset.getString(8));
+				empl.setCodigoPostal(rset.getString(9));
+				empl.setPassword(rset.getString(10));
+			}
+			return empl;
+		}catch(SQLException er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}catch(Exception er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+				if(rset != null) {
+					rset.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void verEmpleadosEnTabla(DefaultTableModel tabla) {
 		ResultSet rset = null;
 		CallableStatement stm = null;

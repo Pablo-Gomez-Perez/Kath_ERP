@@ -39,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.model.Categoria;
+import com.kathsoft.kathpos.app.model.Empleado;
 
 import javax.swing.border.LineBorder;
 import javax.swing.JPasswordField;
@@ -281,6 +282,7 @@ public class Fr_principal extends JFrame {
 				panelPrincipalContenedor.updateUI();
 				
 				llenarTablaEmpleados();
+				llenarCmbRfcEmpleados();
 			}
 		});
 		opcionEmpleados.setIcon(
@@ -394,6 +396,15 @@ public class Fr_principal extends JFrame {
 		horizontalBox_6.add(lblNewLabel_7);
 
 		cmbRFCEmpleado = new JComboBox<String>();
+		cmbRFCEmpleado.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() != KeyEvent.VK_ENTER) {
+					return;
+				}
+				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
+			}
+		});
 		horizontalBox_6.add(cmbRFCEmpleado);
 
 		verticalStrut_8 = Box.createVerticalStrut(5);
@@ -837,6 +848,30 @@ public class Fr_principal extends JFrame {
 		this.cmbIndiceDeCategoria.removeAllItems();
 		this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
+	}
+	
+	/**
+	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos retornados
+	 * por la vista almacenada
+	 */
+	private void llenarCmbRfcEmpleados() {
+		this.cmbRFCEmpleado.removeAllItems();
+		this.cmbRFCEmpleado.updateUI();
+		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
+	}
+	
+	private void consultarEmpleadoPorRfc(String rfc){
+		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
+		this.txfCurpEmpleado.setText(empl.getCurp());
+		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
+		this.txfNombreCompletoEmpleado.setText(empl.getNombre());
+		this.txfFechaNacEmpleado.setText(empl.getFechaNacimiento().toString());
+		this.txfEmailEmpleado.setText(empl.getEmail());
+		this.txfEstadoEmpleado.setText(empl.getEstado());
+		this.txfCiudadEmpleado.setText(empl.getCiudad());
+		this.txfDireccionEmpleado.setText(empl.getDireccion());
+		this.txfCodigoPostalEmpleado.setText(empl.getCodigoPostal());
+		this.txpsContraseniaEmpleado.setText(empl.getPassword());
 	}
 
 	/**
