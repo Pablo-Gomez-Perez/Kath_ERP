@@ -120,29 +120,32 @@ public class CategoriaController implements Serializable {
 	 * @param txf
 	 * @param txa
 	 */
-	public void buscarCategoriaPorIndice(JTextField txf, JTextArea txa) {
+	public Categoria buscarCategoriaPorIndice(int id) {
 		CallableStatement stm = null; 
 		ResultSet rset= null;
-		
+		Categoria cta = new Categoria();
 		try {
 			
 			cn = Conexion.establecerConexionLocal("Kath_erp");
 			stm = cn.prepareCall("CALL buscar_categoria_por_indice(?)");
-			stm.setInt(1, this.categoria.getIdCategoria());
+			stm.setInt(1, id);
 			
 			rset = stm.executeQuery();
 			
 			if(rset.next()) {
-				txf.setText(rset.getString(1));
-				txa.setText(rset.getString(2));
+				cta.setNombre(rset.getString(1));
+				cta.setDescripcion(rset.getString(2));
 			}
 			
+			return cta;
 		}catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}finally {
 			try {
 				if(cn != null) {

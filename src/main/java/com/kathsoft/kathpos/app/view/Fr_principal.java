@@ -487,7 +487,7 @@ public class Fr_principal extends JFrame {
 				if(e.getKeyCode() != KeyEvent.VK_ENTER) {
 					return;
 				}
-				consultarCategoriaPorID();
+				consultarCategoriaPorID(Integer.parseInt(cmbIndiceDeCategoria.getSelectedItem().toString()));
 			}
 		});
 		
@@ -866,6 +866,11 @@ public class Fr_principal extends JFrame {
 		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
 	}
 	
+	/**
+	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como parametro
+	 * y asigna los valores correspondientes a sus respectivos campos en el formulario
+	 * @param rfc
+	 */
 	private void consultarEmpleadoPorRfc(String rfc){
 		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
 		this.txfCurpEmpleado.setText(empl.getCurp());
@@ -883,10 +888,10 @@ public class Fr_principal extends JFrame {
 	/**
 	 * coloca los valores de la consulta en sus respectivos campos de texto
 	 */
-	private void consultarCategoriaPorID() {
-		categoria.setIdCategoria(Integer.parseInt(this.cmbIndiceDeCategoria.getSelectedItem().toString()));
-		categoriaController.setCategoria(this.categoria);
-		categoriaController.buscarCategoriaPorIndice(this.txtNombreCategoria, this.txaDescripcionCategoria);
+	private void consultarCategoriaPorID(int id) {
+		Categoria cta = categoriaController.buscarCategoriaPorIndice(id);
+		this.txtNombreCategoria.setText(cta.getNombre());
+		this.txaDescripcionCategoria.setText(cta.getDescripcion());
 	}
 
 	/**
