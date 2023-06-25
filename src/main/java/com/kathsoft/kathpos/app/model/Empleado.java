@@ -3,7 +3,7 @@
  */
 package com.kathsoft.kathpos.app.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @author PABLO
@@ -22,9 +22,9 @@ public class Empleado extends Usuario {
 	private String nombreCorto;
 	private String password;
 	
+	
+
 	/**
-	 * constructor propio de la clase
-	 * 
 	 * @param id
 	 * @param rfc
 	 * @param idCuentaContable
@@ -37,12 +37,15 @@ public class Empleado extends Usuario {
 	 * @param codigoPostal
 	 * @param curp
 	 * @param nombreCorto
+	 * @param password
 	 */
 	public Empleado(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
-			String estado, String ciudad, String direccion, String codigoPostal, String curp, String nombreCorto) {
+			String estado, String ciudad, String direccion, String codigoPostal, String curp, String nombreCorto,
+			String password) {
 		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
-		this.setCurp(curp);
-		this.setNombreCorto(nombreCorto);
+		this.curp = curp;
+		this.nombreCorto = nombreCorto;
+		this.password = password;
 	}
 
 	/**

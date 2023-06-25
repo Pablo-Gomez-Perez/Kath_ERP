@@ -3,7 +3,7 @@
  */
 package com.kathsoft.kathpos.app.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @author PABLO

@@ -1,7 +1,7 @@
 package com.kathsoft.kathpos.app.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 import java.util.Objects;
 
 public class Usuario implements Serializable {

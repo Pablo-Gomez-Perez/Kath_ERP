@@ -33,6 +33,7 @@ import javax.swing.JTable;
 import javax.swing.JComboBox;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -45,6 +46,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.JPasswordField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.ScrollPaneConstants;
 import java.awt.ComponentOrientation;
 
@@ -219,7 +223,7 @@ public class Fr_principal extends JFrame {
 	private Component verticalStrut_19;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
-	private int[] tableEmpleadosColumnsWidth = { 20, 110, 145, 130, 60, 150 };
+	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
 
 	/**
 	 * Launch the application.
@@ -401,6 +405,8 @@ public class Fr_principal extends JFrame {
 		horizontalBox_6.add(lblNewLabel_7);
 
 		cmbRFCEmpleado = new JComboBox<String>();
+		cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
+		cmbRFCEmpleado.setEditable(true);
 		cmbRFCEmpleado.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -641,6 +647,11 @@ public class Fr_principal extends JFrame {
 		horizontalBox_15.add(horizontalStrut_9);
 
 		btnAgregarEmpleado = new JButton("Agregar");
+		btnAgregarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insertarNuevoEmpleado();
+			}
+		});
 		btnAgregarEmpleado.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		horizontalBox_15.add(btnAgregarEmpleado);
@@ -685,12 +696,12 @@ public class Fr_principal extends JFrame {
 
 		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		horizontalBox_14.add(scrollPane_2);
 
 		modelTablaEmpleados = new DefaultTableModel();
 		tableEmpleados = new JTable();
 		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		//tableEmpleados.setEnabled(false);
 		scrollPane_2.setViewportView(tableEmpleados);
 		tableEmpleados.setModel(modelTablaEmpleados);
 
@@ -700,6 +711,12 @@ public class Fr_principal extends JFrame {
 		modelTablaEmpleados.addColumn("Nombre");
 		modelTablaEmpleados.addColumn("Nick");
 		modelTablaEmpleados.addColumn("Email");
+		
+		//remueve el editor del jtable
+		for(int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
+			Class<?> colClass = tableEmpleados.getColumnClass(i);
+			tableEmpleados.setDefaultEditor(colClass, null);
+		}
 
 		verticalStrut = Box.createVerticalStrut(20);
 		boxVerticalMarcasFormulario.add(verticalStrut);
@@ -892,6 +909,28 @@ public class Fr_principal extends JFrame {
 		this.txfDireccionEmpleado.setText(empl.getDireccion());
 		this.txfCodigoPostalEmpleado.setText(empl.getCodigoPostal());
 		this.txpsContraseniaEmpleado.setText(empl.getPassword());
+	}
+	
+	/**
+	 * inserta un nuevo registro de empleado en la bd
+	 */	
+	private void insertarNuevoEmpleado() {
+		
+		Empleado empl = new Empleado();
+		
+		empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
+		empl.setCurp(this.txfCurpEmpleado.getText());
+		empl.setNombre(this.txfNombreCompletoEmpleado.getText());
+		empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
+		empl.setFechaNacimiento(java.sql.Date.valueOf(this.txfFechaNacEmpleado.getText()));
+		empl.setEmail(this.txfEmailEmpleado.getText());
+		empl.setEstado(this.txfEstadoEmpleado.getText());
+		empl.setCiudad(this.txfCiudadEmpleado.getText());
+		empl.setDireccion(this.txfDireccionEmpleado.getText());
+		empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
+		
+		empleadoController.insertarNuevoEmpleado(empl);
+		
 	}
 
 	/**
