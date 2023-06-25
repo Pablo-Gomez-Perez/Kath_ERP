@@ -8,7 +8,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import java.awt.Color;
 import java.awt.Font;
@@ -35,6 +34,7 @@ import javax.swing.JComboBox;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
@@ -45,10 +45,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.JPasswordField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.MouseWheelEvent;
+import javax.swing.ScrollPaneConstants;
+import java.awt.ComponentOrientation;
 
 public class Fr_principal extends JFrame {
 
@@ -220,6 +218,9 @@ public class Fr_principal extends JFrame {
 	private JButton btnAgregarEmpleado;
 	private Component verticalStrut_19;
 
+	// Array que define el ancho de cada columna de la tabla de empleados
+	private int[] tableEmpleadosColumnsWidth = { 20, 110, 145, 130, 60, 150 };
+
 	/**
 	 * Launch the application.
 	 */
@@ -284,7 +285,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelEmpleados");
 				panelPrincipalContenedor.updateUI();
-				
+
 				llenarTablaEmpleados();
 				llenarCmbRfcEmpleados();
 			}
@@ -307,7 +308,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
-				
+
 				llenarComboBoxCategoria();
 				llenarTablaCategoria();
 			}
@@ -399,16 +400,17 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_7 = new JLabel("RFC Empleado");
 		horizontalBox_6.add(lblNewLabel_7);
 
-		cmbRFCEmpleado = new JComboBox<String>();		
+		cmbRFCEmpleado = new JComboBox<String>();
 		cmbRFCEmpleado.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP
+						|| e.getKeyCode() == KeyEvent.VK_DOWN) {
 					consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
-				}else {
+				} else {
 					return;
 				}
-				
+
 			}
 		});
 		horizontalBox_6.add(cmbRFCEmpleado);
@@ -484,13 +486,13 @@ public class Fr_principal extends JFrame {
 		cmbIndiceDeCategoria.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() != KeyEvent.VK_ENTER) {
+				if (e.getKeyCode() != KeyEvent.VK_ENTER) {
 					return;
 				}
 				consultarCategoriaPorID(Integer.parseInt(cmbIndiceDeCategoria.getSelectedItem().toString()));
 			}
 		});
-		
+
 		horizontalBox_5.add(cmbIndiceDeCategoria);
 
 		verticalStrut_5 = Box.createVerticalStrut(20);
@@ -682,10 +684,13 @@ public class Fr_principal extends JFrame {
 		boxVerticalEmpleadosTabla.add(horizontalBox_14);
 
 		scrollPane_2 = new JScrollPane();
+		scrollPane_2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		horizontalBox_14.add(scrollPane_2);
 
 		modelTablaEmpleados = new DefaultTableModel();
 		tableEmpleados = new JTable();
+		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPane_2.setViewportView(tableEmpleados);
 		tableEmpleados.setModel(modelTablaEmpleados);
 
@@ -694,12 +699,7 @@ public class Fr_principal extends JFrame {
 		modelTablaEmpleados.addColumn("CURP");
 		modelTablaEmpleados.addColumn("Nombre");
 		modelTablaEmpleados.addColumn("Nick");
-		modelTablaEmpleados.addColumn("Fecha na");
 		modelTablaEmpleados.addColumn("Email");
-		modelTablaEmpleados.addColumn("Estado");
-		modelTablaEmpleados.addColumn("Ciudad");
-		modelTablaEmpleados.addColumn("Direccion");
-		modelTablaEmpleados.addColumn("Codigo P.");
 
 		verticalStrut = Box.createVerticalStrut(20);
 		boxVerticalMarcasFormulario.add(verticalStrut);
@@ -799,8 +799,8 @@ public class Fr_principal extends JFrame {
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
 
-		//this.llenarTablaCategoria();
-		//this.llenarComboBoxCategoria();
+		// this.llenarTablaCategoria();
+		// this.llenarComboBoxCategoria();
 
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
@@ -824,6 +824,13 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
 
+		TableColumnModel empleadosColumnModel = tableEmpleados.getColumnModel();
+
+		for (int i = 0; i < tableEmpleadosColumnsWidth.length; i++) {
+			empleadosColumnModel.getColumn(i).setPreferredWidth(tableEmpleadosColumnsWidth[i]);
+			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);			
+		}
+
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
@@ -836,16 +843,16 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaCategorias();
 		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
 	}
-	
+
 	/**
-	 * llena el jTable del panel de empleados con todos los registros encontrados
-	 * en la bd
+	 * llena el jTable del panel de empleados con todos los registros encontrados en
+	 * la bd
 	 */
 	private void llenarTablaEmpleados() {
 		this.borrarElementosDeLaTablaEmpleados();
 		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
 	}
-	
+
 	/**
 	 * llena el JCombobox del panel de categorias con todos los indices encontrados
 	 * en la bd
@@ -855,23 +862,25 @@ public class Fr_principal extends JFrame {
 		this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
 	}
-	
+
 	/**
-	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos retornados
-	 * por la vista almacenada
+	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos
+	 * retornados por la vista almacenada
 	 */
 	private void llenarCmbRfcEmpleados() {
 		this.cmbRFCEmpleado.removeAllItems();
 		this.cmbRFCEmpleado.updateUI();
 		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
 	}
-	
+
 	/**
-	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como parametro
-	 * y asigna los valores correspondientes a sus respectivos campos en el formulario
+	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como
+	 * parametro y asigna los valores correspondientes a sus respectivos campos en
+	 * el formulario
+	 * 
 	 * @param rfc
 	 */
-	private void consultarEmpleadoPorRfc(String rfc){
+	private void consultarEmpleadoPorRfc(String rfc) {
 		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
 		this.txfCurpEmpleado.setText(empl.getCurp());
 		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
@@ -898,17 +907,18 @@ public class Fr_principal extends JFrame {
 	 * inserta un nuevo registro en la bd
 	 */
 	private void insertarCategoria() {
-		
+
 		this.categoria.setNombre(this.txtNombreCategoria.getText());
 		this.categoria.setDescripcion(this.txaDescripcionCategoria.getText());
 		this.categoriaController.setCategoria(this.categoria);
 		this.categoriaController.insertarNuevaCategoria();
-		//this.cmbIndiceDeCategoria.addItem(this.cmbIndiceDeCategoria.getSelectedIndex()+1);
+		// this.cmbIndiceDeCategoria.addItem(this.cmbIndiceDeCategoria.getSelectedIndex()+1);
 		this.llenarComboBoxCategoria();
 		this.llenarTablaCategoria();
 		this.limpiarCampos();
 
-		//JOptionPane.showMessageDialog(this, "Registro agregado", "Kath POS", JOptionPane.INFORMATION_MESSAGE);
+		// JOptionPane.showMessageDialog(this, "Registro agregado", "Kath POS",
+		// JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -918,7 +928,7 @@ public class Fr_principal extends JFrame {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
 	}
-	
+
 	/**
 	 * borra todos los elementos contenidos en la tabla empleados
 	 */

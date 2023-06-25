@@ -203,12 +203,7 @@ public class EmpleadoController implements Serializable {
 					rset.getString(3),		//curp
 					rset.getString(4),		//nombre completo
 					rset.getString(5),		//nombre corto
-					rset.getDate(6),		//fecha nacimiento
-					rset.getString(7),		//correo
-					rset.getString(8),		//estado
-					rset.getString(9),		//ciudad
-					rset.getString(10),		//direccion
-					rset.getString(11)		//codigo postal
+					rset.getString(6),		//correo
 				};
 				tabla.addRow(fila);
 			}
