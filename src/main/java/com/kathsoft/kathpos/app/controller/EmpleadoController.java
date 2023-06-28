@@ -259,8 +259,10 @@ public class EmpleadoController implements Serializable {
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			JOptionPane.showInternalMessageDialog(null, er.getMessage(), er.toString(), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception er) {
 			er.printStackTrace();
+			JOptionPane.showInternalMessageDialog(null, er.getMessage(), er.toString(), JOptionPane.ERROR_MESSAGE);
 		} finally {
 
 			try {

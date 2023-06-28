@@ -51,6 +51,10 @@ import java.util.Date;
 
 import javax.swing.ScrollPaneConstants;
 import java.awt.ComponentOrientation;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class Fr_principal extends JFrame {
 
@@ -177,7 +181,7 @@ public class Fr_principal extends JFrame {
 	private Component verticalStrut_10;
 	private Box horizontalBox_9;
 	private JLabel lblNewLabel_11;
-	private JTextField txfFechaNacEmpleado;
+	private JTextField txfFechaNacEmpleadoDD;
 	private Component horizontalStrut_4;
 	private JLabel lblNewLabel_12;
 	private JTextField txfEmailEmpleado;
@@ -224,6 +228,8 @@ public class Fr_principal extends JFrame {
 
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
+	private JTextField txfFechaNacEmpleadoMM;
+	private JTextField txfFechaNacEmpleadoYY;
 
 	/**
 	 * Launch the application.
@@ -249,7 +255,7 @@ public class Fr_principal extends JFrame {
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/1643231.png")));
 		setTitle("Kath POS");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 567);
+		setBounds(100, 100, 1150, 601);
 
 		BarraMenu = new JMenuBar();
 		BarraMenu.setBackground(new Color(255, 153, 0));
@@ -291,7 +297,7 @@ public class Fr_principal extends JFrame {
 				panelPrincipalContenedor.updateUI();
 
 				llenarTablaEmpleados();
-				llenarCmbRfcEmpleados();
+				llenarCmbRfcEmpleados();				
 			}
 		});
 		opcionEmpleados.setIcon(
@@ -405,18 +411,35 @@ public class Fr_principal extends JFrame {
 		horizontalBox_6.add(lblNewLabel_7);
 
 		cmbRFCEmpleado = new JComboBox<String>();
-		cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
+		cmbRFCEmpleado.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(cmbRFCEmpleado.getSelectedItem().toString() == null) {
+					return;
+				}
+				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
+			}
+		});		
+		cmbRFCEmpleado.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if(cmbRFCEmpleado.getSelectedItem().toString() == null) {
+					return;
+				}
+				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
+			}
+		});
 		cmbRFCEmpleado.setEditable(true);
+		cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
 		cmbRFCEmpleado.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP
+				/*if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP
 						|| e.getKeyCode() == KeyEvent.VK_DOWN) {
 					consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
 				} else {
 					return;
-				}
-
+				}*/
+				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
 			}
 		});
 		horizontalBox_6.add(cmbRFCEmpleado);
@@ -432,7 +455,7 @@ public class Fr_principal extends JFrame {
 
 		txfCurpEmpleado = new JTextField();
 		horizontalBox_7.add(txfCurpEmpleado);
-		txfCurpEmpleado.setColumns(18);
+		txfCurpEmpleado.setColumns(20);
 		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
 
 		horizontalStrut_3 = Box.createHorizontalStrut(10);
@@ -443,7 +466,7 @@ public class Fr_principal extends JFrame {
 
 		txfNombreCortoEmpleado = new JTextField();
 		horizontalBox_7.add(txfNombreCortoEmpleado);
-		txfNombreCortoEmpleado.setColumns(8);
+		txfNombreCortoEmpleado.setColumns(10);
 		this.txfNombreCortoEmpleado.setMaximumSize(this.txfNombreCortoEmpleado.getPreferredSize());
 
 		panelProveedor = new JPanel();
@@ -528,7 +551,7 @@ public class Fr_principal extends JFrame {
 
 		txfNombreCompletoEmpleado = new JTextField();
 		horizontalBox_8.add(txfNombreCompletoEmpleado);
-		txfNombreCompletoEmpleado.setColumns(29);
+		txfNombreCompletoEmpleado.setColumns(35);
 		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
 
 		verticalStrut_10 = Box.createVerticalStrut(5);
@@ -540,20 +563,66 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_11 = new JLabel("Fecha de n.");
 		horizontalBox_9.add(lblNewLabel_11);
 
-		txfFechaNacEmpleado = new JTextField();
-		horizontalBox_9.add(txfFechaNacEmpleado);
-		txfFechaNacEmpleado.setColumns(10);
-		this.txfFechaNacEmpleado.setMaximumSize(this.txfFechaNacEmpleado.getPreferredSize());
+		txfFechaNacEmpleadoDD = new JTextField();
+		txfFechaNacEmpleadoDD.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if(ch < '0' || ch > '9') {
+					e.consume();
+				}
+			}
+		});
+		txfFechaNacEmpleadoDD.setToolTipText("Día");
+		horizontalBox_9.add(txfFechaNacEmpleadoDD);
+		txfFechaNacEmpleadoDD.setColumns(2);
+		this.txfFechaNacEmpleadoDD.setMaximumSize(this.txfFechaNacEmpleadoDD.getPreferredSize());
 
-		horizontalStrut_4 = Box.createHorizontalStrut(10);
+		horizontalStrut_4 = Box.createHorizontalStrut(5);
 		horizontalBox_9.add(horizontalStrut_4);
-
+		
+		txfFechaNacEmpleadoMM = new JTextField();
+		txfFechaNacEmpleadoMM.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if(ch < '0' || ch > '9') {
+					e.consume();
+				}
+			}
+		});
+		txfFechaNacEmpleadoMM.setToolTipText("Mes");
+		horizontalBox_9.add(txfFechaNacEmpleadoMM);
+		txfFechaNacEmpleadoMM.setColumns(2);
+		this.txfFechaNacEmpleadoMM.setMaximumSize(this.txfFechaNacEmpleadoMM.getPreferredSize());
+		
+		horizontalStrut_4 = Box.createHorizontalStrut(5);
+		horizontalBox_9.add(horizontalStrut_4);			
+		
+		txfFechaNacEmpleadoYY = new JTextField();
+		txfFechaNacEmpleadoYY.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if(ch < '0' || ch > '9') {
+					e.consume();
+				}
+			}
+		});
+		txfFechaNacEmpleadoYY.setToolTipText("Año");
+		horizontalBox_9.add(txfFechaNacEmpleadoYY);
+		txfFechaNacEmpleadoYY.setColumns(4);
+		this.txfFechaNacEmpleadoYY.setMaximumSize(this.txfFechaNacEmpleadoYY.getPreferredSize());
+		
+		horizontalStrut_4 = Box.createHorizontalStrut(5);
+		horizontalBox_9.add(horizontalStrut_4);
+		
 		lblNewLabel_12 = new JLabel("Email");
 		horizontalBox_9.add(lblNewLabel_12);
 
 		txfEmailEmpleado = new JTextField();
 		horizontalBox_9.add(txfEmailEmpleado);
-		txfEmailEmpleado.setColumns(18);
+		txfEmailEmpleado.setColumns(20);
 		this.txfEmailEmpleado.setMaximumSize(this.txfEmailEmpleado.getPreferredSize());
 
 		verticalStrut_11 = Box.createVerticalStrut(5);
@@ -656,7 +725,7 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		horizontalBox_15.add(btnAgregarEmpleado);
 
-		verticalStrut_19 = Box.createVerticalStrut(80);
+		verticalStrut_19 = Box.createVerticalStrut(150);
 		boxVerticalEmpleadosFormulario.add(verticalStrut_19);
 
 		boxVerticalEmpleadosTabla = Box.createVerticalBox();
@@ -878,6 +947,7 @@ public class Fr_principal extends JFrame {
 		this.cmbIndiceDeCategoria.removeAllItems();
 		this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
+		this.cmbIndiceDeCategoria.setSelectedIndex(1);		
 	}
 
 	/**
@@ -888,6 +958,7 @@ public class Fr_principal extends JFrame {
 		this.cmbRFCEmpleado.removeAllItems();
 		this.cmbRFCEmpleado.updateUI();
 		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
+		cmbRFCEmpleado.setSelectedIndex(1);
 	}
 
 	/**
@@ -899,10 +970,23 @@ public class Fr_principal extends JFrame {
 	 */
 	private void consultarEmpleadoPorRfc(String rfc) {
 		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
+		String dia = "";
+		String mes = "";
+		String anio = "";
+		
+		if(empl.getFechaNacimiento() != null) {
+			String[] fecha = empl.getFechaNacimiento().toString().split("-");
+			dia = fecha[2];
+			mes = fecha[1];
+			anio = fecha[0];
+		}
+				
 		this.txfCurpEmpleado.setText(empl.getCurp());
 		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
 		this.txfNombreCompletoEmpleado.setText(empl.getNombre());
-		this.txfFechaNacEmpleado.setText(empl.getFechaNacimiento().toString());
+		this.txfFechaNacEmpleadoDD.setText(dia);
+		this.txfFechaNacEmpleadoMM.setText(mes);
+		this.txfFechaNacEmpleadoYY.setText(anio);
 		this.txfEmailEmpleado.setText(empl.getEmail());
 		this.txfEstadoEmpleado.setText(empl.getEstado());
 		this.txfCiudadEmpleado.setText(empl.getCiudad());
@@ -914,15 +998,17 @@ public class Fr_principal extends JFrame {
 	/**
 	 * inserta un nuevo registro de empleado en la bd
 	 */	
-	private void insertarNuevoEmpleado() {
+	private void insertarNuevoEmpleado() {			
 		
 		Empleado empl = new Empleado();
+		
+		String fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-" + this.txfFechaNacEmpleadoYY.getText();
 		
 		empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
 		empl.setCurp(this.txfCurpEmpleado.getText());
 		empl.setNombre(this.txfNombreCompletoEmpleado.getText());
 		empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
-		empl.setFechaNacimiento(java.sql.Date.valueOf(this.txfFechaNacEmpleado.getText()));
+		empl.setFechaNacimiento(java.sql.Date.valueOf(fecha));
 		empl.setEmail(this.txfEmailEmpleado.getText());
 		empl.setEstado(this.txfEstadoEmpleado.getText());
 		empl.setCiudad(this.txfCiudadEmpleado.getText());
