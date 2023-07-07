@@ -298,7 +298,7 @@ public class Fr_principal extends JFrame {
 				panelPrincipalContenedor.updateUI();
 
 				llenarTablaEmpleados();
-				llenarCmbRfcEmpleados();				
+				llenarCmbRfcEmpleados();
 			}
 		});
 		opcionEmpleados.setIcon(
@@ -411,38 +411,19 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_7 = new JLabel("RFC Empleado");
 		horizontalBox_6.add(lblNewLabel_7);
 
-		cmbRFCEmpleado = new JComboBox<String>();
+		cmbRFCEmpleado = new JComboBox<String>();		
 		cmbRFCEmpleado.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if(cmbRFCEmpleado.getSelectedItem().toString() == null) {
+				if((String) cmbRFCEmpleado.getSelectedItem() == null || cmbRFCEmpleado.getSelectedItem().equals("") || ((String)cmbRFCEmpleado.getSelectedItem()).length() < 1) {
 					return;
 				}
-				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
-			}
-		});		
-		cmbRFCEmpleado.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				if(cmbRFCEmpleado.getSelectedItem().toString() == null) {
-					return;
-				}
-				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
+				consultarEmpleadoPorRfc((String) cmbRFCEmpleado.getSelectedItem());
 			}
 		});
-		cmbRFCEmpleado.setEditable(true);
-		cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
-		cmbRFCEmpleado.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				/*if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP
-						|| e.getKeyCode() == KeyEvent.VK_DOWN) {
-					consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
-				} else {
-					return;
-				}*/
-				consultarEmpleadoPorRfc(cmbRFCEmpleado.getSelectedItem().toString());
-			}
-		});
+		this.cmbRFCEmpleado.setEditable(true);
+		//cmbRFCEmpleado.setEditable(false);
+		//cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
+		
 		horizontalBox_6.add(cmbRFCEmpleado);
 
 		verticalStrut_8 = Box.createVerticalStrut(5);
@@ -695,6 +676,8 @@ public class Fr_principal extends JFrame {
 		horizontalBox_12.add(lblNewLabel_17);
 
 		txpsContraseniaEmpleado = new JPasswordField();
+		txpsContraseniaEmpleado.setEnabled(false);
+		txpsContraseniaEmpleado.setEditable(false);
 		txpsContraseniaEmpleado.setColumns(20);
 		horizontalBox_12.add(txpsContraseniaEmpleado);
 		this.txpsContraseniaEmpleado.setMaximumSize(this.txpsContraseniaEmpleado.getPreferredSize());
@@ -703,6 +686,11 @@ public class Fr_principal extends JFrame {
 		horizontalBox_12.add(horizontalStrut_7);
 
 		btnNuevaContraseniaEmpleado = new JButton("Nueva");
+		btnNuevaContraseniaEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirVentanaPasswordEmpleado();
+			}
+		});
 		btnNuevaContraseniaEmpleado.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
 		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
@@ -928,7 +916,7 @@ public class Fr_principal extends JFrame {
 		}
 
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	/**
@@ -957,7 +945,7 @@ public class Fr_principal extends JFrame {
 		this.cmbIndiceDeCategoria.removeAllItems();
 		this.cmbIndiceDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
-		this.cmbIndiceDeCategoria.setSelectedIndex(1);		
+		this.cmbIndiceDeCategoria.setSelectedIndex(0);		
 	}
 
 	/**
@@ -1129,5 +1117,20 @@ public class Fr_principal extends JFrame {
 	private void limpiarCampos() {
 		this.txtNombreCategoria.setText("");
 		this.txaDescripcionCategoria.setText("");
+	}
+	
+	private void abrirVentanaPasswordEmpleado() {
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado();
+					frame.setVisible(true);
+				}catch(Exception er) {
+					er.printStackTrace();
+				}				
+			}
+		});
 	}
 }
