@@ -1,7 +1,5 @@
 package com.kathsoft.kathpos.app.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -9,7 +7,6 @@ import java.awt.BorderLayout;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import java.awt.Component;
-import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -22,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.Window.Type;
 
 public class Fr_NewPasswordEmpleado extends JFrame {
 

@@ -93,7 +93,7 @@ public class Fr_LogIn extends JFrame {
 	 */
 	public Fr_LogIn() {
 		setResizable(false);
-		setType(Type.POPUP);
+		setType(Type.UTILITY);
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_LogIn.class.getResource("/com/kathsoft/kathpos/app/resources/login_ico.png")));
 		setTitle("Acceso");
@@ -173,8 +173,7 @@ public class Fr_LogIn extends JFrame {
 		panelInferior.add(horizontalStrut_2);
 		btn_ingresar.setBackground(new Color(0, 204, 51));
 		btn_ingresar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
+			public void actionPerformed(ActionEvent e) {				
 				logIngFrPrincipal();
 			}
 		});
