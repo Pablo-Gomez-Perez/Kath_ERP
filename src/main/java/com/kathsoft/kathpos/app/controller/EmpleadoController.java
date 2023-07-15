@@ -258,10 +258,10 @@ public class EmpleadoController implements Serializable {
 
 		} catch (SQLException er) {
 			er.printStackTrace();
-			JOptionPane.showInternalMessageDialog(null, er.getMessage(), er.toString(), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, er.getMessage(), er.toString(), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showInternalMessageDialog(null, er.getMessage(), er.toString(), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, er.getMessage(), er.toString(), JOptionPane.ERROR_MESSAGE);
 		} finally {
 
 			try {
@@ -279,6 +279,41 @@ public class EmpleadoController implements Serializable {
 				e.printStackTrace();
 			}
 
+		}
+	}
+	
+	public void actualizarContrasenia(Empleado empl) {
+		CallableStatement stm = null;
+		
+		if(empl.getPassword() == null || empl.getPassword().equals("") || empl.getPassword().length() < 1) {
+			return;
+		}
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL actualizarPassWordEmpleado(?,?);");
+			stm.setString(1, empl.getRfc());
+			stm.setString(2, empl.getPassword());
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch (Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch(Exception er) {
+				er.printStackTrace();
+			}
 		}
 	}
 
