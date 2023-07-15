@@ -218,7 +218,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		}
 
 		Empleado empl = new Empleado();
-		String psw1 = null;
+		String psw1 = "";
 
 		char[] caracteresPassword1 = this.pswf_Password1.getPassword();
 
