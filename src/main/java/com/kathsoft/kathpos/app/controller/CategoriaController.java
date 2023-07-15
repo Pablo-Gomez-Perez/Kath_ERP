@@ -8,12 +8,9 @@ import java.sql.SQLException;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Categoria;
-import com.mysql.cj.xdevapi.StreamingSqlResultBuilder;
 
 public class CategoriaController implements Serializable {
 	
