@@ -282,6 +282,73 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 	
+	/**
+	 * actualiza los datos de un empleado específico en la bd
+	 * recibe como parametro un objeto de tipo {@code Empleado} y actualiza los respectivos valores modificados
+	 * en la bd
+	 * @param empl
+	 */
+	public void actualizarEmpleado(Empleado empl) {
+		
+		CallableStatement stm = null;
+
+		if (
+				empl.getRfc().isEmpty() 				
+				|| empl.getNombre().isEmpty()
+				|| empl.getNombreCorto().isEmpty() 
+				|| empl.getFechaNacimiento().equals(null)
+				|| empl.getEmail().isEmpty() 
+				|| empl.getEstado().isEmpty() 
+				|| empl.getCiudad().isEmpty()
+				|| empl.getDireccion().isEmpty()
+				|| empl.getCodigoPostal().isEmpty()
+		)
+		{
+			
+			return;
+			
+		}
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?);");
+			stm.setString(1, empl.getRfc());
+			stm.setString(2, empl.getNombre());
+			stm.setString(3, empl.getNombreCorto());
+			stm.setDate(4, empl.getFechaNacimiento());
+			stm.setString(5, empl.getEmail());
+			stm.setString(6, empl.getEstado());
+			stm.setString(7, empl.getCiudad());
+			stm.setString(8, empl.getDireccion());
+			stm.setString(9, empl.getCodigoPostal());
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			
+			try {
+
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
 	public void actualizarContrasenia(Empleado empl) {
 		CallableStatement stm = null;
 		

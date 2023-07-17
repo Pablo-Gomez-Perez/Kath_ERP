@@ -701,7 +701,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarEmpleado = new JButton("Actualizar");
 		btnActualizarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				actualizarEmpleado();
 			}
 		});
 		btnActualizarEmpleado.setIcon(new ImageIcon(
@@ -1039,7 +1039,8 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 								
-		System.out.println(fecha);
+		//System.out.println(fecha);
+		
 		try {
 			
 			empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
@@ -1063,7 +1064,79 @@ public class Fr_principal extends JFrame {
 		
 		this.llenarCmbRfcEmpleados();
 		this.llenarTablaEmpleados();
-				
+
+	}
+	
+	/**
+	 * actualiza los registros de un empleado específico en la bd
+	 */
+	private void actualizarEmpleado() {
+		
+		Empleado empl = new Empleado();	
+		
+		if(this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
+			JOptionPane.showMessageDialog(null, "Debe asignar un RFC", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
+			JOptionPane.showMessageDialog(null, "Debe asignar un CURP", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
+			JOptionPane.showMessageDialog(null, "Debe indicar el nombre", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
+			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		String fecha = "";
+		
+		if(this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
+				|| this.txfFechaNacEmpleadoMM.getText() == null || this.txfFechaNacEmpleadoMM.getText() == ""
+				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {			
+			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}else {
+			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-" + this.txfFechaNacEmpleadoDD.getText();
+		}
+			
+		if(fecha.equals("") || fecha.length()<2) {
+			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
+			JOptionPane.showMessageDialog(null, "Indique el correo Electrónico", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		try {
+			
+			empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
+			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
+			empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
+			empl.setFechaNacimiento(java.sql.Date.valueOf(fecha));
+			empl.setEmail(this.txfEmailEmpleado.getText());
+			empl.setEstado(this.txfEstadoEmpleado.getText());
+			empl.setCiudad(this.txfCiudadEmpleado.getText());
+			empl.setDireccion(this.txfDireccionEmpleado.getText());
+			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
+			
+			empleadoController.actualizarEmpleado(empl);
+			
+			
+		}catch(Exception er){
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error", "Error Object", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		this.llenarCmbRfcEmpleados();
+		this.llenarTablaEmpleados();
 	}
 
 	/**
