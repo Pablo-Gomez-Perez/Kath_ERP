@@ -1120,6 +1120,7 @@ public class Fr_principal extends JFrame {
 	private void abrirVentanaPasswordEmpleado() {
 				
 		String rfcEmpleado = this.cmbRFCEmpleado.getSelectedItem().toString();
+		String nombreCortoEmpleado = this.txfNombreCortoEmpleado.getText();
 		
 		if(rfcEmpleado.equals("") || rfcEmpleado == null || rfcEmpleado.length() < 1) {
 			JOptionPane.showMessageDialog(this, "Error", "No se ha seleccionado un empleado", JOptionPane.ERROR_MESSAGE);
@@ -1133,7 +1134,7 @@ public class Fr_principal extends JFrame {
 			public void run() {
 				try {
 					
-					Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado(rfcEmpleado);
+					Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado(rfcEmpleado, nombreCortoEmpleado);
 					frame.setVisible(true);
 				}catch(Exception er) {
 					er.printStackTrace();

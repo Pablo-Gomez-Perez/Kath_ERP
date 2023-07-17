@@ -42,6 +42,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 	private JPasswordField pswf_Password2;
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private String rfcEmpleado;
+	private String nombreCorto;
 	// ============================================================================================
 	// ============================================================================================
 	// panel que agrega una imagen al formulario
@@ -70,7 +71,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_NewPasswordEmpleado(String rfcEmpleado) {
+	public Fr_NewPasswordEmpleado(String rfcEmpleado, String nombreCorto) {
 		setType(Type.UTILITY);
 		setTitle("Nueva contraseña");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -182,6 +183,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.rfcEmpleado = rfcEmpleado;
+		this.nombreCorto = nombreCorto;
 	}
 
 	/**
@@ -255,8 +257,9 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 			actualPsw = actualPsw + c;
 		}
 		
+		empl.setRfc(this.rfcEmpleado);
+		empl.setNombreCorto(this.nombreCorto);
 		empl.setPassword(actualPsw);
-		empl.setRfc(rfcEmpleado);
 		
 		if(empleadoController.validarIngreso(empl) == false || psw1.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "La contraseña actual es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
