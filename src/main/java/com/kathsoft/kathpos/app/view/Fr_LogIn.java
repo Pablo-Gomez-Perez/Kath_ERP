@@ -200,11 +200,9 @@ public class Fr_LogIn extends JFrame {
 		}
 		
 		empl.setNombreCorto(this.jcmbUsuarios.getSelectedItem().toString());
-		empl.setPassword(contra);
+		empl.setPassword(contra);			
 		
-		emplController.setEmpleado(empl);
-		
-		if (emplController.validarIngreso() == false || contra.isEmpty()) {
+		if (emplController.validarIngreso(empl) == false || contra.isEmpty()) {
 			
 			JOptionPane.showMessageDialog(this, "Error de acceso", "Error", JOptionPane.ERROR_MESSAGE);
 			

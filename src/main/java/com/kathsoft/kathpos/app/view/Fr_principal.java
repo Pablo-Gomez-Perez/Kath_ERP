@@ -699,6 +699,11 @@ public class Fr_principal extends JFrame {
 		horizontalBox_15.add(verticalStrut_18);
 
 		btnActualizarEmpleado = new JButton("Actualizar");
+		btnActualizarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		btnActualizarEmpleado.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		horizontalBox_15.add(btnActualizarEmpleado);

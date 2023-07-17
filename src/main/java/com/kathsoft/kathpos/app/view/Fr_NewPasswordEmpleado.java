@@ -25,6 +25,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import javax.swing.JTextField;
 
 public class Fr_NewPasswordEmpleado extends JFrame {
 
@@ -64,6 +65,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		}
 
 	};
+	private JPasswordField pswf_actualPsw;
 
 	/**
 	 * Create the frame.
@@ -94,18 +96,34 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 
 		Box verticalBox = Box.createVerticalBox();
 		panelCentralContenedor.add(verticalBox);
+		
+		Box horizontalBox_2 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_2);
+		
+		JLabel lblNewLabel_2 = new JLabel("Contraseña Actual");
+		horizontalBox_2.add(lblNewLabel_2);
+		
+		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
+		horizontalBox_2.add(horizontalStrut_4);
+		
+		pswf_actualPsw = new JPasswordField();
+		pswf_actualPsw.setColumns(15);
+		horizontalBox_2.add(pswf_actualPsw);
+		
+		Component verticalStrut_2 = Box.createVerticalStrut(20);
+		verticalBox.add(verticalStrut_2);
 
 		Box horizontalBox = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox);
 
-		JLabel lblNewLabel = new JLabel("Ingrese la nueva contraseña");
+		JLabel lblNewLabel = new JLabel("Nueva contraseña");
 		horizontalBox.add(lblNewLabel);
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut);
 
 		pswf_Password1 = new JPasswordField();
-		pswf_Password1.setColumns(35);
+		pswf_Password1.setColumns(15);
 		horizontalBox.add(pswf_Password1);
 
 		Component verticalStrut = Box.createVerticalStrut(20);
@@ -114,7 +132,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_1);
 
-		JLabel lblNewLabel_1 = new JLabel("Confirme la nueva contraseña");
+		JLabel lblNewLabel_1 = new JLabel("Confirmar nueva contraseña");
 		horizontalBox_1.add(lblNewLabel_1);
 
 		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
@@ -127,7 +145,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 				validarContrasenia();
 			}
 		});
-		pswf_Password2.setColumns(35);
+		pswf_Password2.setColumns(15);
 		horizontalBox_1.add(pswf_Password2);
 
 		Component verticalStrut_1 = Box.createVerticalStrut(20);
@@ -208,31 +226,51 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 			return true;
 		}
 	}
-
+	
+	/**
+	 * Actualiza la contraseña de un empleado en la base de datos buscando su rfc
+	 * 
+	 */
 	private void actualizarContrasenia() {
-
+		
+		Empleado empl = new Empleado();
+		
 		if (!validarContrasenia()) {
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error, verifique la contraseña y no deje campos vacios",
 					"Kath-Pos Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-
-		Empleado empl = new Empleado();
+		
 		String psw1 = "";
+		String actualPsw = "";
 
 		char[] caracteresPassword1 = this.pswf_Password1.getPassword();
+		char[] caracteresActualPsw = this.pswf_actualPsw.getPassword();
 
-		for (int i = 0; i < caracteresPassword1.length; i++) {
-			psw1 += caracteresPassword1[i];
+		for (char c: caracteresPassword1) {
+			psw1 = psw1 + c;
 		}
-
+		
+		for(char c: caracteresActualPsw) {
+			actualPsw = actualPsw + c;
+		}
+		
+		empl.setPassword(actualPsw);
+		empl.setRfc(rfcEmpleado);
+		
+		if(empleadoController.validarIngreso(empl) == false || psw1.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "La contraseña actual es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		try {
+			
 			empl.setPassword(psw1);
-			empl.setRfc(rfcEmpleado);
 			empleadoController.actualizarContrasenia(empl);
 			
 			JOptionPane.showMessageDialog(this, "Contraseña actualizada", 
 					"Kat-Pos - Info", JOptionPane.INFORMATION_MESSAGE);
+			
 		} catch (Exception er) {
 			er.printStackTrace();
 		}

@@ -56,19 +56,19 @@ public class EmpleadoController implements Serializable {
 	 * @return {@code false} si el server arroja un error
 	 * @return {@code true} si el server no arroja nada
 	 */
-	public boolean validarIngreso() {
+	public boolean validarIngreso(Empleado empl) {
 
 		String pswd = "";
 
-		System.out.println(this.empleado.getNombreCorto());
-		System.out.println(this.empleado.getPassword());
+		System.out.println(empl.getNombreCorto());
+		System.out.println(empl.getPassword());
 
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			CallableStatement stm = cn.prepareCall("CALL validar_entrada(?,?)");
-			stm.setString(1, this.empleado.getNombreCorto());
-			stm.setString(2, this.empleado.getPassword());
+			stm.setString(1, empl.getNombreCorto());
+			stm.setString(2, empl.getPassword());
 			ResultSet rset = stm.executeQuery();
 
 			if (rset.next()) {
@@ -76,7 +76,7 @@ public class EmpleadoController implements Serializable {
 				System.out.println(pswd);
 			}
 
-			System.out.println(this.empleado.getPassword());
+			System.out.println(empl.getPassword());
 
 			return true;
 
@@ -216,7 +216,7 @@ public class EmpleadoController implements Serializable {
 
 	/**
 	 * inserta un nuevo empleado en la bd
-	 * 
+	 * recibe como paramatetro un objeto de tipo {@code Empleado} e inserta las datos en la bd como nuevo registro
 	 * @param empl
 	 */
 	public void insertarNuevoEmpleado(Empleado empl) {
@@ -231,7 +231,7 @@ public class EmpleadoController implements Serializable {
 				|| empl.getEmail().isEmpty() 
 				|| empl.getEstado().isEmpty() 
 				|| empl.getCiudad().isEmpty()
-				|| empl.getDireccion().isEmpty() 
+				|| empl.getDireccion().isEmpty()
 				|| empl.getCodigoPostal().isEmpty()
 		)
 		{
