@@ -213,7 +213,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 
 		if (!validarContrasenia()) {
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error, verifique la contraseña y no deje campos vacios",
-					"Error", JOptionPane.ERROR_MESSAGE);
+					"Kath-Pos Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
@@ -230,6 +230,9 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 			empl.setPassword(psw1);
 			empl.setRfc(rfcEmpleado);
 			empleadoController.actualizarContrasenia(empl);
+			
+			JOptionPane.showMessageDialog(this, "Contraseña actualizada", 
+					"Kat-Pos - Info", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception er) {
 			er.printStackTrace();
 		}
