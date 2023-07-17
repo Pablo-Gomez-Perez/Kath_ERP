@@ -75,9 +75,12 @@ public class CategoriaController implements Serializable {
 	}
 	
 	public void obtenerIndicesDeCategorias(JComboBox<Integer> jcmb) {
+		
 		ResultSet rset = null;
 		CallableStatement stm = null;
+				
 		try {
+			
 			cn = Conexion.establecerConexionLocal("Kath_erp");
 			stm = cn.prepareCall("CALL ver_indices_categorias()");
 			rset = stm.executeQuery();
