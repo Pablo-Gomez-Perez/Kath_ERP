@@ -699,6 +699,7 @@ public class Fr_principal extends JFrame {
 		horizontalBox_15.add(verticalStrut_18);
 
 		btnActualizarEmpleado = new JButton("Actualizar");
+		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
 		btnActualizarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actualizarEmpleado();
@@ -712,6 +713,7 @@ public class Fr_principal extends JFrame {
 		horizontalBox_15.add(horizontalStrut_9);
 
 		btnAgregarEmpleado = new JButton("Agregar");
+		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		btnAgregarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				insertarNuevoEmpleado();
@@ -796,6 +798,7 @@ public class Fr_principal extends JFrame {
 		horizontalBox_1.add(scrollPane_1);
 
 		txaDescripcionCategoria = new JTextArea();
+		txaDescripcionCategoria.setLineWrap(true);
 		txaDescripcionCategoria.setRows(10);
 		txaDescripcionCategoria.setColumns(25);
 		scrollPane_1.setViewportView(txaDescripcionCategoria);
