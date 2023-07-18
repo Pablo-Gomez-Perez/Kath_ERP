@@ -63,7 +63,6 @@ public class Fr_principal extends JFrame {
 	 */
 	private CategoriaController categoriaController = new CategoriaController();
 	private EmpleadoController empleadoController = new EmpleadoController();
-	private Categoria categoria = new Categoria();
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -122,11 +121,8 @@ public class Fr_principal extends JFrame {
 	private Box boxVerticalMarcasFormulario;
 	private Box boxVerticalMarcasTabla;
 	private Box horizontalBox;
-	private JLabel lblNewLabel_2;
-	private JTextField txtNombreCategoria;
 	private Box horizontalBox_1;
 	private JLabel lblNewLabel_3;
-	private Component verticalStrut;
 	private Box horizontalBox_2;
 	private JLabel lblNewLabel_4;
 	private Component horizontalStrut;
@@ -149,7 +145,7 @@ public class Fr_principal extends JFrame {
 	private JTextArea txaDescripcionCategoria;
 	private Box horizontalBox_5;
 	private JLabel lblNewLabel_5;
-	private JComboBox<Integer> cmbIndiceDeCategoria;
+	private JComboBox<String> cmbNombreDeCategoria;
 	private Component verticalStrut_7;
 	private Component horizontalStrut_2;
 	private JButton btnBuscarCategoriaEnTabla;
@@ -404,7 +400,8 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_7 = new JLabel("RFC Empleado");
 		horizontalBox_6.add(lblNewLabel_7);
 
-		cmbRFCEmpleado = new JComboBox<String>();		
+		cmbRFCEmpleado = new JComboBox<String>();
+		//==================================================================================================================================================================================================================
 		cmbRFCEmpleado.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if((String) cmbRFCEmpleado.getSelectedItem() == null || cmbRFCEmpleado.getSelectedItem().equals("") || ((String)cmbRFCEmpleado.getSelectedItem()).length() < 1) {
@@ -413,6 +410,7 @@ public class Fr_principal extends JFrame {
 				consultarEmpleadoPorRfc((String) cmbRFCEmpleado.getSelectedItem());
 			}
 		});
+		//==================================================================================================================================================================================================================
 		this.cmbRFCEmpleado.setEditable(true);
 		//cmbRFCEmpleado.setEditable(false);
 		//cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
@@ -483,37 +481,30 @@ public class Fr_principal extends JFrame {
 		horizontalBox_5 = Box.createHorizontalBox();
 		boxVerticalMarcasFormulario.add(horizontalBox_5);
 
-		lblNewLabel_5 = new JLabel("Indice");
+		lblNewLabel_5 = new JLabel("Marca");
 		horizontalBox_5.add(lblNewLabel_5);
 
-		cmbIndiceDeCategoria = new JComboBox<Integer>();
-		cmbIndiceDeCategoria.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() != KeyEvent.VK_ENTER) {
+		cmbNombreDeCategoria = new JComboBox<String>();
+		//==================================================================================================================================================================================================================
+		cmbNombreDeCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if((String) cmbNombreDeCategoria.getSelectedItem() == null || cmbNombreDeCategoria.getSelectedItem().equals("") || ((String)cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
 					return;
 				}
-				consultarCategoriaPorID(Integer.parseInt(cmbIndiceDeCategoria.getSelectedItem().toString()));
+				
+				consultarCategoriaPorNombre((String)cmbNombreDeCategoria.getSelectedItem());
 			}
 		});
+		//==================================================================================================================================================================================================================
+		cmbNombreDeCategoria.setEditable(true);
 
-		horizontalBox_5.add(cmbIndiceDeCategoria);
+		horizontalBox_5.add(cmbNombreDeCategoria);
 
 		verticalStrut_5 = Box.createVerticalStrut(20);
 		boxVerticalMarcasFormulario.add(verticalStrut_5);
 
 		horizontalBox = Box.createHorizontalBox();
 		boxVerticalMarcasFormulario.add(horizontalBox);
-
-		lblNewLabel_2 = new JLabel("Nombre");
-		horizontalBox.add(lblNewLabel_2);
-
-		txtNombreCategoria = new JTextField();
-		horizontalBox.add(txtNombreCategoria);
-		txtNombreCategoria.setColumns(28);
-		this.txtNombreCategoria.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
-		cmbIndiceDeCategoria.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
-		cmbRFCEmpleado.setMaximumSize(this.txtNombreCategoria.getPreferredSize());
 
 		verticalStrut_9 = Box.createVerticalStrut(5);
 		boxVerticalEmpleadosFormulario.add(verticalStrut_9);
@@ -785,9 +776,6 @@ public class Fr_principal extends JFrame {
 			tableEmpleados.setDefaultEditor(colClass, null);
 		}
 
-		verticalStrut = Box.createVerticalStrut(20);
-		boxVerticalMarcasFormulario.add(verticalStrut);
-
 		horizontalBox_1 = Box.createHorizontalBox();
 		boxVerticalMarcasFormulario.add(horizontalBox_1);
 
@@ -832,7 +820,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarCategoria.setBackground(new Color(144, 238, 144));
 		horizontalBox_4.add(btnAgregarCategoria);
 
-		verticalStrut_6 = Box.createVerticalStrut(70);
+		verticalStrut_6 = Box.createVerticalStrut(150);
 		boxVerticalMarcasFormulario.add(verticalStrut_6);
 
 		boxVerticalMarcasTabla = Box.createVerticalBox();
@@ -943,10 +931,10 @@ public class Fr_principal extends JFrame {
 	 * en la bd
 	 */
 	private void llenarComboBoxCategoria() {
-		this.cmbIndiceDeCategoria.removeAllItems();
-		this.cmbIndiceDeCategoria.updateUI();
-		categoriaController.obtenerIndicesDeCategorias(this.cmbIndiceDeCategoria);
-		this.cmbIndiceDeCategoria.setSelectedIndex(0);		
+		this.cmbNombreDeCategoria.removeAllItems();
+		this.cmbNombreDeCategoria.updateUI();
+		categoriaController.obtenerIndicesDeCategorias(this.cmbNombreDeCategoria);
+		this.cmbNombreDeCategoria.setSelectedIndex(0);		
 	}
 
 	/**
@@ -1145,28 +1133,36 @@ public class Fr_principal extends JFrame {
 	/**
 	 * coloca los valores de la consulta en sus respectivos campos de texto
 	 */
-	private void consultarCategoriaPorID(int id) {
-		Categoria cta = categoriaController.buscarCategoriaPorIndice(id);
-		this.txtNombreCategoria.setText(cta.getNombre());
+	private void consultarCategoriaPorNombre(String nombre) {
+		Categoria cta = categoriaController.buscarCategoriaPorNombre(nombre);
 		this.txaDescripcionCategoria.setText(cta.getDescripcion());
 	}
 
 	/**
-	 * inserta un nuevo registro en la bd
+	 * inserta una nueva categoría en la bd
 	 */
 	private void insertarCategoria() {
+		
+		Categoria categoria = new Categoria();
+		
+		if(((String)this.cmbNombreDeCategoria.getSelectedItem()).equals(null) || ((String)this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
+			return;
+		}
+		
+		try {
+			
+			categoria.setNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
+			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
+			this.categoriaController.insertarNuevaCategoria(categoria);
+			
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
 
-		this.categoria.setNombre(this.txtNombreCategoria.getText());
-		this.categoria.setDescripcion(this.txaDescripcionCategoria.getText());
-		this.categoriaController.setCategoria(this.categoria);
-		this.categoriaController.insertarNuevaCategoria();
-		// this.cmbIndiceDeCategoria.addItem(this.cmbIndiceDeCategoria.getSelectedIndex()+1);
 		this.llenarComboBoxCategoria();
 		this.llenarTablaCategoria();
-		this.limpiarCampos();
+		this.limpiarCamposPanelCategoria();
 
-		// JOptionPane.showMessageDialog(this, "Registro agregado", "Kath POS",
-		// JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -1188,8 +1184,7 @@ public class Fr_principal extends JFrame {
 	/**
 	 * limpia los campos te texto del formulario
 	 */
-	private void limpiarCampos() {
-		this.txtNombreCategoria.setText("");
+	private void limpiarCamposPanelCategoria() {
 		this.txaDescripcionCategoria.setText("");
 	}
 	

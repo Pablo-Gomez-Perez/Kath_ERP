@@ -74,7 +74,7 @@ public class CategoriaController implements Serializable {
 		}
 	}
 	
-	public void obtenerIndicesDeCategorias(JComboBox<Integer> jcmb) {
+	public void obtenerIndicesDeCategorias(JComboBox<String> jcmb) {
 		
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -82,11 +82,11 @@ public class CategoriaController implements Serializable {
 		try {
 			
 			cn = Conexion.establecerConexionLocal("Kath_erp");
-			stm = cn.prepareCall("CALL ver_indices_categorias()");
+			stm = cn.prepareCall("CALL ver_nombres_categorias()");
 			rset = stm.executeQuery();
 			
 			while(rset.next()) {
-				jcmb.addItem(rset.getInt(1));
+				jcmb.addItem(rset.getString(1));
 			}
 			
 		}catch (SQLException er) {
@@ -120,21 +120,20 @@ public class CategoriaController implements Serializable {
 	 * @param txf
 	 * @param txa
 	 */
-	public Categoria buscarCategoriaPorIndice(int id) {
+	public Categoria buscarCategoriaPorNombre(String nombre) {
 		CallableStatement stm = null; 
 		ResultSet rset= null;
 		Categoria cta = new Categoria();
 		try {
 			
 			cn = Conexion.establecerConexionLocal("Kath_erp");
-			stm = cn.prepareCall("CALL buscar_categoria_por_indice(?)");
-			stm.setInt(1, id);
+			stm = cn.prepareCall("CALL buscar_categoria_por_nombre(?)");
+			stm.setString(1, nombre);
 			
 			rset = stm.executeQuery();
 			
-			if(rset.next()) {
-				cta.setNombre(rset.getString(1));
-				cta.setDescripcion(rset.getString(2));
+			if(rset.next()) {				
+				cta.setDescripcion(rset.getString(1));
 			}
 			
 			return cta;
@@ -165,11 +164,11 @@ public class CategoriaController implements Serializable {
 		}
 	}
 	
-	public void insertarNuevaCategoria() {
+	public void insertarNuevaCategoria(Categoria categoria) {
 		
 		CallableStatement stm= null;
 		
-		if(this.categoria.getNombre().isEmpty()) {
+		if(categoria.getNombre().isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Campo Vacio", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -178,8 +177,8 @@ public class CategoriaController implements Serializable {
 			
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL insertar_nva_categoria(?,?);");
-			stm.setString(1, this.categoria.getNombre());
-			stm.setString(2, this.categoria.getDescripcion());
+			stm.setString(1, categoria.getNombre());
+			stm.setString(2, categoria.getDescripcion());
 			stm.execute();
 			
 		}catch (SQLException er) {
