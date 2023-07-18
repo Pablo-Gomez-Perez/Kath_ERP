@@ -132,8 +132,9 @@ public class CategoriaController implements Serializable {
 			
 			rset = stm.executeQuery();
 			
-			if(rset.next()) {				
-				cta.setDescripcion(rset.getString(1));
+			if(rset.next()) {
+				cta.setIdCategoria(rset.getInt(1));
+				cta.setDescripcion(rset.getString(2));
 			}
 			
 			return cta;
@@ -176,7 +177,7 @@ public class CategoriaController implements Serializable {
 		try {
 			
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insertar_nva_categoria(?,?);");
+			stm = cn.prepareCall("CALL insert_nva_categoria(?,?);");
 			stm.setString(1, categoria.getNombre());
 			stm.setString(2, categoria.getDescripcion());
 			stm.execute();
@@ -201,6 +202,30 @@ public class CategoriaController implements Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void actualizarCategoria(Categoria categoria) {
+		CallableStatement stm = null;
+		
+		if(categoria.getNombre().isEmpty()) {
+			return;
+		}
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL update_categoria(?,?,?);");
+			stm.setInt(1, categoria.getIdCategoria());
+			stm.setString(2, categoria.getNombre());
+			stm.setString(3, categoria.getDescripcion());
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
 	}
 	
 }

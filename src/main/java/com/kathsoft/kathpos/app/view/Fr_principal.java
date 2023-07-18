@@ -1134,7 +1134,7 @@ public class Fr_principal extends JFrame {
 	 * coloca los valores de la consulta en sus respectivos campos de texto
 	 */
 	private void consultarCategoriaPorNombre(String nombre) {
-		Categoria cta = categoriaController.buscarCategoriaPorNombre(nombre);
+		Categoria cta = categoriaController.buscarCategoriaPorNombre(nombre);		
 		this.txaDescripcionCategoria.setText(cta.getDescripcion());
 	}
 
@@ -1163,6 +1163,10 @@ public class Fr_principal extends JFrame {
 		this.llenarTablaCategoria();
 		this.limpiarCamposPanelCategoria();
 
+	}
+	
+	private void actualizarCategoria() {
+		
 	}
 
 	/**
