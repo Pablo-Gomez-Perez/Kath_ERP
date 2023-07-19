@@ -801,6 +801,11 @@ public class Fr_principal extends JFrame {
 		horizontalBox_4.add(verticalStrut_4);
 
 		btnActualizarCategoria = new JButton("Actualizar");
+		btnActualizarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actualizarCategoria();
+			}
+		});
 		btnActualizarCategoria.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarCategoria.setBackground(new Color(144, 238, 144));
@@ -1134,7 +1139,7 @@ public class Fr_principal extends JFrame {
 	 * coloca los valores de la consulta en sus respectivos campos de texto
 	 */
 	private void consultarCategoriaPorNombre(String nombre) {
-		Categoria cta = categoriaController.buscarCategoriaPorNombre(nombre);		
+		Categoria cta = categoriaController.buscarCategoriaPorNombre(nombre);
 		this.txaDescripcionCategoria.setText(cta.getDescripcion());
 	}
 
@@ -1165,7 +1170,30 @@ public class Fr_principal extends JFrame {
 
 	}
 	
+	/**
+	 * actualiza los datos de una categoria específico en la bd
+	 */
 	private void actualizarCategoria() {
+		
+		if(((String)this.cmbNombreDeCategoria.getSelectedItem()).equals(null)||((String)this.cmbNombreDeCategoria.getSelectedItem()).equals("") || ((String)this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
+			return;
+		}
+		
+		Categoria categoria = categoriaController.buscarCategoriaPorNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
+		
+		try {
+			
+			categoria.setNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
+			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
+			
+			categoriaController.actualizarCategoria(categoria);
+			
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+		
+		this.llenarComboBoxCategoria();
+		this.llenarTablaCategoria();
 		
 	}
 

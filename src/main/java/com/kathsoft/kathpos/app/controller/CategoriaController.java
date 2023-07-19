@@ -224,6 +224,19 @@ public class CategoriaController implements Serializable {
 			er.printStackTrace();
 		}catch(Exception er) {
 			er.printStackTrace();
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+			}catch(SQLException er){
+				er.printStackTrace();
+			}catch(Exception er) {
+				er.printStackTrace();
+			}
 		}
 		
 	}
