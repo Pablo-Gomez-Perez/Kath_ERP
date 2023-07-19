@@ -39,6 +39,7 @@ import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Empleado;
 
@@ -63,6 +64,7 @@ public class Fr_principal extends JFrame {
 	 */
 	private CategoriaController categoriaController = new CategoriaController();
 	private EmpleadoController empleadoController = new EmpleadoController();
+	private ProveedorController proveedorController = new ProveedorController();
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -132,6 +134,7 @@ public class Fr_principal extends JFrame {
 	private JScrollPane scrollPane;
 	private JTable tablaCategorias;
 	private DefaultTableModel modelTablaCategoriaArticulo;
+	private DefaultTableModel modelTablaProveedores;
 	private Component verticalStrut_2;
 	private Component verticalStrut_3;
 	private Box horizontalBox_4;
@@ -219,7 +222,10 @@ public class Fr_principal extends JFrame {
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
 	// Array que define el ancho de cada columna de la tabla de categoría
-	private int[] tablaCategoriaColumnsWidth = {40,180,400};
+	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
+	// Array que define el ancho de cada columna de la tabla de Proveedores
+	private int[] tablaProveedoresColumnsWidth = { 150, 150, 180, 400, 200, 100, 100, 300, 90 };
+
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
 	private JLabel lblNewLabel_2;
@@ -301,6 +307,15 @@ public class Fr_principal extends JFrame {
 		menuConsultar.add(opcionEmpleados);
 
 		opcionProveedores = new JMenuItem("Proveedores");
+		opcionProveedores.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelProveedor");
+
+				llenarTablaProveedor();
+			}
+		});
 		opcionProveedores.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
 		menuConsultar.add(opcionProveedores);
@@ -407,20 +422,22 @@ public class Fr_principal extends JFrame {
 		horizontalBox_6.add(lblNewLabel_7);
 
 		cmbRFCEmpleado = new JComboBox<String>();
-		//==================================================================================================================================================================================================================
+		// ==================================================================================================================================================================================================================
 		cmbRFCEmpleado.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if((String) cmbRFCEmpleado.getSelectedItem() == null || cmbRFCEmpleado.getSelectedItem().equals("") || ((String)cmbRFCEmpleado.getSelectedItem()).length() < 1) {
+				if ((String) cmbRFCEmpleado.getSelectedItem() == null || cmbRFCEmpleado.getSelectedItem().equals("")
+						|| ((String) cmbRFCEmpleado.getSelectedItem()).length() < 1) {
 					return;
 				}
 				consultarEmpleadoPorRfc((String) cmbRFCEmpleado.getSelectedItem());
 			}
 		});
-		//==================================================================================================================================================================================================================
+		// ==================================================================================================================================================================================================================
 		this.cmbRFCEmpleado.setEditable(true);
-		//cmbRFCEmpleado.setEditable(false);
-		//cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del empleado");
-		
+		// cmbRFCEmpleado.setEditable(false);
+		// cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del
+		// empleado");
+
 		horizontalBox_6.add(cmbRFCEmpleado);
 
 		verticalStrut_8 = Box.createVerticalStrut(5);
@@ -455,22 +472,46 @@ public class Fr_principal extends JFrame {
 		panelProveedorEtiqueta = new JPanel();
 		panelProveedorEtiqueta.setBackground(new Color(25, 25, 112));
 		panelProveedor.add(panelProveedorEtiqueta, BorderLayout.NORTH);
-		
+
 		lblNewLabel_2 = new JLabel("Modulo de Proveedores");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_2.setForeground(new Color(255, 255, 255));
 		panelProveedorEtiqueta.add(lblNewLabel_2);
-		
+
 		panelProovedorCentral = new JPanel();
 		panelProovedorCentral.setBackground(new Color(255, 215, 0));
 		panelProveedor.add(panelProovedorCentral, BorderLayout.CENTER);
 		panelProovedorCentral.setLayout(new BorderLayout(0, 0));
-		
+
 		scrollPaneTablaProveedores = new JScrollPane();
 		panelProovedorCentral.add(scrollPaneTablaProveedores, BorderLayout.CENTER);
-		
+
+		// ==========================================================================
+		// Configuracion de la tabla Proveedores
+		// ================================================================
+		modelTablaProveedores = new DefaultTableModel();
 		tablaProveedores = new JTable();
+		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
+		tablaProveedores.setModel(modelTablaProveedores);
+
+		modelTablaProveedores.addColumn("RFC");
+		modelTablaProveedores.addColumn("Cta Contable");
+		modelTablaProveedores.addColumn("Nombre");
+		modelTablaProveedores.addColumn("Descripcion");
+		modelTablaProveedores.addColumn("Email");
+		modelTablaProveedores.addColumn("Estado");
+		modelTablaProveedores.addColumn("Ciudad");
+		modelTablaProveedores.addColumn("Direccion");
+		modelTablaProveedores.addColumn("Codigo P.");
+
+		// se remueve el editor de la tabla provedoores
+		for (int i = 0; i < modelTablaProveedores.getColumnCount(); i++) {
+			Class<?> colClass = tablaProveedores.getColumnClass(i);
+			tablaProveedores.setDefaultEditor(colClass, null);
+		}
+
+		// =================================================================================================================================================================================
 
 		panelMarcas = new JPanel();
 		panelPrincipalContenedor.add(panelMarcas, "panelMarcas");
@@ -508,17 +549,19 @@ public class Fr_principal extends JFrame {
 		horizontalBox_5.add(lblNewLabel_5);
 
 		cmbNombreDeCategoria = new JComboBox<String>();
-		//==================================================================================================================================================================================================================
+		// ==================================================================================================================================================================================================================
 		cmbNombreDeCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if((String) cmbNombreDeCategoria.getSelectedItem() == null || cmbNombreDeCategoria.getSelectedItem().equals("") || ((String)cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
+				if ((String) cmbNombreDeCategoria.getSelectedItem() == null
+						|| cmbNombreDeCategoria.getSelectedItem().equals("")
+						|| ((String) cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
 					return;
 				}
-				
-				consultarCategoriaPorNombre((String)cmbNombreDeCategoria.getSelectedItem());
+
+				consultarCategoriaPorNombre((String) cmbNombreDeCategoria.getSelectedItem());
 			}
 		});
-		//==================================================================================================================================================================================================================
+		// ==================================================================================================================================================================================================================
 		cmbNombreDeCategoria.setEditable(true);
 
 		horizontalBox_5.add(cmbNombreDeCategoria);
@@ -557,7 +600,7 @@ public class Fr_principal extends JFrame {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char ch = e.getKeyChar();
-				if(ch < '0' || ch > '9') {
+				if (ch < '0' || ch > '9') {
 					e.consume();
 				}
 			}
@@ -569,13 +612,13 @@ public class Fr_principal extends JFrame {
 
 		horizontalStrut_4 = Box.createHorizontalStrut(5);
 		horizontalBox_9.add(horizontalStrut_4);
-		
+
 		txfFechaNacEmpleadoMM = new JTextField();
 		txfFechaNacEmpleadoMM.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char ch = e.getKeyChar();
-				if(ch < '0' || ch > '9') {
+				if (ch < '0' || ch > '9') {
 					e.consume();
 				}
 			}
@@ -584,16 +627,16 @@ public class Fr_principal extends JFrame {
 		horizontalBox_9.add(txfFechaNacEmpleadoMM);
 		txfFechaNacEmpleadoMM.setColumns(2);
 		this.txfFechaNacEmpleadoMM.setMaximumSize(this.txfFechaNacEmpleadoMM.getPreferredSize());
-		
+
 		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_9.add(horizontalStrut_4);			
-		
+		horizontalBox_9.add(horizontalStrut_4);
+
 		txfFechaNacEmpleadoYY = new JTextField();
 		txfFechaNacEmpleadoYY.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char ch = e.getKeyChar();
-				if(ch < '0' || ch > '9') {
+				if (ch < '0' || ch > '9') {
 					e.consume();
 				}
 			}
@@ -602,10 +645,10 @@ public class Fr_principal extends JFrame {
 		horizontalBox_9.add(txfFechaNacEmpleadoYY);
 		txfFechaNacEmpleadoYY.setColumns(4);
 		this.txfFechaNacEmpleadoYY.setMaximumSize(this.txfFechaNacEmpleadoYY.getPreferredSize());
-		
+
 		horizontalStrut_4 = Box.createHorizontalStrut(5);
 		horizontalBox_9.add(horizontalStrut_4);
-		
+
 		lblNewLabel_12 = new JLabel("Email");
 		horizontalBox_9.add(lblNewLabel_12);
 
@@ -664,7 +707,7 @@ public class Fr_principal extends JFrame {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char ch = e.getKeyChar();
-				if(ch < '0' || ch > '9') {
+				if (ch < '0' || ch > '9') {
 					e.consume();
 				}
 			}
@@ -778,12 +821,13 @@ public class Fr_principal extends JFrame {
 		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		horizontalBox_14.add(scrollPane_2);
-		
-		//================================================= Configuracion tabla Empleados ==============================================================
+
+		// ================================================= Configuracion tabla
+		// Empleados ==============================================================
 		modelTablaEmpleados = new DefaultTableModel();
 		tableEmpleados = new JTable();
 		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		//tableEmpleados.setEnabled(false);
+		// tableEmpleados.setEnabled(false);
 		scrollPane_2.setViewportView(tableEmpleados);
 		tableEmpleados.setModel(modelTablaEmpleados);
 
@@ -793,15 +837,15 @@ public class Fr_principal extends JFrame {
 		modelTablaEmpleados.addColumn("Nombre");
 		modelTablaEmpleados.addColumn("Nick");
 		modelTablaEmpleados.addColumn("Email");
-		
-		//remueve el editor del jtable
-		for(int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
+
+		// remueve el editor del jtable
+		for (int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
 			Class<?> colClass = tableEmpleados.getColumnClass(i);
 			tableEmpleados.setDefaultEditor(colClass, null);
 		}
-		
-		//=================================================================================================================================================
-		
+
+		// =================================================================================================================================================
+
 		horizontalBox_1 = Box.createHorizontalBox();
 		boxVerticalMarcasFormulario.add(horizontalBox_1);
 
@@ -894,8 +938,9 @@ public class Fr_principal extends JFrame {
 
 		scrollPane = new JScrollPane();
 		horizontalBox_3.add(scrollPane);
-		
-		//================================================= Configuracion tabla categorías ==============================================================
+
+		// ================================================= Configuracion tabla
+		// categorías ==============================================================
 		modelTablaCategoriaArticulo = new DefaultTableModel();
 		tablaCategorias = new JTable(this.modelTablaCategoriaArticulo);
 		tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -904,13 +949,13 @@ public class Fr_principal extends JFrame {
 		modelTablaCategoriaArticulo.addColumn("id Categoria");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
-		
-		//remueve el editor del jtable de categorias
-		for(int i = 0; i < modelTablaCategoriaArticulo.getColumnCount(); i++) {
+
+		// remueve el editor del jtable de categorias
+		for (int i = 0; i < modelTablaCategoriaArticulo.getColumnCount(); i++) {
 			Class<?> colClass = tablaCategorias.getColumnClass(i);
 			tablaCategorias.setDefaultEditor(colClass, null);
 		}
-		//=================================================================================================================================================
+		// =================================================================================================================================================
 		// this.llenarTablaCategoria();
 		// this.llenarComboBoxCategoria();
 
@@ -935,27 +980,38 @@ public class Fr_principal extends JFrame {
 		btn_irAInicio.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
-		
+
 		/**
-		 *  Se establecen los tamaños preestablecidos para cada columna de la tabla de empleados
+		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
+		 * empleados
 		 */
 		TableColumnModel empleadosColumnModel = tableEmpleados.getColumnModel();
 
 		for (int i = 0; i < tableEmpleadosColumnsWidth.length; i++) {
 			empleadosColumnModel.getColumn(i).setPreferredWidth(tableEmpleadosColumnsWidth[i]);
-			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);			
+			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);
 		}
-		
-		
+
 		/**
 		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
 		 * categorías
 		 */
 		TableColumnModel categoriaColumnModel = tablaCategorias.getColumnModel();
-		
+
 		for (int i = 0; i < tablaCategoriaColumnsWidth.length; i++) {
 			categoriaColumnModel.getColumn(i).setPreferredWidth(tablaCategoriaColumnsWidth[i]);
 			categoriaColumnModel.getColumn(i).setMinWidth(tablaCategoriaColumnsWidth[i]);
+		}
+
+		/**
+		 * Se establecen los tamaños preestablcidos para cada columna de la tabla de los
+		 * proveedores
+		 */
+		TableColumnModel proveedoresColumnModel = tablaProveedores.getColumnModel();
+
+		for (int i = 0; i < tablaProveedoresColumnsWidth.length; i++) {
+			proveedoresColumnModel.getColumn(i).setPreferredWidth(tablaProveedoresColumnsWidth[i]);
+			proveedoresColumnModel.getColumn(i).setMinWidth(tablaProveedoresColumnsWidth[i]);
 		}
 
 		this.setLocationRelativeTo(null);
@@ -980,6 +1036,11 @@ public class Fr_principal extends JFrame {
 		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
 	}
 
+	private void llenarTablaProveedor() {
+		this.borrarElementosDeLaTablaProveedor();
+		proveedorController.verProveedoresEnTabla(modelTablaProveedores);
+	}
+
 	/**
 	 * llena el JCombobox del panel de categorias con todos los indices encontrados
 	 * en la bd
@@ -988,7 +1049,7 @@ public class Fr_principal extends JFrame {
 		this.cmbNombreDeCategoria.removeAllItems();
 		this.cmbNombreDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbNombreDeCategoria);
-		this.cmbNombreDeCategoria.setSelectedIndex(0);		
+		this.cmbNombreDeCategoria.setSelectedIndex(0);
 	}
 
 	/**
@@ -1014,14 +1075,14 @@ public class Fr_principal extends JFrame {
 		String dia = "";
 		String mes = "";
 		String anio = "";
-		
-		if(empl.getFechaNacimiento() != null) {
+
+		if (empl.getFechaNacimiento() != null) {
 			String[] fecha = empl.getFechaNacimiento().toString().split("-");
 			dia = fecha[2];
 			mes = fecha[1];
 			anio = fecha[0];
 		}
-				
+
 		this.txfCurpEmpleado.setText(empl.getCurp());
 		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
 		this.txfNombreCompletoEmpleado.setText(empl.getNombre());
@@ -1035,59 +1096,61 @@ public class Fr_principal extends JFrame {
 		this.txfCodigoPostalEmpleado.setText(empl.getCodigoPostal());
 		this.txpsContraseniaEmpleado.setText(empl.getPassword());
 	}
-	
+
 	/**
 	 * inserta un nuevo registro de empleado en la bd
-	 */	
+	 */
 	private void insertarNuevoEmpleado() {
-		
-		Empleado empl = new Empleado();	
-		
-		if(this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
+
+		Empleado empl = new Empleado();
+
+		if (this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
 			JOptionPane.showMessageDialog(null, "Debe asignar un RFC", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
+
+		if (this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Debe asignar un CURP", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
+
+		if (this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Debe indicar el nombre", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error", JOptionPane.ERROR_MESSAGE);
+
+		if (this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
+			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		String fecha = "";
-		
-		if(this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
+
+		if (this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
 				|| this.txfFechaNacEmpleadoMM.getText() == null || this.txfFechaNacEmpleadoMM.getText() == ""
-				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {			
+				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
-		}else {
-			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-" + this.txfFechaNacEmpleadoDD.getText();
+		} else {
+			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-"
+					+ this.txfFechaNacEmpleadoDD.getText();
 		}
-			
-		if(fecha.equals("") || fecha.length()<2) {
+
+		if (fecha.equals("") || fecha.length() < 2) {
 			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
+
+		if (this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Indique el correo Electrónico", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-								
-		//System.out.println(fecha);
-		
+
+		// System.out.println(fecha);
+
 		try {
-			
+
 			empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
 			empl.setCurp(this.txfCurpEmpleado.getText());
 			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
@@ -1098,70 +1161,71 @@ public class Fr_principal extends JFrame {
 			empl.setCiudad(this.txfCiudadEmpleado.getText());
 			empl.setDireccion(this.txfDireccionEmpleado.getText());
 			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
-			
+
 			empleadoController.insertarNuevoEmpleado(empl);
-			
-			
-		}catch(Exception er){
+
+		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error", "Error Object", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 		this.llenarCmbRfcEmpleados();
 		this.llenarTablaEmpleados();
 
 	}
-	
+
 	/**
 	 * actualiza los registros de un empleado específico en la bd
 	 */
 	private void actualizarEmpleado() {
-		
-		Empleado empl = new Empleado();	
-		
-		if(this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
+
+		Empleado empl = new Empleado();
+
+		if (this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
 			JOptionPane.showMessageDialog(null, "Debe asignar un RFC", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
+
+		if (this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Debe asignar un CURP", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
+
+		if (this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Debe indicar el nombre", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error", JOptionPane.ERROR_MESSAGE);
+
+		if (this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
+			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		String fecha = "";
-		
-		if(this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
+
+		if (this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
 				|| this.txfFechaNacEmpleadoMM.getText() == null || this.txfFechaNacEmpleadoMM.getText() == ""
-				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {			
+				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
-		}else {
-			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-" + this.txfFechaNacEmpleadoDD.getText();
+		} else {
+			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-"
+					+ this.txfFechaNacEmpleadoDD.getText();
 		}
-			
-		if(fecha.equals("") || fecha.length()<2) {
+
+		if (fecha.equals("") || fecha.length() < 2) {
 			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
+
+		if (this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
 			JOptionPane.showMessageDialog(null, "Indique el correo Electrónico", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		try {
-			
+
 			empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
 			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
 			empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
@@ -1171,15 +1235,14 @@ public class Fr_principal extends JFrame {
 			empl.setCiudad(this.txfCiudadEmpleado.getText());
 			empl.setDireccion(this.txfDireccionEmpleado.getText());
 			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
-			
+
 			empleadoController.actualizarEmpleado(empl);
-			
-			
-		}catch(Exception er){
+
+		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error", "Error Object", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 		this.llenarCmbRfcEmpleados();
 		this.llenarTablaEmpleados();
 	}
@@ -1196,20 +1259,21 @@ public class Fr_principal extends JFrame {
 	 * inserta una nueva categoría en la bd
 	 */
 	private void insertarCategoria() {
-		
+
 		Categoria categoria = new Categoria();
-		
-		if(((String)this.cmbNombreDeCategoria.getSelectedItem()).equals(null) || ((String)this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
+
+		if (((String) this.cmbNombreDeCategoria.getSelectedItem()).equals(null)
+				|| ((String) this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
 			return;
 		}
-		
+
 		try {
-			
-			categoria.setNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
+
+			categoria.setNombre((String) this.cmbNombreDeCategoria.getSelectedItem());
 			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
 			this.categoriaController.insertarNuevaCategoria(categoria);
-			
-		}catch(Exception er) {
+
+		} catch (Exception er) {
 			er.printStackTrace();
 		}
 
@@ -1218,35 +1282,38 @@ public class Fr_principal extends JFrame {
 		this.limpiarCamposPanelCategoria();
 
 	}
-	
+
 	/**
 	 * actualiza los datos de una categoria específico en la bd
 	 */
 	private void actualizarCategoria() {
-		
-		if(((String)this.cmbNombreDeCategoria.getSelectedItem()).equals(null)||((String)this.cmbNombreDeCategoria.getSelectedItem()).equals("") || ((String)this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
+
+		if (((String) this.cmbNombreDeCategoria.getSelectedItem()).equals(null)
+				|| ((String) this.cmbNombreDeCategoria.getSelectedItem()).equals("")
+				|| ((String) this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
 			return;
 		}
-		
-		Categoria categoria = categoriaController.buscarCategoriaPorNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
-		
+
+		Categoria categoria = categoriaController
+				.buscarCategoriaPorNombre((String) this.cmbNombreDeCategoria.getSelectedItem());
+
 		int idCategoria = categoria.getIdCategoria();
-		
+
 		try {
-			
+
 			categoria.setIdCategoria(idCategoria);
-			categoria.setNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
+			categoria.setNombre((String) this.cmbNombreDeCategoria.getSelectedItem());
 			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
-			
+
 			categoriaController.actualizarCategoria(categoria);
-			
+
 		} catch (Exception er) {
 			er.printStackTrace();
 		}
-		
+
 		this.llenarComboBoxCategoria();
 		this.llenarTablaCategoria();
-		
+
 	}
 
 	/**
@@ -1255,6 +1322,11 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaCategorias() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
+	}
+
+	private void borrarElementosDeLaTablaProveedor() {
+		this.modelTablaProveedores.getDataVector().removeAllElements();
+		this.tablaProveedores.updateUI();
 	}
 
 	/**
@@ -1271,29 +1343,30 @@ public class Fr_principal extends JFrame {
 	private void limpiarCamposPanelCategoria() {
 		this.txaDescripcionCategoria.setText("");
 	}
-	
+
 	private void abrirVentanaPasswordEmpleado() {
-				
+
 		String rfcEmpleado = this.cmbRFCEmpleado.getSelectedItem().toString();
 		String nombreCortoEmpleado = this.txfNombreCortoEmpleado.getText();
-		
-		if(rfcEmpleado.equals("") || rfcEmpleado == null || rfcEmpleado.length() < 1) {
-			JOptionPane.showMessageDialog(this, "Error", "No se ha seleccionado un empleado", JOptionPane.ERROR_MESSAGE);
+
+		if (rfcEmpleado.equals("") || rfcEmpleado == null || rfcEmpleado.length() < 1) {
+			JOptionPane.showMessageDialog(this, "Error", "No se ha seleccionado un empleado",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		System.out.println(rfcEmpleado);
-		
-		EventQueue.invokeLater(new Runnable() {			
+
+		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					
+
 					Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado(rfcEmpleado, nombreCortoEmpleado);
 					frame.setVisible(true);
-				}catch(Exception er) {
+				} catch (Exception er) {
 					er.printStackTrace();
-				}				
+				}
 			}
 		});
 	}

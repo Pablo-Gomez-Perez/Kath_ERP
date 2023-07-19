@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import javax.swing.table.DefaultTableModel;
 
-public class ProovedorController implements java.io.Serializable{
+public class ProveedorController implements java.io.Serializable{
 
 	/**
 	 * 
