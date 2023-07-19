@@ -218,6 +218,8 @@ public class Fr_principal extends JFrame {
 
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
+	// Array que define el ancho de cada columna de la tabla de categoría
+	private int[] tablaCategoriaColumnsWidth = {40,180,200};
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
 
@@ -901,12 +903,27 @@ public class Fr_principal extends JFrame {
 		btn_irAInicio.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
-
+		
+		/**
+		 *  Se establecen los tamaños preestablecidos para cada columna de la tabla de empleados
+		 */
 		TableColumnModel empleadosColumnModel = tableEmpleados.getColumnModel();
 
 		for (int i = 0; i < tableEmpleadosColumnsWidth.length; i++) {
 			empleadosColumnModel.getColumn(i).setPreferredWidth(tableEmpleadosColumnsWidth[i]);
 			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);			
+		}
+		
+		
+		/**
+		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
+		 * categorías
+		 */
+		TableColumnModel categoriaColumnModel = tablaCategorias.getColumnModel();
+		
+		for (int i = 0; i < tablaCategoriaColumnsWidth.length; i++) {
+			categoriaColumnModel.getColumn(i).setPreferredWidth(tablaCategoriaColumnsWidth[i]);
+			categoriaColumnModel.getColumn(i).setMinWidth(tablaCategoriaColumnsWidth[i]);
 		}
 
 		this.setLocationRelativeTo(null);
