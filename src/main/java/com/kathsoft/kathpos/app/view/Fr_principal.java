@@ -219,7 +219,7 @@ public class Fr_principal extends JFrame {
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
 	// Array que define el ancho de cada columna de la tabla de categoría
-	private int[] tablaCategoriaColumnsWidth = {40,180,200};
+	private int[] tablaCategoriaColumnsWidth = {40,180,400};
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
 
@@ -757,7 +757,8 @@ public class Fr_principal extends JFrame {
 		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		horizontalBox_14.add(scrollPane_2);
-
+		
+		//================================================= Configuracion tabla Empleados ==============================================================
 		modelTablaEmpleados = new DefaultTableModel();
 		tableEmpleados = new JTable();
 		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -777,7 +778,9 @@ public class Fr_principal extends JFrame {
 			Class<?> colClass = tableEmpleados.getColumnClass(i);
 			tableEmpleados.setDefaultEditor(colClass, null);
 		}
-
+		
+		//=================================================================================================================================================
+		
 		horizontalBox_1 = Box.createHorizontalBox();
 		boxVerticalMarcasFormulario.add(horizontalBox_1);
 
@@ -870,15 +873,23 @@ public class Fr_principal extends JFrame {
 
 		scrollPane = new JScrollPane();
 		horizontalBox_3.add(scrollPane);
-
+		
+		//================================================= Configuracion tabla categorías ==============================================================
 		modelTablaCategoriaArticulo = new DefaultTableModel();
 		tablaCategorias = new JTable(this.modelTablaCategoriaArticulo);
+		tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPane.setViewportView(tablaCategorias);
 
 		modelTablaCategoriaArticulo.addColumn("id Categoria");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
-
+		
+		//remueve el editor del jtable de categorias
+		for(int i = 0; i < modelTablaCategoriaArticulo.getColumnCount(); i++) {
+			Class<?> colClass = tablaCategorias.getColumnClass(i);
+			tablaCategorias.setDefaultEditor(colClass, null);
+		}
+		//=================================================================================================================================================
 		// this.llenarTablaCategoria();
 		// this.llenarComboBoxCategoria();
 
