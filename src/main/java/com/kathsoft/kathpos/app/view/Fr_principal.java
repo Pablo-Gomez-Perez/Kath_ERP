@@ -222,6 +222,10 @@ public class Fr_principal extends JFrame {
 	private int[] tablaCategoriaColumnsWidth = {40,180,400};
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
+	private JLabel lblNewLabel_2;
+	private JPanel panelProovedorCentral;
+	private JScrollPane scrollPaneTablaProveedores;
+	private JTable tablaProveedores;
 
 	/**
 	 * Launch the application.
@@ -449,7 +453,24 @@ public class Fr_principal extends JFrame {
 		panelProveedor.setLayout(new BorderLayout(0, 0));
 
 		panelProveedorEtiqueta = new JPanel();
+		panelProveedorEtiqueta.setBackground(new Color(25, 25, 112));
 		panelProveedor.add(panelProveedorEtiqueta, BorderLayout.NORTH);
+		
+		lblNewLabel_2 = new JLabel("Modulo de Proveedores");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblNewLabel_2.setForeground(new Color(255, 255, 255));
+		panelProveedorEtiqueta.add(lblNewLabel_2);
+		
+		panelProovedorCentral = new JPanel();
+		panelProovedorCentral.setBackground(new Color(255, 215, 0));
+		panelProveedor.add(panelProovedorCentral, BorderLayout.CENTER);
+		panelProovedorCentral.setLayout(new BorderLayout(0, 0));
+		
+		scrollPaneTablaProveedores = new JScrollPane();
+		panelProovedorCentral.add(scrollPaneTablaProveedores, BorderLayout.CENTER);
+		
+		tablaProveedores = new JTable();
+		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
 
 		panelMarcas = new JPanel();
 		panelPrincipalContenedor.add(panelMarcas, "panelMarcas");
@@ -1209,8 +1230,11 @@ public class Fr_principal extends JFrame {
 		
 		Categoria categoria = categoriaController.buscarCategoriaPorNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
 		
+		int idCategoria = categoria.getIdCategoria();
+		
 		try {
 			
+			categoria.setIdCategoria(idCategoria);
 			categoria.setNombre((String)this.cmbNombreDeCategoria.getSelectedItem());
 			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
 			
