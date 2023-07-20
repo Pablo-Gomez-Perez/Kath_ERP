@@ -188,6 +188,7 @@ public class Fr_DatosProveedor extends JFrame {
 		verticalBox.add(horizontalBox_3);
 		
 		txaDescripcionProveedor = new JTextArea();
+		txaDescripcionProveedor.setLineWrap(true);
 		horizontalBox_3.add(txaDescripcionProveedor);
 		
 		verticalStrut_3 = Box.createVerticalStrut(20);
@@ -271,6 +272,7 @@ public class Fr_DatosProveedor extends JFrame {
 		verticalBox_1.add(horizontalBox_6);
 		
 		txaDireccionProveedor = new JTextArea();
+		txaDireccionProveedor.setLineWrap(true);
 		horizontalBox_6.add(txaDireccionProveedor);
 		
 		panelInferiorBotones = new JPanel();
@@ -279,7 +281,7 @@ public class Fr_DatosProveedor extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 		
 		btn_Cancelar = new JButton("Cancelar");
-		btn_Cancelar.setIcon(new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/CancelarIcon.png")));
+		btn_Cancelar.setIcon(new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		btn_Cancelar.setBackground(new Color(205,92,92));
 		panelInferiorBotones.add(btn_Cancelar);
 		
