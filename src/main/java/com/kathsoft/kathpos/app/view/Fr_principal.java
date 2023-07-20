@@ -232,6 +232,10 @@ public class Fr_principal extends JFrame {
 	private JPanel panelProovedorCentral;
 	private JScrollPane scrollPaneTablaProveedores;
 	private JTable tablaProveedores;
+	private JPanel panelProveedorCentralBotones;
+	private JButton btnAgregarProveedor;
+	private Component horizontalStrut_10;
+	private JButton btnActualizarProveedor;
 
 	/**
 	 * Launch the application.
@@ -263,7 +267,7 @@ public class Fr_principal extends JFrame {
 		BarraMenu.setBackground(new Color(255, 153, 0));
 		setJMenuBar(BarraMenu);
 
-		menuConsultar = new JMenu("Consultar");
+		menuConsultar = new JMenu("Consultar Catalogo");
 		menuConsultar.setIcon(new ImageIcon(Fr_principal.class
 				.getResource("/com/kathsoft/kathpos/app/resources/icone-point-d-interrogation-question-rouge.jpg")));
 		menuConsultar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -479,6 +483,7 @@ public class Fr_principal extends JFrame {
 		panelProveedorEtiqueta.add(lblNewLabel_2);
 
 		panelProovedorCentral = new JPanel();
+		panelProovedorCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelProovedorCentral.setBackground(new Color(255, 215, 0));
 		panelProveedor.add(panelProovedorCentral, BorderLayout.CENTER);
 		panelProovedorCentral.setLayout(new BorderLayout(0, 0));
@@ -494,6 +499,23 @@ public class Fr_principal extends JFrame {
 		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
 		tablaProveedores.setModel(modelTablaProveedores);
+		
+		panelProveedorCentralBotones = new JPanel();
+		panelProveedorCentralBotones.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_1 = (FlowLayout) panelProveedorCentralBotones.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.RIGHT);
+		panelProovedorCentral.add(panelProveedorCentralBotones, BorderLayout.NORTH);
+		
+		btnAgregarProveedor = new JButton("Agregar");
+		btnAgregarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		panelProveedorCentralBotones.add(btnAgregarProveedor);
+		
+		horizontalStrut_10 = Box.createHorizontalStrut(5);
+		panelProveedorCentralBotones.add(horizontalStrut_10);
+		
+		btnActualizarProveedor = new JButton("Actualizar");
+		btnActualizarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		panelProveedorCentralBotones.add(btnActualizarProveedor);
 
 		modelTablaProveedores.addColumn("RFC");
 		modelTablaProveedores.addColumn("Cta Contable");
