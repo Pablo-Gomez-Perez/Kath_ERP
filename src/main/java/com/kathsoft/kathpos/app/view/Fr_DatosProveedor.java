@@ -135,6 +135,8 @@ public class Fr_DatosProveedor extends JFrame {
 		cmbRFCProveedor = new JComboBox<String>();
 		horizontalBox.add(cmbRFCProveedor);
 		
+		this.llenarCmbRfcProveedor();
+		
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut_1);
 		
@@ -276,6 +278,7 @@ public class Fr_DatosProveedor extends JFrame {
 		horizontalBox_6.add(txaDireccionProveedor);
 		
 		panelInferiorBotones = new JPanel();
+		panelInferiorBotones.setBackground(new Color(30, 144, 255));
 		FlowLayout flowLayout_2 = (FlowLayout) panelInferiorBotones.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
@@ -294,6 +297,19 @@ public class Fr_DatosProveedor extends JFrame {
 		panelInferiorBotones.add(btn_Guardar);
 		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	
+	private void llenarCmbRfcProveedor() {
+		
+		this.limpiarCmbProveedor();
+		
+		proveedorController.consultarRFCProveedor(this.cmbRFCProveedor);
+		
+	}
+	
+	private void limpiarCmbProveedor() {
+		this.cmbRFCProveedor.removeAllItems();
+		this.cmbRFCProveedor.updateUI();
 	}
 
 }
