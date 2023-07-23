@@ -394,7 +394,17 @@ public class Fr_DatosProveedor extends JFrame {
 		}
 		
 		try {
+			
 			prv.setRfc(this.txfRfcProveedor.getText());
+			prv.setNombre(this.txfNombreProveedor.getText());
+			prv.setDescripcion(this.txaDescripcionProveedor.getText());
+			prv.setEmail(this.txfEmailProveedor.getText());
+			prv.setEstado(this.txfEstadoProveedor.getText());
+			prv.setCiudad(this.txfCiudadProveedor.getText());
+			prv.setDireccion(this.txaDireccionProveedor.getText());
+			prv.setCodigoPostal(this.txfCodigoPostalProveedor.getText());
+			
+			
 		}catch(Exception er) {
 			er.printStackTrace();
 		}
