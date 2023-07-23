@@ -62,7 +62,6 @@ public class ProveedorController implements java.io.Serializable{
 	 */
 	public void consultarRFCProveedor(JComboBox<String> cmb) {
 		
-		Proveedor prv = new Proveedor();
 		CallableStatement stm = null;
 		ResultSet rset = null;
 		
@@ -100,6 +99,44 @@ public class ProveedorController implements java.io.Serializable{
 			}
 		}
 		
+	}
+	
+	/**
+	 * inserta un nuevo registro en la base de datos
+	 * @param prv
+	 * @throws Exception
+	 */
+	public void insertarNuevoProveedor(Proveedor prv) throws Exception{
+		
+		System.out.println(prv.toString());
+		
+		CallableStatement stm = null;
+		
+		if(prv.getRfc().isEmpty() || prv.getNombre().isEmpty()) {
+			throw new Exception("campos vacios");
+		}
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");			
+			stm = cn.prepareCall("CALL insert_nuevo_proveedor(?,?,?,?,?,?,?,?);");
+			
+			stm.setString(1, prv.getRfc());
+			stm.setString(2, prv.getNombre());
+			stm.setString(3, prv.getDescripcion());
+			stm.setString(4, prv.getEmail());
+			stm.setString(5, prv.getEstado());
+			stm.setString(6, prv.getCiudad());
+			stm.setString(7, prv.getDireccion());
+			stm.setString(8, prv.getCodigoPostal());
+			
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
 	}
 }
 //144,238,144

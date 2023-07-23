@@ -215,29 +215,21 @@ public class EmpleadoController implements Serializable {
 	}
 
 	/**
-	 * inserta un nuevo empleado en la bd
-	 * recibe como paramatetro un objeto de tipo {@code Empleado} e inserta las datos en la bd como nuevo registro
+	 * inserta un nuevo empleado en la bd recibe como paramatetro un objeto de tipo
+	 * {@code Empleado} e inserta las datos en la bd como nuevo registro
+	 * 
 	 * @param empl
 	 */
 	public void insertarNuevoEmpleado(Empleado empl) {
 		CallableStatement stm = null;
 
-		if (
-				empl.getRfc().isEmpty() 
-				|| empl.getCurp().isEmpty() 
-				|| empl.getNombre().isEmpty()
-				|| empl.getNombreCorto().isEmpty() 
-				|| empl.getFechaNacimiento().equals(null)
-				|| empl.getEmail().isEmpty() 
-				|| empl.getEstado().isEmpty() 
-				|| empl.getCiudad().isEmpty()
-				|| empl.getDireccion().isEmpty()
-				|| empl.getCodigoPostal().isEmpty()
-		)
-		{
-			
+		if (empl.getRfc().isEmpty() || empl.getCurp().isEmpty() || empl.getNombre().isEmpty()
+				|| empl.getNombreCorto().isEmpty() || empl.getFechaNacimiento().equals(null)
+				|| empl.getEmail().isEmpty() || empl.getEstado().isEmpty() || empl.getCiudad().isEmpty()
+				|| empl.getDireccion().isEmpty() || empl.getCodigoPostal().isEmpty()) {
+
 			return;
-			
+
 		}
 
 		try {
@@ -281,36 +273,28 @@ public class EmpleadoController implements Serializable {
 
 		}
 	}
-	
+
 	/**
-	 * actualiza los datos de un empleado específico en la bd
-	 * recibe como parametro un objeto de tipo {@code Empleado} y actualiza los respectivos valores modificados
-	 * en la bd
+	 * actualiza los datos de un empleado específico en la bd recibe como parametro
+	 * un objeto de tipo {@code Empleado} y actualiza los respectivos valores
+	 * modificados en la bd
+	 * 
 	 * @param empl
 	 */
 	public void actualizarEmpleado(Empleado empl) {
-		
+
 		CallableStatement stm = null;
 
-		if (
-				empl.getRfc().isEmpty() 				
-				|| empl.getNombre().isEmpty()
-				|| empl.getNombreCorto().isEmpty() 
-				|| empl.getFechaNacimiento().equals(null)
-				|| empl.getEmail().isEmpty() 
-				|| empl.getEstado().isEmpty() 
-				|| empl.getCiudad().isEmpty()
-				|| empl.getDireccion().isEmpty()
-				|| empl.getCodigoPostal().isEmpty()
-		)
-		{
-			
+		if (empl.getRfc().isEmpty() || empl.getNombre().isEmpty() || empl.getNombreCorto().isEmpty()
+				|| empl.getFechaNacimiento().equals(null) || empl.getEmail().isEmpty() || empl.getEstado().isEmpty()
+				|| empl.getCiudad().isEmpty() || empl.getDireccion().isEmpty() || empl.getCodigoPostal().isEmpty()) {
+
 			return;
-			
+
 		}
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?);");
 			stm.setString(1, empl.getRfc());
@@ -323,13 +307,13 @@ public class EmpleadoController implements Serializable {
 			stm.setString(8, empl.getDireccion());
 			stm.setString(9, empl.getCodigoPostal());
 			stm.execute();
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
-			
+		} finally {
+
 			try {
 
 				if (cn != null) {
@@ -344,41 +328,41 @@ public class EmpleadoController implements Serializable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public void actualizarContrasenia(Empleado empl) {
 		CallableStatement stm = null;
-		
-		if(empl.getPassword() == null || empl.getPassword().equals("") || empl.getPassword().length() < 1) {
+
+		if (empl.getPassword() == null || empl.getPassword().equals("") || empl.getPassword().length() < 1) {
 			return;
 		}
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL actualizarPassWordEmpleado(?,?);");
 			stm.setString(1, empl.getRfc());
 			stm.setString(2, empl.getPassword());
 			stm.execute();
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch (Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
-				if(cn != null) {
+				if (cn != null) {
 					cn.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}

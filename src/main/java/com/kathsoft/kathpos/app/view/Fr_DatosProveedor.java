@@ -1,7 +1,5 @@
 package com.kathsoft.kathpos.app.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -346,21 +344,21 @@ public class Fr_DatosProveedor extends JFrame {
 		if (this.txfRfcProveedor.getText() == null || this.txfRfcProveedor.getText().isEmpty()
 				|| this.txfRfcProveedor.getText() == "" || this.txfRfcProveedor.getText().equals("")
 				|| this.txfRfcProveedor.getText().length() < 1) {
-			JOptionPane.showInternalMessageDialog(this, "Debe ingresar un RFC para el proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe ingresar un RFC para el proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		if(this.txfNombreProveedor.getText() == null || this.txfNombreProveedor.getText().isEmpty()
 				|| this.txfNombreProveedor.getText() == "" || this.txfNombreProveedor.getText().equals("")
-				|| this.txfNombreProveedor.getText().length() > 1) {
-			JOptionPane.showInternalMessageDialog(this, "Debe ingresar un nombre de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+				|| this.txfNombreProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(null, "Debe ingresar un nombre de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		if(this.txfEmailProveedor.getText() == null || this.txfEmailProveedor.getText().isEmpty()
 				|| this.txfEmailProveedor.getText() == "" || this.txfEmailProveedor.getText().equals("")
 				|| this.txfEmailProveedor.getText().length() < 1) {
-			JOptionPane.showInternalMessageDialog(this, "Debe ingresar un correo electrónico de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe ingresar un correo electrónico de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -374,14 +372,14 @@ public class Fr_DatosProveedor extends JFrame {
 		if(this.txfCiudadProveedor.getText() == null || this.txfCiudadProveedor.getText().isEmpty()
 				|| this.txfCiudadProveedor.getText() == "" || this.txfCiudadProveedor.getText().equals("")
 				|| this.txfCiudadProveedor.getText().length() < 1) {
-			JOptionPane.showInternalMessageDialog(this, "Debe ingresar la ciudad fiscal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe ingresar la ciudad fiscal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		if(this.txfCodigoPostalProveedor.getText() == null || this.txfCodigoPostalProveedor.getText().isEmpty()
 				|| this.txfCodigoPostalProveedor.getText() == "" || this.txfCodigoPostalProveedor.getText().equals("")
 				|| this.txfCodigoPostalProveedor.getText().length() < 1) {
-			JOptionPane.showInternalMessageDialog(this, "Indique el codigo postal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Indique el codigo postal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -389,7 +387,7 @@ public class Fr_DatosProveedor extends JFrame {
 				|| this.txaDireccionProveedor.getText() == "" || this.txaDireccionProveedor.getText().equals("")
 				|| this.txaDireccionProveedor.getText().length() < 1) {
 			
-			JOptionPane.showInternalMessageDialog(this, "Indique la direccion del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Indique la direccion del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -404,6 +402,9 @@ public class Fr_DatosProveedor extends JFrame {
 			prv.setDireccion(this.txaDireccionProveedor.getText());
 			prv.setCodigoPostal(this.txfCodigoPostalProveedor.getText());
 			
+			System.out.println(prv.toString());
+			
+			proveedorController.insertarNuevoProveedor(prv);
 			
 		}catch(Exception er) {
 			er.printStackTrace();
