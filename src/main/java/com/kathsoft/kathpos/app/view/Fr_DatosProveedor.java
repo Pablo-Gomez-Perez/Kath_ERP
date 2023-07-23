@@ -165,6 +165,8 @@ public class Fr_DatosProveedor extends JFrame {
 		horizontalBox.add(horizontalStrut_2);
 
 		txfCtaContableProveedor = new JTextField();
+		txfCtaContableProveedor.setEnabled(false);
+		txfCtaContableProveedor.setEditable(false);
 		horizontalBox.add(txfCtaContableProveedor);
 		txfCtaContableProveedor.setColumns(20);
 		this.txfCtaContableProveedor.setMaximumSize(this.txfCtaContableProveedor.getPreferredSize());
@@ -361,6 +363,42 @@ public class Fr_DatosProveedor extends JFrame {
 			JOptionPane.showInternalMessageDialog(this, "Debe ingresar un correo electrónico de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		
+		if(this.txfEstadoProveedor.getText() == null || this.txfEstadoProveedor.getText().isEmpty()
+				|| this.txfEstadoProveedor.getText() == "" || this.txfEstadoProveedor.getText().equals("")
+				|| this.txfEstadoProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el estado o entidad federal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txfCiudadProveedor.getText() == null || this.txfCiudadProveedor.getText().isEmpty()
+				|| this.txfCiudadProveedor.getText() == "" || this.txfCiudadProveedor.getText().equals("")
+				|| this.txfCiudadProveedor.getText().length() < 1) {
+			JOptionPane.showInternalMessageDialog(this, "Debe ingresar la ciudad fiscal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txfCodigoPostalProveedor.getText() == null || this.txfCodigoPostalProveedor.getText().isEmpty()
+				|| this.txfCodigoPostalProveedor.getText() == "" || this.txfCodigoPostalProveedor.getText().equals("")
+				|| this.txfCodigoPostalProveedor.getText().length() < 1) {
+			JOptionPane.showInternalMessageDialog(this, "Indique el codigo postal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(this.txaDireccionProveedor.getText()== null || this.txaDireccionProveedor.getText().isEmpty()
+				|| this.txaDireccionProveedor.getText() == "" || this.txaDireccionProveedor.getText().equals("")
+				|| this.txaDireccionProveedor.getText().length() < 1) {
+			
+			JOptionPane.showInternalMessageDialog(this, "Indique la direccion del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		try {
+			prv.setRfc(this.txfRfcProveedor.getText());
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
 	}
 
 	/**
