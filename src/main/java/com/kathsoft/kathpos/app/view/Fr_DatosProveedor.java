@@ -23,6 +23,9 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
 public class Fr_DatosProveedor extends JFrame {
@@ -91,6 +94,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private JButton btn_Cancelar;
 	private Component horizontalStrut_10;
 	private JButton btn_Guardar;
+	private int indice_proveedor;
 
 	/**
 	 * Create the frame.
@@ -116,8 +120,10 @@ public class Fr_DatosProveedor extends JFrame {
 		panelSuperiorEtiqueta.add(lblNewLabel);
 
 		if (tipoOperacion == 0) {
+			this.setTitle("Nuevo Proveedor");
 			lblNewLabel.setText("Agregar nuevo Proveedor");
 		} else if (tipoOperacion == 1) {
+			this.setTitle("Editar Proveedor");
 			lblNewLabel.setText("Editar Proveedor");
 		}
 
@@ -151,6 +157,14 @@ public class Fr_DatosProveedor extends JFrame {
 			horizontalBox.add(cmbRFCProveedor);
 
 			this.llenarCmbRfcProveedor();
+
+			this.cmbRFCProveedor.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					buscarProveedorPorRFC(cmbRFCProveedor.getSelectedItem().toString());
+				}
+			});
+
 		}
 
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
@@ -303,6 +317,7 @@ public class Fr_DatosProveedor extends JFrame {
 
 		btn_Cancelar = new JButton("Cancelar");
 		btn_Cancelar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				cerrarForm();
 			}
@@ -317,12 +332,14 @@ public class Fr_DatosProveedor extends JFrame {
 
 		btn_Guardar = new JButton("Guardar");
 		btn_Guardar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (tipoOperacion == 0) {
-					//para insertar un nuevo proveedor en la bd
+					// para insertar un nuevo proveedor en la bd
 					insertarNuevoProveedor();
 				} else if (tipoOperacion == 1) {
 					// para actualizar un proveedor existente
+					actualizarProveedor();
 				}
 			}
 		});
@@ -338,61 +355,74 @@ public class Fr_DatosProveedor extends JFrame {
 	 * inserta un nuevo registro en la base de datos
 	 */
 	private void insertarNuevoProveedor() {
-		
+
 		Proveedor prv = new Proveedor();
 
 		if (this.txfRfcProveedor.getText() == null || this.txfRfcProveedor.getText().isEmpty()
 				|| this.txfRfcProveedor.getText() == "" || this.txfRfcProveedor.getText().equals("")
 				|| this.txfRfcProveedor.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Debe ingresar un RFC para el proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe ingresar un RFC para el proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfNombreProveedor.getText() == null || this.txfNombreProveedor.getText().isEmpty()
+
+		if (this.txfNombreProveedor.getText() == null || this.txfNombreProveedor.getText().isEmpty()
 				|| this.txfNombreProveedor.getText() == "" || this.txfNombreProveedor.getText().equals("")
 				|| this.txfNombreProveedor.getText().length() < 1) {
-			JOptionPane.showMessageDialog(null, "Debe ingresar un nombre de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Debe ingresar un nombre de proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfEmailProveedor.getText() == null || this.txfEmailProveedor.getText().isEmpty()
+
+		if (this.txfEmailProveedor.getText() == null || this.txfEmailProveedor.getText().isEmpty()
 				|| this.txfEmailProveedor.getText() == "" || this.txfEmailProveedor.getText().equals("")
 				|| this.txfEmailProveedor.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Debe ingresar un correo electrónico de proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe ingresar un correo electrónico de proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfEstadoProveedor.getText() == null || this.txfEstadoProveedor.getText().isEmpty()
+
+		if (this.txfEstadoProveedor.getText() == null || this.txfEstadoProveedor.getText().isEmpty()
 				|| this.txfEstadoProveedor.getText() == "" || this.txfEstadoProveedor.getText().equals("")
 				|| this.txfEstadoProveedor.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el estado o entidad federal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe indicar el estado o entidad federal del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfCiudadProveedor.getText() == null || this.txfCiudadProveedor.getText().isEmpty()
+
+		if (this.txfCiudadProveedor.getText() == null || this.txfCiudadProveedor.getText().isEmpty()
 				|| this.txfCiudadProveedor.getText() == "" || this.txfCiudadProveedor.getText().equals("")
 				|| this.txfCiudadProveedor.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Debe ingresar la ciudad fiscal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe ingresar la ciudad fiscal del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txfCodigoPostalProveedor.getText() == null || this.txfCodigoPostalProveedor.getText().isEmpty()
+
+		if (this.txfCodigoPostalProveedor.getText() == null || this.txfCodigoPostalProveedor.getText().isEmpty()
 				|| this.txfCodigoPostalProveedor.getText() == "" || this.txfCodigoPostalProveedor.getText().equals("")
 				|| this.txfCodigoPostalProveedor.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Indique el codigo postal del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Indique el codigo postal del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.txaDireccionProveedor.getText()== null || this.txaDireccionProveedor.getText().isEmpty()
+
+		if (this.txaDireccionProveedor.getText() == null || this.txaDireccionProveedor.getText().isEmpty()
 				|| this.txaDireccionProveedor.getText() == "" || this.txaDireccionProveedor.getText().equals("")
 				|| this.txaDireccionProveedor.getText().length() < 1) {
-			
-			JOptionPane.showMessageDialog(this, "Indique la direccion del proveedor", "Error", JOptionPane.ERROR_MESSAGE);
+
+			JOptionPane.showMessageDialog(this, "Indique la direccion del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
+		if(this.indice_proveedor < 1) {
+			JOptionPane.showMessageDialog(this, "No se ha seleccionado un proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
 		try {
-			
+
 			prv.setRfc(this.txfRfcProveedor.getText());
 			prv.setNombre(this.txfNombreProveedor.getText());
 			prv.setDescripcion(this.txaDescripcionProveedor.getText());
@@ -401,15 +431,130 @@ public class Fr_DatosProveedor extends JFrame {
 			prv.setCiudad(this.txfCiudadProveedor.getText());
 			prv.setDireccion(this.txaDireccionProveedor.getText());
 			prv.setCodigoPostal(this.txfCodigoPostalProveedor.getText());
-			
-			System.out.println(prv.toString());
-			
+
+			// System.out.println(prv.toString());
+
 			proveedorController.insertarNuevoProveedor(prv);
-			
-		}catch(Exception er) {
+
+		} catch (Exception er) {
 			er.printStackTrace();
 		}
-		
+
+	}
+
+	private void actualizarProveedor() {
+
+		Proveedor prv = new Proveedor();
+
+		if (((String)this.cmbRFCProveedor.getSelectedItem()) == "" || ((String)this.cmbRFCProveedor.getSelectedItem()).length() < 1) {
+			JOptionPane.showMessageDialog(this, "No se ha seleccionado un proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfNombreProveedor.getText() == null || this.txfNombreProveedor.getText().isEmpty()
+				|| this.txfNombreProveedor.getText() == "" || this.txfNombreProveedor.getText().equals("")
+				|| this.txfNombreProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(null, "Debe ingresar un nombre de proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfEmailProveedor.getText() == null || this.txfEmailProveedor.getText().isEmpty()
+				|| this.txfEmailProveedor.getText() == "" || this.txfEmailProveedor.getText().equals("")
+				|| this.txfEmailProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(this, "Debe ingresar un correo electrónico de proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfEstadoProveedor.getText() == null || this.txfEstadoProveedor.getText().isEmpty()
+				|| this.txfEstadoProveedor.getText() == "" || this.txfEstadoProveedor.getText().equals("")
+				|| this.txfEstadoProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el estado o entidad federal del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfCiudadProveedor.getText() == null || this.txfCiudadProveedor.getText().isEmpty()
+				|| this.txfCiudadProveedor.getText() == "" || this.txfCiudadProveedor.getText().equals("")
+				|| this.txfCiudadProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(this, "Debe ingresar la ciudad fiscal del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfCodigoPostalProveedor.getText() == null || this.txfCodigoPostalProveedor.getText().isEmpty()
+				|| this.txfCodigoPostalProveedor.getText() == "" || this.txfCodigoPostalProveedor.getText().equals("")
+				|| this.txfCodigoPostalProveedor.getText().length() < 1) {
+			JOptionPane.showMessageDialog(this, "Indique el codigo postal del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txaDireccionProveedor.getText() == null || this.txaDireccionProveedor.getText().isEmpty()
+				|| this.txaDireccionProveedor.getText() == "" || this.txaDireccionProveedor.getText().equals("")
+				|| this.txaDireccionProveedor.getText().length() < 1) {
+
+			JOptionPane.showMessageDialog(this, "Indique la direccion del proveedor", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		try {
+
+			prv.setId(this.indice_proveedor);
+			prv.setNombre(this.txfNombreProveedor.getText());
+			prv.setDescripcion(this.txaDescripcionProveedor.getText());
+			prv.setEmail(this.txfEmailProveedor.getText());
+			prv.setEstado(this.txfEstadoProveedor.getText());
+			prv.setCiudad(this.txfCiudadProveedor.getText());
+			prv.setDireccion(this.txaDireccionProveedor.getText());
+			prv.setCodigoPostal(this.txfCodigoPostalProveedor.getText());
+
+			proveedorController.actualizarProveedor(prv);
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Error en proceso: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Error en proceso: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
+	 * busca en la bse de datos el registro de un proveedor en base a su RFC
+	 * 
+	 * @param rfc
+	 */
+	private void buscarProveedorPorRFC(String rfc) {
+
+		try {
+
+			Proveedor prv = proveedorController.buscarProveedorPorRFC(rfc);
+
+			this.indice_proveedor = prv.getId();
+			this.txfCtaContableProveedor.setText(prv.getClaveCuentaContable());
+			this.txfNombreProveedor.setText(prv.getNombre());
+			this.txaDescripcionProveedor.setText(prv.getDescripcion());
+			this.txfEmailProveedor.setText(prv.getEmail());
+			this.txfEstadoProveedor.setText(prv.getEstado());
+			this.txfCiudadProveedor.setText(prv.getCiudad());
+			this.txfCodigoPostalProveedor.setText(prv.getCodigoPostal());
+			this.txaDireccionProveedor.setText(prv.getDireccion());
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Error en proceso " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Error en procesos " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
 	/**

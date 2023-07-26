@@ -37,9 +37,9 @@ public class Proveedor extends Usuario {
 	 * @param codigoPostal
 	 * @param descripcion
 	 */
-	public Proveedor(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
+	public Proveedor(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal, String descripcion) {
-		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
+		super(id, rfc, idCuentaContable, claveCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 		this.setDescripcion(descripcion);
 	}
 
@@ -56,9 +56,9 @@ public class Proveedor extends Usuario {
 	 * @param direccion
 	 * @param codigoPostal
 	 */
-	public Proveedor(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
+	public Proveedor(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal) {
-		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
+		super(id, rfc, idCuentaContable, claveCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 		
 		
 		
