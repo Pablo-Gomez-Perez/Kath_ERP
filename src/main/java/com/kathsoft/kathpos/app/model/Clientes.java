@@ -35,9 +35,9 @@ public class Clientes extends Usuario {
 	 * @param codigoPostal
 	 * @param nombreCorto
 	 */
-	public Clientes(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
+	public Clientes(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal, String nombreCorto) {
-		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
+		super(id, rfc, idCuentaContable, claveCuentaContable,nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 		this.nombreCorto = nombreCorto;
 	}
 
@@ -55,21 +55,17 @@ public class Clientes extends Usuario {
 	 * @param direccion
 	 * @param codigoPostal
 	 */
-	public Clientes(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
+	public Clientes(int id, String rfc, int idCuentaContable, String claveCuentaContable,String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal) {
-		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
+		super(id, rfc, idCuentaContable, claveCuentaContable,nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 	}
-
-
 
 	/**
-	 * 
+	 * constructor vacío
 	 */
 	public Clientes() {
-		// TODO Auto-generated constructor stub
+		
 	}
-
-	
 
 	/**
 	 * @return the nombreCorto

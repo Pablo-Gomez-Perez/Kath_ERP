@@ -39,10 +39,10 @@ public class Empleado extends Usuario {
 	 * @param nombreCorto
 	 * @param password
 	 */
-	public Empleado(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email,
+	public Empleado(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal, String curp, String nombreCorto,
 			String password) {
-		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
+		super(id, rfc, idCuentaContable, claveCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 		this.curp = curp;
 		this.nombreCorto = nombreCorto;
 		this.password = password;
@@ -61,9 +61,9 @@ public class Empleado extends Usuario {
 	 * @param direccion
 	 * @param codigoPostal
 	 */
-	public Empleado(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email, String estado, String ciudad,
+	public Empleado(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email, String estado, String ciudad,
 			String direccion, String codigoPostal) {
-		super(id, rfc, idCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);		
+		super(id, rfc, idCuentaContable, claveCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);		
 	}
 
 	/**

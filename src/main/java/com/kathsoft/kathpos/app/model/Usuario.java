@@ -5,8 +5,7 @@ import java.sql.Date;
 import java.util.Objects;
 
 public class Usuario implements Serializable {
-	
-	
+
 	/**
 	 * 
 	 */
@@ -18,6 +17,7 @@ public class Usuario implements Serializable {
 	private int id;
 	private String rfc;
 	private int idCuentaContable;
+	private String claveCuentaContable;
 	private String nombre;
 	private Date fechaNacimiento;
 	private String email;
@@ -25,7 +25,7 @@ public class Usuario implements Serializable {
 	private String ciudad;
 	private String direccion;
 	private String codigoPostal;
-	
+
 	/**
 	 * @param id
 	 * @param rfc
@@ -37,13 +37,13 @@ public class Usuario implements Serializable {
 	 * @param direccion
 	 * @param codigoPostal
 	 */
-	public Usuario(int id, String rfc, int idCuentaContable, String nombre, Date fechaNacimiento, String email, String estado, String ciudad,
-			String direccion, String codigoPostal) {
+	public Usuario(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre,
+			Date fechaNacimiento, String email, String estado, String ciudad, String direccion, String codigoPostal) {
 		super();
 		this.setId(id);
 		this.setRfc(rfc);
 		this.setIdCuentaContable(idCuentaContable);
-		this.setNombre(nombre); 
+		this.setNombre(nombre);
 		this.setFechaNacimiento(fechaNacimiento);
 		this.setEmail(email);
 		this.setEstado(estado);
@@ -51,111 +51,129 @@ public class Usuario implements Serializable {
 		this.setDireccion(direccion);
 		this.setCodigoPostal(codigoPostal);
 	}
-	
-	public Usuario() {}
-	
+
+	public Usuario() {
+	}
+
 	/**
 	 * @return the id
 	 */
 	public int getId() {
 		return id;
 	}
+
 	/**
 	 * @return the rfc
 	 */
 	public String getRfc() {
 		return rfc;
 	}
+
 	/**
 	 * @return the nombre
 	 */
 	public String getNombre() {
 		return nombre;
 	}
+
 	/**
 	 * @return the fechaNacimiento
 	 */
 	public Date getFechaNacimiento() {
 		return fechaNacimiento;
 	}
+
 	/**
 	 * @return the email
 	 */
 	public String getEmail() {
 		return email;
 	}
+
 	/**
 	 * @return the estado
 	 */
 	public String getEstado() {
 		return estado;
 	}
+
 	/**
 	 * @return the ciudad
 	 */
 	public String getCiudad() {
 		return ciudad;
 	}
+
 	/**
 	 * @return the direccion
 	 */
 	public String getDireccion() {
 		return direccion;
 	}
+
 	/**
 	 * @return the codigoPostal
 	 */
 	public String getCodigoPostal() {
 		return codigoPostal;
 	}
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	/**
 	 * @param rfc the rfc to set
 	 */
 	public void setRfc(String rfc) {
 		this.rfc = rfc;
 	}
+
 	/**
 	 * @param nombre the nombre to set
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+
 	/**
 	 * @param fechaNacimiento the fechaNacimiento to set
 	 */
 	public void setFechaNacimiento(Date fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
 	}
+
 	/**
 	 * @param email the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	/**
 	 * @param estado the estado to set
 	 */
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+
 	/**
 	 * @param ciudad the ciudad to set
 	 */
 	public void setCiudad(String ciudad) {
 		this.ciudad = ciudad;
 	}
+
 	/**
 	 * @param direccion the direccion to set
 	 */
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
+
 	/**
 	 * @param codigoPostal the codigoPostal to set
 	 */
@@ -179,8 +197,6 @@ public class Usuario implements Serializable {
 		Usuario other = (Usuario) obj;
 		return id == other.id && Objects.equals(rfc, other.rfc);
 	}
-	
-	
 
 	/**
 	 * @return the idCuentaContable
@@ -194,6 +210,20 @@ public class Usuario implements Serializable {
 	 */
 	public void setIdCuentaContable(int idCuentaContable) {
 		this.idCuentaContable = idCuentaContable;
+	}
+
+	/**
+	 * @return the claveCuentaContable
+	 */
+	public String getClaveCuentaContable() {
+		return claveCuentaContable;
+	}
+
+	/**
+	 * @param claveCuentaContable the claveCuentaContable to set
+	 */
+	public void setClaveCuentaContable(String claveCuentaContable) {
+		this.claveCuentaContable = claveCuentaContable;
 	}
 
 	@Override
@@ -219,9 +249,12 @@ public class Usuario implements Serializable {
 		builder.append(getCodigoPostal());
 		builder.append(", hashCode()=");
 		builder.append(hashCode());
+		builder.append(", getIdCuentaContable()=");
+		builder.append(getIdCuentaContable());
+		builder.append(", getClaveCuentaContable()=");
+		builder.append(getClaveCuentaContable());
 		builder.append("]");
 		return builder.toString();
 	}
 
-	
 }
