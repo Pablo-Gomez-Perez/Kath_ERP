@@ -258,6 +258,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarArticulo;
 	private Component horizontalStrut_12;
 	private JButton btnExportarArticuloExcel;
+	private JButton btnNewButton;
 
 	/**
 	 * Launch the application.
@@ -1082,7 +1083,7 @@ public class Fr_principal extends JFrame {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panelSuperiorBotones, BorderLayout.NORTH);
 
-		btn_irAInicio = new JButton("");
+		btn_irAInicio = new JButton("Inicio");
 		btn_irAInicio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -1097,6 +1098,16 @@ public class Fr_principal extends JFrame {
 		btn_irAInicio.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
+		
+		btnNewButton = new JButton("Calculadora");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirCalculadora();
+			}
+		});
+		btnNewButton.setBackground(new Color(135, 206, 250));
+		btnNewButton.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/Calculadora.png")));
+		panelSuperiorBotones.add(btnNewButton);
 
 		/**
 		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
@@ -1530,5 +1541,16 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaArticulos() {
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
+	}
+	
+	/**
+	 * abre la calculadora, valido unicamente en windows
+	 */
+	private void abrirCalculadora() {
+		try {
+			Runtime.getRuntime().exec("calc");
+		}catch(Exception er) {
+			er.printStackTrace();
+		}		
 	}
 }
