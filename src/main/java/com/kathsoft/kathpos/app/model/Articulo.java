@@ -1,7 +1,7 @@
 package com.kathsoft.kathpos.app.model;
 
 public class Articulo implements java.io.Serializable {
-	
+
 	/**
 	 * 
 	 */
@@ -24,8 +24,7 @@ public class Articulo implements java.io.Serializable {
 	private double costoUnitario;
 	private double precioGeneral;
 	private double precioMayoreo;
-		
-	
+
 	/**
 	 * @param idArticulo
 	 * @param codigoArticulo
@@ -62,10 +61,9 @@ public class Articulo implements java.io.Serializable {
 		this.precioMayoreo = precioMayoreo;
 	}
 
-	public Articulo() {}
-	
-	
-	
+	public Articulo() {
+	}
+
 	/**
 	 * @return the idArticulo
 	 */
@@ -270,7 +268,7 @@ public class Articulo implements java.io.Serializable {
 		result = prime * result + idArticulo;
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -329,5 +327,5 @@ public class Articulo implements java.io.Serializable {
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 }
