@@ -1,55 +1,54 @@
 package com.kathsoft.kathpos.app.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JMenu;
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.ComponentOrientation;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
 import java.awt.Toolkit;
-import java.awt.CardLayout;
-import java.awt.FlowLayout;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 import javax.swing.Box;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import java.awt.Component;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JComboBox;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Empleado;
-
-import javax.swing.border.LineBorder;
-import javax.swing.JPasswordField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.ComponentOrientation;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class Fr_principal extends JFrame {
 
@@ -65,6 +64,7 @@ public class Fr_principal extends JFrame {
 	private CategoriaController categoriaController = new CategoriaController();
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ProveedorController proveedorController = new ProveedorController();
+	private ArticuloController articuloController = new ArticuloController();
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -135,6 +135,7 @@ public class Fr_principal extends JFrame {
 	private JTable tablaCategorias;
 	private DefaultTableModel modelTablaCategoriaArticulo;
 	private DefaultTableModel modelTablaProveedores;
+	private DefaultTableModel modelTablaArticulos;
 	private Component verticalStrut_2;
 	private Component verticalStrut_3;
 	private Box horizontalBox_4;
@@ -225,7 +226,20 @@ public class Fr_principal extends JFrame {
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
 	private int[] tablaProveedoresColumnsWidth = { 150, 150, 180, 400, 200, 100, 100, 300, 90 };
-
+	// Array que define el ancho de cada columna de la tabla de Articulos
+	private int[] tablaArticulosColumnsWidth = { 
+			40, /*id*/
+			150, /*codigo*/
+			200, /*proveedor*/
+			180, /*categoría*/
+			100, /*codigo sat*/
+			300,  /*Nombre*/
+			450, /*descripcion*/
+			100, /*Existencia*/
+			100, /*Precio g*/
+			100 /*Precio m*/
+	};
+	
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
 	private JLabel lblNewLabel_2;
@@ -290,7 +304,8 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelArticulos");
 				panelPrincipalContenedor.updateUI();
-
+				
+				llenarTablaArticulos();
 			}
 		});
 		opcionConsultarArticulos.setIcon(new ImageIcon(
@@ -400,8 +415,34 @@ public class Fr_principal extends JFrame {
 		scrollPaneTablaArticulos = new JScrollPane();
 		panelArticulosCentral.add(scrollPaneTablaArticulos);
 		
+		
+		// ==========================================================================
+		// Configuracion de la tabla Articulos
+		// ==========================================================================
+		modelTablaArticulos = new DefaultTableModel();
 		tablaArticulos = new JTable();
+		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaArticulos.setViewportView(tablaArticulos);
+		tablaArticulos.setModel(modelTablaArticulos);
+		
+		modelTablaArticulos.addColumn("Id");
+		modelTablaArticulos.addColumn("Codigo");
+		modelTablaArticulos.addColumn("Proveedor");
+		modelTablaArticulos.addColumn("Categoría");
+		modelTablaArticulos.addColumn("Codigo Sat");
+		modelTablaArticulos.addColumn("Nombre");
+		modelTablaArticulos.addColumn("Descripción");
+		modelTablaArticulos.addColumn("Existencia");
+		modelTablaArticulos.addColumn("Precio G");
+		modelTablaArticulos.addColumn("Precio M");
+		
+		//se remueve el editor de la tabla de articulos
+		for(int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
+			Class<?> colClass = modelTablaArticulos.getColumnClass(i);
+			tablaArticulos.setDefaultEditor(colClass, null);
+		}
+		
+		// =================================================================================================================================================================================
 		
 		panelArticulosCentralBotones = new JPanel();
 		panelArticulosCentralBotones.setBackground(new Color(255, 215, 0));
@@ -410,6 +451,7 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentral.add(panelArticulosCentralBotones, BorderLayout.NORTH);
 		
 		btnAgregarArticulo = new JButton("Agregar");
+		btnAgregarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnAgregarArticulo);
 		
@@ -417,6 +459,7 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentralBotones.add(horizontalStrut_11);
 		
 		btnActualizarArticulo = new JButton("Actualizar");
+		btnActualizarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
 		
@@ -424,6 +467,7 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentralBotones.add(horizontalStrut_12);
 		
 		btnExportarArticuloExcel = new JButton("Exportar a Excel");
+		btnExportarArticuloExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
@@ -1086,7 +1130,18 @@ public class Fr_principal extends JFrame {
 			proveedoresColumnModel.getColumn(i).setPreferredWidth(tablaProveedoresColumnsWidth[i]);
 			proveedoresColumnModel.getColumn(i).setMinWidth(tablaProveedoresColumnsWidth[i]);
 		}
-
+		
+		/**
+		 * se establecen los tamaños preestablecidos para cada columna de la tabla de los
+		 * articulos
+		 */
+		TableColumnModel articulosColumnModel = tablaArticulos.getColumnModel();
+		
+		for(int i = 0; i < tablaArticulosColumnsWidth.length; i++) {
+			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
+			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
+		}
+		
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -1461,5 +1516,19 @@ public class Fr_principal extends JFrame {
 			}
 			
 		});
+	}
+	
+	
+	private void llenarTablaArticulos() {
+		this.borrarElementosDeLaTablaArticulos();
+		articuloController.verArticulosEnTabla(modelTablaArticulos);
+	}
+	
+	/**
+	 * borra todos los datos de la tabla de articulos
+	 */
+	private void borrarElementosDeLaTablaArticulos() {
+		this.modelTablaArticulos.getDataVector().removeAllElements();
+		this.tablaArticulos.updateUI();
 	}
 }
