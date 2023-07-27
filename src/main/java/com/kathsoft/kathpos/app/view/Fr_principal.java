@@ -236,6 +236,14 @@ public class Fr_principal extends JFrame {
 	private JButton btnAgregarProveedor;
 	private Component horizontalStrut_10;
 	private JButton btnActualizarProveedor;
+	private JScrollPane scrollPaneTablaArticulos;
+	private JTable tablaArticulos;
+	private JPanel panelArticulosCentralBotones;
+	private JButton btnAgregarArticulo;
+	private Component horizontalStrut_11;
+	private JButton btnActualizarArticulo;
+	private Component horizontalStrut_12;
+	private JButton btnExportarArticuloExcel;
 
 	/**
 	 * Launch the application.
@@ -384,9 +392,40 @@ public class Fr_principal extends JFrame {
 		panelEtiquetaArticulos.add(lblNewLabel);
 
 		panelArticulosCentral = new JPanel();
+		panelArticulosCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelArticulosCentral.setBackground(new Color(255, 215, 0));
 		panelArticulos.add(panelArticulosCentral, BorderLayout.CENTER);
-		panelArticulosCentral.setLayout(new BoxLayout(panelArticulosCentral, BoxLayout.X_AXIS));
+		panelArticulosCentral.setLayout(new BorderLayout(0, 0));
+		
+		scrollPaneTablaArticulos = new JScrollPane();
+		panelArticulosCentral.add(scrollPaneTablaArticulos);
+		
+		tablaArticulos = new JTable();
+		scrollPaneTablaArticulos.setViewportView(tablaArticulos);
+		
+		panelArticulosCentralBotones = new JPanel();
+		panelArticulosCentralBotones.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_2 = (FlowLayout) panelArticulosCentralBotones.getLayout();
+		flowLayout_2.setAlignment(FlowLayout.RIGHT);
+		panelArticulosCentral.add(panelArticulosCentralBotones, BorderLayout.NORTH);
+		
+		btnAgregarArticulo = new JButton("Agregar");
+		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
+		panelArticulosCentralBotones.add(btnAgregarArticulo);
+		
+		horizontalStrut_11 = Box.createHorizontalStrut(5);
+		panelArticulosCentralBotones.add(horizontalStrut_11);
+		
+		btnActualizarArticulo = new JButton("Actualizar");
+		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
+		panelArticulosCentralBotones.add(btnActualizarArticulo);
+		
+		horizontalStrut_12 = Box.createHorizontalStrut(5);
+		panelArticulosCentralBotones.add(horizontalStrut_12);
+		
+		btnExportarArticuloExcel = new JButton("Exportar a Excel");
+		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
+		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
 		panelClientes = new JPanel();
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");

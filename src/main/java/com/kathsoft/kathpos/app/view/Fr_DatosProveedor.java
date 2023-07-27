@@ -27,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 public class Fr_DatosProveedor extends JFrame {
 
@@ -100,6 +101,7 @@ public class Fr_DatosProveedor extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_DatosProveedor(int tipoOperacion) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
