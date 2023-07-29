@@ -227,19 +227,18 @@ public class Fr_principal extends JFrame {
 	// Array que define el ancho de cada columna de la tabla de Proveedores
 	private int[] tablaProveedoresColumnsWidth = { 150, 150, 180, 400, 200, 100, 100, 300, 90 };
 	// Array que define el ancho de cada columna de la tabla de Articulos
-	private int[] tablaArticulosColumnsWidth = { 
-			40, /*id*/
-			150, /*codigo*/
-			200, /*proveedor*/
-			180, /*categoría*/
-			100, /*codigo sat*/
-			300,  /*Nombre*/
-			450, /*descripcion*/
-			100, /*Existencia*/
-			100, /*Precio g*/
-			100 /*Precio m*/
+	private int[] tablaArticulosColumnsWidth = { 40, /* id */
+			150, /* codigo */
+			200, /* proveedor */
+			180, /* categoría */
+			100, /* codigo sat */
+			300, /* Nombre */
+			450, /* descripcion */
+			100, /* Existencia */
+			100, /* Precio g */
+			100 /* Precio m */
 	};
-	
+
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
 	private JLabel lblNewLabel_2;
@@ -305,7 +304,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelArticulos");
 				panelPrincipalContenedor.updateUI();
-				
+
 				llenarTablaArticulos();
 			}
 		});
@@ -412,11 +411,10 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentral.setBackground(new Color(255, 215, 0));
 		panelArticulos.add(panelArticulosCentral, BorderLayout.CENTER);
 		panelArticulosCentral.setLayout(new BorderLayout(0, 0));
-		
+
 		scrollPaneTablaArticulos = new JScrollPane();
 		panelArticulosCentral.add(scrollPaneTablaArticulos);
-		
-		
+
 		// ==========================================================================
 		// Configuracion de la tabla Articulos
 		// ==========================================================================
@@ -425,7 +423,7 @@ public class Fr_principal extends JFrame {
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaArticulos.setViewportView(tablaArticulos);
 		tablaArticulos.setModel(modelTablaArticulos);
-		
+
 		modelTablaArticulos.addColumn("Id");
 		modelTablaArticulos.addColumn("Codigo");
 		modelTablaArticulos.addColumn("Proveedor");
@@ -436,53 +434,56 @@ public class Fr_principal extends JFrame {
 		modelTablaArticulos.addColumn("Existencia");
 		modelTablaArticulos.addColumn("Precio G");
 		modelTablaArticulos.addColumn("Precio M");
-		
-		//se remueve el editor de la tabla de articulos
-		for(int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
+
+		// se remueve el editor de la tabla de articulos
+		for (int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
 			Class<?> colClass = modelTablaArticulos.getColumnClass(i);
 			tablaArticulos.setDefaultEditor(colClass, null);
 		}
-		
+
 		// =================================================================================================================================================================================
-		
+
 		panelArticulosCentralBotones = new JPanel();
 		panelArticulosCentralBotones.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_2 = (FlowLayout) panelArticulosCentralBotones.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.RIGHT);
 		panelArticulosCentral.add(panelArticulosCentralBotones, BorderLayout.NORTH);
-		
+
 		btnAgregarArticulo = new JButton("Agregar");
 		btnAgregarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				abrirVentanaFormularioArticulo(0);
-				
+
 			}
 		});
-		btnAgregarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnAgregarArticulo.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnAgregarArticulo);
-		
+
 		horizontalStrut_11 = Box.createHorizontalStrut(5);
 		panelArticulosCentralBotones.add(horizontalStrut_11);
-		
+
 		btnActualizarArticulo = new JButton("Actualizar");
 		btnActualizarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				abrirVentanaFormularioArticulo(1);
-				
+
 			}
 		});
-		btnActualizarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarArticulo.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
-		
+
 		horizontalStrut_12 = Box.createHorizontalStrut(5);
 		panelArticulosCentralBotones.add(horizontalStrut_12);
-		
+
 		btnExportarArticuloExcel = new JButton("Exportar a Excel");
-		btnExportarArticuloExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		btnExportarArticuloExcel.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
@@ -597,13 +598,13 @@ public class Fr_principal extends JFrame {
 		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
 		tablaProveedores.setModel(modelTablaProveedores);
-		
+
 		panelProveedorCentralBotones = new JPanel();
 		panelProveedorCentralBotones.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_1 = (FlowLayout) panelProveedorCentralBotones.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.RIGHT);
 		panelProovedorCentral.add(panelProveedorCentralBotones, BorderLayout.NORTH);
-		
+
 		btnAgregarProveedor = new JButton("Agregar");
 		btnAgregarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -611,12 +612,13 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnAgregarProveedor.setBackground(new Color(144, 238, 144));
-		btnAgregarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnAgregarProveedor.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelProveedorCentralBotones.add(btnAgregarProveedor);
-		
+
 		horizontalStrut_10 = Box.createHorizontalStrut(5);
 		panelProveedorCentralBotones.add(horizontalStrut_10);
-		
+
 		btnActualizarProveedor = new JButton("Actualizar");
 		btnActualizarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -624,7 +626,8 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
-		btnActualizarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarProveedor.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelProveedorCentralBotones.add(btnActualizarProveedor);
 
 		modelTablaProveedores.addColumn("RFC");
@@ -1112,7 +1115,7 @@ public class Fr_principal extends JFrame {
 		btn_irAInicio.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
-		
+
 		btnNewButton = new JButton("Calculadora");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1120,7 +1123,8 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnNewButton.setBackground(new Color(135, 206, 250));
-		btnNewButton.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/Calculadora.png")));
+		btnNewButton.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/Calculadora.png")));
 		panelSuperiorBotones.add(btnNewButton);
 
 		/**
@@ -1155,18 +1159,18 @@ public class Fr_principal extends JFrame {
 			proveedoresColumnModel.getColumn(i).setPreferredWidth(tablaProveedoresColumnsWidth[i]);
 			proveedoresColumnModel.getColumn(i).setMinWidth(tablaProveedoresColumnsWidth[i]);
 		}
-		
+
 		/**
-		 * se establecen los tamaños preestablecidos para cada columna de la tabla de los
-		 * articulos
+		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
+		 * los articulos
 		 */
 		TableColumnModel articulosColumnModel = tablaArticulos.getColumnModel();
-		
-		for(int i = 0; i < tablaArticulosColumnsWidth.length; i++) {
+
+		for (int i = 0; i < tablaArticulosColumnsWidth.length; i++) {
 			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
 			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
 		}
-		
+
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -1523,56 +1527,54 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-	
+
 	private void abrirVentanaFormularioProveedor(int opcion) {
 		EventQueue.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {
 					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion);
 					fr.setLocationRelativeTo(null);
 					fr.setVisible(true);
-					
-				}catch(Exception er) {
+
+				} catch (Exception er) {
 					er.printStackTrace();
 				}
-				
+
 			}
-			
+
 		});
 	}
-	
+
 	private void abrirVentanaFormularioArticulo(int opcion) {
-		
+
 		EventQueue.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				
+
 				try {
-					
+
 					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion);
 					fr.setLocationRelativeTo(null);
 					fr.setVisible(true);
-					
-				}catch(Exception er) {
+
+				} catch (Exception er) {
 					er.printStackTrace();
 				}
-				
+
 			}
-			
+
 		});
-		
-		
+
 	}
-	
-	
+
 	private void llenarTablaArticulos() {
 		this.borrarElementosDeLaTablaArticulos();
 		articuloController.verArticulosEnTabla(modelTablaArticulos);
 	}
-	
+
 	/**
 	 * borra todos los datos de la tabla de articulos
 	 */
@@ -1580,15 +1582,15 @@ public class Fr_principal extends JFrame {
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
 	}
-	
+
 	/**
 	 * abre la calculadora, valido unicamente en windows
 	 */
 	private void abrirCalculadora() {
 		try {
 			Runtime.getRuntime().exec("calc");
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}		
+		}
 	}
 }

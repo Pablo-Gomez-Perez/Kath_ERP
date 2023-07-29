@@ -102,6 +102,47 @@ public class ProveedorController implements java.io.Serializable {
 		}
 
 	}
+	
+	public void consultarNombresProveedor(JComboBox<String> cmb) {
+		
+		CallableStatement stm = null;
+		ResultSet rset = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL ver_nombres_proveedor();");
+			rset = stm.executeQuery();
+
+			while (rset.next()) {
+				cmb.addItem(rset.getString(1));
+			}
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		} finally {
+			try {
+
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+				if (rset != null) {
+					rset.close();
+				}
+
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+		
+	}
 
 	/**
 	 * inserta un nuevo registro en la base de datos
