@@ -28,6 +28,8 @@ import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
+import javax.swing.border.LineBorder;
+import javax.swing.border.CompoundBorder;
 
 public class Fr_DatosProveedor extends JFrame {
 
@@ -96,6 +98,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private Component horizontalStrut_10;
 	private JButton btn_Guardar;
 	private int indice_proveedor;
+	private Component verticalStrut_6;
 
 	/**
 	 * Create the frame.
@@ -130,6 +133,7 @@ public class Fr_DatosProveedor extends JFrame {
 		}
 
 		panelCentralFormulario = new JPanel();
+		panelCentralFormulario.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(new Color(0, 0, 0))));
 		panelCentralFormulario.setBackground(new Color(255, 215, 0));
 		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
 		panelCentralFormulario.setLayout(new BoxLayout(panelCentralFormulario, BoxLayout.Y_AXIS));
@@ -310,8 +314,12 @@ public class Fr_DatosProveedor extends JFrame {
 		txaDireccionProveedor = new JTextArea();
 		txaDireccionProveedor.setLineWrap(true);
 		horizontalBox_6.add(txaDireccionProveedor);
+		
+		verticalStrut_6 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_6);
 
 		panelInferiorBotones = new JPanel();
+		panelInferiorBotones.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelInferiorBotones.setBackground(new Color(30, 144, 255));
 		FlowLayout flowLayout_2 = (FlowLayout) panelInferiorBotones.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.RIGHT);

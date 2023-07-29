@@ -452,6 +452,13 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentral.add(panelArticulosCentralBotones, BorderLayout.NORTH);
 		
 		btnAgregarArticulo = new JButton("Agregar");
+		btnAgregarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				abrirVentanaFormularioArticulo(0);
+				
+			}
+		});
 		btnAgregarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnAgregarArticulo);
@@ -460,6 +467,13 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentralBotones.add(horizontalStrut_11);
 		
 		btnActualizarArticulo = new JButton("Actualizar");
+		btnActualizarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				abrirVentanaFormularioArticulo(1);
+				
+			}
+		});
 		btnActualizarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
@@ -1527,6 +1541,30 @@ public class Fr_principal extends JFrame {
 			}
 			
 		});
+	}
+	
+	private void abrirVentanaFormularioArticulo(int opcion) {
+		
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion);
+					fr.setLocationRelativeTo(null);
+					fr.setVisible(true);
+					
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
+				
+			}
+			
+		});
+		
+		
 	}
 	
 	

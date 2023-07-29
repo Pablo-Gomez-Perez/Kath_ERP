@@ -24,6 +24,7 @@ public class Articulo implements java.io.Serializable {
 	private double costoUnitario;
 	private double precioGeneral;
 	private double precioMayoreo;
+	private int cantidadMayoreo;
 
 	/**
 	 * @param idArticulo
@@ -43,7 +44,7 @@ public class Articulo implements java.io.Serializable {
 	 */
 	public Articulo(int idArticulo, String codigoArticulo, int idProvedor, String nombreProveedor, int idCategoria,
 			String nombreCategoria, String codigoSat, String nombre, String descripcion, int existencia, boolean exento,
-			double costoUnitario, double precioGeneral, double precioMayoreo) {
+			double costoUnitario, double precioGeneral, double precioMayoreo, int cantidadMayoreo) {
 		super();
 		this.idArticulo = idArticulo;
 		this.codigoArticulo = codigoArticulo;
@@ -59,6 +60,7 @@ public class Articulo implements java.io.Serializable {
 		this.costoUnitario = costoUnitario;
 		this.precioGeneral = precioGeneral;
 		this.precioMayoreo = precioMayoreo;
+		this.cantidadMayoreo = cantidadMayoreo;
 	}
 
 	public Articulo() {
@@ -259,6 +261,14 @@ public class Articulo implements java.io.Serializable {
 	public void setPrecioMayoreo(double precioMayoreo) {
 		this.precioMayoreo = precioMayoreo;
 	}
+	
+	public void setCantidadMayoreo(int cantidadMayoreo) {
+		this.cantidadMayoreo = cantidadMayoreo;
+	}
+	
+	public int getCantidadMayoreo() {
+		return this.cantidadMayoreo;
+	}
 
 	@Override
 	public int hashCode() {
@@ -320,8 +330,10 @@ public class Articulo implements java.io.Serializable {
 		builder.append(getCostoUnitario());
 		builder.append(", getPrecioGeneral()=");
 		builder.append(getPrecioGeneral());
-		builder.append(", getPrecioMayoreo()=");
+		builder.append(", getPrecioMayoreo()=");		
 		builder.append(getPrecioMayoreo());
+		builder.append(", getCantidadMayoreo()");
+		builder.append(getCantidadMayoreo());
 		builder.append(", hashCode()=");
 		builder.append(hashCode());
 		builder.append("]");
