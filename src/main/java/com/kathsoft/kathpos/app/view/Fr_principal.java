@@ -279,6 +279,12 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_12;
 	private JButton btnExportarArticuloExcel;
 	private JButton btnNewButton;
+	private JPanel panelArticulosCentralBuscar;
+	private JLabel lblNewLabel_19;
+	private Component horizontalStrut_13;
+	private JTextField txfBuscarArticulo;
+	private Component horizontalStrut_14;
+	private JButton btnBuscarArticulo;
 
 	/**
 	 * Launch the application.
@@ -507,6 +513,33 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
+		
+		panelArticulosCentralBuscar = new JPanel();
+		FlowLayout flowLayout_3 = (FlowLayout) panelArticulosCentralBuscar.getLayout();
+		flowLayout_3.setAlignment(FlowLayout.LEFT);
+		panelArticulosCentralBuscar.setBackground(new Color(255, 215, 0));
+		panelArticulosCentral.add(panelArticulosCentralBuscar, BorderLayout.SOUTH);
+		
+		lblNewLabel_19 = new JLabel("Buscar artículo");
+		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelArticulosCentralBuscar.add(lblNewLabel_19);
+		
+		horizontalStrut_13 = Box.createHorizontalStrut(5);
+		panelArticulosCentralBuscar.add(horizontalStrut_13);
+		
+		txfBuscarArticulo = new JTextField();
+		txfBuscarArticulo.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelArticulosCentralBuscar.add(txfBuscarArticulo);
+		txfBuscarArticulo.setColumns(70);
+		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
+		
+		horizontalStrut_14 = Box.createHorizontalStrut(20);
+		panelArticulosCentralBuscar.add(horizontalStrut_14);
+		
+		btnBuscarArticulo = new JButton("Buscar");
+		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
+		btnBuscarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		panelArticulosCentralBuscar.add(btnBuscarArticulo);
 
 		panelClientes = new JPanel();
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");
