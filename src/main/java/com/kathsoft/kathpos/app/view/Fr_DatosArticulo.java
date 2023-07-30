@@ -1,44 +1,39 @@
 package com.kathsoft.kathpos.app.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.SQLException;
+
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-
-import java.awt.Component;
-import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import java.awt.FlowLayout;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Articulo;
-
-import javax.swing.border.LineBorder;
-import javax.swing.JRadioButton;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.sql.SQLException;
-
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.border.CompoundBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Fr_DatosArticulo extends JFrame {
 
@@ -533,7 +528,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private void insertarNuevoArticulo() {
 
 		Articulo art = new Articulo();
-		
+
 		if (this.txfCodigoArticulo.getText().length() < 1 || this.txfCodigoArticulo.getText().equals(null)
 				|| this.txfCodigoArticulo.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo", "Error", JOptionPane.ERROR_MESSAGE);
@@ -546,7 +541,42 @@ public class Fr_DatosArticulo extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+
+		if (this.txfNombreArticulo.getText().length() < 1 || this.txfNombreArticulo.getText().equals(null)
+				|| this.txfNombreArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el nombre comercial del acrticulo", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfCostoArticulo.getText().length() < 1 || this.txfCostoArticulo.getText().equals(null)
+				|| this.txfCostoArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el costo del articulo", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+				.parseDouble(this.txfPrecioGArticulo.getText())) {
+			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+				.parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
+			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		
+		if(this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
+				|| this.txfPrecioGArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
 		try {
 
 			art.setCodigoArticulo(this.txfCodigoArticulo.getText());
@@ -561,17 +591,39 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
+			System.out.println(art.toString());
+
 			articuloController.insertarNuevoArticulo(art);
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception er) {
 			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 
+		this.limpiarCampos();
+		JOptionPane.showMessageDialog(this, "Articulo almacenado", "Registro almacenado",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void actualizarArticulo() {
+
+	}
+
+	private void limpiarCampos() {
+
+		this.txfCodigoArticulo.setText("");
+		this.txfNombreArticulo.setText("");
+		this.txfCodigoSat.setText("");
+		this.txaDescripcionArticulo.setText("");
+		this.txfCostoArticulo.setText("");
+		this.txfPrecioGArticulo.setText("");
+		this.txfPrecioMayoreoArticulo.setText("");
+		this.txfCantidadParaMayoreo.setText("");
 
 	}
 }

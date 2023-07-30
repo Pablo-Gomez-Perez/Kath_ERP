@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Articulo;
@@ -137,7 +138,7 @@ public class ArticuloController implements java.io.Serializable {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?,?,?,?);");
-			
+
 			stm.setString(1, art.getCodigoArticulo());
 			stm.setString(2, art.getNombreProveedor());
 			stm.setString(3, art.getNombreCategoria());
@@ -149,25 +150,29 @@ public class ArticuloController implements java.io.Serializable {
 			stm.setDouble(9, art.getPrecioGeneral());
 			stm.setDouble(10, art.getPrecioMayoreo());
 			stm.setInt(11, art.getCantidadMayoreo());
-			
+
 			stm.execute();
-			
+
 		} catch (SQLException er) {
 			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} finally {
 			try {
-				
-				if(cn != null) {
+
+				if (cn != null) {
 					cn.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
