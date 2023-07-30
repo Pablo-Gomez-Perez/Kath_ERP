@@ -4,9 +4,10 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
+
+import com.kathsoft.kathpos.app.model.Articulo;
 
 public class ArticuloController implements java.io.Serializable {
 
@@ -53,6 +54,24 @@ public class ArticuloController implements java.io.Serializable {
 			er.printStackTrace();
 		} catch (Exception er) {
 			er.printStackTrace();
+		} finally {
+			try {
+
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+				if (rset != null) {
+					rset.close();
+				}
+
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
 		}
 
 	}
@@ -101,6 +120,58 @@ public class ArticuloController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Inserta un nuevo registro en la base de datos
+	 * 
+	 * @param art
+	 * @throws SQLException
+	 * @throws Exception
+	 */
+	public void insertarNuevoArticulo(Articulo art) throws SQLException, Exception {
+
+		CallableStatement stm = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+			
+			stm.setString(1, art.getCodigoArticulo());
+			stm.setString(2, art.getNombreProveedor());
+			stm.setString(3, art.getNombreCategoria());
+			stm.setString(4, art.getCodigoSat());
+			stm.setString(5, art.getNombre());
+			stm.setString(6, art.getDescripcion());
+			stm.setInt(7, art.isExento() == true ? 1 : 0);
+			stm.setDouble(8, art.getCostoUnitario());
+			stm.setDouble(9, art.getPrecioGeneral());
+			stm.setDouble(10, art.getPrecioMayoreo());
+			stm.setInt(11, art.getCantidadMayoreo());
+			
+			stm.execute();
+			
+		} catch (SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch(Exception er) {
+				er.printStackTrace();
+			}
+		}
 
 	}
+
 }
