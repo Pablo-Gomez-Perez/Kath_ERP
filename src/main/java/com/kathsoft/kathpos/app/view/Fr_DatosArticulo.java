@@ -14,6 +14,8 @@ import javax.swing.ButtonGroup;
 import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
@@ -24,14 +26,19 @@ import javax.swing.border.TitledBorder;
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
+import com.kathsoft.kathpos.app.model.Articulo;
 
 import javax.swing.border.LineBorder;
 import javax.swing.JRadioButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
+
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.border.CompoundBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_DatosArticulo extends JFrame {
 
@@ -114,6 +121,10 @@ public class Fr_DatosArticulo extends JFrame {
 	private Component horizontalStrut_18;
 	private JButton btnGuardar;
 	private Component verticalStrut_6;
+	private Component horizontalStrut_19;
+	private JLabel lblNewLabel_12;
+	private Component horizontalStrut_20;
+	private JTextField txfCodigoSat;
 
 	/**
 	 * Create the frame.
@@ -250,6 +261,29 @@ public class Fr_DatosArticulo extends JFrame {
 		txfNombreArticulo.setColumns(80);
 		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
 
+		horizontalStrut_19 = Box.createHorizontalStrut(20);
+		horizontalBox_2.add(horizontalStrut_19);
+
+		lblNewLabel_12 = new JLabel("Codigo SAT");
+		horizontalBox_2.add(lblNewLabel_12);
+
+		horizontalStrut_20 = Box.createHorizontalStrut(5);
+		horizontalBox_2.add(horizontalStrut_20);
+
+		txfCodigoSat = new JTextField();
+		txfCodigoSat.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if (!(ch >= '0' && ch <= '9') || txfCodigoSat.getText().length() >= 8) {
+					e.consume();
+				}
+			}
+		});
+		horizontalBox_2.add(txfCodigoSat);
+		txfCodigoSat.setColumns(20);
+		this.txfCodigoSat.setMaximumSize(this.txfCodigoSat.getPreferredSize());
+
 		verticalStrut_3 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_3);
 
@@ -347,7 +381,7 @@ public class Fr_DatosArticulo extends JFrame {
 		txfCostoArticulo.setColumns(10);
 		this.txfCostoArticulo.setMaximumSize(this.txfCostoArticulo.getPreferredSize());
 
-		horizontalStrut_9 = Box.createHorizontalStrut(20);
+		horizontalStrut_9 = Box.createHorizontalStrut(10);
 		horizontalBox_4.add(horizontalStrut_9);
 
 		lblNewLabel_9 = new JLabel("Precio General");
@@ -372,7 +406,7 @@ public class Fr_DatosArticulo extends JFrame {
 		txfPrecioGArticulo.setColumns(10);
 		this.txfPrecioGArticulo.setMaximumSize(this.txfPrecioGArticulo.getPreferredSize());
 
-		horizontalStrut_11 = Box.createHorizontalStrut(20);
+		horizontalStrut_11 = Box.createHorizontalStrut(10);
 		horizontalBox_4.add(horizontalStrut_11);
 
 		lblNewLabel_10 = new JLabel("Mayoreo");
@@ -397,7 +431,7 @@ public class Fr_DatosArticulo extends JFrame {
 		txfPrecioMayoreoArticulo.setColumns(10);
 		this.txfPrecioMayoreoArticulo.setMaximumSize(this.txfPrecioMayoreoArticulo.getPreferredSize());
 
-		horizontalStrut_13 = Box.createHorizontalStrut(20);
+		horizontalStrut_13 = Box.createHorizontalStrut(10);
 		horizontalBox_4.add(horizontalStrut_13);
 
 		lblNewLabel_11 = new JLabel("Cant. p/Mayoreo");
@@ -431,6 +465,11 @@ public class Fr_DatosArticulo extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cerrarForm();
+			}
+		});
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		btnCancelar.setIcon(
 				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
@@ -440,6 +479,15 @@ public class Fr_DatosArticulo extends JFrame {
 		panelInferiorBotones.add(horizontalStrut_18);
 
 		btnGuardar = new JButton("Guardar");
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (tipoOperacion == 0) {
+					insertarNuevoArticulo();
+				} else if (tipoOperacion == 1) {
+					actualizarArticulo();
+				}
+			}
+		});
 		btnGuardar.setBackground(new Color(144, 238, 144));
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
@@ -478,4 +526,52 @@ public class Fr_DatosArticulo extends JFrame {
 		this.cmbProveedorArticulo.updateUI();
 	}
 
+	private void cerrarForm() {
+		this.dispose();
+	}
+
+	private void insertarNuevoArticulo() {
+
+		Articulo art = new Articulo();
+		
+		if (this.txfCodigoArticulo.getText().length() < 1 || this.txfCodigoArticulo.getText().equals(null)
+				|| this.txfCodigoArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfCodigoSat.getText().length() < 1 || this.txfCodigoSat.getText().equals(null)
+				|| this.txfCodigoSat.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo agrupador SAT", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		try {
+
+			art.setCodigoArticulo(this.txfCodigoArticulo.getText());
+			art.setNombreProveedor((String) this.cmbProveedorArticulo.getSelectedItem());
+			art.setNombreCategoria((String) this.cmbMarcaArticulo.getSelectedItem());
+			art.setCodigoSat(this.txfCodigoSat.getText());
+			art.setNombre(this.txfNombreArticulo.getText());
+			art.setDescripcion(this.txaDescripcionArticulo.getText());
+			art.setExento((this.rdbtnExento.isSelected() || this.rdbtnNoObjeto.isSelected()) ? true : false);
+			art.setCostoUnitario(Double.parseDouble(this.txfCostoArticulo.getText()));
+			art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
+			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
+			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
+
+			articuloController.insertarNuevoArticulo(art);
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+
+	}
+
+	private void actualizarArticulo() {
+
+	}
 }

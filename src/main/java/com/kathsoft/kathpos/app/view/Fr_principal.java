@@ -221,11 +221,32 @@ public class Fr_principal extends JFrame {
 	private Component verticalStrut_19;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
-	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
+	private int[] tableEmpleadosColumnsWidth = { 
+			40,
+			180,
+			180,
+			180,
+			100,
+			200
+	};
 	// Array que define el ancho de cada columna de la tabla de categoría
-	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
+	private int[] tablaCategoriaColumnsWidth = { 
+			40,
+			180,
+			400 
+	};
 	// Array que define el ancho de cada columna de la tabla de Proveedores
-	private int[] tablaProveedoresColumnsWidth = { 150, 150, 180, 400, 200, 100, 100, 300, 90 };
+	private int[] tablaProveedoresColumnsWidth = { 
+			150,
+			150,
+			180,
+			400,
+			200,
+			100,
+			100,
+			300,
+			90 
+	};
 	// Array que define el ancho de cada columna de la tabla de Articulos
 	private int[] tablaArticulosColumnsWidth = { 40, /* id */
 			150, /* codigo */
