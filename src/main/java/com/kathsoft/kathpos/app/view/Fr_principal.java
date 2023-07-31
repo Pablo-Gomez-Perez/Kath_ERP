@@ -537,6 +537,11 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentralBuscar.add(horizontalStrut_14);
 		
 		btnBuscarArticulo = new JButton("Buscar");
+		btnBuscarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				consultarArticulosPorNombre();
+			}
+		});
 		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
 		btnBuscarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		panelArticulosCentralBuscar.add(btnBuscarArticulo);
@@ -1636,7 +1641,12 @@ public class Fr_principal extends JFrame {
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
 	}
-
+	
+	private void consultarArticulosPorNombre() {
+		this.borrarElementosDeLaTablaArticulos();
+		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos);
+	}
+	
 	/**
 	 * abre la calculadora, valido unicamente en windows
 	 */

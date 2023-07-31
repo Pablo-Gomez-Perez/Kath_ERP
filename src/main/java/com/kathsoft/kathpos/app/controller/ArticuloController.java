@@ -122,6 +122,61 @@ public class ArticuloController implements java.io.Serializable {
 			}
 		}
 	}
+	
+	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla) {
+		
+		ResultSet rset = null;
+		CallableStatement stm = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?);");
+			stm.setString(1, nombre);
+			rset = stm.executeQuery();
+
+			while (rset.next()) {
+
+				Object[] fila = { rset.getInt(1), // indice del articulo
+						rset.getString(2), // codigo del articulo
+						rset.getString(3), // Nombre del proveedor
+						rset.getString(4), // nombre de la categoría
+						rset.getString(5), // codigo SAT del articulo
+						rset.getString(6), // nombre del articulo
+						rset.getString(7), // descripcion
+						rset.getString(8), // existencia
+						rset.getString(9), // precio general
+						rset.getString(10), // precio mayoreo
+				};
+
+				tabla.addRow(fila);
+			}
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		} finally {
+			try {
+
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+				if (rset != null) {
+					rset.close();
+				}
+
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+		
+	}
 
 	/**
 	 * Inserta un nuevo registro en la base de datos

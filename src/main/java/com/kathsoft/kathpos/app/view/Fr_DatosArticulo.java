@@ -229,7 +229,7 @@ public class Fr_DatosArticulo extends JFrame {
 		horizontalStrut_4 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_4);
 
-		lblNewLabel_4 = new JLabel("Marca");
+		lblNewLabel_4 = new JLabel("Categoría");
 		horizontalBox_1.add(lblNewLabel_4);
 
 		horizontalStrut_5 = Box.createHorizontalStrut(5);
@@ -626,4 +626,5 @@ public class Fr_DatosArticulo extends JFrame {
 		this.txfCantidadParaMayoreo.setText("");
 
 	}
+	
 }
