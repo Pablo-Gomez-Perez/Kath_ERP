@@ -123,7 +123,16 @@ public class ArticuloController implements java.io.Serializable {
 		}
 	}
 	
-	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla) {
+	/**
+	 * consulta el listado de articulos registrados en la base de datos de manera dinámica,
+	 * ya séa por nombre, proveedor, categoría, codigo o descripción, y los resultados encontrados
+	 * los imprime en la tabla pasada como parámetro
+	 * 
+	 * @param nombre
+	 * @param tabla
+	 * @param opcion
+	 */
+	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla, int opcion) {
 		
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -131,8 +140,9 @@ public class ArticuloController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?);");
+			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?,?);");
 			stm.setString(1, nombre);
+			stm.setInt(2, opcion);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {

@@ -20,6 +20,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -49,6 +50,7 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Empleado;
+import javax.swing.JRadioButton;
 
 public class Fr_principal extends JFrame {
 
@@ -283,8 +285,24 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNewLabel_19;
 	private Component horizontalStrut_13;
 	private JTextField txfBuscarArticulo;
-	private Component horizontalStrut_14;
 	private JButton btnBuscarArticulo;
+	private Box verticalBox;
+	private Box verticalBox_1;
+	private Box horizontalBox_16;
+	private Box horizontalBox_17;
+	private JLabel lblNewLabel_20;
+	private Component horizontalStrut_14;
+	private ButtonGroup btnRadioGroupArticulos;
+	private JRadioButton rdbBuscarArtPorNombre;
+	private Component horizontalStrut_15;
+	private JRadioButton rdbtBuscarArtPorProveedor;
+	private Component horizontalStrut_16;
+	private JRadioButton rdbtBuscarArtPorCategoria;
+	private Component horizontalStrut_17;
+	private JRadioButton rdbtBuscarArtPorCodigo;
+	private Component horizontalStrut_18;
+	private JRadioButton rdbtBuscarArtPorDescrip;
+	private Component horizontalStrut_19;
 
 	/**
 	 * Launch the application.
@@ -520,21 +538,91 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentralBuscar.setBackground(new Color(255, 215, 0));
 		panelArticulosCentral.add(panelArticulosCentralBuscar, BorderLayout.SOUTH);
 		
+		verticalBox = Box.createVerticalBox();
+		panelArticulosCentralBuscar.add(verticalBox);
+		
+		horizontalBox_16 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_16);
+		
+		horizontalBox_17 = Box.createHorizontalBox();
+		horizontalBox_17.setBorder(new EmptyBorder(5, 0, 0, 0));
+		verticalBox.add(horizontalBox_17);
+		
+		lblNewLabel_20 = new JLabel("Buscar por");
+		lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 12));
+		horizontalBox_17.add(lblNewLabel_20);
+		
+		horizontalStrut_14 = Box.createHorizontalStrut(20);
+		horizontalBox_17.add(horizontalStrut_14);
+		
+		btnRadioGroupArticulos = new ButtonGroup();
+		
+		rdbBuscarArtPorNombre = new JRadioButton("Nombre");
+		rdbBuscarArtPorNombre.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbBuscarArtPorNombre.setBackground(new Color(255, 215, 0));
+		horizontalBox_17.add(rdbBuscarArtPorNombre);
+		
+		horizontalStrut_15 = Box.createHorizontalStrut(20);
+		horizontalBox_17.add(horizontalStrut_15);
+		
+		rdbtBuscarArtPorProveedor = new JRadioButton("Proveedor");
+		rdbtBuscarArtPorProveedor.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbtBuscarArtPorProveedor.setBackground(new Color(255, 215, 0));
+		horizontalBox_17.add(rdbtBuscarArtPorProveedor);
+		
+		horizontalStrut_16 = Box.createHorizontalStrut(20);
+		horizontalBox_17.add(horizontalStrut_16);
+		
+		rdbtBuscarArtPorCategoria = new JRadioButton("Categoria");
+		rdbtBuscarArtPorCategoria.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbtBuscarArtPorCategoria.setBackground(new Color(255, 215, 0));
+		horizontalBox_17.add(rdbtBuscarArtPorCategoria);
+		
+		horizontalStrut_17 = Box.createHorizontalStrut(20);
+		horizontalBox_17.add(horizontalStrut_17);
+		
+		rdbtBuscarArtPorCodigo = new JRadioButton("Código");
+		rdbtBuscarArtPorCodigo.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbtBuscarArtPorCodigo.setBackground(new Color(255, 215, 0));
+		horizontalBox_17.add(rdbtBuscarArtPorCodigo);
+		
+		horizontalStrut_18 = Box.createHorizontalStrut(20);
+		horizontalBox_17.add(horizontalStrut_18);
+		
+		rdbtBuscarArtPorDescrip = new JRadioButton("Descripción");
+		rdbtBuscarArtPorDescrip.setFont(new Font("Tahoma", Font.BOLD, 12));
+		rdbtBuscarArtPorDescrip.setBackground(new Color(255, 215, 0));
+		horizontalBox_17.add(rdbtBuscarArtPorDescrip);
+		
+		btnRadioGroupArticulos.add(this.rdbBuscarArtPorNombre);
+		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCategoria);
+		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCodigo);
+		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorDescrip);
+		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorProveedor);
+		
+		horizontalStrut_19 = Box.createHorizontalStrut(300);
+		horizontalBox_17.add(horizontalStrut_19);
+		
 		lblNewLabel_19 = new JLabel("Buscar artículo");
 		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelArticulosCentralBuscar.add(lblNewLabel_19);
+		//panelArticulosCentralBuscar.add(lblNewLabel_19);
+		horizontalBox_16.add(lblNewLabel_19);
+		//verticalBox.add(lblNewLabel_19);
 		
 		horizontalStrut_13 = Box.createHorizontalStrut(5);
-		panelArticulosCentralBuscar.add(horizontalStrut_13);
+		horizontalBox_16.add(horizontalStrut_13);
+		//panelArticulosCentralBuscar.add(horizontalStrut_13);
 		
 		txfBuscarArticulo = new JTextField();
 		txfBuscarArticulo.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelArticulosCentralBuscar.add(txfBuscarArticulo);
+		//panelArticulosCentralBuscar.add(txfBuscarArticulo);
+		horizontalBox_16.add(txfBuscarArticulo);
 		txfBuscarArticulo.setColumns(70);
 		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
 		
-		horizontalStrut_14 = Box.createHorizontalStrut(20);
-		panelArticulosCentralBuscar.add(horizontalStrut_14);
+		verticalBox_1 = Box.createVerticalBox();
+		verticalBox_1.setBorder(new EmptyBorder(10, 10, 10, 10));
+		panelArticulosCentralBuscar.add(verticalBox_1);
 		
 		btnBuscarArticulo = new JButton("Buscar");
 		btnBuscarArticulo.addActionListener(new ActionListener() {
@@ -544,8 +632,10 @@ public class Fr_principal extends JFrame {
 		});
 		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
 		btnBuscarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
-		panelArticulosCentralBuscar.add(btnBuscarArticulo);
-
+		//panelArticulosCentralBuscar.add(btnBuscarArticulo);
+				
+		verticalBox_1.add(btnBuscarArticulo);
+		
 		panelClientes = new JPanel();
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");
 		panelClientes.setLayout(new BorderLayout(0, 0));
@@ -1644,7 +1734,29 @@ public class Fr_principal extends JFrame {
 	
 	private void consultarArticulosPorNombre() {
 		this.borrarElementosDeLaTablaArticulos();
-		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos);
+		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos, opcionDeBusquedaDeArticulo());
+	}
+	
+	/**
+	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
+	 * @return
+	 */
+	private int opcionDeBusquedaDeArticulo() {
+		
+		if(this.rdbBuscarArtPorNombre.isSelected()) {
+			return 1;
+		}
+		else if(this.rdbtBuscarArtPorProveedor.isSelected()) {
+			return 2;
+		}
+		else if(this.rdbtBuscarArtPorCategoria.isSelected()) {
+			return 3;
+		}else if(this.rdbtBuscarArtPorCodigo.isSelected()) {
+			return 4;
+		}else {
+			return 5;
+		}
+		
 	}
 	
 	/**
