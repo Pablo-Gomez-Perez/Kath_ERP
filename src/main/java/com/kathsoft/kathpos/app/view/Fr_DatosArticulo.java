@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -205,9 +207,17 @@ public class Fr_DatosArticulo extends JFrame {
 			cmbCodigoArticulo = new JComboBox<String>();
 			cmbCodigoArticulo.setEditable(false);
 			horizontalBox.add(cmbCodigoArticulo);
-
+			
 			this.llenarCmbCodigoArticulos();
-
+			
+			this.cmbCodigoArticulo.addItemListener(new ItemListener() {				
+				@Override
+				public void itemStateChanged(ItemEvent e) {				
+					
+					consultarArticuloPorCodigo();
+					
+				}
+			});						
 		}
 
 		verticalStrut_1 = Box.createVerticalStrut(20);
@@ -295,6 +305,7 @@ public class Fr_DatosArticulo extends JFrame {
 		panel.add(lblNewLabel_6);
 
 		txaDescripcionArticulo = new JTextArea();
+		txaDescripcionArticulo.setLineWrap(true);
 		verticalBox.add(txaDescripcionArticulo);
 
 		verticalStrut_4 = Box.createVerticalStrut(20);
@@ -591,10 +602,10 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
-			System.out.println(art.toString());
+			//System.out.println(art.toString());
 
 			articuloController.insertarNuevoArticulo(art);
-
+			
 		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
@@ -609,9 +620,133 @@ public class Fr_DatosArticulo extends JFrame {
 		JOptionPane.showMessageDialog(this, "Articulo almacenado", "Registro almacenado",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
-
+	
+	/**
+	 * coloca valores de forma dinámica en cada uno de los campos correspondientes
+	 * al consultar la información de un artículo en específico
+	 * en la bd
+	 */
+	private void consultarArticuloPorCodigo() {
+		
+		try {
+			
+			Articulo art = articuloController.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem());
+			
+			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
+			this.cmbProveedorArticulo.setSelectedItem(art.getNombreProveedor());
+			this.cmbMarcaArticulo.setSelectedItem(art.getNombreCategoria());
+			this.txfNombreArticulo.setText(art.getNombre());
+			this.txfCodigoSat.setText(art.getCodigoSat());
+			this.txaDescripcionArticulo.setText(art.getDescripcion());
+			
+			if(art.isExento() == true) {
+				this.rdbtnExento.setSelected(true);
+			}else {
+				this.rdbtnGravado.setSelected(true);
+			}
+			
+			this.txfExistenciaArticulo.setText(String.valueOf(art.getExistencia()));
+			this.txfCostoArticulo.setText(String.valueOf(art.getCostoUnitario()));
+			this.txfPrecioGArticulo.setText(String.valueOf(art.getPrecioGeneral()));
+			this.txfPrecioMayoreoArticulo.setText(String.valueOf(art.getPrecioMayoreo()));
+			this.txfCantidadParaMayoreo.setText(String.valueOf(art.getCantidadMayoreo()));
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
+	}
+	
 	private void actualizarArticulo() {
+		
+		Articulo art = new Articulo();
 
+		if(((String)this.cmbCodigoArticulo.getSelectedItem()).length() < 1 || ((String)this.cmbCodigoArticulo.getSelectedItem()).equals(null)
+				|| ((String)this.cmbCodigoArticulo.getSelectedItem()).isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Se debe indicar el código del artículo", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfCodigoSat.getText().length() < 1 || this.txfCodigoSat.getText().equals(null)
+				|| this.txfCodigoSat.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo agrupador SAT", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfNombreArticulo.getText().length() < 1 || this.txfNombreArticulo.getText().equals(null)
+				|| this.txfNombreArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el nombre comercial del acrticulo", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfCostoArticulo.getText().length() < 1 || this.txfCostoArticulo.getText().equals(null)
+				|| this.txfCostoArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el costo del articulo", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+				.parseDouble(this.txfPrecioGArticulo.getText())) {
+			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+				.parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
+			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
+				|| this.txfPrecioGArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		try {
+
+			art.setIdArticulo(Integer.parseInt(this.txfIdArticulo.getText()));
+			art.setNombreProveedor((String) this.cmbProveedorArticulo.getSelectedItem());
+			art.setNombreCategoria((String) this.cmbMarcaArticulo.getSelectedItem());
+			art.setCodigoSat(this.txfCodigoSat.getText());
+			art.setNombre(this.txfNombreArticulo.getText());
+			art.setDescripcion(this.txaDescripcionArticulo.getText());
+			art.setExento((this.rdbtnExento.isSelected() || this.rdbtnNoObjeto.isSelected()) ? true : false);
+			art.setCostoUnitario(Double.parseDouble(this.txfCostoArticulo.getText()));
+			art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
+			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
+			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
+			
+			System.out.println("Desde la vista---------");
+			
+			System.out.println(art.toString());
+
+			articuloController.actualizarArticulo(art);
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		
 	}
 
 	private void limpiarCampos() {

@@ -122,18 +122,18 @@ public class ArticuloController implements java.io.Serializable {
 			}
 		}
 	}
-	
+
 	/**
-	 * consulta el listado de articulos registrados en la base de datos de manera dinámica,
-	 * ya séa por nombre, proveedor, categoría, codigo o descripción, y los resultados encontrados
-	 * los imprime en la tabla pasada como parámetro
+	 * consulta el listado de articulos registrados en la base de datos de manera
+	 * dinámica, ya séa por nombre, proveedor, categoría, codigo o descripción, y
+	 * los resultados encontrados los imprime en la tabla pasada como parámetro
 	 * 
 	 * @param nombre
 	 * @param tabla
 	 * @param opcion
 	 */
 	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla, int opcion) {
-		
+
 		ResultSet rset = null;
 		CallableStatement stm = null;
 
@@ -185,7 +185,7 @@ public class ArticuloController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	/**
@@ -238,6 +238,129 @@ public class ArticuloController implements java.io.Serializable {
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+
+	}
+
+	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			
+			stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+			
+			stm.setInt(1, art.getIdArticulo());			
+			stm.setString(2, art.getNombreProveedor());
+			stm.setString(3, art.getNombreCategoria());
+			stm.setString(4, art.getCodigoSat());
+			stm.setString(5, art.getNombre());
+			stm.setString(6, art.getDescripcion());
+			stm.setInt(7, art.isExento() == true ? 1 : 0);
+			stm.setDouble(8, art.getCostoUnitario());
+			stm.setDouble(9, art.getPrecioGeneral());
+			stm.setDouble(10, art.getPrecioMayoreo());
+			stm.setInt(11, art.getCantidadMayoreo());
+			
+			System.out.println("Desde el controlador---------");
+			
+			System.out.println(art.toString());
+			
+			stm.execute();
+			
+		}catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} finally {
+			try {
+
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param codigo -> codigo del articulo;
+	 * @return un objeto de tipo {@code Articulo} en función del codigo pasado como parámetro
+	 */
+	public Articulo consultarArticuloPorCodigo(String codigo) throws SQLException, Exception{
+
+		Articulo art = new Articulo();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?);");
+			stm.setString(1, codigo);
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				
+				art.setIdArticulo(rset.getInt(1));
+				art.setNombreProveedor(rset.getString(2));
+				art.setNombreCategoria(rset.getString(3));
+				art.setNombre(rset.getString(4));
+				art.setCodigoSat(rset.getString(5));
+				art.setDescripcion(rset.getString(6));
+				art.setExistencia(rset.getInt(7));
+				art.setExento( (rset.getInt(8) == 1) ? true : false);
+				art.setCostoUnitario(rset.getDouble(9));
+				art.setPrecioGeneral(rset.getDouble(10));
+				art.setPrecioMayoreo(rset.getDouble(11));
+				art.setCantidadMayoreo(rset.getInt(12));
+				
+			}
+			
+			return art;
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		}finally {
+			try {
+				
+				if(rset != null) {
+					rset.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+				if(cn != null) {
+					cn.close();
+				}
+				
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch(Exception er) {
 				er.printStackTrace();
 			}
 		}
