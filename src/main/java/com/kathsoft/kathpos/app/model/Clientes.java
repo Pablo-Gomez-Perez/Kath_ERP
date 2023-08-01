@@ -23,9 +23,11 @@ public class Clientes extends Usuario {
 	
 
 	/**
+	 * 
 	 * @param id
 	 * @param rfc
 	 * @param idCuentaContable
+	 * @param claveCuentaContable
 	 * @param nombre
 	 * @param fechaNacimiento
 	 * @param email

@@ -282,6 +282,8 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_18;
 	private JRadioButton rdbtBuscarArtPorDescrip;
 	private Component horizontalStrut_19;
+	private JPanel panelEtiquetaClientes;
+	private JPanel panelClientesCentral;
 
 	/**
 	 * Launch the application.
@@ -337,6 +339,15 @@ public class Fr_principal extends JFrame {
 		menuConsultar.add(opcionConsultarArticulos);
 
 		opcionClientes = new JMenuItem("Clientes");
+		opcionClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelClientes");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+		});
 		opcionClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
 				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 		menuConsultar.add(opcionClientes);
@@ -344,7 +355,9 @@ public class Fr_principal extends JFrame {
 		opcionEmpleados = new JMenuItem("Empleados");
 		opcionEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				
+				
+				//ir al panel de empleados dentro del CardLayout
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelEmpleados");
 				panelPrincipalContenedor.updateUI();
@@ -617,8 +630,18 @@ public class Fr_principal extends JFrame {
 		verticalBox_1.add(btnBuscarArticulo);
 
 		panelClientes = new JPanel();
+		panelClientes.setBackground(new Color(255, 215, 0));
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");
 		panelClientes.setLayout(new BorderLayout(0, 0));
+		
+		panelEtiquetaClientes = new JPanel();
+		panelEtiquetaClientes.setBackground(new Color(25, 25, 112));
+		panelClientes.add(panelEtiquetaClientes, BorderLayout.NORTH);
+		
+		panelClientesCentral = new JPanel();
+		panelClientesCentral.setBackground(new Color(255, 215, 0));
+		panelClientes.add(panelClientesCentral, BorderLayout.CENTER);
+		panelClientesCentral.setLayout(new BorderLayout(0, 0));
 
 		panelEmpleados = new JPanel();
 		panelPrincipalContenedor.add(panelEmpleados, "panelEmpleados");
