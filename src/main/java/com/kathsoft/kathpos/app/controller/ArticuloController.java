@@ -245,16 +245,16 @@ public class ArticuloController implements java.io.Serializable {
 	}
 
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
-		
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			
+
 			stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
-			
-			stm.setInt(1, art.getIdArticulo());			
+
+			stm.setInt(1, art.getIdArticulo());
 			stm.setString(2, art.getNombreProveedor());
 			stm.setString(3, art.getNombreCategoria());
 			stm.setString(4, art.getCodigoSat());
@@ -265,14 +265,14 @@ public class ArticuloController implements java.io.Serializable {
 			stm.setDouble(9, art.getPrecioGeneral());
 			stm.setDouble(10, art.getPrecioMayoreo());
 			stm.setInt(11, art.getCantidadMayoreo());
-			
+
 			System.out.println("Desde el controlador---------");
-			
+
 			System.out.println(art.toString());
-			
+
 			stm.execute();
-			
-		}catch (SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -295,15 +295,16 @@ public class ArticuloController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param codigo -> codigo del articulo;
-	 * @return un objeto de tipo {@code Articulo} en función del codigo pasado como parámetro
+	 * @return un objeto de tipo {@code Articulo} en función del codigo pasado como
+	 *         parámetro
 	 */
-	public Articulo consultarArticuloPorCodigo(String codigo) throws SQLException, Exception{
+	public Articulo consultarArticuloPorCodigo(String codigo) throws SQLException, Exception {
 
 		Articulo art = new Articulo();
 		CallableStatement stm = null;
@@ -315,9 +316,9 @@ public class ArticuloController implements java.io.Serializable {
 			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?);");
 			stm.setString(1, codigo);
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
-				
+
+			if (rset.next()) {
+
 				art.setIdArticulo(rset.getInt(1));
 				art.setNombreProveedor(rset.getString(2));
 				art.setNombreCategoria(rset.getString(3));
@@ -325,14 +326,14 @@ public class ArticuloController implements java.io.Serializable {
 				art.setCodigoSat(rset.getString(5));
 				art.setDescripcion(rset.getString(6));
 				art.setExistencia(rset.getInt(7));
-				art.setExento( (rset.getInt(8) == 1) ? true : false);
+				art.setExento((rset.getInt(8) == 1) ? true : false);
 				art.setCostoUnitario(rset.getDouble(9));
 				art.setPrecioGeneral(rset.getDouble(10));
 				art.setPrecioMayoreo(rset.getDouble(11));
 				art.setCantidadMayoreo(rset.getInt(12));
-				
+
 			}
-			
+
 			return art;
 
 		} catch (SQLException er) {
@@ -345,22 +346,22 @@ public class ArticuloController implements java.io.Serializable {
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return null;
-		}finally {
+		} finally {
 			try {
-				
-				if(rset != null) {
+
+				if (rset != null) {
 					rset.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-				if(cn != null) {
+				if (cn != null) {
 					cn.close();
 				}
-				
-			}catch(SQLException er) {
+
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}

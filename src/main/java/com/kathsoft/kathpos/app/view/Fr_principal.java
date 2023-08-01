@@ -223,32 +223,11 @@ public class Fr_principal extends JFrame {
 	private Component verticalStrut_19;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
-	private int[] tableEmpleadosColumnsWidth = { 
-			40,
-			180,
-			180,
-			180,
-			100,
-			200
-	};
+	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
 	// Array que define el ancho de cada columna de la tabla de categoría
-	private int[] tablaCategoriaColumnsWidth = { 
-			40,
-			180,
-			400 
-	};
+	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
-	private int[] tablaProveedoresColumnsWidth = { 
-			150,
-			150,
-			180,
-			400,
-			200,
-			100,
-			100,
-			300,
-			90 
-	};
+	private int[] tablaProveedoresColumnsWidth = { 150, 150, 180, 400, 200, 100, 100, 300, 90 };
 	// Array que define el ancho de cada columna de la tabla de Articulos
 	private int[] tablaArticulosColumnsWidth = { 40, /* id */
 			150, /* codigo */
@@ -531,99 +510,99 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
-		
+
 		panelArticulosCentralBuscar = new JPanel();
 		FlowLayout flowLayout_3 = (FlowLayout) panelArticulosCentralBuscar.getLayout();
 		flowLayout_3.setAlignment(FlowLayout.LEFT);
 		panelArticulosCentralBuscar.setBackground(new Color(255, 215, 0));
 		panelArticulosCentral.add(panelArticulosCentralBuscar, BorderLayout.SOUTH);
-		
+
 		verticalBox = Box.createVerticalBox();
 		panelArticulosCentralBuscar.add(verticalBox);
-		
+
 		horizontalBox_16 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_16);
-		
+
 		horizontalBox_17 = Box.createHorizontalBox();
 		horizontalBox_17.setBorder(new EmptyBorder(5, 0, 0, 0));
 		verticalBox.add(horizontalBox_17);
-		
+
 		lblNewLabel_20 = new JLabel("Buscar por");
 		lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 12));
 		horizontalBox_17.add(lblNewLabel_20);
-		
+
 		horizontalStrut_14 = Box.createHorizontalStrut(20);
 		horizontalBox_17.add(horizontalStrut_14);
-		
+
 		btnRadioGroupArticulos = new ButtonGroup();
-		
+
 		rdbBuscarArtPorNombre = new JRadioButton("Nombre");
 		rdbBuscarArtPorNombre.setFont(new Font("Tahoma", Font.BOLD, 12));
 		rdbBuscarArtPorNombre.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbBuscarArtPorNombre);
-		
+
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
 		horizontalBox_17.add(horizontalStrut_15);
-		
+
 		rdbtBuscarArtPorProveedor = new JRadioButton("Proveedor");
 		rdbtBuscarArtPorProveedor.setFont(new Font("Tahoma", Font.BOLD, 12));
 		rdbtBuscarArtPorProveedor.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorProveedor);
-		
+
 		horizontalStrut_16 = Box.createHorizontalStrut(20);
 		horizontalBox_17.add(horizontalStrut_16);
-		
+
 		rdbtBuscarArtPorCategoria = new JRadioButton("Categoria");
 		rdbtBuscarArtPorCategoria.setFont(new Font("Tahoma", Font.BOLD, 12));
 		rdbtBuscarArtPorCategoria.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorCategoria);
-		
+
 		horizontalStrut_17 = Box.createHorizontalStrut(20);
 		horizontalBox_17.add(horizontalStrut_17);
-		
+
 		rdbtBuscarArtPorCodigo = new JRadioButton("Código");
 		rdbtBuscarArtPorCodigo.setFont(new Font("Tahoma", Font.BOLD, 12));
 		rdbtBuscarArtPorCodigo.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorCodigo);
-		
+
 		horizontalStrut_18 = Box.createHorizontalStrut(20);
 		horizontalBox_17.add(horizontalStrut_18);
-		
+
 		rdbtBuscarArtPorDescrip = new JRadioButton("Descripción");
 		rdbtBuscarArtPorDescrip.setFont(new Font("Tahoma", Font.BOLD, 12));
 		rdbtBuscarArtPorDescrip.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorDescrip);
-		
+
 		btnRadioGroupArticulos.add(this.rdbBuscarArtPorNombre);
 		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCategoria);
 		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCodigo);
 		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorDescrip);
 		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorProveedor);
-		
+
 		horizontalStrut_19 = Box.createHorizontalStrut(300);
 		horizontalBox_17.add(horizontalStrut_19);
-		
+
 		lblNewLabel_19 = new JLabel("Buscar artículo");
 		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
-		//panelArticulosCentralBuscar.add(lblNewLabel_19);
+		// panelArticulosCentralBuscar.add(lblNewLabel_19);
 		horizontalBox_16.add(lblNewLabel_19);
-		//verticalBox.add(lblNewLabel_19);
-		
+		// verticalBox.add(lblNewLabel_19);
+
 		horizontalStrut_13 = Box.createHorizontalStrut(5);
 		horizontalBox_16.add(horizontalStrut_13);
-		//panelArticulosCentralBuscar.add(horizontalStrut_13);
-		
+		// panelArticulosCentralBuscar.add(horizontalStrut_13);
+
 		txfBuscarArticulo = new JTextField();
 		txfBuscarArticulo.setFont(new Font("Tahoma", Font.BOLD, 13));
-		//panelArticulosCentralBuscar.add(txfBuscarArticulo);
+		// panelArticulosCentralBuscar.add(txfBuscarArticulo);
 		horizontalBox_16.add(txfBuscarArticulo);
 		txfBuscarArticulo.setColumns(70);
 		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
-		
+
 		verticalBox_1 = Box.createVerticalBox();
 		verticalBox_1.setBorder(new EmptyBorder(10, 10, 10, 10));
 		panelArticulosCentralBuscar.add(verticalBox_1);
-		
+
 		btnBuscarArticulo = new JButton("Buscar");
 		btnBuscarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -631,11 +610,12 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
-		btnBuscarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
-		//panelArticulosCentralBuscar.add(btnBuscarArticulo);
-				
+		btnBuscarArticulo.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		// panelArticulosCentralBuscar.add(btnBuscarArticulo);
+
 		verticalBox_1.add(btnBuscarArticulo);
-		
+
 		panelClientes = new JPanel();
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");
 		panelClientes.setLayout(new BorderLayout(0, 0));
@@ -1731,34 +1711,34 @@ public class Fr_principal extends JFrame {
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
 	}
-	
+
 	private void consultarArticulosPorNombre() {
 		this.borrarElementosDeLaTablaArticulos();
-		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos, opcionDeBusquedaDeArticulo());
+		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos,
+				opcionDeBusquedaDeArticulo());
 	}
-	
+
 	/**
 	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
+	 * 
 	 * @return
 	 */
 	private int opcionDeBusquedaDeArticulo() {
-		
-		if(this.rdbBuscarArtPorNombre.isSelected()) {
+
+		if (this.rdbBuscarArtPorNombre.isSelected()) {
 			return 1;
-		}
-		else if(this.rdbtBuscarArtPorProveedor.isSelected()) {
+		} else if (this.rdbtBuscarArtPorProveedor.isSelected()) {
 			return 2;
-		}
-		else if(this.rdbtBuscarArtPorCategoria.isSelected()) {
+		} else if (this.rdbtBuscarArtPorCategoria.isSelected()) {
 			return 3;
-		}else if(this.rdbtBuscarArtPorCodigo.isSelected()) {
+		} else if (this.rdbtBuscarArtPorCodigo.isSelected()) {
 			return 4;
-		}else {
+		} else {
 			return 5;
 		}
-		
+
 	}
-	
+
 	/**
 	 * abre la calculadora, valido unicamente en windows
 	 */

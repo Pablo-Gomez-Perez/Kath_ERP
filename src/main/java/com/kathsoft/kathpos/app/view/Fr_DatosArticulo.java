@@ -207,17 +207,17 @@ public class Fr_DatosArticulo extends JFrame {
 			cmbCodigoArticulo = new JComboBox<String>();
 			cmbCodigoArticulo.setEditable(false);
 			horizontalBox.add(cmbCodigoArticulo);
-			
+
 			this.llenarCmbCodigoArticulos();
-			
-			this.cmbCodigoArticulo.addItemListener(new ItemListener() {				
+
+			this.cmbCodigoArticulo.addItemListener(new ItemListener() {
 				@Override
-				public void itemStateChanged(ItemEvent e) {				
-					
+				public void itemStateChanged(ItemEvent e) {
+
 					consultarArticuloPorCodigo();
-					
+
 				}
-			});						
+			});
 		}
 
 		verticalStrut_1 = Box.createVerticalStrut(20);
@@ -580,8 +580,8 @@ public class Fr_DatosArticulo extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
-		if(this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
+
+		if (this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
 				|| this.txfPrecioGArticulo.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
 					JOptionPane.WARNING_MESSAGE);
@@ -602,10 +602,10 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
-			//System.out.println(art.toString());
+			// System.out.println(art.toString());
 
 			articuloController.insertarNuevoArticulo(art);
-			
+
 		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
@@ -620,56 +620,56 @@ public class Fr_DatosArticulo extends JFrame {
 		JOptionPane.showMessageDialog(this, "Articulo almacenado", "Registro almacenado",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	/**
 	 * coloca valores de forma dinámica en cada uno de los campos correspondientes
-	 * al consultar la información de un artículo en específico
-	 * en la bd
+	 * al consultar la información de un artículo en específico en la bd
 	 */
 	private void consultarArticuloPorCodigo() {
-		
+
 		try {
-			
-			Articulo art = articuloController.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem());
-			
+
+			Articulo art = articuloController
+					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem());
+
 			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
 			this.cmbProveedorArticulo.setSelectedItem(art.getNombreProveedor());
 			this.cmbMarcaArticulo.setSelectedItem(art.getNombreCategoria());
 			this.txfNombreArticulo.setText(art.getNombre());
 			this.txfCodigoSat.setText(art.getCodigoSat());
 			this.txaDescripcionArticulo.setText(art.getDescripcion());
-			
-			if(art.isExento() == true) {
+
+			if (art.isExento() == true) {
 				this.rdbtnExento.setSelected(true);
-			}else {
+			} else {
 				this.rdbtnGravado.setSelected(true);
 			}
-			
+
 			this.txfExistenciaArticulo.setText(String.valueOf(art.getExistencia()));
 			this.txfCostoArticulo.setText(String.valueOf(art.getCostoUnitario()));
 			this.txfPrecioGArticulo.setText(String.valueOf(art.getPrecioGeneral()));
 			this.txfPrecioMayoreoArticulo.setText(String.valueOf(art.getPrecioMayoreo()));
 			this.txfCantidadParaMayoreo.setText(String.valueOf(art.getCantidadMayoreo()));
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
-		}catch (Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		
-		
+
 	}
-	
+
 	private void actualizarArticulo() {
-		
+
 		Articulo art = new Articulo();
 
-		if(((String)this.cmbCodigoArticulo.getSelectedItem()).length() < 1 || ((String)this.cmbCodigoArticulo.getSelectedItem()).equals(null)
-				|| ((String)this.cmbCodigoArticulo.getSelectedItem()).isEmpty()) {
+		if (((String) this.cmbCodigoArticulo.getSelectedItem()).length() < 1
+				|| ((String) this.cmbCodigoArticulo.getSelectedItem()).equals(null)
+				|| ((String) this.cmbCodigoArticulo.getSelectedItem()).isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Se debe indicar el código del artículo", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -709,14 +709,14 @@ public class Fr_DatosArticulo extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
-		if(this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
+
+		if (this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
 				|| this.txfPrecioGArticulo.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
+
 		try {
 
 			art.setIdArticulo(Integer.parseInt(this.txfIdArticulo.getText()));
@@ -730,9 +730,9 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
 			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
-			
+
 			System.out.println("Desde la vista---------");
-			
+
 			System.out.println(art.toString());
 
 			articuloController.actualizarArticulo(art);
@@ -746,7 +746,7 @@ public class Fr_DatosArticulo extends JFrame {
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 	}
 
 	private void limpiarCampos() {
@@ -761,5 +761,5 @@ public class Fr_DatosArticulo extends JFrame {
 		this.txfCantidadParaMayoreo.setText("");
 
 	}
-	
+
 }
