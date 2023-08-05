@@ -23,12 +23,15 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.Date;
 import java.sql.SQLException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_DatosCliente extends JFrame {
 
@@ -181,7 +184,7 @@ public class Fr_DatosCliente extends JFrame {
 				public void itemStateChanged(ItemEvent e) {
 					consultarClientePorRFC();
 				}
-			});			
+			});
 		}
 
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
@@ -375,6 +378,15 @@ public class Fr_DatosCliente extends JFrame {
 		panelInferiorBotones.add(horizontalStrut);
 
 		btnGuardar = new JButton("Guardar");
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(tipoOperacion == 0) {
+					insertarNuevoCliente();
+				}else if(tipoOperacion == 1) {
+					
+				}
+			}
+		});
 		btnGuardar.setBackground(new Color(144, 238, 144));
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
@@ -445,23 +457,128 @@ public class Fr_DatosCliente extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
+	/**
+	 * inserta un nuevo registro en la bd
+	 */
 	private void insertarNuevoCliente() {
-		
+
 		Clientes cl = new Clientes();
-		
+		String fecha = null;
+
 		if (this.txfRfcCliente.getText().length() < 10 || this.txfRfcCliente.getText().isEmpty()
 				|| this.txfRfcCliente.getText().equals(null) || this.txfRfcCliente.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el RFC del cliente", "Error", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Debe indicar el RFC del cliente", "Error",
+					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
-		if(this.txfNombreCompleto.getText().length() < 1 || this.txfNombreCompleto.getText().isEmpty()
-				||this.txfNombreCompleto.getText().equals("") || this.txfNombreCompleto.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el nombre del cliente", "Error", JOptionPane.WARNING_MESSAGE);
+
+		if (this.txfNombreCompleto.getText().length() < 1 || this.txfNombreCompleto.getText().isEmpty()
+				|| this.txfNombreCompleto.getText().equals("") || this.txfNombreCompleto.getText().equals(null)) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el nombre del cliente", "Error",
+					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+
+		if (this.txfNombreCorto.getText().length() < 1 || this.txfNombreCorto.getText().isEmpty()
+				|| this.txfNombreCorto.getText().equals(null) || this.txfNombreCorto.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Debe indicar un Alias para el cliente", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (this.txfDiaNac.getText().length() < 1 || this.txfMesNac.getText().length() < 1
+				|| this.txfAnioNac.getText().length() < 1) {
+			JOptionPane.showMessageDialog(this, "Error al indicar fecha", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.txfEmail.getText().length() < 1 || this.txfEmail.getText().isEmpty()
+				|| this.txfEmail.getText().equals(null) || this.txfEmail.getText().equals("")) {
+			JOptionPane.showMessageDialog(this, "Indique un correo electrónico", "Error", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
+
+		if (fecha.isBlank() || fecha.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Indique un correo electrónico", "Error", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (this.txfEstado.getText().isEmpty() || this.txfEstado.getText().isBlank()
+				|| this.txfEstado.getText().length() < 1 || this.txfEstado.getText().equals(null)) {
+			JOptionPane.showMessageDialog(this, "Indique el estado del cliente", "Error", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (this.txfCiudad.getText().isEmpty() || this.txfCiudad.getText().isBlank()
+				|| this.txfCiudad.getText().length() < 1 || this.txfCiudad.getText().equals(null)) {
+			JOptionPane.showMessageDialog(this, "Indique la ciudad del cliente", "Error", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (this.txaDireccion.getText().isEmpty() || this.txaDireccion.getText().isBlank()
+				|| this.txaDireccion.getText().length() < 1 || this.txaDireccion.getText().equals(null)) {
+			JOptionPane.showMessageDialog(this, "Indique la direccion del cliente", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (this.txfCodigoPostal.getText().isEmpty() || this.txfCodigoPostal.getText().isBlank()
+				|| this.txfCodigoPostal.getText().length() < 1 || this.txfCodigoPostal.getText().equals(null)) {
+			JOptionPane.showMessageDialog(this, "Indique el codigo postal del cliente", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		try {
+
+			cl.setRfc(this.txfRfcCliente.getText());
+			cl.setNombre(this.txfNombreCompleto.getText());
+			cl.setNombreCorto(this.txfNombreCorto.getText());
+			cl.setDescripcion(this.txaDescripcion.getText());
+			cl.setFechaNacimiento(Date.valueOf(fecha));
+			cl.setEmail(this.txfEmail.getText());
+			cl.setEstado(this.txfEstado.getText());
+			cl.setCiudad(this.txfCiudad.getText());
+			cl.setDireccion(this.txaDireccion.getText());
+			cl.setCodigoPostal(this.txfCodigoPostal.getText());
+
+			clientesController.insertarNuevoCliente(cl);
+			
+			JOptionPane.showMessageDialog(this, "Cliente registrado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.limpiarCamposFormulario();
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	/**
+	 * borra el contenido de todos los campos del formulario
+	 */
+	private void limpiarCamposFormulario() {
 		
+		this.txfRfcCliente.setText("");
+		this.txfNombreCompleto.setText("");
+		this.txfNombreCorto.setText("");
+		this.txaDescripcion.setText("");
+		this.txfDiaNac.setText("");
+		this.txfMesNac.setText("");
+		this.txfAnioNac.setText("");
+		this.txfEmail.setText("");
+		this.txfEstado.setText("");
+		this.txfCiudad.setText("");
+		this.txaDireccion.setText("");
+		this.txfCodigoPostal.setText("");
 		
 	}
 

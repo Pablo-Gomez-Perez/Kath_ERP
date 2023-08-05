@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Clientes;
@@ -22,117 +23,107 @@ public class ClientesController implements Serializable {
 	 * 
 	 */
 	private Connection cn = null;
-	
-	
+
 	public void verClientesEnTabla(DefaultTableModel tabla) {
-		
+
 		CallableStatement stm = null;
 		ResultSet rset = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL ver_clientes();");
 			rset = stm.executeQuery();
-			
-			while(rset.next()) {
-				
-				Object[] fila = {
-					rset.getString(1),
-					rset.getString(2),
-					rset.getString(3),
-					rset.getString(4),
-					rset.getString(5),
-					rset.getString(6),
-					rset.getString(7),
-					rset.getString(8),
-					rset.getString(9)
-				};
-				
+
+			while (rset.next()) {
+
+				Object[] fila = { rset.getString(1), rset.getString(2), rset.getString(3), rset.getString(4),
+						rset.getString(5), rset.getString(6), rset.getString(7), rset.getString(8), rset.getString(9) };
+
 				tabla.addRow(fila);
-				
+
 			}
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
-				
-				if(rset != null) {
+
+				if (rset != null) {
 					rset.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-				if(cn != null) {
+				if (cn != null) {
 					cn.close();
 				}
-				
-			}catch(SQLException er) {
+
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
-	
-	public void consultarRFCClientes(JComboBox<String> cmb) throws SQLException, Exception{
+
+	public void consultarRFCClientes(JComboBox<String> cmb) throws SQLException, Exception {
 		CallableStatement stm = null;
 		ResultSet rset = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL ver_rfc_clientes();");
 			rset = stm.executeQuery();
-			
-			while(rset.next()) {
+
+			while (rset.next()) {
 				cmb.addItem(rset.getString(2));
 			}
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
-				
-				if(cn != null) {
+
+				if (cn != null) {
 					cn.close();
 				}
-				if(rset != null) {
+				if (rset != null) {
 					rset.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-				
-			}catch(SQLException er) {
+
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
 	}
-	
+
 	public Clientes buscarClientePorRFC(String rfc) throws SQLException, Exception {
-		
+
 		Clientes cl = new Clientes();
 		CallableStatement stm = null;
 		ResultSet rset = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL ver_cliente_por_rfc(?);");
 			stm.setString(1, rfc);
-			
+
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				cl.setId(rset.getInt(1));
 				cl.setRfc(rset.getString(2));
 				cl.setClaveCuentaContable(rset.getString(3));
@@ -146,44 +137,44 @@ public class ClientesController implements Serializable {
 				cl.setDireccion(rset.getString(11));
 				cl.setCodigoPostal(rset.getString(12));
 			}
-			
+
 			return cl;
-		}catch(SQLException er) {
+		} catch (SQLException er) {
 			er.printStackTrace();
 			return null;
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
-		}finally {
+		} finally {
 			try {
-				
-				if(cn != null) {
+
+				if (cn != null) {
 					cn.close();
 				}
-				if(rset != null) {
+				if (rset != null) {
 					rset.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-				
-			}catch(SQLException er) {
+
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
 	}
-	
-	public void insertarNuevoCliente(Clientes cl) throws SQLException, Exception{
-		
+
+	public void insertarNuevoCliente(Clientes cl) throws SQLException, Exception {
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL insert_nuevo_cliente(?,?,?,?,?,?,?,?,?,?);");
-			
+
 			stm.setString(1, cl.getRfc());
 			stm.setString(2, cl.getNombre());
 			stm.setString(3, cl.getNombreCorto());
@@ -194,28 +185,32 @@ public class ClientesController implements Serializable {
 			stm.setString(8, cl.getCiudad());
 			stm.setString(9, cl.getDireccion());
 			stm.setString(10, cl.getCodigoPostal());
-			
+
 			stm.execute();
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} finally {
 			try {
-				if(cn != null) {
+				if (cn != null) {
 					cn.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch (Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 }
