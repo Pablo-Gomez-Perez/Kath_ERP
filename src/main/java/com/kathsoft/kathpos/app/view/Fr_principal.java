@@ -46,6 +46,7 @@ import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
+import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Categoria;
@@ -67,6 +68,7 @@ public class Fr_principal extends JFrame {
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ProveedorController proveedorController = new ProveedorController();
 	private ArticuloController articuloController = new ArticuloController();
+	private ClientesController clientesController = new ClientesController();
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -240,6 +242,18 @@ public class Fr_principal extends JFrame {
 			100, /* Precio g */
 			100 /* Precio m */
 	};
+	
+	private int[] tablaClientesColumnsWidth = {
+			150,
+			100,
+			300,
+			100,
+			180,
+			100,
+			100,
+			400,
+			100
+	};
 
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
@@ -284,6 +298,19 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_19;
 	private JPanel panelEtiquetaClientes;
 	private JPanel panelClientesCentral;
+	private JPanel panelClientesCentralBotones;
+	private JButton btnAgregarCliente;
+	private Component horizontalStrut_20;
+	private JButton btnActualizarCliente;
+	private JScrollPane scrollPaneTablaClientes;
+	private JTable tablaClientes;
+	private JPanel panelClientesCentralBuscar;
+	private JLabel lblNewLabel_21;
+	private Component horizontalStrut_21;
+	private JTextField txfBuscarCliente;
+	private Component horizontalStrut_22;
+	private JButton btnBuscarCliente;
+	private DefaultTableModel modelTablaClientes;
 
 	/**
 	 * Launch the application.
@@ -346,6 +373,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelClientes");
 				panelPrincipalContenedor.updateUI();
 				
+				llenarTablaClientes();
 			}
 		});
 		opcionClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
@@ -639,9 +667,94 @@ public class Fr_principal extends JFrame {
 		panelClientes.add(panelEtiquetaClientes, BorderLayout.NORTH);
 		
 		panelClientesCentral = new JPanel();
+		panelClientesCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelClientesCentral.setBackground(new Color(255, 215, 0));
 		panelClientes.add(panelClientesCentral, BorderLayout.CENTER);
 		panelClientesCentral.setLayout(new BorderLayout(0, 0));
+		
+		panelClientesCentralBotones = new JPanel();
+		FlowLayout fl_panelClientesCentralBotones = (FlowLayout) panelClientesCentralBotones.getLayout();
+		fl_panelClientesCentralBotones.setAlignment(FlowLayout.RIGHT);
+		panelClientesCentralBotones.setBackground(new Color(255, 215, 0));
+		panelClientesCentral.add(panelClientesCentralBotones, BorderLayout.NORTH);
+		
+		btnAgregarCliente = new JButton("Agregar");
+		btnAgregarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Fr_DatosCliente frame = new Fr_DatosCliente(0);
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			}
+		});
+		btnAgregarCliente.setBackground(new Color(144,238,144));
+		btnAgregarCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		panelClientesCentralBotones.add(btnAgregarCliente);
+		
+		horizontalStrut_20 = Box.createHorizontalStrut(20);
+		panelClientesCentralBotones.add(horizontalStrut_20);
+		
+		btnActualizarCliente = new JButton("Actualizar");
+		btnActualizarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Fr_DatosCliente frame = new Fr_DatosCliente(1);
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			}
+		});
+		btnActualizarCliente.setBackground(new Color(144,238,144));
+		btnActualizarCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		panelClientesCentralBotones.add(btnActualizarCliente);
+		
+		scrollPaneTablaClientes = new JScrollPane();
+		panelClientesCentral.add(scrollPaneTablaClientes, BorderLayout.CENTER);
+		
+		modelTablaClientes = new DefaultTableModel();
+		tablaClientes = new JTable();
+		tablaClientes.setModel(modelTablaClientes);
+		tablaClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		scrollPaneTablaClientes.setViewportView(tablaClientes);
+		
+		modelTablaClientes.addColumn("RFC");
+		modelTablaClientes.addColumn("Cta Contable");
+		modelTablaClientes.addColumn("Nombre completo");
+		modelTablaClientes.addColumn("Alias");
+		modelTablaClientes.addColumn("Email");
+		modelTablaClientes.addColumn("Estado");
+		modelTablaClientes.addColumn("Ciudad");
+		modelTablaClientes.addColumn("Direccion");
+		modelTablaClientes.addColumn("Codigo P.");
+		
+		// se remueve el editor de la tabla provedoores
+		for (int i = 0; i < modelTablaClientes.getColumnCount(); i++) {
+			Class<?> colClass = tablaClientes.getColumnClass(i);
+			tablaClientes.setDefaultEditor(colClass, null);
+		}
+		
+		panelClientesCentralBuscar = new JPanel();
+		panelClientesCentralBuscar.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_4 = (FlowLayout) panelClientesCentralBuscar.getLayout();
+		flowLayout_4.setAlignment(FlowLayout.RIGHT);
+		panelClientesCentral.add(panelClientesCentralBuscar, BorderLayout.SOUTH);
+		
+		lblNewLabel_21 = new JLabel("Buscar cliente");
+		lblNewLabel_21.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelClientesCentralBuscar.add(lblNewLabel_21);
+		
+		horizontalStrut_21 = Box.createHorizontalStrut(20);
+		panelClientesCentralBuscar.add(horizontalStrut_21);
+		
+		txfBuscarCliente = new JTextField();
+		panelClientesCentralBuscar.add(txfBuscarCliente);
+		txfBuscarCliente.setColumns(70);
+		this.txfBuscarCliente.setMaximumSize(this.txfBuscarCliente.getPreferredSize());
+		
+		horizontalStrut_22 = Box.createHorizontalStrut(20);
+		panelClientesCentralBuscar.add(horizontalStrut_22);
+		
+		btnBuscarCliente = new JButton("Buscar");
+		btnBuscarCliente.setBackground(new Color(184, 134, 11));
+		btnBuscarCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		panelClientesCentralBuscar.add(btnBuscarCliente);
 
 		panelEmpleados = new JPanel();
 		panelPrincipalContenedor.add(panelEmpleados, "panelEmpleados");
@@ -1322,6 +1435,13 @@ public class Fr_principal extends JFrame {
 			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
 			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
 		}
+		
+		TableColumnModel clientesColumnModel = tablaClientes.getColumnModel();
+		
+		for (int i = 0; i < tablaClientesColumnsWidth.length; i++) {
+			clientesColumnModel.getColumn(i).setPreferredWidth(tablaClientesColumnsWidth[i]);
+			clientesColumnModel.getColumn(i).setMinWidth(tablaClientesColumnsWidth[i]);
+		}
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1760,6 +1880,16 @@ public class Fr_principal extends JFrame {
 			return 5;
 		}
 
+	}
+	
+	private void borrarElementosDeLaTablaClientes() {
+		this.modelTablaClientes.getDataVector().removeAllElements();
+		this.tablaClientes.updateUI();
+	}
+	
+	private void llenarTablaClientes() {
+		this.borrarElementosDeLaTablaClientes();
+		clientesController.verClientesEnTabla(modelTablaClientes);
 	}
 
 	/**

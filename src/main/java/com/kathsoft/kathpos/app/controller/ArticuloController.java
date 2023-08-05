@@ -266,10 +266,6 @@ public class ArticuloController implements java.io.Serializable {
 			stm.setDouble(10, art.getPrecioMayoreo());
 			stm.setInt(11, art.getCantidadMayoreo());
 
-			System.out.println("Desde el controlador---------");
-
-			System.out.println(art.toString());
-
 			stm.execute();
 
 		} catch (SQLException er) {

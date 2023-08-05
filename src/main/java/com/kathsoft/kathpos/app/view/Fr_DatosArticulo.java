@@ -731,10 +731,6 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
-			System.out.println("Desde la vista---------");
-
-			System.out.println(art.toString());
-
 			articuloController.actualizarArticulo(art);
 
 		} catch (SQLException er) {

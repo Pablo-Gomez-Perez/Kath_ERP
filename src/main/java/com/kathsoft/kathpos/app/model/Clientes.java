@@ -19,7 +19,7 @@ public class Clientes extends Usuario {
 	 * 
 	 */
 	private String nombreCorto;
-		
+	private String descripcion;
 	
 
 	/**
@@ -38,9 +38,10 @@ public class Clientes extends Usuario {
 	 * @param nombreCorto
 	 */
 	public Clientes(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
-			String estado, String ciudad, String direccion, String codigoPostal, String nombreCorto) {
+			String estado, String ciudad, String direccion, String codigoPostal, String nombreCorto, String descripcion) {
 		super(id, rfc, idCuentaContable, claveCuentaContable,nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 		this.nombreCorto = nombreCorto;
+		this.descripcion = descripcion;
 	}
 
 
@@ -76,26 +77,38 @@ public class Clientes extends Usuario {
 		return nombreCorto;
 	}
 
-	
-
 	/**
 	 * @param nombreCorto the nombreCorto to set
 	 */
 	public void setNombreCorto(String nombreCorto) {
 		this.nombreCorto = nombreCorto;
 	}
+	
+	/**
+	 * @return the descripcion
+	 */
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	/**
+	 * @param descripcion the descripcion to set
+	 */
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Clientes [getIdCtaContable()=");
-		builder.append(", getNombreCorto()=");
+		builder.append("Clientes [getNombreCorto()=");
 		builder.append(getNombreCorto());
-		builder.append(super.toString());
+		builder.append(", getDescripcion()=");
+		builder.append(getDescripcion());
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 	
 
 }
