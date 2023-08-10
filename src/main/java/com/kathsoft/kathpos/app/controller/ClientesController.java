@@ -5,6 +5,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -186,7 +187,7 @@ public class ClientesController implements Serializable {
 			stm.setString(9, cl.getDireccion());
 			stm.setString(10, cl.getCodigoPostal());
 
-			stm.execute();
+			stm.executeUpdate();
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -207,6 +208,50 @@ public class ClientesController implements Serializable {
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+
+	}
+	
+	public void actualizarCliente(Clientes cl) throws SQLException, Exception{
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL update_cliente(?,?,?,?,?,?,?,?,?,?,?);");
+			
+			stm.setInt(1, cl.getId());
+			stm.setString(2, cl.getClaveCuentaContable());
+			stm.setString(3, cl.getNombre());
+			stm.setString(4, cl.getNombreCorto());
+			stm.setString(5, cl.getDescripcion());
+			stm.setDate(6, cl.getFechaNacimiento());
+			stm.setString(7, cl.getEmail());
+			stm.setString(8, cl.getEstado());
+			stm.setString(9, cl.getCiudad());
+			stm.setString(10, cl.getDireccion());
+			stm.setString(11, cl.getCodigoPostal());
+			
+			stm.executeUpdate();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				if(cn != null) {
+					cn.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}catch(Exception er) {
 				er.printStackTrace();
 			}
 		}
