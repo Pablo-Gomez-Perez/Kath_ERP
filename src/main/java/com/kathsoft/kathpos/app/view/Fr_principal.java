@@ -273,7 +273,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarArticulo;
 	private Component horizontalStrut_12;
 	private JButton btnExportarArticuloExcel;
-	private JButton btnNewButton;
+	private JButton btnCalculadora;
 	private JPanel panelArticulosCentralBuscar;
 	private JLabel lblNewLabel_19;
 	private Component horizontalStrut_13;
@@ -311,6 +311,12 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_22;
 	private JButton btnBuscarCliente;
 	private DefaultTableModel modelTablaClientes;
+	private JPanel panelVentas;
+	private JPanel panelCompras;
+	private JPanel panelEtiquetaVentas;
+	private JPanel panelVentasCentral;
+	private JLabel lblNewLabel_22;
+	private JButton btn_irAVentas;
 
 	/**
 	 * Launch the application.
@@ -443,6 +449,15 @@ public class Fr_principal extends JFrame {
 		subMenuVentas.add(opcionRegistrarVenta);
 
 		opcionConsultarVenta = new JMenuItem("Consultar");
+		opcionConsultarVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelVentas");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+		});
 		subMenuVentas.add(opcionConsultarVenta);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -1345,6 +1360,27 @@ public class Fr_principal extends JFrame {
 		tablaCategorias = new JTable(this.modelTablaCategoriaArticulo);
 		tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPane.setViewportView(tablaCategorias);
+		
+		panelVentas = new JPanel();
+		panelVentas.setBackground(new Color(255, 215, 0));
+		panelPrincipalContenedor.add(panelVentas, "panelVentas");
+		panelVentas.setLayout(new BorderLayout(0, 0));
+		
+		panelEtiquetaVentas = new JPanel();
+		panelEtiquetaVentas.setBackground(new Color(0, 0, 128));
+		panelVentas.add(panelEtiquetaVentas, BorderLayout.NORTH);
+		
+		lblNewLabel_22 = new JLabel("Ventas");
+		lblNewLabel_22.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblNewLabel_22.setForeground(new Color(255, 255, 255));
+		panelEtiquetaVentas.add(lblNewLabel_22);
+		
+		panelVentasCentral = new JPanel();
+		panelVentasCentral.setBackground(new Color(255, 215, 0));
+		panelVentas.add(panelVentasCentral, BorderLayout.CENTER);
+		
+		panelCompras = new JPanel();
+		panelPrincipalContenedor.add(panelCompras, "panelCompras");
 
 		modelTablaCategoriaArticulo.addColumn("id Categoria");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
@@ -1381,16 +1417,28 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
 
-		btnNewButton = new JButton("Calculadora");
-		btnNewButton.addActionListener(new ActionListener() {
+		btnCalculadora = new JButton("Calculadora");
+		btnCalculadora.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirCalculadora();
 			}
 		});
-		btnNewButton.setBackground(new Color(135, 206, 250));
-		btnNewButton.setIcon(
+		btnCalculadora.setBackground(new Color(135, 206, 250));
+		btnCalculadora.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/Calculadora.png")));
-		panelSuperiorBotones.add(btnNewButton);
+		panelSuperiorBotones.add(btnCalculadora);
+		
+		btn_irAVentas = new JButton("Ventas");
+		btn_irAVentas.setBackground(new Color(204, 255, 102));
+		btn_irAVentas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelVentas");
+				panelPrincipalContenedor.updateUI();
+			}
+		});
+		btn_irAVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
+		panelSuperiorBotones.add(btn_irAVentas);
 
 		/**
 		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
