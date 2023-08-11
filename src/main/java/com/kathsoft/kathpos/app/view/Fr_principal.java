@@ -696,9 +696,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarCliente = new JButton("Agregar");
 		btnAgregarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Fr_DatosCliente frame = new Fr_DatosCliente(0);
-				frame.setLocationRelativeTo(null);
-				frame.setVisible(true);
+				abrirFormClientes(0);
 			}
 		});
 		btnAgregarCliente.setBackground(new Color(144,238,144));
@@ -711,9 +709,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarCliente = new JButton("Actualizar");
 		btnActualizarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Fr_DatosCliente frame = new Fr_DatosCliente(1);
-				frame.setLocationRelativeTo(null);
-				frame.setVisible(true);
+				abrirFormClientes(1);
 			}
 		});
 		btnActualizarCliente.setBackground(new Color(144,238,144));
@@ -1432,9 +1428,9 @@ public class Fr_principal extends JFrame {
 		btn_irAVentas.setBackground(new Color(204, 255, 102));
 		btn_irAVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
-				cr.show(panelPrincipalContenedor, "panelVentas");
-				panelPrincipalContenedor.updateUI();
+				
+				abrirFormVentas();
+				
 			}
 		});
 		btn_irAVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
@@ -1822,7 +1818,8 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void abrirVentanaPasswordEmpleado() {
-
+		
+		Component cm = this;
 		String rfcEmpleado = this.cmbRFCEmpleado.getSelectedItem().toString();
 		String nombreCortoEmpleado = this.txfNombreCortoEmpleado.getText();
 
@@ -1840,6 +1837,7 @@ public class Fr_principal extends JFrame {
 				try {
 
 					Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado(rfcEmpleado, nombreCortoEmpleado);
+					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
 				} catch (Exception er) {
 					er.printStackTrace();
@@ -1849,13 +1847,16 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void abrirVentanaFormularioProveedor(int opcion) {
+		
+		Component cm = this;
+		
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
 					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion);
-					fr.setLocationRelativeTo(null);
+					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
 				} catch (Exception er) {
@@ -1868,7 +1869,9 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void abrirVentanaFormularioArticulo(int opcion) {
-
+		
+		Component cm = this;
+		
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
@@ -1877,7 +1880,7 @@ public class Fr_principal extends JFrame {
 				try {
 
 					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion);
-					fr.setLocationRelativeTo(null);
+					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
 				} catch (Exception er) {
@@ -1950,4 +1953,34 @@ public class Fr_principal extends JFrame {
 			er.printStackTrace();
 		}
 	}
+	
+	/**
+	 * abre el formulario del punto de ventas
+	 */
+	private void abrirFormVentas() {
+		Component cm = this;
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas();
+				fr.setLocationRelativeTo(cm);
+				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				fr.setVisible(true);
+			}
+		});
+	}
+	
+	private void abrirFormClientes(int tipoOperacion) {
+		Component cm = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion);
+				frame.setLocationRelativeTo(cm);
+				frame.setVisible(true);
+			}
+		});
+	}
+	
 }

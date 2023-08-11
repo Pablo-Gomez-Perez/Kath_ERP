@@ -17,39 +17,46 @@ public class Ventas implements Serializable {
 	private int idVenta;
 	private Date fechaVenta;
 	private boolean tipoVenta; //para describir si la venta es a contado o credito;
-	private int idEmpleado;
-	private int idCliente;
+	private Empleado empleado;
+	private Clientes cliente;
 	private double subTotal;
 	private double iva;
 	private double total;
 	private boolean statusVenta; //describe si la venta está vigente o cancelada;
 	
+	
+	
 	/**
 	 * @param idVenta
 	 * @param fechaVenta
 	 * @param tipoVenta
-	 * @param idEmpleado
-	 * @param idCliente
+	 * @param empleado
+	 * @param cliente
 	 * @param subTotal
 	 * @param iva
 	 * @param total
 	 * @param statusVenta
 	 */
-	public Ventas(int idVenta, Date fechaVenta, boolean tipoVenta, int idEmpleado, int idCliente, double subTotal,
+	public Ventas(int idVenta, Date fechaVenta, boolean tipoVenta, Empleado empleado, Clientes cliente, double subTotal,
 			double iva, double total, boolean statusVenta) {
 		super();
 		this.idVenta = idVenta;
 		this.fechaVenta = fechaVenta;
 		this.tipoVenta = tipoVenta;
-		this.idEmpleado = idEmpleado;
-		this.idCliente = idCliente;
+		this.empleado = empleado;
+		this.cliente = cliente;
 		this.subTotal = subTotal;
 		this.iva = iva;
 		this.total = total;
 		this.statusVenta = statusVenta;
 	}
 	
-	public Ventas() {}
+	/**
+	 * void constructor
+	 */
+	public Ventas() {
+		
+	}
 	
 	/**
 	 * @return the idVenta
@@ -88,28 +95,28 @@ public class Ventas implements Serializable {
 		this.tipoVenta = tipoVenta;
 	}
 	/**
-	 * @return the idEmpleado
+	 * @return the empleado
 	 */
-	public int getIdEmpleado() {
-		return idEmpleado;
+	public Empleado getEmpleado() {
+		return empleado;
 	}
 	/**
-	 * @param idEmpleado the idEmpleado to set
+	 * @param empleado the empleado to set
 	 */
-	public void setIdEmpleado(int idEmpleado) {
-		this.idEmpleado = idEmpleado;
+	public void setEmpleado(Empleado empleado) {
+		this.empleado = empleado;
 	}
 	/**
-	 * @return the idCliente
+	 * @return the cliente
 	 */
-	public int getIdCliente() {
-		return idCliente;
+	public Clientes getCliente() {
+		return cliente;
 	}
 	/**
-	 * @param idCliente the idCliente to set
+	 * @param cliente the cliente to set
 	 */
-	public void setIdCliente(int idCliente) {
-		this.idCliente = idCliente;
+	public void setCliente(Clientes cliente) {
+		this.cliente = cliente;
 	}
 	/**
 	 * @return the subTotal
@@ -159,62 +166,8 @@ public class Ventas implements Serializable {
 	public void setStatusVenta(boolean statusVenta) {
 		this.statusVenta = statusVenta;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + idCliente;
-		result = prime * result + idEmpleado;
-		result = prime * result + idVenta;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof Ventas)) {
-			return false;
-		}
-		Ventas other = (Ventas) obj;
-		if (idCliente != other.idCliente) {
-			return false;
-		}
-		if (idEmpleado != other.idEmpleado) {
-			return false;
-		}
-		if (idVenta != other.idVenta) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Ventas [idVenta=");
-		builder.append(idVenta);
-		builder.append(", fechaVenta=");
-		builder.append(fechaVenta);
-		builder.append(", tipoVenta=");
-		builder.append(tipoVenta);
-		builder.append(", idEmpleado=");
-		builder.append(idEmpleado);
-		builder.append(", idCliente=");
-		builder.append(idCliente);
-		builder.append(", subTotal=");
-		builder.append(subTotal);
-		builder.append(", iva=");
-		builder.append(iva);
-		builder.append(", total=");
-		builder.append(total);
-		builder.append(", statusVenta=");
-		builder.append(statusVenta);
-		builder.append("]");
-		return builder.toString();
-	}
+	
+	
 		
 	
 }

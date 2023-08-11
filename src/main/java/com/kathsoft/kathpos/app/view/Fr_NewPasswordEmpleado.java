@@ -180,7 +180,6 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		panelBotones.add(btn_Guardar);
 
 		this.pack();
-		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.rfcEmpleado = rfcEmpleado;
 		this.nombreCorto = nombreCorto;
