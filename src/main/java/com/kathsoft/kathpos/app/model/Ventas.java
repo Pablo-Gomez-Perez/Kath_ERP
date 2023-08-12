@@ -16,7 +16,7 @@ public class Ventas implements Serializable {
 	 */	
 	private int idVenta;
 	private Date fechaVenta;
-	private boolean tipoVenta; //para describir si la venta es a contado o credito;
+	private boolean ventaContado; //para describir si la venta es a contado o credito;
 	private Empleado empleado;
 	private Clientes cliente;
 	private double subTotal;
@@ -42,7 +42,7 @@ public class Ventas implements Serializable {
 		super();
 		this.idVenta = idVenta;
 		this.fechaVenta = fechaVenta;
-		this.tipoVenta = tipoVenta;
+		this.ventaContado = tipoVenta;
 		this.empleado = empleado;
 		this.cliente = cliente;
 		this.subTotal = subTotal;
@@ -86,13 +86,13 @@ public class Ventas implements Serializable {
 	 * @return the tipoVenta
 	 */
 	public boolean isTipoVenta() {
-		return tipoVenta;
+		return ventaContado;
 	}
 	/**
 	 * @param tipoVenta the tipoVenta to set
 	 */
 	public void setTipoVenta(boolean tipoVenta) {
-		this.tipoVenta = tipoVenta;
+		this.ventaContado = tipoVenta;
 	}
 	/**
 	 * @return the empleado
