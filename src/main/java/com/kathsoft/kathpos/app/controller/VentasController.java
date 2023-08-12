@@ -21,7 +21,7 @@ public class VentasController implements java.io.Serializable {
 	 */
 	private static Connection cn = null;
 
-	public void verVentasEnTabla(DefaultTableModel tabla) {
+	public void verVentasEnTabla(DefaultTableModel tabla, int opcion) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -29,7 +29,10 @@ public class VentasController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_ventas();");
+			stm = cn.prepareCall("CALL ver_ventas(?);");
+			
+			stm.setInt(1, opcion);
+			
 			rset = stm.executeQuery();
 
 			while (rset.next()) {

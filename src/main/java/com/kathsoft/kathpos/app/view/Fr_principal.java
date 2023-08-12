@@ -49,6 +49,7 @@ import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
+import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Empleado;
 import javax.swing.JRadioButton;
@@ -69,6 +70,7 @@ public class Fr_principal extends JFrame {
 	private ProveedorController proveedorController = new ProveedorController();
 	private ArticuloController articuloController = new ArticuloController();
 	private ClientesController clientesController = new ClientesController();
+	private VentasController ventasController = new VentasController();
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -140,6 +142,7 @@ public class Fr_principal extends JFrame {
 	private DefaultTableModel modelTablaCategoriaArticulo;
 	private DefaultTableModel modelTablaProveedores;
 	private DefaultTableModel modelTablaArticulos;
+	private DefaultTableModel modelTablaVentas;
 	private Component verticalStrut_2;
 	private Component verticalStrut_3;
 	private Box horizontalBox_4;
@@ -254,6 +257,18 @@ public class Fr_principal extends JFrame {
 			400,
 			100
 	};
+	
+	private int[] tablaVentasColumnsWidth = {
+			50, //i venta
+			120, // fecha venta
+			100, //tipo venta
+			210, //empleado
+			210, //Cliente
+			120, //sub total
+			120, //Iva
+			120, //Total
+			90, //Accion
+	};
 
 	private JTextField txfFechaNacEmpleadoMM;
 	private JTextField txfFechaNacEmpleadoYY;
@@ -286,6 +301,7 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNewLabel_20;
 	private Component horizontalStrut_14;
 	private ButtonGroup btnRadioGroupArticulos;
+	private ButtonGroup btnRadioGroupVentas;
 	private JRadioButton rdbBuscarArtPorNombre;
 	private Component horizontalStrut_15;
 	private JRadioButton rdbtBuscarArtPorProveedor;
@@ -317,6 +333,38 @@ public class Fr_principal extends JFrame {
 	private JPanel panelVentasCentral;
 	private JLabel lblNewLabel_22;
 	private JButton btn_irAVentas;
+	private JPanel panelVentasCentralBotones;
+	private JScrollPane scrollPaneTablaVentas;
+	private JTable tablaVentas;
+	private JPanel panelVentasCentralBuscar;
+	private JLabel lblNewLabel_23;
+	private Component horizontalStrut_23;
+	private JRadioButton rdbOrdenarVtPorId;
+	private JRadioButton rdbOrdenarVtPorEmpleado;
+	private JRadioButton rdbOrdenarVtPorCliente;
+	private JRadioButton rdbOrdenarVtPorVigente;
+	private Component horizontalStrut_24;
+	private JButton btNuevaVenta;
+	private JButton btnExportarVentasExcel;
+	private JRadioButton rdbOrdenarVtPorTipo;
+	private Box verticalBox_2;
+	private Box verticalBox_3;
+	private Box horizontalBox_18;
+	private JLabel lblNewLabel_24;
+	private Component horizontalStrut_25;
+	private JTextField txfBuscarVenta;
+	private JButton btnBuscarVenta;
+	private Box horizontalBox_19;
+	private JLabel lblNewLabel_25;
+	private Component horizontalStrut_26;
+	private JRadioButton rdbBuscarVtPorId;
+	private Component horizontalStrut_27;
+	private JRadioButton rdbBuscarVtPorEmpleado;
+	private Component horizontalStrut_28;
+	private JRadioButton rdbBuscarVtPorCliente;
+	private Component horizontalStrut_29;
+	private JRadioButton rdbBuscarVtPorFecha;
+	private Component horizontalStrut_30;
 
 	/**
 	 * Launch the application.
@@ -446,6 +494,11 @@ public class Fr_principal extends JFrame {
 		mnNewMenu.add(subMenuVentas);
 
 		opcionRegistrarVenta = new JMenuItem("Registrar");
+		opcionRegistrarVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormVentas();
+			}
+		});
 		subMenuVentas.add(opcionRegistrarVenta);
 
 		opcionConsultarVenta = new JMenuItem("Consultar");
@@ -456,6 +509,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelVentas");
 				panelPrincipalContenedor.updateUI();
 				
+				llenarTablaVentas(1);
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
@@ -656,7 +710,7 @@ public class Fr_principal extends JFrame {
 		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
 
 		verticalBox_1 = Box.createVerticalBox();
-		verticalBox_1.setBorder(new EmptyBorder(10, 10, 10, 10));
+		verticalBox_1.setBorder(new EmptyBorder(10, 30, 10, 10));
 		panelArticulosCentralBuscar.add(verticalBox_1);
 
 		btnBuscarArticulo = new JButton("Buscar");
@@ -1372,8 +1426,205 @@ public class Fr_principal extends JFrame {
 		panelEtiquetaVentas.add(lblNewLabel_22);
 		
 		panelVentasCentral = new JPanel();
+		panelVentasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelVentasCentral.setBackground(new Color(255, 215, 0));
 		panelVentas.add(panelVentasCentral, BorderLayout.CENTER);
+		panelVentasCentral.setLayout(new BorderLayout(0, 0));
+		
+		panelVentasCentralBotones = new JPanel();
+		panelVentasCentralBotones.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_5 = (FlowLayout) panelVentasCentralBotones.getLayout();
+		flowLayout_5.setAlignment(FlowLayout.RIGHT);
+		panelVentasCentral.add(panelVentasCentralBotones, BorderLayout.NORTH);
+		
+		lblNewLabel_23 = new JLabel("Ordenar por");
+		lblNewLabel_23.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelVentasCentralBotones.add(lblNewLabel_23);
+		
+		horizontalStrut_23 = Box.createHorizontalStrut(5);
+		panelVentasCentralBotones.add(horizontalStrut_23);
+		
+		rdbOrdenarVtPorId = new JRadioButton("Folio");
+		rdbOrdenarVtPorId.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaVentas(1);
+			}
+		});
+		rdbOrdenarVtPorId.setFont(new Font("Tahoma", Font.BOLD, 11));
+		rdbOrdenarVtPorId.setSelected(true);
+		rdbOrdenarVtPorId.setBackground(new Color(255, 215, 0));
+		panelVentasCentralBotones.add(rdbOrdenarVtPorId);
+		
+		rdbOrdenarVtPorEmpleado = new JRadioButton("Empleado");
+		rdbOrdenarVtPorEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaVentas(2);
+			}
+		});
+		rdbOrdenarVtPorEmpleado.setFont(new Font("Tahoma", Font.BOLD, 11));
+		rdbOrdenarVtPorEmpleado.setBackground(new Color(255, 215, 0));
+		panelVentasCentralBotones.add(rdbOrdenarVtPorEmpleado);
+		
+		rdbOrdenarVtPorCliente = new JRadioButton("Cliente");
+		rdbOrdenarVtPorCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaVentas(3);
+			}
+		});
+		rdbOrdenarVtPorCliente.setFont(new Font("Tahoma", Font.BOLD, 11));
+		rdbOrdenarVtPorCliente.setBackground(new Color(255, 215, 0));
+		panelVentasCentralBotones.add(rdbOrdenarVtPorCliente);
+		
+		rdbOrdenarVtPorVigente = new JRadioButton("Vigente");
+		rdbOrdenarVtPorVigente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaVentas(4);
+			}
+		});
+		rdbOrdenarVtPorVigente.setFont(new Font("Tahoma", Font.BOLD, 11));
+		rdbOrdenarVtPorVigente.setBackground(new Color(255, 215, 0));
+		panelVentasCentralBotones.add(rdbOrdenarVtPorVigente);
+		
+		rdbOrdenarVtPorTipo = new JRadioButton("Tipo");
+		rdbOrdenarVtPorTipo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaVentas(5);
+			}
+		});
+		rdbOrdenarVtPorTipo.setFont(new Font("Tahoma", Font.BOLD, 11));
+		rdbOrdenarVtPorTipo.setBackground(new Color(255, 215, 0));
+		panelVentasCentralBotones.add(rdbOrdenarVtPorTipo);
+		
+		btnRadioGroupVentas = new ButtonGroup();
+		
+		btnRadioGroupVentas.add(this.rdbOrdenarVtPorId);
+		btnRadioGroupVentas.add(this.rdbOrdenarVtPorEmpleado);
+		btnRadioGroupVentas.add(this.rdbOrdenarVtPorCliente);
+		btnRadioGroupVentas.add(this.rdbOrdenarVtPorVigente);
+		btnRadioGroupVentas.add(this.rdbOrdenarVtPorTipo);
+		
+		
+		horizontalStrut_24 = Box.createHorizontalStrut(320);
+		panelVentasCentralBotones.add(horizontalStrut_24);
+		
+		btNuevaVenta = new JButton("Punto de venta");
+		btNuevaVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormVentas();
+			}
+		});
+		btNuevaVenta.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
+		btNuevaVenta.setBackground(new Color(152, 251, 152));
+		panelVentasCentralBotones.add(btNuevaVenta);
+		
+		btnExportarVentasExcel = new JButton("Exportar a Excel");
+		btnExportarVentasExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		btnExportarVentasExcel.setBackground(new Color(102, 205, 170));
+		panelVentasCentralBotones.add(btnExportarVentasExcel);
+		
+		scrollPaneTablaVentas = new JScrollPane();
+		panelVentasCentral.add(scrollPaneTablaVentas, BorderLayout.CENTER);
+		
+		modelTablaVentas = new DefaultTableModel();
+		tablaVentas = new JTable();
+		
+		modelTablaVentas.addColumn("Folio");
+		modelTablaVentas.addColumn("Fecha");
+		modelTablaVentas.addColumn("Tipo");
+		modelTablaVentas.addColumn("Atendió");
+		modelTablaVentas.addColumn("Cliente");
+		modelTablaVentas.addColumn("Subtotal");
+		modelTablaVentas.addColumn("IVA");
+		modelTablaVentas.addColumn("Total");
+		modelTablaVentas.addColumn("Vigente");
+		modelTablaVentas.addColumn("Edit");
+		
+		tablaVentas.setModel(modelTablaVentas);
+		scrollPaneTablaVentas.setViewportView(tablaVentas);
+		
+		//se remueve el editor del jtable de ventas
+		for (int i = 0; i < modelTablaVentas.getColumnCount(); i++) {
+			Class<?> colClass = tablaVentas.getColumnClass(i);
+			tablaVentas.setDefaultEditor(colClass, null);
+		}
+		
+		tablaVentas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		panelVentasCentralBuscar = new JPanel();
+		panelVentasCentralBuscar.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_6 = (FlowLayout) panelVentasCentralBuscar.getLayout();
+		flowLayout_6.setAlignment(FlowLayout.LEFT);
+		panelVentasCentral.add(panelVentasCentralBuscar, BorderLayout.SOUTH);
+		
+		verticalBox_2 = Box.createVerticalBox();
+		panelVentasCentralBuscar.add(verticalBox_2);
+		
+		horizontalBox_18 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_18);
+		
+		lblNewLabel_24 = new JLabel("Buscar Venta");
+		lblNewLabel_24.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_18.add(lblNewLabel_24);
+		
+		horizontalStrut_25 = Box.createHorizontalStrut(20);
+		horizontalBox_18.add(horizontalStrut_25);
+		
+		txfBuscarVenta = new JTextField();
+		txfBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_18.add(txfBuscarVenta);
+		txfBuscarVenta.setColumns(70);
+		
+		horizontalBox_19 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_19);
+		
+		lblNewLabel_25 = new JLabel("Buscar por:");
+		lblNewLabel_25.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_19.add(lblNewLabel_25);
+		
+		horizontalStrut_26 = Box.createHorizontalStrut(20);
+		horizontalBox_19.add(horizontalStrut_26);
+		
+		rdbBuscarVtPorId = new JRadioButton("Folio");
+		rdbBuscarVtPorId.setBackground(new Color(255, 215, 0));
+		rdbBuscarVtPorId.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_19.add(rdbBuscarVtPorId);
+		
+		horizontalStrut_27 = Box.createHorizontalStrut(20);
+		horizontalBox_19.add(horizontalStrut_27);
+		
+		rdbBuscarVtPorEmpleado = new JRadioButton("Empleado");
+		rdbBuscarVtPorEmpleado.setBackground(new Color(255, 215, 0));
+		rdbBuscarVtPorEmpleado.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_19.add(rdbBuscarVtPorEmpleado);
+		
+		horizontalStrut_28 = Box.createHorizontalStrut(20);
+		horizontalBox_19.add(horizontalStrut_28);
+		
+		rdbBuscarVtPorCliente = new JRadioButton("Cliente");
+		rdbBuscarVtPorCliente.setBackground(new Color(255, 215, 0));
+		rdbBuscarVtPorCliente.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_19.add(rdbBuscarVtPorCliente);
+		
+		horizontalStrut_29 = Box.createHorizontalStrut(20);
+		horizontalBox_19.add(horizontalStrut_29);
+		
+		rdbBuscarVtPorFecha = new JRadioButton("Fecha");
+		rdbBuscarVtPorFecha.setBackground(new Color(255, 215, 0));
+		rdbBuscarVtPorFecha.setFont(new Font("Tahoma", Font.BOLD, 13));
+		horizontalBox_19.add(rdbBuscarVtPorFecha);
+		
+		horizontalStrut_30 = Box.createHorizontalStrut(460);
+		horizontalBox_19.add(horizontalStrut_30);
+		
+		verticalBox_3 = Box.createVerticalBox();
+		verticalBox_3.setBorder(new EmptyBorder(10, 30, 10, 10));
+		panelVentasCentralBuscar.add(verticalBox_3);
+		
+		btnBuscarVenta = new JButton("Buscar");
+		btnBuscarVenta.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnBuscarVenta.setBackground(new Color(184, 134, 11));
+		verticalBox_3.add(btnBuscarVenta);
 		
 		panelCompras = new JPanel();
 		panelPrincipalContenedor.add(panelCompras, "panelCompras");
@@ -1482,10 +1733,26 @@ public class Fr_principal extends JFrame {
 		
 		TableColumnModel clientesColumnModel = tablaClientes.getColumnModel();
 		
+		/**
+		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
+		 * los clientes registrados
+		 */
 		for (int i = 0; i < tablaClientesColumnsWidth.length; i++) {
 			clientesColumnModel.getColumn(i).setPreferredWidth(tablaClientesColumnsWidth[i]);
 			clientesColumnModel.getColumn(i).setMinWidth(tablaClientesColumnsWidth[i]);
 		}
+		
+		/**
+		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
+		 * las ventas registradas
+		 */
+		TableColumnModel ventasColumnModel = tablaVentas.getColumnModel();
+		
+		for (int i = 0; i < tablaVentasColumnsWidth.length; i++) {
+			ventasColumnModel.getColumn(i).setPreferredWidth(tablaVentasColumnsWidth[i]);
+			ventasColumnModel.getColumn(i).setMinWidth(tablaVentasColumnsWidth[i]);
+		}
+		
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1982,5 +2249,18 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
+	
+	private void llenarTablaVentas(int opcion) {
+		this.borrarElementosDeLaTablaVentas();
+		ventasController.verVentasEnTabla(modelTablaVentas, opcion);
+	}
+	
+	private void borrarElementosDeLaTablaVentas() {
+		this.modelTablaVentas.getDataVector().removeAllElements();
+		this.tablaVentas.updateUI();
+		
+	}
+	
+	
 	
 }
