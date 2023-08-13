@@ -301,7 +301,8 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNewLabel_20;
 	private Component horizontalStrut_14;
 	private ButtonGroup btnRadioGroupArticulos;
-	private ButtonGroup btnRadioGroupVentas;
+	private ButtonGroup btnRadioGroupOrdernarVentas;
+	private ButtonGroup btnRadioGroupBuscarVentas;
 	private JRadioButton rdbBuscarArtPorNombre;
 	private Component horizontalStrut_15;
 	private JRadioButton rdbtBuscarArtPorProveedor;
@@ -1495,13 +1496,13 @@ public class Fr_principal extends JFrame {
 		rdbOrdenarVtPorTipo.setBackground(new Color(255, 215, 0));
 		panelVentasCentralBotones.add(rdbOrdenarVtPorTipo);
 		
-		btnRadioGroupVentas = new ButtonGroup();
+		btnRadioGroupOrdernarVentas = new ButtonGroup();
 		
-		btnRadioGroupVentas.add(this.rdbOrdenarVtPorId);
-		btnRadioGroupVentas.add(this.rdbOrdenarVtPorEmpleado);
-		btnRadioGroupVentas.add(this.rdbOrdenarVtPorCliente);
-		btnRadioGroupVentas.add(this.rdbOrdenarVtPorVigente);
-		btnRadioGroupVentas.add(this.rdbOrdenarVtPorTipo);
+		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorId);
+		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorEmpleado);
+		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorCliente);
+		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorVigente);
+		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorTipo);
 		
 		
 		horizontalStrut_24 = Box.createHorizontalStrut(320);
@@ -1613,6 +1614,13 @@ public class Fr_principal extends JFrame {
 		rdbBuscarVtPorFecha.setFont(new Font("Tahoma", Font.BOLD, 13));
 		horizontalBox_19.add(rdbBuscarVtPorFecha);
 		
+		btnRadioGroupBuscarVentas = new ButtonGroup();
+		
+		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorId);
+		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorEmpleado);
+		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorCliente);
+		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorFecha);
+		
 		horizontalStrut_30 = Box.createHorizontalStrut(460);
 		horizontalBox_19.add(horizontalStrut_30);
 		
@@ -1621,6 +1629,11 @@ public class Fr_principal extends JFrame {
 		panelVentasCentralBuscar.add(verticalBox_3);
 		
 		btnBuscarVenta = new JButton("Buscar");
+		btnBuscarVenta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buscarVentasPor();
+			}
+		});
 		btnBuscarVenta.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		btnBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnBuscarVenta.setBackground(new Color(184, 134, 11));
@@ -2261,6 +2274,25 @@ public class Fr_principal extends JFrame {
 		
 	}
 	
+	private int opcionDeBusquedaDeVenta() {
+		
+		if (this.rdbBuscarVtPorId.isSelected()) {
+			return 1;
+		}
+		if (this.rdbBuscarVtPorEmpleado.isSelected()) {
+			return 2;
+		}
+		if (this.rdbBuscarVtPorCliente.isSelected()) {
+			return 3;
+		}
+		
+		return 4;
+		
+	}
 	
+	private void buscarVentasPor() {
+		this.borrarElementosDeLaTablaVentas();
+		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(), this.opcionDeBusquedaDeVenta());
+	}
 	
 }
