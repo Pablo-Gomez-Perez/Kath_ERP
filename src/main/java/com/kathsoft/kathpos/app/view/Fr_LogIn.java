@@ -180,9 +180,7 @@ public class Fr_LogIn extends JFrame {
 
 		panelInferior.add(btn_ingresar);
 
-		this.emplController.consultaNombresCortosEmpleados(this.jcmbUsuarios);
-		
-		this.setLocationRelativeTo(null);
+		this.emplController.consultaNombresCortosEmpleados(this.jcmbUsuarios);			
 
 		this.pack();
 	}

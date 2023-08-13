@@ -53,6 +53,7 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Empleado;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 
 public class Fr_principal extends JFrame {
 
@@ -76,7 +77,7 @@ public class Fr_principal extends JFrame {
 	private JMenu menuConsultar;
 	private JMenuItem opcionConsultarArticulos;
 	private JPanel panelPrincipalContenedor;
-	private JMenu mnNewMenu;
+	private JMenu menuOperaciones;
 	private JMenuItem opcionClientes;
 	private JMenuItem opcionEmpleados;
 	private JMenuItem opcionProveedores;
@@ -366,6 +367,9 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_29;
 	private JRadioButton rdbBuscarVtPorFecha;
 	private Component horizontalStrut_30;
+	private JSeparator separator;
+	private JMenuItem opcionCerrarSesion;
+	private JMenuItem opcionSalirDelSistema;
 
 	/**
 	 * Launch the application.
@@ -482,17 +486,40 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		menuConsultar.add(opcionMarcas);
+		
+		separator = new JSeparator();
+		menuConsultar.add(separator);
+		
+		opcionCerrarSesion = new JMenuItem("Cerrar sesion");
+		opcionCerrarSesion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormLogin();
+			}
+		});
+		opcionCerrarSesion.setBackground(new Color(255, 153, 153));
+		opcionCerrarSesion.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cerrarSesion.png")));
+		menuConsultar.add(opcionCerrarSesion);
+		
+		opcionSalirDelSistema = new JMenuItem("Salir");
+		opcionSalirDelSistema.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cerrarFormPrincipal();
+			}			
+		});
+		opcionSalirDelSistema.setBackground(new Color(255, 0, 51));
+		opcionSalirDelSistema.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cerrar.png")));
+		menuConsultar.add(opcionSalirDelSistema);
 
-		mnNewMenu = new JMenu("Operaciones");
-		mnNewMenu.setIcon(
+		menuOperaciones = new JMenu("Operaciones");
+		menuOperaciones.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/operaciones.png")));
-		mnNewMenu.setFont(new Font("Segoe UI", Font.BOLD, 13));
-		BarraMenu.add(mnNewMenu);
+		menuOperaciones.setFont(new Font("Segoe UI", Font.BOLD, 13));
+		BarraMenu.add(menuOperaciones);
 
 		subMenuVentas = new JMenu("Ventas");
 		subMenuVentas.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
-		mnNewMenu.add(subMenuVentas);
+		menuOperaciones.add(subMenuVentas);
 
 		opcionRegistrarVenta = new JMenuItem("Registrar");
 		opcionRegistrarVenta.addActionListener(new ActionListener() {
@@ -1770,7 +1797,25 @@ public class Fr_principal extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
+	
+	private void abrirFormLogin() {
+		Component cm = this;
+		this.dispose();
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Fr_LogIn frame = new Fr_LogIn();
+				frame.setLocationRelativeTo(cm);
+				frame.setVisible(true);
+			}
+		});
+	}
+	
+	private void cerrarFormPrincipal() {
+		this.dispose();
+		System.exit(0);
+	}
+	
 	/**
 	 * llena el JTable del panel de categorias con todos los registros encontrados
 	 * en la bd
