@@ -1565,7 +1565,7 @@ public class Fr_principal extends JFrame {
 		modelTablaVentas.addColumn("IVA");
 		modelTablaVentas.addColumn("Total");
 		modelTablaVentas.addColumn("Vigente");
-		modelTablaVentas.addColumn("Edit");
+		//modelTablaVentas.addColumn("Edit");
 		
 		tablaVentas.setModel(modelTablaVentas);
 		scrollPaneTablaVentas.setViewportView(tablaVentas);
@@ -2319,6 +2319,11 @@ public class Fr_principal extends JFrame {
 		
 	}
 	
+	/**
+	 * en función del RadioButton seleccionado retorna el criterio de busqueda
+	 * de las ventas registradas en la base de datos
+	 * @return el criterio de busqueda
+	 */
 	private int opcionDeBusquedaDeVenta() {
 		
 		if (this.rdbBuscarVtPorId.isSelected()) {
@@ -2335,6 +2340,9 @@ public class Fr_principal extends JFrame {
 		
 	}
 	
+	/**
+	 * busca las ventas en la db de acuerdo al RadioButton seleccionado
+	 */
 	private void buscarVentasPor() {
 		this.borrarElementosDeLaTablaVentas();
 		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(), this.opcionDeBusquedaDeVenta());
