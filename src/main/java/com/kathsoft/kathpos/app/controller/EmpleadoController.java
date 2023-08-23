@@ -98,11 +98,17 @@ public class EmpleadoController implements Serializable {
 	 * 
 	 * @param jcmb
 	 */
-	public void consultaNombresCortosEmpleados(JComboBox<String> jcmb) {
+	public void consultaNombresCortosEmpleados(JComboBox<String> jcmb, int id_sucursal) {
+		
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		
 		try {
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			Statement stm = cn.createStatement();
-			ResultSet rset = stm.executeQuery("SELECT * FROM empleados_nombre_costo");
+			stm = cn.prepareCall("CALL ver_rfc_empleado_por_sucursal(?)");
+			stm.setInt(1, id_sucursal);
+			
+			rset = stm.executeQuery();
 
 			while (rset.next()) {
 				jcmb.addItem(rset.getString(1));

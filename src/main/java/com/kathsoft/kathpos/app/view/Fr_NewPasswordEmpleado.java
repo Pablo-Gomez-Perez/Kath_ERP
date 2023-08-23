@@ -5,7 +5,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 
-import javax.naming.ldap.ManageReferralControl;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,7 +24,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
-import javax.swing.JTextField;
 
 public class Fr_NewPasswordEmpleado extends JFrame {
 

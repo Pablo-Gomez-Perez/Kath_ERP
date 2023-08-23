@@ -25,7 +25,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class Fr_LogIn extends JFrame {
 
@@ -44,6 +47,7 @@ public class Fr_LogIn extends JFrame {
 	private JButton btn_cancelar = new JButton("Cancelar");
 	private JButton btn_ingresar = new JButton("Ingresar");
 	private EmpleadoController emplController = new EmpleadoController();
+	private SucursalController sucursalController = new SucursalController();
 	private Empleado empl = new Empleado();
 	
 	//============================================================================================	
@@ -71,6 +75,26 @@ public class Fr_LogIn extends JFrame {
 	};
 	//============================================================================================
 	//============================================================================================
+	private JComboBox<String> cmbSucursal;
+	private Component verticalStrut_3;
+	private JPanel panelCentral;
+	private Box verticalBox_1;
+	private Component horizontalStrut_3;
+	private Box verticalBox;
+	private Component verticalStrut_2;
+	private Box horizontalBox_2;
+	private JLabel lblNewLabel_2;
+	private Component horizontalStrut_5;
+	private Box horizontalBox;
+	private Component horizontalStrut;
+	private Component verticalStrut;
+	private Box horizontalBox_1;
+	private JLabel lblNewLabel_1;
+	private Component horizontalStrut_1;
+	private Component verticalStrut_1;
+	private Component horizontalStrut_4;
+	private JPanel panelInferior;
+	private FlowLayout flowLayout;
 	
 	/**
 	 * Launch the application.
@@ -105,58 +129,85 @@ public class Fr_LogIn extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 
-		JPanel panelCentral = new JPanel();
+		panelCentral = new JPanel();
 		panelCentral.setBackground(new Color(255, 204, 0));
 		panelCentral.setBorder(new LineBorder(new Color(0, 0, 0)));
 		contentPane.add(panelCentral, BorderLayout.CENTER);
 		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.X_AXIS));
 
-		Box verticalBox_1 = Box.createVerticalBox();
+		verticalBox_1 = Box.createVerticalBox();
 		verticalBox_1.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelCentral.add(verticalBox_1);
 
 		verticalBox_1.add(panelImagen);
 
-		Component horizontalStrut_3 = Box.createHorizontalStrut(100);
+		horizontalStrut_3 = Box.createHorizontalStrut(150);
 		panelImagen.add(horizontalStrut_3);
 
-		Box verticalBox = Box.createVerticalBox();
+		verticalBox = Box.createVerticalBox();
+		verticalBox.setBorder(new EmptyBorder(0, 10, 0, 10));
 		panelCentral.add(verticalBox);
+		
+		verticalStrut_2 = Box.createVerticalStrut(20);
+		verticalBox.add(verticalStrut_2);
+		
+		horizontalBox_2 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_2);
+		
+		lblNewLabel_2 = new JLabel("Sucursal");
+		horizontalBox_2.add(lblNewLabel_2);
+		
+		horizontalStrut_5 = Box.createHorizontalStrut(20);
+		horizontalBox_2.add(horizontalStrut_5);
+		
+		cmbSucursal = new JComboBox<String>();
+		this.llenarCmbSucursales();
+		cmbSucursal.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				llenarCmbEmpleados();
+			}
+		});
+		
+		
+		horizontalBox_2.add(cmbSucursal);
+		
+		verticalStrut_3 = Box.createVerticalStrut(20);
+		verticalBox.add(verticalStrut_3);
 
-		Box horizontalBox = Box.createHorizontalBox();
+		horizontalBox = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox);
 
 		horizontalBox.add(lblNewLabel);
 
-		Component horizontalStrut = Box.createHorizontalStrut(20);
+		horizontalStrut = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut);
 
 		horizontalBox.add(jcmbUsuarios);
 
-		Component verticalStrut = Box.createVerticalStrut(20);
+		verticalStrut = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut);
 
-		Box horizontalBox_1 = Box.createHorizontalBox();
+		horizontalBox_1 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_1);
 
-		JLabel lblNewLabel_1 = new JLabel("Contraseña");
+		lblNewLabel_1 = new JLabel("Contraseña");
 		horizontalBox_1.add(lblNewLabel_1);
 
-		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_1);
 		pswfContrasenia.setBackground(new Color(204, 255, 255));
 
 		horizontalBox_1.add(pswfContrasenia);
 
-		Component verticalStrut_1 = Box.createVerticalStrut(20);
+		verticalStrut_1 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_1);
 
-		Component horizontalStrut_4 = Box.createHorizontalStrut(300);
+		horizontalStrut_4 = Box.createHorizontalStrut(300);
 		verticalBox.add(horizontalStrut_4);
 
-		JPanel panelInferior = new JPanel();
+		panelInferior = new JPanel();
 		panelInferior.setBackground(new Color(51, 153, 255));
-		FlowLayout flowLayout = (FlowLayout) panelInferior.getLayout();
+		flowLayout = (FlowLayout) panelInferior.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panelInferior, BorderLayout.SOUTH);
 		btn_cancelar.addActionListener(new ActionListener() {
@@ -180,9 +231,26 @@ public class Fr_LogIn extends JFrame {
 
 		panelInferior.add(btn_ingresar);
 
-		this.emplController.consultaNombresCortosEmpleados(this.jcmbUsuarios);			
+		
 
 		this.pack();
+	}
+	
+	
+	private void llenarCmbSucursales() {
+		this.borrarElementosJcmb(cmbSucursal);
+		sucursalController.consultarSucursales(cmbSucursal);
+		this.cmbSucursal.setSelectedIndex(0);
+	}
+	
+	private void borrarElementosJcmb(JComboBox<String> cmb) {
+		cmb.removeAllItems();
+		cmb.updateUI();
+	}
+	
+	private void llenarCmbEmpleados() {
+		borrarElementosJcmb(this.jcmbUsuarios);
+		this.emplController.consultaNombresCortosEmpleados(this.jcmbUsuarios,this.cmbSucursal.getSelectedIndex() + 1);
 	}
 	
 	/**
