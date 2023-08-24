@@ -52,6 +52,8 @@ import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.app.model.Sucursal;
+
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 
@@ -72,6 +74,7 @@ public class Fr_principal extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private ClientesController clientesController = new ClientesController();
 	private VentasController ventasController = new VentasController();
+	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -373,7 +376,7 @@ public class Fr_principal extends JFrame {
 
 	/**
 	 * Launch the application.
-	 */
+	 *
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -386,11 +389,12 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-
+	*/
+	
 	/**
 	 * Create the frame.
 	 */
-	public Fr_principal() {
+	public Fr_principal(Sucursal sucursal) {
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/1643231.png")));
 		setTitle("Kath POS");

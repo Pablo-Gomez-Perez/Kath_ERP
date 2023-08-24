@@ -27,6 +27,8 @@ import javax.swing.border.LineBorder;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.app.model.Sucursal;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
@@ -49,7 +51,7 @@ public class Fr_LogIn extends JFrame {
 	private EmpleadoController emplController = new EmpleadoController();
 	private SucursalController sucursalController = new SucursalController();
 	private Empleado empl = new Empleado();
-	
+	private Sucursal sucursal;
 	//============================================================================================	
 	//============================================================================================
 	// panel que agrega una imagen al formulario
@@ -164,6 +166,8 @@ public class Fr_LogIn extends JFrame {
 		this.llenarCmbSucursales();
 		cmbSucursal.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				sucursal = sucursalController.consultarSucursalPorId(cmbSucursal.getSelectedIndex() + 1);
+				System.out.println(sucursal.toString());
 				llenarCmbEmpleados();
 			}
 		});
@@ -276,7 +280,7 @@ public class Fr_LogIn extends JFrame {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						Fr_principal frame = new Fr_principal();
+						Fr_principal frame = new Fr_principal(sucursal);
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
