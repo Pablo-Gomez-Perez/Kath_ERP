@@ -2241,7 +2241,7 @@ public class Fr_principal extends JFrame {
 	private void consultarArticulosPorNombre() {
 		this.borrarElementosDeLaTablaArticulos();
 		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos,
-				opcionDeBusquedaDeArticulo());
+				opcionDeBusquedaDeArticulo(),this.sucursal.getIdSucursal());
 	}
 
 	/**

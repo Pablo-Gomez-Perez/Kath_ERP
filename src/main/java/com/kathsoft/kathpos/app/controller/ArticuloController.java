@@ -133,7 +133,7 @@ public class ArticuloController implements java.io.Serializable {
 	 * @param tabla
 	 * @param opcion
 	 */
-	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla, int opcion) {
+	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla, int opcion, int id_sucursal) {
 
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -141,9 +141,10 @@ public class ArticuloController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?,?);");
+			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?,?,?);");
 			stm.setString(1, nombre);
 			stm.setInt(2, opcion);
+			stm.setInt(3, id_sucursal);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
@@ -244,7 +245,13 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
-
+	
+	/**
+	 * 
+	 * @param art
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
 
 		CallableStatement stm = null;
