@@ -395,6 +395,9 @@ public class Fr_principal extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_principal(Sucursal sucursal) {
+		
+		this.sucursal = sucursal;
+		
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/1643231.png")));
 		setTitle("Kath POS");
@@ -2224,7 +2227,7 @@ public class Fr_principal extends JFrame {
 
 	private void llenarTablaArticulos() {
 		this.borrarElementosDeLaTablaArticulos();
-		articuloController.verArticulosEnTabla(modelTablaArticulos);
+		articuloController.verArticulosEnTabla(modelTablaArticulos,this.sucursal.getIdSucursal());
 	}
 
 	/**

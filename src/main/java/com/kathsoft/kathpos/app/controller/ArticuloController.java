@@ -23,7 +23,7 @@ public class ArticuloController implements java.io.Serializable {
 	 */
 	private static Connection cn = null;
 
-	public void verArticulosEnTabla(DefaultTableModel tabla) {
+	public void verArticulosEnTabla(DefaultTableModel tabla, int idSucursal) {
 
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -31,7 +31,8 @@ public class ArticuloController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_articulos();");
+			stm = cn.prepareCall("CALL ver_articulos(?);");
+			stm.setInt(1, idSucursal);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
