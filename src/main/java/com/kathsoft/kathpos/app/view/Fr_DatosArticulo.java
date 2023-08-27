@@ -20,6 +20,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,6 +37,7 @@ import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.app.model.Sucursal;
 
 public class Fr_DatosArticulo extends JFrame {
 
@@ -50,6 +52,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private CategoriaController categoriaController = new CategoriaController();
 	private ProveedorController proveedorController = new ProveedorController();
+	private int idSucursal;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelCentralFormulario;
@@ -122,12 +125,16 @@ public class Fr_DatosArticulo extends JFrame {
 	private JLabel lblNewLabel_12;
 	private Component horizontalStrut_20;
 	private JTextField txfCodigoSat;
+	private JButton btnExistenciaGlobal;
+	private Component horizontalStrut_21;
 
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosArticulo(int tipoOperacion) {
-
+	public Fr_DatosArticulo(int tipoOperacion, int sucursal) {
+		
+		this.idSucursal = sucursal;
+		
 		if (tipoOperacion == 0) {
 			this.setTitle("Nuevo Articulo");
 		} else if (tipoOperacion == 1) {
@@ -328,6 +335,13 @@ public class Fr_DatosArticulo extends JFrame {
 
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
 		horizontalBox_3.add(horizontalStrut_15);
+		
+		btnExistenciaGlobal = new JButton("Global");
+		btnExistenciaGlobal.setBackground(new Color(102, 51, 255));
+		horizontalBox_3.add(btnExistenciaGlobal);
+		
+		horizontalStrut_21 = Box.createHorizontalStrut(20);
+		horizontalBox_3.add(horizontalStrut_21);
 
 		horizontalBox_5 = Box.createHorizontalBox();
 		horizontalBox_5.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Impuestos Trasladado",
@@ -630,7 +644,7 @@ public class Fr_DatosArticulo extends JFrame {
 		try {
 
 			Articulo art = articuloController
-					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem());
+					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem(),this.idSucursal);
 
 			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
 			this.cmbProveedorArticulo.setSelectedItem(art.getNombreProveedor());
@@ -743,6 +757,12 @@ public class Fr_DatosArticulo extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
+	}
+	
+	private void abrirFormExistencias() {
+		Component componente = this;
+		
+		
 	}
 
 	private void limpiarCampos() {

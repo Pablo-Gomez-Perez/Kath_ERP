@@ -308,7 +308,7 @@ public class ArticuloController implements java.io.Serializable {
 	 * @return un objeto de tipo {@code Articulo} en función del codigo pasado como
 	 *         parámetro
 	 */
-	public Articulo consultarArticuloPorCodigo(String codigo) throws SQLException, Exception {
+	public Articulo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
 
 		Articulo art = new Articulo();
 		CallableStatement stm = null;
@@ -317,9 +317,11 @@ public class ArticuloController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?);");
+			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?,?);");
 			stm.setString(1, codigo);
+			stm.setInt(2, idSucursal);
 			rset = stm.executeQuery();
+			
 
 			if (rset.next()) {
 
@@ -370,6 +372,34 @@ public class ArticuloController implements java.io.Serializable {
 			}
 		}
 
+	}
+	
+	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
+		
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		
+		try {
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL ver_existencias_articulo_sucursal(?);");
+			stm.setInt(1, idArticulo);
+			rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				Object[] fila = {
+					rset.getString(1),
+					rset.getInt(2)
+				};
+				
+				tabla.addRow(fila);
+			}
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
 	}
 
 }
