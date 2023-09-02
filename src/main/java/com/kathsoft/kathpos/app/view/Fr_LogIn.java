@@ -167,7 +167,7 @@ public class Fr_LogIn extends JFrame {
 		cmbSucursal.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sucursal = sucursalController.consultarSucursalPorId(cmbSucursal.getSelectedIndex() + 1);
-				System.out.println(sucursal.toString());
+				//System.out.println(sucursal.toString());
 				llenarCmbEmpleados();
 			}
 		});

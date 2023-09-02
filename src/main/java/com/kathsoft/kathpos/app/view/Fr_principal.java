@@ -168,68 +168,8 @@ public class Fr_principal extends JFrame {
 	private JPanel panelEmpleadosEtiqueta;
 	private JLabel lblNewLabel_6;
 	private JPanel panelEmpleadosCentral;
-	private Box boxVerticalEmpleadosFormulario;
-	private Box horizontalBox_6;
-	private JLabel lblNewLabel_7;
-	private JComboBox<String> cmbRFCEmpleado;
-	private Component verticalStrut_8;
-	private Box horizontalBox_7;
-	private JLabel lblNewLabel_8;
-	private JTextField txfCurpEmpleado;
-	private Component horizontalStrut_3;
-	private JLabel lblNewLabel_9;
-	private JTextField txfNombreCortoEmpleado;
-	private Component verticalStrut_9;
-	private Box horizontalBox_8;
-	private JLabel lblNewLabel_10;
-	private JTextField txfNombreCompletoEmpleado;
-	private Component verticalStrut_10;
-	private Box horizontalBox_9;
-	private JLabel lblNewLabel_11;
-	private JTextField txfFechaNacEmpleadoDD;
 	private Component horizontalStrut_4;
-	private JLabel lblNewLabel_12;
-	private JTextField txfEmailEmpleado;
-	private Component verticalStrut_11;
-	private Box horizontalBox_10;
-	private JLabel lblNewLabel_13;
-	private JTextField txfEstadoEmpleado;
-	private Component horizontalStrut_5;
-	private JLabel lblNewLabel_14;
-	private JTextField txfCiudadEmpleado;
-	private Component verticalStrut_12;
-	private Box horizontalBox_11;
-	private JLabel lblNewLabel_15;
-	private JTextField txfDireccionEmpleado;
-	private Component horizontalStrut_6;
-	private JLabel lblNewLabel_16;
-	private JTextField txfCodigoPostalEmpleado;
-	private Component verticalStrut_13;
-	private Box horizontalBox_12;
-	private JLabel lblNewLabel_17;
-	private JPasswordField txpsContraseniaEmpleado;
-	private Component horizontalStrut_7;
-	private JButton btnNuevaContraseniaEmpleado;
-	private Box boxVerticalEmpleadosTabla;
-	private Component verticalStrut_14;
-	private Component verticalStrut_15;
-	private Box horizontalBox_13;
-	private JLabel lblNewLabel_18;
-	private JTextField txfbuscarEmpleadoEnTabla;
-	private Component horizontalStrut_8;
-	private JButton btnBuscarEmpleadoEnTabla;
-	private Component verticalStrut_16;
-	private Box horizontalBox_14;
-	private JScrollPane scrollPane_2;
-	private JTable tableEmpleados;
 	private DefaultTableModel modelTablaEmpleados;
-	private Component verticalStrut_17;
-	private Box horizontalBox_15;
-	private Component verticalStrut_18;
-	private JButton btnActualizarEmpleado;
-	private Component horizontalStrut_9;
-	private JButton btnAgregarEmpleado;
-	private Component verticalStrut_19;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
@@ -273,9 +213,6 @@ public class Fr_principal extends JFrame {
 			120, //Total
 			90, //Accion
 	};
-
-	private JTextField txfFechaNacEmpleadoMM;
-	private JTextField txfFechaNacEmpleadoYY;
 	private JLabel lblNewLabel_2;
 	private JPanel panelProovedorCentral;
 	private JScrollPane scrollPaneTablaProveedores;
@@ -377,11 +314,12 @@ public class Fr_principal extends JFrame {
 	/**
 	 * Launch the application.
 	 *
+	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Fr_principal frame = new Fr_principal();
+					Fr_principal frame = new Fr_principal(new Sucursal(2, null, null, null, null, null, null, null, null));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -389,7 +327,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-	*/
+	
 	
 	/**
 	 * Create the frame.
@@ -872,66 +810,7 @@ public class Fr_principal extends JFrame {
 		panelEmpleadosCentral = new JPanel();
 		panelEmpleadosCentral.setBackground(new Color(255, 215, 0));
 		panelEmpleados.add(panelEmpleadosCentral, BorderLayout.CENTER);
-		panelEmpleadosCentral.setLayout(new BoxLayout(panelEmpleadosCentral, BoxLayout.X_AXIS));
-
-		boxVerticalEmpleadosFormulario = Box.createVerticalBox();
-		boxVerticalEmpleadosFormulario.setBorder(
-				new CompoundBorder(new EmptyBorder(0, 5, 0, 5), new TitledBorder(new LineBorder(new Color(0, 0, 0)),
-						"Datos y Actualizacion", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
-		panelEmpleadosCentral.add(boxVerticalEmpleadosFormulario);
-
-		verticalStrut_14 = Box.createVerticalStrut(20);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_14);
-
-		horizontalBox_6 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_6);
-
-		lblNewLabel_7 = new JLabel("RFC Empleado");
-		horizontalBox_6.add(lblNewLabel_7);
-
-		cmbRFCEmpleado = new JComboBox<String>();
-		// ==================================================================================================================================================================================================================
-		cmbRFCEmpleado.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if ((String) cmbRFCEmpleado.getSelectedItem() == null || cmbRFCEmpleado.getSelectedItem().equals("")
-						|| ((String) cmbRFCEmpleado.getSelectedItem()).length() < 1) {
-					return;
-				}
-				consultarEmpleadoPorRfc((String) cmbRFCEmpleado.getSelectedItem());
-			}
-		});
-		// ==================================================================================================================================================================================================================
-		this.cmbRFCEmpleado.setEditable(true);
-		// cmbRFCEmpleado.setEditable(false);
-		// cmbRFCEmpleado.setToolTipText("Presiona enter para ver detalles del
-		// empleado");
-
-		horizontalBox_6.add(cmbRFCEmpleado);
-
-		verticalStrut_8 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_8);
-
-		horizontalBox_7 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_7);
-
-		lblNewLabel_8 = new JLabel("CURP");
-		horizontalBox_7.add(lblNewLabel_8);
-
-		txfCurpEmpleado = new JTextField();
-		horizontalBox_7.add(txfCurpEmpleado);
-		txfCurpEmpleado.setColumns(20);
-		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
-
-		horizontalStrut_3 = Box.createHorizontalStrut(10);
-		horizontalBox_7.add(horizontalStrut_3);
-
-		lblNewLabel_9 = new JLabel("Nombre Corto");
-		horizontalBox_7.add(lblNewLabel_9);
-
-		txfNombreCortoEmpleado = new JTextField();
-		horizontalBox_7.add(txfNombreCortoEmpleado);
-		txfNombreCortoEmpleado.setColumns(10);
-		this.txfNombreCortoEmpleado.setMaximumSize(this.txfNombreCortoEmpleado.getPreferredSize());
+		panelEmpleadosCentral.setLayout(new BorderLayout(0, 0));
 
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
@@ -1072,264 +951,9 @@ public class Fr_principal extends JFrame {
 		horizontalBox = Box.createHorizontalBox();
 		boxVerticalMarcasFormulario.add(horizontalBox);
 
-		verticalStrut_9 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_9);
-
-		horizontalBox_8 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_8);
-
-		lblNewLabel_10 = new JLabel("Nombre completo");
-		horizontalBox_8.add(lblNewLabel_10);
-
-		txfNombreCompletoEmpleado = new JTextField();
-		horizontalBox_8.add(txfNombreCompletoEmpleado);
-		txfNombreCompletoEmpleado.setColumns(35);
-		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
-
-		verticalStrut_10 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_10);
-
-		horizontalBox_9 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_9);
-
-		lblNewLabel_11 = new JLabel("Fecha de n.");
-		horizontalBox_9.add(lblNewLabel_11);
-
-		txfFechaNacEmpleadoDD = new JTextField();
-		txfFechaNacEmpleadoDD.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (ch < '0' || ch > '9') {
-					e.consume();
-				}
-			}
-		});
-		txfFechaNacEmpleadoDD.setToolTipText("Día");
-		horizontalBox_9.add(txfFechaNacEmpleadoDD);
-		txfFechaNacEmpleadoDD.setColumns(2);
-		this.txfFechaNacEmpleadoDD.setMaximumSize(this.txfFechaNacEmpleadoDD.getPreferredSize());
-
-		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_9.add(horizontalStrut_4);
-
-		txfFechaNacEmpleadoMM = new JTextField();
-		txfFechaNacEmpleadoMM.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (ch < '0' || ch > '9') {
-					e.consume();
-				}
-			}
-		});
-		txfFechaNacEmpleadoMM.setToolTipText("Mes");
-		horizontalBox_9.add(txfFechaNacEmpleadoMM);
-		txfFechaNacEmpleadoMM.setColumns(2);
-		this.txfFechaNacEmpleadoMM.setMaximumSize(this.txfFechaNacEmpleadoMM.getPreferredSize());
-
-		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_9.add(horizontalStrut_4);
-
-		txfFechaNacEmpleadoYY = new JTextField();
-		txfFechaNacEmpleadoYY.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (ch < '0' || ch > '9') {
-					e.consume();
-				}
-			}
-		});
-		txfFechaNacEmpleadoYY.setToolTipText("Año");
-		horizontalBox_9.add(txfFechaNacEmpleadoYY);
-		txfFechaNacEmpleadoYY.setColumns(4);
-		this.txfFechaNacEmpleadoYY.setMaximumSize(this.txfFechaNacEmpleadoYY.getPreferredSize());
-
-		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_9.add(horizontalStrut_4);
-
-		lblNewLabel_12 = new JLabel("Email");
-		horizontalBox_9.add(lblNewLabel_12);
-
-		txfEmailEmpleado = new JTextField();
-		horizontalBox_9.add(txfEmailEmpleado);
-		txfEmailEmpleado.setColumns(20);
-		this.txfEmailEmpleado.setMaximumSize(this.txfEmailEmpleado.getPreferredSize());
-
-		verticalStrut_11 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_11);
-
-		horizontalBox_10 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_10);
-
-		lblNewLabel_13 = new JLabel("Estado");
-		horizontalBox_10.add(lblNewLabel_13);
-
-		txfEstadoEmpleado = new JTextField();
-		horizontalBox_10.add(txfEstadoEmpleado);
-		txfEstadoEmpleado.setColumns(15);
-		this.txfEstadoEmpleado.setMaximumSize(this.txfEstadoEmpleado.getPreferredSize());
-
-		horizontalStrut_5 = Box.createHorizontalStrut(20);
-		horizontalBox_10.add(horizontalStrut_5);
-
-		lblNewLabel_14 = new JLabel("Ciudad");
-		horizontalBox_10.add(lblNewLabel_14);
-
-		txfCiudadEmpleado = new JTextField();
-		horizontalBox_10.add(txfCiudadEmpleado);
-		txfCiudadEmpleado.setColumns(15);
-		this.txfCiudadEmpleado.setMaximumSize(this.txfCiudadEmpleado.getPreferredSize());
-
-		verticalStrut_12 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_12);
-
-		horizontalBox_11 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_11);
-
-		lblNewLabel_15 = new JLabel("Direccion");
-		horizontalBox_11.add(lblNewLabel_15);
-
-		txfDireccionEmpleado = new JTextField();
-		horizontalBox_11.add(txfDireccionEmpleado);
-		txfDireccionEmpleado.setColumns(20);
-		this.txfDireccionEmpleado.setMaximumSize(this.txfDireccionEmpleado.getPreferredSize());
-
-		horizontalStrut_6 = Box.createHorizontalStrut(20);
-		horizontalBox_11.add(horizontalStrut_6);
-
-		lblNewLabel_16 = new JLabel("Codigo Postal");
-		horizontalBox_11.add(lblNewLabel_16);
-
-		txfCodigoPostalEmpleado = new JTextField();
-		txfCodigoPostalEmpleado.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (ch < '0' || ch > '9') {
-					e.consume();
-				}
-			}
-		});
-		horizontalBox_11.add(txfCodigoPostalEmpleado);
-		txfCodigoPostalEmpleado.setColumns(8);
-		this.txfCodigoPostalEmpleado.setMaximumSize(this.txfCodigoPostalEmpleado.getPreferredSize());
-
-		verticalStrut_13 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_13);
-
-		horizontalBox_12 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_12);
-
-		lblNewLabel_17 = new JLabel("Contraseña");
-		horizontalBox_12.add(lblNewLabel_17);
-
-		txpsContraseniaEmpleado = new JPasswordField();
-		txpsContraseniaEmpleado.setEnabled(false);
-		txpsContraseniaEmpleado.setEditable(false);
-		txpsContraseniaEmpleado.setColumns(20);
-		horizontalBox_12.add(txpsContraseniaEmpleado);
-		this.txpsContraseniaEmpleado.setMaximumSize(this.txpsContraseniaEmpleado.getPreferredSize());
-
-		horizontalStrut_7 = Box.createHorizontalStrut(20);
-		horizontalBox_12.add(horizontalStrut_7);
-
-		btnNuevaContraseniaEmpleado = new JButton("Nueva");
-		btnNuevaContraseniaEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaPasswordEmpleado();
-			}
-		});
-		btnNuevaContraseniaEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
-		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
-		horizontalBox_12.add(btnNuevaContraseniaEmpleado);
-
-		verticalStrut_17 = Box.createVerticalStrut(5);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_17);
-
-		horizontalBox_15 = Box.createHorizontalBox();
-		boxVerticalEmpleadosFormulario.add(horizontalBox_15);
-
-		verticalStrut_18 = Box.createVerticalStrut(20);
-		horizontalBox_15.add(verticalStrut_18);
-
-		btnActualizarEmpleado = new JButton("Actualizar");
-		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
-		btnActualizarEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actualizarEmpleado();
-			}
-		});
-		btnActualizarEmpleado.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
-		horizontalBox_15.add(btnActualizarEmpleado);
-
-		horizontalStrut_9 = Box.createHorizontalStrut(20);
-		horizontalBox_15.add(horizontalStrut_9);
-
-		btnAgregarEmpleado = new JButton("Agregar");
-		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
-		btnAgregarEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insertarNuevoEmpleado();
-			}
-		});
-		btnAgregarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
-		horizontalBox_15.add(btnAgregarEmpleado);
-
-		verticalStrut_19 = Box.createVerticalStrut(150);
-		boxVerticalEmpleadosFormulario.add(verticalStrut_19);
-
-		boxVerticalEmpleadosTabla = Box.createVerticalBox();
-		boxVerticalEmpleadosTabla.setBorder(
-				new CompoundBorder(new EmptyBorder(0, 5, 0, 5), new TitledBorder(new LineBorder(new Color(0, 0, 0)),
-						"Registros", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
-		panelEmpleadosCentral.add(boxVerticalEmpleadosTabla);
-
-		verticalStrut_15 = Box.createVerticalStrut(20);
-		boxVerticalEmpleadosTabla.add(verticalStrut_15);
-
-		horizontalBox_13 = Box.createHorizontalBox();
-		boxVerticalEmpleadosTabla.add(horizontalBox_13);
-
-		lblNewLabel_18 = new JLabel("Buscar");
-		horizontalBox_13.add(lblNewLabel_18);
-
-		txfbuscarEmpleadoEnTabla = new JTextField();
-		horizontalBox_13.add(txfbuscarEmpleadoEnTabla);
-		txfbuscarEmpleadoEnTabla.setColumns(80);
-		this.txfbuscarEmpleadoEnTabla.setMaximumSize(this.txfbuscarEmpleadoEnTabla.getPreferredSize());
-
-		horizontalStrut_8 = Box.createHorizontalStrut(20);
-		horizontalBox_13.add(horizontalStrut_8);
-
-		btnBuscarEmpleadoEnTabla = new JButton("Buscar");
-		btnBuscarEmpleadoEnTabla.setBackground(new Color(205, 133, 63));
-		btnBuscarEmpleadoEnTabla.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
-		horizontalBox_13.add(btnBuscarEmpleadoEnTabla);
-
-		verticalStrut_16 = Box.createVerticalStrut(20);
-		boxVerticalEmpleadosTabla.add(verticalStrut_16);
-
-		horizontalBox_14 = Box.createHorizontalBox();
-		boxVerticalEmpleadosTabla.add(horizontalBox_14);
-
-		scrollPane_2 = new JScrollPane();
-		scrollPane_2.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-		horizontalBox_14.add(scrollPane_2);
-
 		// ================================================= Configuracion tabla
 		// Empleados ==============================================================
 		modelTablaEmpleados = new DefaultTableModel();
-		tableEmpleados = new JTable();
-		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		// tableEmpleados.setEnabled(false);
-		scrollPane_2.setViewportView(tableEmpleados);
-		tableEmpleados.setModel(modelTablaEmpleados);
 
 		modelTablaEmpleados.addColumn("id");
 		modelTablaEmpleados.addColumn("RFC");
@@ -1734,12 +1358,6 @@ public class Fr_principal extends JFrame {
 		btn_irAVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
-		/**
-		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * empleados
-		 */
-		TableColumnModel empleadosColumnModel = tableEmpleados.getColumnModel();
-
 		for (int i = 0; i < tableEmpleadosColumnsWidth.length; i++) {
 			empleadosColumnModel.getColumn(i).setPreferredWidth(tableEmpleadosColumnsWidth[i]);
 			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);
@@ -1903,156 +1521,6 @@ public class Fr_principal extends JFrame {
 	}
 
 	/**
-	 * inserta un nuevo registro de empleado en la bd
-	 */
-	private void insertarNuevoEmpleado() {
-
-		Empleado empl = new Empleado();
-
-		if (this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un RFC", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un CURP", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe indicar el nombre", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		String fecha = "";
-
-		if (this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
-				|| this.txfFechaNacEmpleadoMM.getText() == null || this.txfFechaNacEmpleadoMM.getText() == ""
-				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		} else {
-			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-"
-					+ this.txfFechaNacEmpleadoDD.getText();
-		}
-
-		if (fecha.equals("") || fecha.length() < 2) {
-			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Indique el correo Electrónico", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		// System.out.println(fecha);
-
-		try {
-
-			empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
-			empl.setCurp(this.txfCurpEmpleado.getText());
-			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
-			empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
-			empl.setFechaNacimiento(java.sql.Date.valueOf(fecha));
-			empl.setEmail(this.txfEmailEmpleado.getText());
-			empl.setEstado(this.txfEstadoEmpleado.getText());
-			empl.setCiudad(this.txfCiudadEmpleado.getText());
-			empl.setDireccion(this.txfDireccionEmpleado.getText());
-			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
-
-			empleadoController.insertarNuevoEmpleado(empl);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error", "Error Object", JOptionPane.ERROR_MESSAGE);
-		}
-
-		this.llenarCmbRfcEmpleados();
-		this.llenarTablaEmpleados();
-
-	}
-
-	/**
-	 * actualiza los registros de un empleado específico en la bd
-	 */
-	private void actualizarEmpleado() {
-
-		Empleado empl = new Empleado();
-
-		if (this.cmbRFCEmpleado.getSelectedItem() == null || this.cmbRFCEmpleado.getSelectedItem().toString() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un RFC", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfCurpEmpleado.getText() == null || this.txfCurpEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un CURP", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreCompletoEmpleado.getText() == null || this.txfNombreCompletoEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe indicar el nombre", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreCortoEmpleado.getText() == null || this.txfNombreCortoEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Debe asignar un alias o nombre corto", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		String fecha = "";
-
-		if (this.txfFechaNacEmpleadoDD.getText() == null || this.txfFechaNacEmpleadoDD.getText() == ""
-				|| this.txfFechaNacEmpleadoMM.getText() == null || this.txfFechaNacEmpleadoMM.getText() == ""
-				|| this.txfFechaNacEmpleadoYY.getText() == null || this.txfFechaNacEmpleadoYY.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		} else {
-			fecha = this.txfFechaNacEmpleadoYY.getText() + "-" + this.txfFechaNacEmpleadoMM.getText() + "-"
-					+ this.txfFechaNacEmpleadoDD.getText();
-		}
-
-		if (fecha.equals("") || fecha.length() < 2) {
-			JOptionPane.showMessageDialog(null, "Indique la fecha correctamente", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfEmailEmpleado.getText() == null || this.txfEmailEmpleado.getText() == "") {
-			JOptionPane.showMessageDialog(null, "Indique el correo Electrónico", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		try {
-
-			empl.setRfc(this.cmbRFCEmpleado.getSelectedItem().toString());
-			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
-			empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
-			empl.setFechaNacimiento(java.sql.Date.valueOf(fecha));
-			empl.setEmail(this.txfEmailEmpleado.getText());
-			empl.setEstado(this.txfEstadoEmpleado.getText());
-			empl.setCiudad(this.txfCiudadEmpleado.getText());
-			empl.setDireccion(this.txfDireccionEmpleado.getText());
-			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
-
-			empleadoController.actualizarEmpleado(empl);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error", "Error Object", JOptionPane.ERROR_MESSAGE);
-		}
-
-		this.llenarCmbRfcEmpleados();
-		this.llenarTablaEmpleados();
-	}
-
-	/**
 	 * coloca los valores de la consulta en sus respectivos campos de texto
 	 */
 	private void consultarCategoriaPorNombre(String nombre) {
@@ -2147,35 +1615,6 @@ public class Fr_principal extends JFrame {
 	 */
 	private void limpiarCamposPanelCategoria() {
 		this.txaDescripcionCategoria.setText("");
-	}
-
-	private void abrirVentanaPasswordEmpleado() {
-		
-		Component cm = this;
-		String rfcEmpleado = this.cmbRFCEmpleado.getSelectedItem().toString();
-		String nombreCortoEmpleado = this.txfNombreCortoEmpleado.getText();
-
-		if (rfcEmpleado.equals("") || rfcEmpleado == null || rfcEmpleado.length() < 1) {
-			JOptionPane.showMessageDialog(this, "Error", "No se ha seleccionado un empleado",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		System.out.println(rfcEmpleado);
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-
-					Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado(rfcEmpleado, nombreCortoEmpleado);
-					frame.setLocationRelativeTo(cm);
-					frame.setVisible(true);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
 	}
 
 	private void abrirVentanaFormularioProveedor(int opcion) {
@@ -2317,7 +1756,7 @@ public class Fr_principal extends JFrame {
 	
 	private void llenarTablaVentas(int opcion) {
 		this.borrarElementosDeLaTablaVentas();
-		ventasController.verVentasEnTabla(modelTablaVentas, opcion);
+		ventasController.verVentasEnTabla(modelTablaVentas, opcion, this.sucursal.getIdSucursal());
 	}
 	
 	private void borrarElementosDeLaTablaVentas() {

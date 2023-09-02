@@ -1,0 +1,340 @@
+package com.kathsoft.kathpos.app.view;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
+import javax.swing.JComboBox;
+import java.awt.Component;
+import javax.swing.JTextField;
+import java.awt.Dimension;
+import javax.swing.JPasswordField;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+import java.awt.FlowLayout;
+
+public class Fr_DatosEmpleado extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2754103795838559070L;
+	/**
+	 * 
+	 * 
+	 */
+	private JPanel contentPane;
+	private JPanel panelSuperiorEtiqueta;
+	private JPanel panelCentralFormulario;
+	private JPanel panelInferiorBotones;
+	private JLabel lblNewLabel;
+	private Component verticalStrut;
+	private Box horizontalBox;
+	private JLabel lblNewLabel_1;
+	private JComboBox<String> cmbRFCEmpleado;
+	private Component verticalStrut_1;
+	private Box horizontalBox_1;
+	private JLabel lblNewLabel_2;
+	private JTextField txfCurpEmpleado;
+	private Component horizontalStrut;
+	private JLabel lblNewLabel_3;
+	private JTextField txfNombreCortoEmpleado;
+	private Component verticalStrut_2;
+	private Box horizontalBox_2;
+	private JLabel lblNewLabel_4;
+	private JTextField txfNombreCompletoEmpleado;
+	private Component verticalStrut_3;
+	private Box horizontalBox_3;
+	private JLabel lblNewLabel_5;
+	private JTextField txfFechaNacEmpleadoDD;
+	private Component horizontalStrut_1;
+	private JTextField txfFechaNacEmpleadoMM;
+	private Component horizontalStrut_2;
+	private JTextField txfFechaNacEmpleadoYY;
+	private Component horizontalStrut_3;
+	private JLabel lblNewLabel_6;
+	private JTextField txfEmailEmpleado;
+	private Component verticalStrut_4;
+	private Box horizontalBox_4;
+	private JLabel lblNewLabel_7;
+	private JTextField txfEstadoEmpleado;
+	private Component horizontalStrut_4;
+	private JLabel lblNewLabel_8;
+	private JTextField txfCiudadEmpleado;
+	private Component verticalStrut_5;
+	private Box horizontalBox_5;
+	private JLabel lblNewLabel_9;
+	private JTextField txfDireccionEmpleado;
+	private Component horizontalStrut_5;
+	private JLabel lblNewLabel_10;
+	private JTextField txfCodigoPostalEmpleado;
+	private Component verticalStrut_6;
+	private Box horizontalBox_6;
+	private JLabel lblNewLabel_11;
+	private JPasswordField txpsContraseniaEmpleado;
+	private Component horizontalStrut_6;
+	private JButton btnNuevaContraseniaEmpleado;
+	private Component verticalStrut_7;
+	private Box horizontalBox_7;
+	private JButton btnCancelar;
+	private Component horizontalStrut_7;
+	private JButton btnAgregarEmpleado;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Fr_DatosEmpleado frame = new Fr_DatosEmpleado();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Fr_DatosEmpleado() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 581, 512);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 215, 0));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		panelSuperiorEtiqueta = new JPanel();
+		this.panelSuperiorEtiqueta.setBackground(new Color(0,0,128));
+		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
+		
+		lblNewLabel = new JLabel("Agregar Nuevo Empleado");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblNewLabel.setForeground(new Color(255, 255, 255));
+		panelSuperiorEtiqueta.add(lblNewLabel);
+		
+		panelCentralFormulario = new JPanel();
+		panelCentralFormulario.setBackground(new Color(255, 215, 0));
+		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
+		panelCentralFormulario.setLayout(new BoxLayout(panelCentralFormulario, BoxLayout.Y_AXIS));
+		
+		verticalStrut = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut);
+		
+		horizontalBox = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox);
+		
+		lblNewLabel_1 = new JLabel("RFC Empleado");
+		horizontalBox.add(lblNewLabel_1);
+		
+		cmbRFCEmpleado = new JComboBox<String>();
+		cmbRFCEmpleado.setEditable(true);
+		horizontalBox.add(cmbRFCEmpleado);
+		
+		verticalStrut_1 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_1);
+		
+		horizontalBox_1 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_1);
+		
+		lblNewLabel_2 = new JLabel("CURP");
+		horizontalBox_1.add(lblNewLabel_2);
+		
+		txfCurpEmpleado = new JTextField();
+		txfCurpEmpleado.setMaximumSize(new Dimension(166, 20));
+		txfCurpEmpleado.setColumns(60);
+		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
+		horizontalBox_1.add(txfCurpEmpleado);
+		
+		horizontalStrut = Box.createHorizontalStrut(10);
+		horizontalBox_1.add(horizontalStrut);
+		
+		lblNewLabel_3 = new JLabel("Nombre Corto");
+		horizontalBox_1.add(lblNewLabel_3);
+		
+		txfNombreCortoEmpleado = new JTextField();
+		txfNombreCortoEmpleado.setMaximumSize(new Dimension(86, 20));
+		txfNombreCortoEmpleado.setColumns(40);
+		this.txfNombreCortoEmpleado.setMaximumSize(this.txfNombreCortoEmpleado.getPreferredSize());
+		horizontalBox_1.add(txfNombreCortoEmpleado);
+		
+		verticalStrut_2 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_2);
+		
+		horizontalBox_2 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_2);
+		
+		lblNewLabel_4 = new JLabel("Nombre completo");
+		horizontalBox_2.add(lblNewLabel_4);
+		
+		txfNombreCompletoEmpleado = new JTextField();
+		txfNombreCompletoEmpleado.setMaximumSize(new Dimension(286, 20));
+		txfNombreCompletoEmpleado.setColumns(60);
+		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
+		horizontalBox_2.add(txfNombreCompletoEmpleado);
+		
+		verticalStrut_3 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_3);
+		
+		horizontalBox_3 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_3);
+		
+		lblNewLabel_5 = new JLabel("Fecha de n.");
+		horizontalBox_3.add(lblNewLabel_5);
+		
+		txfFechaNacEmpleadoDD = new JTextField();
+		txfFechaNacEmpleadoDD.setToolTipText("Día");
+		txfFechaNacEmpleadoDD.setMaximumSize(new Dimension(22, 20));
+		txfFechaNacEmpleadoDD.setColumns(4);
+		this.txfFechaNacEmpleadoDD.setMaximumSize(this.txfFechaNacEmpleadoDD.getPreferredSize());
+		horizontalBox_3.add(txfFechaNacEmpleadoDD);
+		
+		horizontalStrut_1 = Box.createHorizontalStrut(5);
+		horizontalBox_3.add(horizontalStrut_1);
+		
+		txfFechaNacEmpleadoMM = new JTextField();
+		txfFechaNacEmpleadoMM.setToolTipText("Mes");
+		txfFechaNacEmpleadoMM.setMaximumSize(new Dimension(22, 20));
+		txfFechaNacEmpleadoMM.setColumns(4);
+		this.txfFechaNacEmpleadoMM.setMaximumSize(this.txfFechaNacEmpleadoMM.getPreferredSize());
+		horizontalBox_3.add(txfFechaNacEmpleadoMM);
+		
+		horizontalStrut_2 = Box.createHorizontalStrut(5);
+		horizontalBox_3.add(horizontalStrut_2);
+		
+		txfFechaNacEmpleadoYY = new JTextField();
+		txfFechaNacEmpleadoYY.setToolTipText("Año");
+		txfFechaNacEmpleadoYY.setMaximumSize(new Dimension(38, 20));
+		txfFechaNacEmpleadoYY.setColumns(8);
+		this.txfFechaNacEmpleadoYY.setMaximumSize(this.txfFechaNacEmpleadoYY.getPreferredSize());
+		horizontalBox_3.add(txfFechaNacEmpleadoYY);
+		
+		horizontalStrut_3 = Box.createHorizontalStrut(5);
+		horizontalBox_3.add(horizontalStrut_3);
+		
+		lblNewLabel_6 = new JLabel("Email");
+		horizontalBox_3.add(lblNewLabel_6);
+		
+		txfEmailEmpleado = new JTextField();
+		txfEmailEmpleado.setMaximumSize(new Dimension(166, 20));
+		txfEmailEmpleado.setColumns(40);
+		this.txfEmailEmpleado.setMaximumSize(this.txfEmailEmpleado.getPreferredSize());
+		horizontalBox_3.add(txfEmailEmpleado);
+		
+		verticalStrut_4 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_4);
+		
+		horizontalBox_4 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_4);
+		
+		lblNewLabel_7 = new JLabel("Estado");
+		horizontalBox_4.add(lblNewLabel_7);
+		
+		txfEstadoEmpleado = new JTextField();
+		txfEstadoEmpleado.setMaximumSize(new Dimension(126, 20));
+		txfEstadoEmpleado.setColumns(30);
+		this.txfEstadoEmpleado.setMaximumSize(this.txfEstadoEmpleado.getPreferredSize());
+		horizontalBox_4.add(txfEstadoEmpleado);
+		
+		horizontalStrut_4 = Box.createHorizontalStrut(20);
+		horizontalBox_4.add(horizontalStrut_4);
+		
+		lblNewLabel_8 = new JLabel("Ciudad");
+		horizontalBox_4.add(lblNewLabel_8);
+		
+		txfCiudadEmpleado = new JTextField();
+		txfCiudadEmpleado.setMaximumSize(new Dimension(126, 20));
+		txfCiudadEmpleado.setColumns(40);
+		this.txfCiudadEmpleado.setMaximumSize(this.txfCiudadEmpleado.getPreferredSize());
+		horizontalBox_4.add(txfCiudadEmpleado);
+		
+		verticalStrut_5 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_5);
+		
+		horizontalBox_5 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_5);
+		
+		lblNewLabel_9 = new JLabel("Direccion");
+		horizontalBox_5.add(lblNewLabel_9);
+		
+		txfDireccionEmpleado = new JTextField();
+		txfDireccionEmpleado.setMaximumSize(new Dimension(166, 20));
+		txfDireccionEmpleado.setColumns(50);
+		this.txfDireccionEmpleado.setMaximumSize(this.txfDireccionEmpleado.getPreferredSize());
+		horizontalBox_5.add(txfDireccionEmpleado);
+		
+		horizontalStrut_5 = Box.createHorizontalStrut(20);
+		horizontalBox_5.add(horizontalStrut_5);
+		
+		lblNewLabel_10 = new JLabel("Codigo Postal");
+		horizontalBox_5.add(lblNewLabel_10);
+		
+		txfCodigoPostalEmpleado = new JTextField();
+		txfCodigoPostalEmpleado.setMaximumSize(new Dimension(70, 20));
+		txfCodigoPostalEmpleado.setColumns(30);
+		horizontalBox_5.add(txfCodigoPostalEmpleado);
+		
+		verticalStrut_6 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_6);
+		
+		horizontalBox_6 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_6);
+		
+		lblNewLabel_11 = new JLabel("Contraseña");
+		horizontalBox_6.add(lblNewLabel_11);
+		
+		txpsContraseniaEmpleado = new JPasswordField();
+		txpsContraseniaEmpleado.setMaximumSize(new Dimension(166, 20));
+		txpsContraseniaEmpleado.setEnabled(false);
+		txpsContraseniaEmpleado.setEditable(false);
+		txpsContraseniaEmpleado.setColumns(60);
+		this.txpsContraseniaEmpleado.setMaximumSize(this.txpsContraseniaEmpleado.getPreferredSize());
+		
+		horizontalBox_6.add(txpsContraseniaEmpleado);
+		
+		horizontalStrut_6 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_6);
+		
+		btnNuevaContraseniaEmpleado = new JButton("Nueva");
+		btnNuevaContraseniaEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
+		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
+		horizontalBox_6.add(btnNuevaContraseniaEmpleado);
+		
+		verticalStrut_7 = Box.createVerticalStrut(80);
+		panelCentralFormulario.add(verticalStrut_7);
+		
+		panelInferiorBotones = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelInferiorBotones.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		this.panelInferiorBotones.setBackground(new Color(30,144,255));
+		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
+		
+		horizontalBox_7 = Box.createHorizontalBox();
+		panelInferiorBotones.add(horizontalBox_7);
+		
+		btnCancelar = new JButton("Actualizar");
+		btnCancelar.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnCancelar.setBackground(new Color(205, 92, 92));
+		horizontalBox_7.add(btnCancelar);
+		
+		horizontalStrut_7 = Box.createHorizontalStrut(20);
+		horizontalBox_7.add(horizontalStrut_7);
+		
+		btnAgregarEmpleado = new JButton("Agregar");
+		btnAgregarEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
+		horizontalBox_7.add(btnAgregarEmpleado);
+	}
+
+}

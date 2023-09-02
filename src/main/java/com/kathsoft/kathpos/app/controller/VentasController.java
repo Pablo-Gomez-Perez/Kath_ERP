@@ -29,7 +29,7 @@ public class VentasController implements java.io.Serializable {
 	 * @param tabla  -> tabla en la que será mostrada la información
 	 * @param opcion -> opción de ordenamiento
 	 */
-	public void verVentasEnTabla(DefaultTableModel tabla, int opcion) {
+	public void verVentasEnTabla(DefaultTableModel tabla, int opcion, int sucursal) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -37,9 +37,10 @@ public class VentasController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_ventas(?);");
+			stm = cn.prepareCall("CALL ver_ventas(?,?);");
 
 			stm.setInt(1, opcion);
+			stm.setInt(2, sucursal);
 
 			rset = stm.executeQuery();
 
