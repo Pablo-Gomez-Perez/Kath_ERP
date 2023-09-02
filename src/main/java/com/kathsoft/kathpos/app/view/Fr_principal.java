@@ -168,7 +168,6 @@ public class Fr_principal extends JFrame {
 	private JPanel panelEmpleadosEtiqueta;
 	private JLabel lblNewLabel_6;
 	private JPanel panelEmpleadosCentral;
-	private Component horizontalStrut_4;
 	private DefaultTableModel modelTablaEmpleados;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
@@ -310,6 +309,8 @@ public class Fr_principal extends JFrame {
 	private JSeparator separator;
 	private JMenuItem opcionCerrarSesion;
 	private JMenuItem opcionSalirDelSistema;
+	private JScrollPane scrollPaneTablaEmpleados;
+	private JTable tableEmpleados;
 
 	/**
 	 * Launch the application.
@@ -395,7 +396,6 @@ public class Fr_principal extends JFrame {
 				panelPrincipalContenedor.updateUI();
 
 				llenarTablaEmpleados();
-				llenarCmbRfcEmpleados();
 			}
 		});
 		opcionEmpleados.setIcon(
@@ -808,9 +808,33 @@ public class Fr_principal extends JFrame {
 		panelEmpleadosEtiqueta.add(lblNewLabel_6);
 
 		panelEmpleadosCentral = new JPanel();
+		panelEmpleadosCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelEmpleadosCentral.setBackground(new Color(255, 215, 0));
 		panelEmpleados.add(panelEmpleadosCentral, BorderLayout.CENTER);
 		panelEmpleadosCentral.setLayout(new BorderLayout(0, 0));
+		
+		scrollPaneTablaEmpleados = new JScrollPane();
+		panelEmpleadosCentral.add(scrollPaneTablaEmpleados, BorderLayout.CENTER);			
+		
+		modelTablaEmpleados = new DefaultTableModel();
+		tableEmpleados = new JTable();
+		tableEmpleados.setModel(this.modelTablaEmpleados);		
+		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);		
+
+		modelTablaEmpleados.addColumn("id");
+		modelTablaEmpleados.addColumn("RFC");
+		modelTablaEmpleados.addColumn("CURP");
+		modelTablaEmpleados.addColumn("Nombre");
+		modelTablaEmpleados.addColumn("Nick");
+		modelTablaEmpleados.addColumn("Email");
+
+		// remueve el editor del jtable
+		for (int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
+			Class<?> colClass = tableEmpleados.getColumnClass(i);
+			tableEmpleados.setDefaultEditor(colClass, null);
+		}
+		
+		scrollPaneTablaEmpleados.setViewportView(tableEmpleados);
 
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
@@ -952,21 +976,7 @@ public class Fr_principal extends JFrame {
 		boxVerticalMarcasFormulario.add(horizontalBox);
 
 		// ================================================= Configuracion tabla
-		// Empleados ==============================================================
-		modelTablaEmpleados = new DefaultTableModel();
-
-		modelTablaEmpleados.addColumn("id");
-		modelTablaEmpleados.addColumn("RFC");
-		modelTablaEmpleados.addColumn("CURP");
-		modelTablaEmpleados.addColumn("Nombre");
-		modelTablaEmpleados.addColumn("Nick");
-		modelTablaEmpleados.addColumn("Email");
-
-		// remueve el editor del jtable
-		for (int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
-			Class<?> colClass = tableEmpleados.getColumnClass(i);
-			tableEmpleados.setDefaultEditor(colClass, null);
-		}
+		// Empleados ==============================================================		
 
 		// =================================================================================================================================================
 
@@ -1357,7 +1367,9 @@ public class Fr_principal extends JFrame {
 		});
 		btn_irAVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
-
+		
+		TableColumnModel empleadosColumnModel = tableEmpleados.getColumnModel();
+		
 		for (int i = 0; i < tableEmpleadosColumnsWidth.length; i++) {
 			empleadosColumnModel.getColumn(i).setPreferredWidth(tableEmpleadosColumnsWidth[i]);
 			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);
@@ -1473,52 +1485,7 @@ public class Fr_principal extends JFrame {
 		this.cmbNombreDeCategoria.updateUI();
 		categoriaController.obtenerIndicesDeCategorias(this.cmbNombreDeCategoria);
 		this.cmbNombreDeCategoria.setSelectedIndex(0);
-	}
-
-	/**
-	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos
-	 * retornados por la vista almacenada
-	 */
-	private void llenarCmbRfcEmpleados() {
-		this.cmbRFCEmpleado.removeAllItems();
-		this.cmbRFCEmpleado.updateUI();
-		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
-		cmbRFCEmpleado.setSelectedIndex(1);
-	}
-
-	/**
-	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como
-	 * parametro y asigna los valores correspondientes a sus respectivos campos en
-	 * el formulario
-	 * 
-	 * @param rfc
-	 */
-	private void consultarEmpleadoPorRfc(String rfc) {
-		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
-		String dia = "";
-		String mes = "";
-		String anio = "";
-
-		if (empl.getFechaNacimiento() != null) {
-			String[] fecha = empl.getFechaNacimiento().toString().split("-");
-			dia = fecha[2];
-			mes = fecha[1];
-			anio = fecha[0];
-		}
-
-		this.txfCurpEmpleado.setText(empl.getCurp());
-		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
-		this.txfNombreCompletoEmpleado.setText(empl.getNombre());
-		this.txfFechaNacEmpleadoDD.setText(dia);
-		this.txfFechaNacEmpleadoMM.setText(mes);
-		this.txfFechaNacEmpleadoYY.setText(anio);
-		this.txfEmailEmpleado.setText(empl.getEmail());
-		this.txfEstadoEmpleado.setText(empl.getEstado());
-		this.txfCiudadEmpleado.setText(empl.getCiudad());
-		this.txfDireccionEmpleado.setText(empl.getDireccion());
-		this.txfCodigoPostalEmpleado.setText(empl.getCodigoPostal());
-		this.txpsContraseniaEmpleado.setText(empl.getPassword());
-	}
+	}	
 
 	/**
 	 * coloca los valores de la consulta en sus respectivos campos de texto

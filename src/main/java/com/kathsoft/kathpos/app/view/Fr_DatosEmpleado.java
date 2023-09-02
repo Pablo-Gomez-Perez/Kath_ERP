@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.model.Empleado;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -19,6 +23,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.FlowLayout;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class Fr_DatosEmpleado extends JFrame {
 	/**
@@ -29,6 +35,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * 
 	 * 
 	 */
+	private EmpleadoController empleadoController = new EmpleadoController();
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelCentralFormulario;
@@ -139,6 +146,11 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox.add(lblNewLabel_1);
 		
 		cmbRFCEmpleado = new JComboBox<String>();
+		cmbRFCEmpleado.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				consultarEmpleadoPorRfc((String)cmbRFCEmpleado.getSelectedItem());
+			}
+		});
 		cmbRFCEmpleado.setEditable(true);
 		horizontalBox.add(cmbRFCEmpleado);
 		
@@ -335,6 +347,58 @@ public class Fr_DatosEmpleado extends JFrame {
 		btnAgregarEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		horizontalBox_7.add(btnAgregarEmpleado);
+		
+		llenarCmbRfcEmpleados();
+	}
+	
+	
+	/**
+	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos
+	 * retornados por la vista almacenada
+	 */
+	private void llenarCmbRfcEmpleados() {
+		this.cmbRFCEmpleado.removeAllItems();
+		this.cmbRFCEmpleado.updateUI();
+		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
+		cmbRFCEmpleado.setSelectedIndex(1);
+	}
+	
+	/**
+	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como
+	 * parametro y asigna los valores correspondientes a sus respectivos campos en
+	 * el formulario
+	 * 
+	 * @param rfc
+	 */
+	private void consultarEmpleadoPorRfc(String rfc) {
+		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
+		String dia = "";
+		String mes = "";
+		String anio = "";
+
+		if (empl.getFechaNacimiento() != null) {
+			String[] fecha = empl.getFechaNacimiento().toString().split("-");
+			dia = fecha[2];
+			mes = fecha[1];
+			anio = fecha[0];
+		}
+
+		this.txfCurpEmpleado.setText(empl.getCurp());
+		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
+		this.txfNombreCompletoEmpleado.setText(empl.getNombre());
+		this.txfFechaNacEmpleadoDD.setText(dia);
+		this.txfFechaNacEmpleadoMM.setText(mes);
+		this.txfFechaNacEmpleadoYY.setText(anio);
+		this.txfEmailEmpleado.setText(empl.getEmail());
+		this.txfEstadoEmpleado.setText(empl.getEstado());
+		this.txfCiudadEmpleado.setText(empl.getCiudad());
+		this.txfDireccionEmpleado.setText(empl.getDireccion());
+		this.txfCodigoPostalEmpleado.setText(empl.getCodigoPostal());
+		this.txpsContraseniaEmpleado.setText(empl.getPassword());
 	}
 
 }
+
+
+
+
