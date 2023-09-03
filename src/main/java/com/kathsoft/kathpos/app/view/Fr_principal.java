@@ -311,6 +311,10 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionSalirDelSistema;
 	private JScrollPane scrollPaneTablaEmpleados;
 	private JTable tableEmpleados;
+	private JPanel panelEmpleadosCentralbotones;
+	private JButton btnAgregarEmpleado;
+	private Component horizontalStrut_3;
+	private JButton btnActualizarEmpleado;
 
 	/**
 	 * Launch the application.
@@ -835,6 +839,35 @@ public class Fr_principal extends JFrame {
 		}
 		
 		scrollPaneTablaEmpleados.setViewportView(tableEmpleados);
+		
+		panelEmpleadosCentralbotones = new JPanel();
+		FlowLayout flowLayout_7 = (FlowLayout) panelEmpleadosCentralbotones.getLayout();
+		flowLayout_7.setAlignment(FlowLayout.RIGHT);
+		panelEmpleadosCentralbotones.setBackground(new Color(255, 215, 0));
+		panelEmpleadosCentral.add(panelEmpleadosCentralbotones, BorderLayout.NORTH);
+		
+		btnAgregarEmpleado = new JButton("Agregar");
+		btnAgregarEmpleado.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnAgregarEmpleado.setBackground(new Color(144,238,144));
+		btnAgregarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormularioEmpleados(0);
+			}
+		});
+		panelEmpleadosCentralbotones.add(btnAgregarEmpleado);
+		
+		horizontalStrut_3 = Box.createHorizontalStrut(20);
+		panelEmpleadosCentralbotones.add(horizontalStrut_3);
+		
+		btnActualizarEmpleado = new JButton("Actualizar");
+		btnActualizarEmpleado.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarEmpleado.setBackground(new Color(144,238,144));
+		btnActualizarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormularioEmpleados(1);
+			}
+		});
+		panelEmpleadosCentralbotones.add(btnActualizarEmpleado);
 
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
@@ -1629,6 +1662,25 @@ public class Fr_principal extends JFrame {
 
 		});
 
+	}
+	
+	private void abrirFormularioEmpleados(int opcion) {
+		Component cm = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					
+					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion);
+					fr.setLocationRelativeTo(cm);
+					fr.setVisible(true);
+					
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
+			}
+		});
 	}
 
 	private void llenarTablaArticulos() {

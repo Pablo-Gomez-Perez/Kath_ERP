@@ -241,17 +241,18 @@ public class EmpleadoController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_nuevo_empleado(?,?,?,?,?,?,?,?,?,?);");
-			stm.setString(1, empl.getRfc());
-			stm.setString(2, empl.getCurp());
-			stm.setString(3, empl.getNombre());
-			stm.setString(4, empl.getNombreCorto());
-			stm.setDate(5, empl.getFechaNacimiento());
-			stm.setString(6, empl.getEmail());
-			stm.setString(7, empl.getEstado());
-			stm.setString(8, empl.getCiudad());
-			stm.setString(9, empl.getDireccion());
-			stm.setString(10, empl.getCodigoPostal());
+			stm = cn.prepareCall("CALL insert_nuevo_empleado(?,?,?,?,?,?,?,?,?,?,?);");
+			stm.setInt(1, empl.getIdSucursal());
+			stm.setString(2, empl.getRfc());
+			stm.setString(3, empl.getCurp());
+			stm.setString(4, empl.getNombre());
+			stm.setString(5, empl.getNombreCorto());
+			stm.setDate(6, empl.getFechaNacimiento());
+			stm.setString(7, empl.getEmail());
+			stm.setString(8, empl.getEstado());
+			stm.setString(9, empl.getCiudad());
+			stm.setString(10, empl.getDireccion());
+			stm.setString(11, empl.getCodigoPostal());
 			stm.execute();
 
 		} catch (SQLException er) {

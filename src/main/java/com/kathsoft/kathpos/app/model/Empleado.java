@@ -18,6 +18,7 @@ public class Empleado extends Usuario {
 	/**
 	 * 
 	 */
+	private int idSucursal;
 	private String curp;
 	private String nombreCorto;
 	private String password;
@@ -39,10 +40,11 @@ public class Empleado extends Usuario {
 	 * @param nombreCorto
 	 * @param password
 	 */
-	public Empleado(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
+	public Empleado(int id, int idSucursal, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
 			String estado, String ciudad, String direccion, String codigoPostal, String curp, String nombreCorto,
 			String password) {
 		super(id, rfc, idCuentaContable, claveCuentaContable, nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
+		this.idSucursal = idSucursal;
 		this.curp = curp;
 		this.nombreCorto = nombreCorto;
 		this.password = password;
@@ -72,7 +74,15 @@ public class Empleado extends Usuario {
 	public Empleado() {
 		
 	}
-
+	
+	public void setIdSucursal(int idSucursal) {
+		this.idSucursal = idSucursal;
+	}
+	
+	public int getIdSucursal() {
+		return this.idSucursal;
+	}
+	
 	/**
 	 * @return the curp
 	 */
@@ -118,14 +128,19 @@ public class Empleado extends Usuario {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Empleado [getCurp()=");
-		builder.append(getCurp());
-		builder.append(", getNombreCorto()=");
-		builder.append(getNombreCorto());
-		builder.append(super.toString());
+		builder.append("Empleado [idSucursal=");
+		builder.append(idSucursal);
+		builder.append(", curp=");
+		builder.append(curp);
+		builder.append(", nombreCorto=");
+		builder.append(nombreCorto);
+		builder.append(", password=");
+		builder.append(password);
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
 	
 	
 }

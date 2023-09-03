@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
 
 import java.awt.BorderLayout;
@@ -92,10 +93,15 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JButton btnCancelar;
 	private Component horizontalStrut_7;
 	private JButton btnAgregarEmpleado;
+	private JTextField txfRfcEmpleado;
+	private Component horizontalStrut_8;
+	private JLabel lblNewLabel_12;
+	private JComboBox cmbSucursalEmpleado;
+	private SucursalController sucursalController = new SucursalController();
 
 	/**
 	 * Launch the application.
-	 */
+	 *
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -107,12 +113,12 @@ public class Fr_DatosEmpleado extends JFrame {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosEmpleado() {
+	public Fr_DatosEmpleado(int opcion) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
 		contentPane = new JPanel();
@@ -124,11 +130,20 @@ public class Fr_DatosEmpleado extends JFrame {
 		
 		panelSuperiorEtiqueta = new JPanel();
 		this.panelSuperiorEtiqueta.setBackground(new Color(0,0,128));
-		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
+		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);			
 		
-		lblNewLabel = new JLabel("Agregar Nuevo Empleado");
+		lblNewLabel = new JLabel();			
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel.setForeground(new Color(255, 255, 255));
+		
+		if(opcion == 0) {
+			this.setTitle("Nuevo Empleado");
+			lblNewLabel.setText("Agregar Nuevo Empleado");
+		}else if(opcion == 1) {
+			this.setTitle("Actualizar Empleado");
+			lblNewLabel.setText("Actualizar Empleado");
+		}
+		
 		panelSuperiorEtiqueta.add(lblNewLabel);
 		
 		panelCentralFormulario = new JPanel();
@@ -145,14 +160,22 @@ public class Fr_DatosEmpleado extends JFrame {
 		lblNewLabel_1 = new JLabel("RFC Empleado");
 		horizontalBox.add(lblNewLabel_1);
 		
-		cmbRFCEmpleado = new JComboBox<String>();
-		cmbRFCEmpleado.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				consultarEmpleadoPorRfc((String)cmbRFCEmpleado.getSelectedItem());
-			}
-		});
-		cmbRFCEmpleado.setEditable(true);
-		horizontalBox.add(cmbRFCEmpleado);
+		if(opcion == 0) {
+			this.txfRfcEmpleado = new JTextField();
+			this.txfRfcEmpleado.setColumns(60);
+			this.txfRfcEmpleado.setMaximumSize(this.txfRfcEmpleado.getPreferredSize());
+			horizontalBox.add(txfRfcEmpleado);
+		}else if(opcion == 1) {
+			cmbRFCEmpleado = new JComboBox<String>();
+			llenarCmbRfcEmpleados();
+			cmbRFCEmpleado.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					consultarEmpleadoPorRfc((String)cmbRFCEmpleado.getSelectedItem());
+				}
+			});
+			cmbRFCEmpleado.setEditable(true);
+			horizontalBox.add(cmbRFCEmpleado);
+		}			
 		
 		verticalStrut_1 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_1);
@@ -165,21 +188,18 @@ public class Fr_DatosEmpleado extends JFrame {
 		
 		txfCurpEmpleado = new JTextField();
 		txfCurpEmpleado.setMaximumSize(new Dimension(166, 20));
-		txfCurpEmpleado.setColumns(60);
+		txfCurpEmpleado.setColumns(40);
 		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
 		horizontalBox_1.add(txfCurpEmpleado);
 		
-		horizontalStrut = Box.createHorizontalStrut(10);
-		horizontalBox_1.add(horizontalStrut);
+		horizontalStrut_8 = Box.createHorizontalStrut(20);
+		horizontalBox_1.add(horizontalStrut_8);
 		
-		lblNewLabel_3 = new JLabel("Nombre Corto");
-		horizontalBox_1.add(lblNewLabel_3);
+		lblNewLabel_12 = new JLabel("Sucursal");
+		horizontalBox_1.add(lblNewLabel_12);
 		
-		txfNombreCortoEmpleado = new JTextField();
-		txfNombreCortoEmpleado.setMaximumSize(new Dimension(86, 20));
-		txfNombreCortoEmpleado.setColumns(40);
-		this.txfNombreCortoEmpleado.setMaximumSize(this.txfNombreCortoEmpleado.getPreferredSize());
-		horizontalBox_1.add(txfNombreCortoEmpleado);
+		cmbSucursalEmpleado = new JComboBox();
+		horizontalBox_1.add(cmbSucursalEmpleado);
 		
 		verticalStrut_2 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_2);
@@ -195,6 +215,18 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfNombreCompletoEmpleado.setColumns(60);
 		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
 		horizontalBox_2.add(txfNombreCompletoEmpleado);
+		
+		lblNewLabel_3 = new JLabel("Nombre Corto");
+		horizontalBox_2.add(lblNewLabel_3);
+		
+		horizontalStrut = Box.createHorizontalStrut(10);
+		horizontalBox_2.add(horizontalStrut);
+		
+		txfNombreCortoEmpleado = new JTextField();
+		horizontalBox_2.add(txfNombreCortoEmpleado);
+		txfNombreCortoEmpleado.setMaximumSize(new Dimension(86, 20));
+		txfNombreCortoEmpleado.setColumns(40);
+		this.txfNombreCortoEmpleado.setMaximumSize(this.txfNombreCortoEmpleado.getPreferredSize());
 		
 		verticalStrut_3 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_3);
@@ -346,9 +378,11 @@ public class Fr_DatosEmpleado extends JFrame {
 		btnAgregarEmpleado = new JButton("Agregar");
 		btnAgregarEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
-		horizontalBox_7.add(btnAgregarEmpleado);
+		horizontalBox_7.add(btnAgregarEmpleado);			
 		
-		llenarCmbRfcEmpleados();
+		this.llenarCmbSucursales();
+		
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	
@@ -395,6 +429,12 @@ public class Fr_DatosEmpleado extends JFrame {
 		this.txfDireccionEmpleado.setText(empl.getDireccion());
 		this.txfCodigoPostalEmpleado.setText(empl.getCodigoPostal());
 		this.txpsContraseniaEmpleado.setText(empl.getPassword());
+	}
+	
+	private void llenarCmbSucursales() {
+		this.cmbSucursalEmpleado.removeAllItems();
+		this.cmbSucursalEmpleado.updateUI();
+		this.sucursalController.consultarNombreSucursales(cmbSucursalEmpleado);
 	}
 
 }

@@ -97,4 +97,42 @@ public class SucursalController implements java.io.Serializable {
 		
 	}
 	
+	/**
+	 * consulta únicamente los nombres de las sucursales registradas
+	 * @param cmb
+	 */
+	public void consultarNombreSucursales(JComboBox<String> cmb) {
+		
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			
+			stm = cn.prepareCall("CALL ver_sucursales_nombres();");
+			rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				cmb.addItem(rset.getString(2));
+			}
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch( Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				if(rset != null) {
+					rset.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+			}catch(Exception er) {
+				er.printStackTrace();
+			}
+		}
+	}
+	
 }
