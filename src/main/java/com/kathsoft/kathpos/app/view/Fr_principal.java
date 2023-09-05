@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -13,11 +12,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -29,9 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -51,7 +43,6 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
-import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Sucursal;
 
 import javax.swing.JRadioButton;
@@ -315,6 +306,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnAgregarEmpleado;
 	private Component horizontalStrut_3;
 	private JButton btnActualizarEmpleado;
+	private JLabel lblNewLabel_7;
 
 	/**
 	 * Launch the application.
@@ -711,6 +703,11 @@ public class Fr_principal extends JFrame {
 		panelEtiquetaClientes = new JPanel();
 		panelEtiquetaClientes.setBackground(new Color(25, 25, 112));
 		panelClientes.add(panelEtiquetaClientes, BorderLayout.NORTH);
+		
+		lblNewLabel_7 = new JLabel("Modulo de Clientes");
+		lblNewLabel_7.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblNewLabel_7.setForeground(new Color(255, 255, 255));
+		panelEtiquetaClientes.add(lblNewLabel_7);
 		
 		panelClientesCentral = new JPanel();
 		panelClientesCentral.setBorder(new EmptyBorder(30, 30, 30, 30));

@@ -13,6 +13,8 @@ import com.kathsoft.kathpos.app.model.Empleado;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.BoxLayout;
 import javax.swing.Box;
@@ -26,6 +28,8 @@ import javax.swing.ImageIcon;
 import java.awt.FlowLayout;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_DatosEmpleado extends JFrame {
 	/**
@@ -96,7 +100,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JTextField txfRfcEmpleado;
 	private Component horizontalStrut_8;
 	private JLabel lblNewLabel_12;
-	private JComboBox cmbSucursalEmpleado;
+	private JComboBox<String> cmbSucursalEmpleado;
 	private SucursalController sucursalController = new SucursalController();
 
 	/**
@@ -198,7 +202,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		lblNewLabel_12 = new JLabel("Sucursal");
 		horizontalBox_1.add(lblNewLabel_12);
 		
-		cmbSucursalEmpleado = new JComboBox();
+		cmbSucursalEmpleado = new JComboBox<String>();
 		horizontalBox_1.add(cmbSucursalEmpleado);
 		
 		verticalStrut_2 = Box.createVerticalStrut(20);
@@ -351,6 +355,11 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_6.add(horizontalStrut_6);
 		
 		btnNuevaContraseniaEmpleado = new JButton("Nueva");
+		btnNuevaContraseniaEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirVentanaPasswordEmpleado();
+			}
+		});
 		btnNuevaContraseniaEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
 		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
 		horizontalBox_6.add(btnNuevaContraseniaEmpleado);
@@ -367,7 +376,12 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_7 = Box.createHorizontalBox();
 		panelInferiorBotones.add(horizontalBox_7);
 		
-		btnCancelar = new JButton("Actualizar");
+		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cerrarForm();
+			}
+		});
 		btnCancelar.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		horizontalBox_7.add(btnCancelar);
@@ -376,6 +390,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_7.add(horizontalStrut_7);
 		
 		btnAgregarEmpleado = new JButton("Agregar");
+		btnAgregarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(opcion == 0) {
+					insertarEmpleado();
+				}else if(opcion == 1) {
+					actualizarEmpleado();
+				}
+			}
+		});
 		btnAgregarEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		horizontalBox_7.add(btnAgregarEmpleado);			
@@ -383,6 +406,10 @@ public class Fr_DatosEmpleado extends JFrame {
 		this.llenarCmbSucursales();
 		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	}
+	
+	private void cerrarForm() {
+		this.dispose();
 	}
 	
 	
@@ -431,10 +458,64 @@ public class Fr_DatosEmpleado extends JFrame {
 		this.txpsContraseniaEmpleado.setText(empl.getPassword());
 	}
 	
+	/**
+	 * inserta un registro de un nuevo empleado en la base de datos
+	 */
+	private void insertarEmpleado() {
+		
+	}
+	
+	/**
+	 * actualiza un registro existente de un empleado en la base de datos
+	 */
+	private void actualizarEmpleado() {
+		
+	}
+	
+	private boolean validarCamposVacios() {
+		
+		if(this.cmbRFCEmpleado != null) {
+			if(((String)this.cmbRFCEmpleado.getSelectedItem()).isEmpty() || ((String)this.cmbRFCEmpleado.getSelectedItem()).length()<1) {
+				JOptionPane.showMessageDialog(this, "Indique el RFC del empleado", "Error",JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		
+		
+		
+		return true;
+	}
+	
 	private void llenarCmbSucursales() {
 		this.cmbSucursalEmpleado.removeAllItems();
 		this.cmbSucursalEmpleado.updateUI();
 		this.sucursalController.consultarNombreSucursales(cmbSucursalEmpleado);
+	}
+	
+	private void abrirVentanaPasswordEmpleado() {
+		
+		if(this.cmbRFCEmpleado == null) {
+			return;
+		}
+		
+		String rfcEmpleado = (String)this.cmbRFCEmpleado.getSelectedItem();
+		String nombreCortoEmpleado = this.txfNombreCortoEmpleado.getText();
+		Component cmp = this;
+		
+		if(rfcEmpleado.equals("") || rfcEmpleado.isEmpty() || rfcEmpleado.length() < 1) {
+			JOptionPane.showMessageDialog(this, "Error", "No se ha seleccionado empleado", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Fr_NewPasswordEmpleado frame = new Fr_NewPasswordEmpleado(rfcEmpleado,nombreCortoEmpleado);
+				frame.setLocationRelativeTo(cmp);
+				frame.setVisible(rootPaneCheckingEnabled);
+			}
+		});
+		
 	}
 
 }
