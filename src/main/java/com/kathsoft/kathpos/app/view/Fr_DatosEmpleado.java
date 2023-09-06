@@ -27,9 +27,12 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.FlowLayout;
 import java.awt.event.ItemListener;
+import java.sql.Date;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Fr_DatosEmpleado extends JFrame {
 	/**
@@ -242,6 +245,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_3.add(lblNewLabel_5);
 		
 		txfFechaNacEmpleadoDD = new JTextField();
+		txfFechaNacEmpleadoDD.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if((ch < '0' || ch > '9') || txfFechaNacEmpleadoDD.getText().length() >= 2) {
+					e.consume();
+				}
+			}
+		});
 		txfFechaNacEmpleadoDD.setToolTipText("Día");
 		txfFechaNacEmpleadoDD.setMaximumSize(new Dimension(22, 20));
 		txfFechaNacEmpleadoDD.setColumns(4);
@@ -252,6 +264,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_3.add(horizontalStrut_1);
 		
 		txfFechaNacEmpleadoMM = new JTextField();
+		txfFechaNacEmpleadoMM.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if((ch < '0' || ch > '9') || txfFechaNacEmpleadoMM.getText().length() >= 2) {
+					e.consume();
+				}
+			}
+		});
 		txfFechaNacEmpleadoMM.setToolTipText("Mes");
 		txfFechaNacEmpleadoMM.setMaximumSize(new Dimension(22, 20));
 		txfFechaNacEmpleadoMM.setColumns(4);
@@ -262,6 +283,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_3.add(horizontalStrut_2);
 		
 		txfFechaNacEmpleadoYY = new JTextField();
+		txfFechaNacEmpleadoYY.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if(ch < '0' || ch > '9' || txfFechaNacEmpleadoYY.getText().length() >= 4) {
+					e.consume();
+				}
+			}
+		});
 		txfFechaNacEmpleadoYY.setToolTipText("Año");
 		txfFechaNacEmpleadoYY.setMaximumSize(new Dimension(38, 20));
 		txfFechaNacEmpleadoYY.setColumns(8);
@@ -329,6 +359,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_5.add(lblNewLabel_10);
 		
 		txfCodigoPostalEmpleado = new JTextField();
+		txfCodigoPostalEmpleado.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if(ch < '0' || ch > '9' || txfCodigoPostalEmpleado.getText().length() >= 5) {
+					e.consume();
+				}
+			}
+		});
 		txfCodigoPostalEmpleado.setMaximumSize(new Dimension(70, 20));
 		txfCodigoPostalEmpleado.setColumns(30);
 		horizontalBox_5.add(txfCodigoPostalEmpleado);
@@ -362,6 +401,12 @@ public class Fr_DatosEmpleado extends JFrame {
 		});
 		btnNuevaContraseniaEmpleado.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
 		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
+		if(opcion == 0) {
+			this.btnNuevaContraseniaEmpleado.setEnabled(false);
+		}else if(opcion == 1) {
+			this.btnNuevaContraseniaEmpleado.setEnabled(true);
+		}
+		
 		horizontalBox_6.add(btnNuevaContraseniaEmpleado);
 		
 		verticalStrut_7 = Box.createVerticalStrut(80);
@@ -463,6 +508,41 @@ public class Fr_DatosEmpleado extends JFrame {
 	 */
 	private void insertarEmpleado() {
 		
+		if(!this.validarCamposVacios()) {
+			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		Empleado empl = new Empleado();
+		
+		//formato de fecha para el estandar SQL
+		String dia = this.txfFechaNacEmpleadoDD.getText();
+		String mes = this.txfFechaNacEmpleadoMM.getText();
+		String anio = this.txfFechaNacEmpleadoYY.getText();
+		String fecha = anio + "-" + mes + "-" + dia;			
+		
+		try {
+			
+			empl.setIdSucursal(this.cmbSucursalEmpleado.getSelectedIndex());
+			empl.setRfc(this.txfRfcEmpleado.getText());
+			empl.setCurp(this.txfCurpEmpleado.getText());
+			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
+			empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
+			empl.setFechaNacimiento(Date.valueOf(fecha));
+			empl.setEmail(this.txfEmailEmpleado.getText());
+			empl.setEstado(this.txfEstadoEmpleado.getText());
+			empl.setCiudad(this.txfCiudadEmpleado.getText());
+			empl.setDireccion(this.txfDireccionEmpleado.getText());
+			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
+			
+			this.empleadoController.insertarNuevoEmpleado(empl);
+			
+		}catch(Exception er) {
+			System.out.println("Error en vista :-> " + er.getMessage() + "\n"); 
+			er.printStackTrace();
+		}
+		
+		JOptionPane.showMessageDialog(this, "Registro almacenado", "Operacion exitosa", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	/**
@@ -470,18 +550,66 @@ public class Fr_DatosEmpleado extends JFrame {
 	 */
 	private void actualizarEmpleado() {
 		
+		if(!this.validarCamposVacios()) {
+			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 	}
 	
 	private boolean validarCamposVacios() {
 		
 		if(this.cmbRFCEmpleado != null) {
 			if(((String)this.cmbRFCEmpleado.getSelectedItem()).isEmpty() || ((String)this.cmbRFCEmpleado.getSelectedItem()).length()<1) {
-				JOptionPane.showMessageDialog(this, "Indique el RFC del empleado", "Error",JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}
 		
+		if(this.txfRfcEmpleado != null) {
+			if(this.txfRfcEmpleado.getText().isEmpty() || this.txfRfcEmpleado.getText().length() < 1) {
+				return false;
+			}
+		}
 		
+		if(this.txfCurpEmpleado.getText().isEmpty() || this.txfCurpEmpleado.getText().length() < 1) {
+			return false;
+		}
+		
+		if(((String)this.cmbSucursalEmpleado.getSelectedItem()).isEmpty() || ((String)this.cmbSucursalEmpleado.getSelectedItem()).length() < 1) {
+			return false;
+		}
+		
+		if(this.txfFechaNacEmpleadoDD.getText().isEmpty() || this.txfFechaNacEmpleadoDD.getText().length() < 1) {
+			return false;
+		}
+		
+		if(this.txfFechaNacEmpleadoMM.getText().isEmpty() || this.txfFechaNacEmpleadoMM.getText().length() < 1) {
+			return false;
+		}
+		
+		if(this.txfFechaNacEmpleadoYY.getText().isEmpty() || this.txfFechaNacEmpleadoYY.getText().length() < 1) {
+			return false;
+		}
+		
+		if(this.txfEmailEmpleado.getText().isEmpty() || this.txfEmailEmpleado.getText().length() < 1) {
+			return false;
+		}
+		
+		if(this.txfEstadoEmpleado.getText().isEmpty() || this.txfEstadoEmpleado.getText().length() <1) {
+			return false;
+		}
+		
+		if(this.txfCiudadEmpleado.getText().isEmpty() || this.txfCiudadEmpleado.getText().length() < 1) {			
+			return false;
+		}
+		
+		if(this.txfDireccionEmpleado.getText().isEmpty() || this.txfDireccionEmpleado.getText().length() < 1) {			
+			return false;
+		}
+		
+		if(this.txfCodigoPostalEmpleado.getText().isEmpty() || this.txfCodigoPostalEmpleado.getText().length() < 1) {	
+			return false;
+		}
 		
 		return true;
 	}
