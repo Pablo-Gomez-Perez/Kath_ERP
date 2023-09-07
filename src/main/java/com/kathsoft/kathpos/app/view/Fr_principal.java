@@ -160,6 +160,7 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNewLabel_6;
 	private JPanel panelEmpleadosCentral;
 	private DefaultTableModel modelTablaEmpleados;
+	private DefaultTableModel modelTablaSucursales;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
@@ -307,6 +308,13 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_3;
 	private JButton btnActualizarEmpleado;
 	private JLabel lblNewLabel_7;
+	private JPanel panelSucursales;
+	private JPanel panelEtiquetaSucursales;
+	private JLabel lblNewLabel_8;
+	private JPanel panelSucursalCentral;
+	private JScrollPane scrollPaneTablaSucursales;
+	private JTable tablaSucursales;
+	private JMenuItem opcionSucursales;
 
 	/**
 	 * Launch the application.
@@ -427,6 +435,20 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		menuConsultar.add(opcionMarcas);
+		
+		opcionSucursales = new JMenuItem("Sucursales");
+		opcionSucursales.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelSucursales");
+				panelPrincipalContenedor.updateUI();
+				
+				
+			}
+		});
+		opcionSucursales.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/sucursal.jpg")));
+		menuConsultar.add(opcionSucursales);
 		
 		separator = new JSeparator();
 		menuConsultar.add(separator);
@@ -1339,6 +1361,32 @@ public class Fr_principal extends JFrame {
 		
 		panelCompras = new JPanel();
 		panelPrincipalContenedor.add(panelCompras, "panelCompras");
+		
+		panelSucursales = new JPanel();
+		panelSucursales.setBackground(new Color(255, 215, 0));
+		panelPrincipalContenedor.add(panelSucursales, "panelSucursal");
+		panelSucursales.setLayout(new BorderLayout(0, 0));
+		
+		panelEtiquetaSucursales = new JPanel();
+		panelEtiquetaSucursales.setBackground(new Color(0,0,128));
+		panelSucursales.add(panelEtiquetaSucursales, BorderLayout.NORTH);
+		
+		lblNewLabel_8 = new JLabel("Modulo de Sucursales");
+		lblNewLabel_8.setForeground(new Color(255, 255, 255));
+		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 16));
+		panelEtiquetaSucursales.add(lblNewLabel_8);
+		
+		panelSucursalCentral = new JPanel();
+		panelSucursalCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
+		panelSucursalCentral.setBackground(new Color(255, 215, 0));
+		panelSucursales.add(panelSucursalCentral, BorderLayout.CENTER);
+		panelSucursalCentral.setLayout(new BorderLayout(0, 0));
+		
+		scrollPaneTablaSucursales = new JScrollPane();
+		panelSucursalCentral.add(scrollPaneTablaSucursales, BorderLayout.CENTER);
+		
+		tablaSucursales = new JTable();
+		scrollPaneTablaSucursales.setViewportView(tablaSucursales);
 
 		modelTablaCategoriaArticulo.addColumn("id Categoria");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
@@ -1809,5 +1857,7 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaVentas();
 		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(), this.opcionDeBusquedaDeVenta());
 	}
+	
+	
 	
 }
