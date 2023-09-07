@@ -315,6 +315,9 @@ public class Fr_principal extends JFrame {
 	private JScrollPane scrollPaneTablaSucursales;
 	private JTable tablaSucursales;
 	private JMenuItem opcionSucursales;
+	private JPanel panelSucursalCentralBotones;
+	private JButton btnNuevaSucursal;
+	private JButton btnActualizarSucursal;
 
 	/**
 	 * Launch the application.
@@ -1364,7 +1367,7 @@ public class Fr_principal extends JFrame {
 		
 		panelSucursales = new JPanel();
 		panelSucursales.setBackground(new Color(255, 215, 0));
-		panelPrincipalContenedor.add(panelSucursales, "panelSucursal");
+		panelPrincipalContenedor.add(panelSucursales, "panelSucursales");
 		panelSucursales.setLayout(new BorderLayout(0, 0));
 		
 		panelEtiquetaSucursales = new JPanel();
@@ -1387,6 +1390,19 @@ public class Fr_principal extends JFrame {
 		
 		tablaSucursales = new JTable();
 		scrollPaneTablaSucursales.setViewportView(tablaSucursales);
+		
+		panelSucursalCentralBotones = new JPanel();
+		panelSucursalCentralBotones.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_8 = (FlowLayout) panelSucursalCentralBotones.getLayout();
+		flowLayout_8.setAlignment(FlowLayout.RIGHT);
+		panelSucursalCentral.add(panelSucursalCentralBotones, BorderLayout.NORTH);
+		
+		btnNuevaSucursal = new JButton("Agregar");
+		btnNuevaSucursal.setBackground(new Color(255, 215, 0));
+		panelSucursalCentralBotones.add(btnNuevaSucursal);
+		
+		btnActualizarSucursal = new JButton("Actualizar");
+		panelSucursalCentralBotones.add(btnActualizarSucursal);
 
 		modelTablaCategoriaArticulo.addColumn("id Categoria");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
