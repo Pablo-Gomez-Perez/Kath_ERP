@@ -41,6 +41,7 @@ import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
+import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Sucursal;
@@ -65,6 +66,7 @@ public class Fr_principal extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private ClientesController clientesController = new ClientesController();
 	private VentasController ventasController = new VentasController();
+	private SucursalController sucursalController = new SucursalController();
 	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -203,6 +205,18 @@ public class Fr_principal extends JFrame {
 			120, //Iva
 			120, //Total
 			90, //Accion
+	};
+	
+	private int[] tablaSucursalesColumnWidth = {
+			150, //nombre
+			300, //descripcion
+			200, //telefono
+			200, //email
+			150, //estado
+			200, //ciudad
+			300, //direccion
+			120 //codigo postal
+			
 	};
 	private JLabel lblNewLabel_2;
 	private JPanel panelProovedorCentral;
@@ -447,7 +461,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelSucursales");
 				panelPrincipalContenedor.updateUI();
 				
-				
+				llenarTablaSucursales();
 			}
 		});
 		opcionSucursales.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/sucursal.jpg")));
@@ -1135,6 +1149,16 @@ public class Fr_principal extends JFrame {
 		tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPane.setViewportView(tablaCategorias);
 		
+		modelTablaCategoriaArticulo.addColumn("id Categoria");
+		modelTablaCategoriaArticulo.addColumn("Nombre");
+		modelTablaCategoriaArticulo.addColumn("Descripcion");
+		
+		// remueve el editor del jtable de categorias
+		for (int i = 0; i < modelTablaCategoriaArticulo.getColumnCount(); i++) {
+			Class<?> colClass = tablaCategorias.getColumnClass(i);
+			tablaCategorias.setDefaultEditor(colClass, null);
+		}
+		
 		panelVentas = new JPanel();
 		panelVentas.setBackground(new Color(255, 215, 0));
 		panelPrincipalContenedor.add(panelVentas, "panelVentas");
@@ -1388,8 +1412,27 @@ public class Fr_principal extends JFrame {
 		scrollPaneTablaSucursales = new JScrollPane();
 		panelSucursalCentral.add(scrollPaneTablaSucursales, BorderLayout.CENTER);
 		
+		modelTablaSucursales = new DefaultTableModel();
 		tablaSucursales = new JTable();
+		tablaSucursales.setModel(modelTablaSucursales);
 		scrollPaneTablaSucursales.setViewportView(tablaSucursales);
+		
+		modelTablaSucursales.addColumn("Nombre");
+		modelTablaSucursales.addColumn("Descripcion");
+		modelTablaSucursales.addColumn("Telefono");
+		modelTablaSucursales.addColumn("Email");
+		modelTablaSucursales.addColumn("Estado");
+		modelTablaSucursales.addColumn("Ciudad");
+		modelTablaSucursales.addColumn("Dirección");
+		modelTablaSucursales.addColumn("Codigo Postal");
+		
+		tablaSucursales.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		//remueve el editor de la tabla de sucursales
+		for (int i = 0; i < modelTablaSucursales.getColumnCount(); i++) {
+			Class<?> colClass = modelTablaSucursales.getColumnClass(i);
+			tablaSucursales.setDefaultEditor(colClass, null);
+		}
 		
 		panelSucursalCentralBotones = new JPanel();
 		panelSucursalCentralBotones.setBackground(new Color(255, 215, 0));
@@ -1398,21 +1441,15 @@ public class Fr_principal extends JFrame {
 		panelSucursalCentral.add(panelSucursalCentralBotones, BorderLayout.NORTH);
 		
 		btnNuevaSucursal = new JButton("Agregar");
-		btnNuevaSucursal.setBackground(new Color(255, 215, 0));
+		btnNuevaSucursal.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnNuevaSucursal.setBackground(new Color(152, 251, 152));
 		panelSucursalCentralBotones.add(btnNuevaSucursal);
 		
 		btnActualizarSucursal = new JButton("Actualizar");
-		panelSucursalCentralBotones.add(btnActualizarSucursal);
-
-		modelTablaCategoriaArticulo.addColumn("id Categoria");
-		modelTablaCategoriaArticulo.addColumn("Nombre");
-		modelTablaCategoriaArticulo.addColumn("Descripcion");
-
-		// remueve el editor del jtable de categorias
-		for (int i = 0; i < modelTablaCategoriaArticulo.getColumnCount(); i++) {
-			Class<?> colClass = tablaCategorias.getColumnClass(i);
-			tablaCategorias.setDefaultEditor(colClass, null);
-		}
+		btnActualizarSucursal.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
+		panelSucursalCentralBotones.add(btnActualizarSucursal);		
+		
 		// =================================================================================================================================================
 		// this.llenarTablaCategoria();
 		// this.llenarComboBoxCategoria();
@@ -1524,7 +1561,19 @@ public class Fr_principal extends JFrame {
 			ventasColumnModel.getColumn(i).setMinWidth(tablaVentasColumnsWidth[i]);
 		}
 		
-
+		
+		/**
+		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de las sucursales
+		 * registradas
+		 */
+		TableColumnModel sucursalColumnModel = tablaSucursales.getColumnModel();
+		
+		for(int i = 0; i < tablaSucursalesColumnWidth.length; i++) {
+			sucursalColumnModel.getColumn(i).setPreferredWidth(tablaSucursalesColumnWidth[i]);
+			sucursalColumnModel.getColumn(i).setMinWidth(tablaSucursalesColumnWidth[i]);
+		}
+		
+		
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -1554,6 +1603,16 @@ public class Fr_principal extends JFrame {
 	private void llenarTablaCategoria() {
 		this.borrarElementosDeLaTablaCategorias();
 		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
+	}
+	
+	/**
+	 * Llena el JTable correspondiente con los registro de las sucursales extraidos 
+	 * de la base de datos
+	 */
+	private void llenarTablaSucursales() {
+		this.modelTablaSucursales.getDataVector().removeAllElements();
+		this.tablaSucursales.updateUI();
+		this.sucursalController.verSucursalesEnTabla(modelTablaSucursales);
 	}
 
 	/**
