@@ -243,7 +243,7 @@ public class Fr_LogIn extends JFrame {
 	
 	private void llenarCmbSucursales() {
 		this.borrarElementosJcmb(cmbSucursal);
-		sucursalController.consultarSucursales(cmbSucursal);
+		sucursalController.consultarNombreSucursales(cmbSucursal);
 		this.cmbSucursal.setSelectedIndex(0);
 	}
 	
