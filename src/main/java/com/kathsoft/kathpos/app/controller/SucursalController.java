@@ -120,7 +120,12 @@ public class SucursalController implements java.io.Serializable {
 			}
 		}
 	}
-
+	
+	/**
+	 * consulta todos lo registros de las sucursales en la base de datos y los agrega a un
+	 * table model para ser mostrado en la vista
+	 * @param model
+	 */
 	public void verSucursalesEnTabla(DefaultTableModel model) {
 
 		CallableStatement stm = null;
@@ -158,6 +163,48 @@ public class SucursalController implements java.io.Serializable {
 			}
 		}
 
+	}
+	
+	/**
+	 * inserta una nueva sucursal en la base de datos
+	 * @param sucursal
+	 */
+	public void insertarNuevaSucursal(Sucursal sucursal) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL insert_nueva_sucursal(?,?,?,?,?,?,?,?);");
+			
+			stm.setString(1, sucursal.getNombre());
+			stm.setString(2, sucursal.getDescripcion());
+			stm.setString(3, sucursal.getTelefono());
+			stm.setString(4, sucursal.getEmail());
+			stm.setString(5, sucursal.getEstado());
+			stm.setString(6, sucursal.getCiudad());
+			stm.setString(7, sucursal.getDireccion());
+			stm.setString(8, sucursal.getCodigoPostal());
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+				
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
 	}
 
 }
