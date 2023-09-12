@@ -127,38 +127,30 @@ public class SucursalController implements java.io.Serializable {
 		ResultSet rset = null;
 
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL ver_sucursales();");
 			rset = stm.executeQuery();
-			
-			while(rset.next()) {
-				Object[] fila = {
-						rset.getString(1),
-						rset.getString(2),
-						rset.getString(3),
-						rset.getString(4),
-						rset.getString(5),
-						rset.getString(6),
-						rset.getString(7),
-						rset.getString(8)
-				};
+
+			while (rset.next()) {
+				Object[] fila = { rset.getString(1), rset.getString(2), rset.getString(3), rset.getString(4),
+						rset.getString(5), rset.getString(6), rset.getString(7), rset.getString(8) };
 				model.addRow(fila);
 			}
-			
+
 		} catch (SQLException er) {
 			er.printStackTrace();
 		} catch (Exception er) {
 			er.printStackTrace();
 		} finally {
 			try {
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-				if(rset != null) {
+				if (rset != null) {
 					rset.close();
 				}
-				if(cn != null) {
+				if (cn != null) {
 					cn.close();
 				}
 			} catch (SQLException er) {
