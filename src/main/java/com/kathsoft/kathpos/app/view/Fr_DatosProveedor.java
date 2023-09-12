@@ -104,7 +104,8 @@ public class Fr_DatosProveedor extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_DatosProveedor(int tipoOperacion) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
@@ -133,7 +134,8 @@ public class Fr_DatosProveedor extends JFrame {
 		}
 
 		panelCentralFormulario = new JPanel();
-		panelCentralFormulario.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(new Color(0, 0, 0))));
+		panelCentralFormulario
+				.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(new Color(0, 0, 0))));
 		panelCentralFormulario.setBackground(new Color(255, 215, 0));
 		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
 		panelCentralFormulario.setLayout(new BoxLayout(panelCentralFormulario, BoxLayout.Y_AXIS));
@@ -314,7 +316,7 @@ public class Fr_DatosProveedor extends JFrame {
 		txaDireccionProveedor = new JTextArea();
 		txaDireccionProveedor.setLineWrap(true);
 		horizontalBox_6.add(txaDireccionProveedor);
-		
+
 		verticalStrut_6 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_6);
 
@@ -424,8 +426,8 @@ public class Fr_DatosProveedor extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
-		if(this.indice_proveedor < 1) {
+
+		if (this.indice_proveedor < 1) {
 			JOptionPane.showMessageDialog(this, "No se ha seleccionado un proveedor", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -456,7 +458,8 @@ public class Fr_DatosProveedor extends JFrame {
 
 		Proveedor prv = new Proveedor();
 
-		if (((String)this.cmbRFCProveedor.getSelectedItem()) == "" || ((String)this.cmbRFCProveedor.getSelectedItem()).length() < 1) {
+		if (((String) this.cmbRFCProveedor.getSelectedItem()) == ""
+				|| ((String) this.cmbRFCProveedor.getSelectedItem()).length() < 1) {
 			JOptionPane.showMessageDialog(this, "No se ha seleccionado un proveedor", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
