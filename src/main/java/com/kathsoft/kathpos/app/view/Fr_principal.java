@@ -1438,12 +1438,22 @@ public class Fr_principal extends JFrame {
 		panelSucursalCentral.add(panelSucursalCentralBotones, BorderLayout.NORTH);
 
 		btnNuevaSucursal = new JButton("Agregar");
+		btnNuevaSucursal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormSucursales(0);
+			}
+		});
 		btnNuevaSucursal.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnNuevaSucursal.setBackground(new Color(152, 251, 152));
 		panelSucursalCentralBotones.add(btnNuevaSucursal);
 
 		btnActualizarSucursal = new JButton("Actualizar");
+		btnActualizarSucursal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 abrirFormSucursales(1);
+			}
+		});
 		btnActualizarSucursal.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
@@ -1883,6 +1893,22 @@ public class Fr_principal extends JFrame {
 				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion);
 				frame.setLocationRelativeTo(cm);
 				frame.setVisible(true);
+			}
+		});
+	}
+	
+	private void abrirFormSucursales(int opcion) {
+		Component cm = null;
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion);
+					frame.setLocationRelativeTo(cm);
+					frame.setVisible(true);
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
 			}
 		});
 	}
