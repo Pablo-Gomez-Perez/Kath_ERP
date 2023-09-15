@@ -207,6 +207,45 @@ public class SucursalController implements java.io.Serializable {
 		
 	}
 	
+	public void actualizarSucursal(Sucursal sucursal) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL update_sucursal(?,?,?,?,?,?,?,?,?);");
+			
+			stm.setInt(1, sucursal.getIdSucursal());
+			stm.setString(2, sucursal.getNombre());
+			stm.setString(3, sucursal.getDescripcion());
+			stm.setString(4, sucursal.getTelefono());
+			stm.setString(5, sucursal.getEmail());
+			stm.setString(6, sucursal.getEstado());
+			stm.setString(7, sucursal.getCiudad());
+			stm.setString(8, sucursal.getDireccion());
+			stm.setString(9, sucursal.getCodigoPostal());
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				if (cn != null) {
+					cn.close();
+				}
+				if (stm != null) {
+					stm.close();
+				}
+				
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
+	}
+	
 	public Sucursal consultarSucursal(int idSucursal) {
 		
 		Sucursal sucursal = new Sucursal();

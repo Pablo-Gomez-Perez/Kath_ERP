@@ -13,6 +13,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.controller.SucursalController;
+import com.kathsoft.kathpos.app.model.Sucursal;
 
 import javax.swing.BoxLayout;
 import java.awt.Component;
@@ -24,6 +25,9 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
 public class Fr_DatosSucursal extends JFrame {
@@ -61,6 +65,7 @@ public class Fr_DatosSucursal extends JFrame {
 	private JPanel panelInferiorBotones;
 	private JButton btn_Cancelar;
 	private JButton btn_Guardar;
+	private JTextArea txaDescripcionSucursal;
 
 	/**
 	 * Launch the application.
@@ -136,6 +141,15 @@ public class Fr_DatosSucursal extends JFrame {
 		}else if(opcion == 1){
 			cmbNombreSucursal = new JComboBox<String>();
 			horizontalBox.add(cmbNombreSucursal);
+			this.cmbNombreSucursal.addItemListener(new ItemListener() {
+				
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					
+					consultarSucursal();
+					
+				}
+			});
 		}			
 
 		Component verticalStrut_1 = Box.createVerticalStrut(20);
@@ -159,7 +173,7 @@ public class Fr_DatosSucursal extends JFrame {
 		Box horizontalBox_2 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_2);
 
-		JTextArea txaDescripcionSucursal = new JTextArea();
+		txaDescripcionSucursal = new JTextArea();
 		txaDescripcionSucursal.setLineWrap(true);
 		horizontalBox_2.add(txaDescripcionSucursal);
 
@@ -334,6 +348,21 @@ public class Fr_DatosSucursal extends JFrame {
 		this.sucursalController.consultarNombreSucursales(cmbNombreSucursal);
 	}
 	
-	
-	
+	private void consultarSucursal() {
+		
+		if(this.cmbNombreSucursal == null) {
+			return;
+		}
+		
+		Sucursal sucursal = sucursalController.consultarSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
+		
+		this.txaDescripcionSucursal.setText(sucursal.getDescripcion());
+		this.txfTelefonoSucursal.setText(sucursal.getTelefono());
+		this.txfEmailSucursal.setText(sucursal.getEmail());
+		this.txfEstadoSucursal.setText(sucursal.getEstado());
+		this.txfCiudadSucursal.setText(sucursal.getCiudad());
+		this.txfCodigoPostalSucursal.setText(sucursal.getCodigoPostal());
+		this.txaDireccionSucursal.setText(sucursal.getDireccion());
+		
+	}	
 }
