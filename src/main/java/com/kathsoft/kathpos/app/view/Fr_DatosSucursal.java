@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -335,6 +337,31 @@ public class Fr_DatosSucursal extends JFrame {
 	 */
 	private void actualizarSucursal() {
 		
+		Sucursal sucursal = new Sucursal();
+		
+		if(validarCamposVacios() == true) {
+			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		try {
+						
+			sucursal.setIdSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
+			sucursal.setNombre(this.txfNombreSucursal.getText());
+			sucursal.setDescripcion(this.txaDescripcionSucursal.getText());
+			sucursal.setTelefono(this.txfTelefonoSucursal.getText());
+			sucursal.setEmail(this.txfEmailSucursal.getText());
+			sucursal.setEstado(this.txfEstadoSucursal.getText());
+			sucursal.setCiudad(this.txfCiudadSucursal.getText());
+			sucursal.setCodigoPostal(this.txfCodigoPostalSucursal.getText());
+			sucursal.setDireccion(this.txaDireccionSucursal.getText());
+			
+			this.sucursalController.actualizarSucursal(sucursal);
+			
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
 	}
 	
 	private void llenarCmbSucursales() {
@@ -346,6 +373,48 @@ public class Fr_DatosSucursal extends JFrame {
 		this.cmbNombreSucursal.removeAll();
 		this.cmbNombreSucursal.updateUI();
 		this.sucursalController.consultarNombreSucursales(cmbNombreSucursal);
+	}
+	
+	private boolean validarCamposVacios() {
+		
+		if(this.cmbNombreSucursal != null) {
+			if(((String)this.cmbNombreSucursal.getSelectedItem()).length() < 1 || ((String)this.cmbNombreSucursal.getSelectedItem()).isEmpty()) {
+				return true;
+			}
+		}
+		
+		if(this.txfNombreSucursal != null) {
+			if(this.txfNombreSucursal.getText().isEmpty() || this.txfNombreSucursal.getText().length() < 1) {
+				return true;
+			}
+		}
+		
+		if(this.txfTelefonoSucursal.getText().length() < 1 || this.txfTelefonoSucursal.getText().isEmpty()) {
+			return true;
+		}
+		
+		if(this.txfEmailSucursal.getText().length() < 1 || this.txfEmailSucursal.getText().isEmpty()) {
+			return true;
+		}
+		
+		if(this.txfEstadoSucursal.getText().length() < 1 || this.txfEstadoSucursal.getText().isEmpty()) {
+			return true;
+		}
+		
+		if(this.txfCiudadSucursal.getText().length() < 1 || this.txfCiudadSucursal.getText().isEmpty()) {
+			return true;
+		}
+		
+		if(this.txfCodigoPostalSucursal.getText().length() < 1 || this.txfCodigoPostalSucursal.getText().isEmpty()) {
+			return true;
+		}
+		
+		if(this.txaDireccionSucursal.getText().length() < 1 || this.txaDireccionSucursal.getText().isEmpty()) {
+			return true;
+		}
+		
+		return false;
+		
 	}
 	
 	private void consultarSucursal() {
