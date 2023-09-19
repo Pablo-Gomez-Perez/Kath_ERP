@@ -71,21 +71,13 @@ public class Fr_DatosSucursal extends JFrame {
 
 	/**
 	 * Launch the application.
-	 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Fr_DatosSucursal frame = new Fr_DatosSucursal(0);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	*/
-	
+	 * 
+	 * public static void main(String[] args) { EventQueue.invokeLater(new
+	 * Runnable() { public void run() { try { Fr_DatosSucursal frame = new
+	 * Fr_DatosSucursal(0); frame.setVisible(true); } catch (Exception e) {
+	 * e.printStackTrace(); } } }); }
+	 */
+
 	/**
 	 * Create the frame.
 	 */
@@ -107,13 +99,13 @@ public class Fr_DatosSucursal extends JFrame {
 		lblNewLabel = new JLabel();
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel.setForeground(new Color(255, 255, 255));
-		
-		if(opcion == 0) {
+
+		if (opcion == 0) {
 			lblNewLabel.setText("Agregar Nueva Sucursal");
-		}else if(opcion == 1) {
+		} else if (opcion == 1) {
 			lblNewLabel.setText("Editar Sucursal");
 		}
-		
+
 		panelSuperiorEtiqueta.add(lblNewLabel);
 
 		panelCentralFormulario = new JPanel();
@@ -135,24 +127,24 @@ public class Fr_DatosSucursal extends JFrame {
 		Component horizontalStrut = Box.createHorizontalStrut(5);
 		horizontalBox.add(horizontalStrut);
 
-		if(opcion == 0) {
+		if (opcion == 0) {
 			this.txfNombreSucursal = new JTextField();
 			this.txfNombreSucursal.setColumns(90);
 			this.txfNombreSucursal.setMaximumSize(this.txfNombreSucursal.getPreferredSize());
 			horizontalBox.add(this.txfNombreSucursal);
-		}else if(opcion == 1){
+		} else if (opcion == 1) {
 			cmbNombreSucursal = new JComboBox<String>();
 			horizontalBox.add(cmbNombreSucursal);
 			this.cmbNombreSucursal.addItemListener(new ItemListener() {
-				
+
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					
+
 					consultarSucursal();
-					
+
 				}
 			});
-		}			
+		}
 
 		Component verticalStrut_1 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_1);
@@ -302,9 +294,9 @@ public class Fr_DatosSucursal extends JFrame {
 		btn_Guardar = new JButton("Guardar");
 		btn_Guardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(opcion == 0) {
+				if (opcion == 0) {
 					insertarSucursal();
-				}else if(opcion == 1) {
+				} else if (opcion == 1) {
 					actualizarSucursal();
 				}
 			}
@@ -313,40 +305,32 @@ public class Fr_DatosSucursal extends JFrame {
 		btn_Guardar.setIcon(new ImageIcon(
 				Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btn_Guardar);
-		
+
 		this.llenarCmbSucursales();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
-	
+
 	/**
 	 * cierra el form sin cerrar el sistema
 	 */
 	private void cerrarForm() {
 		this.dispose();
 	}
-	
+
 	/**
 	 * inserta un registro de una nueva sucursal a la base de datos
 	 */
 	private void insertarSucursal() {
-		
-	}
-	
-	/**
-	 * actualiza los datos de una sucursal existente en la base de datos
-	 */
-	private void actualizarSucursal() {
-		
+
 		Sucursal sucursal = new Sucursal();
-		
-		if(validarCamposVacios() == true) {
+
+		if (this.validarCamposVacios() == true) {
 			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		try {
-						
-			sucursal.setIdSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
+
 			sucursal.setNombre(this.txfNombreSucursal.getText());
 			sucursal.setDescripcion(this.txaDescripcionSucursal.getText());
 			sucursal.setTelefono(this.txfTelefonoSucursal.getText());
@@ -355,76 +339,138 @@ public class Fr_DatosSucursal extends JFrame {
 			sucursal.setCiudad(this.txfCiudadSucursal.getText());
 			sucursal.setCodigoPostal(this.txfCodigoPostalSucursal.getText());
 			sucursal.setDireccion(this.txaDireccionSucursal.getText());
-			
-			this.sucursalController.actualizarSucursal(sucursal);
-			
-		}catch(Exception er) {
+
+			this.sucursalController.insertarNuevaSucursal(sucursal);
+
+			this.borrarCampos();
+
+			JOptionPane.showMessageDialog(this, "Proceso exitoso", "Registro almacenado con exito",
+					JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (Exception er) {
 			er.printStackTrace();
 		}
-		
+
 	}
-	
-	private void llenarCmbSucursales() {
-		
-		if(this.cmbNombreSucursal == null) {
+
+	/**
+	 * actualiza los datos de una sucursal existente en la base de datos
+	 */
+	private void actualizarSucursal() {
+
+		Sucursal sucursal = new Sucursal();
+
+		if (validarCamposVacios() == true) {
+			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
+		try {
+
+			sucursal.setIdSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
+			sucursal.setNombre((String) this.cmbNombreSucursal.getSelectedItem());
+			sucursal.setDescripcion(this.txaDescripcionSucursal.getText());
+			sucursal.setTelefono(this.txfTelefonoSucursal.getText());
+			sucursal.setEmail(this.txfEmailSucursal.getText());
+			sucursal.setEstado(this.txfEstadoSucursal.getText());
+			sucursal.setCiudad(this.txfCiudadSucursal.getText());
+			sucursal.setCodigoPostal(this.txfCodigoPostalSucursal.getText());
+			sucursal.setDireccion(this.txaDireccionSucursal.getText());
+
+			this.sucursalController.actualizarSucursal(sucursal);
+
+			this.borrarCampos();
+
+			JOptionPane.showMessageDialog(this, "Proceso exitoso", "Registro actualizado con exito",
+					JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+
+	}
+
+	private void llenarCmbSucursales() {
+
+		if (this.cmbNombreSucursal == null) {
+			return;
+		}
+
 		this.cmbNombreSucursal.removeAll();
 		this.cmbNombreSucursal.updateUI();
 		this.sucursalController.consultarNombreSucursales(cmbNombreSucursal);
 	}
-	
+
 	private boolean validarCamposVacios() {
-		
-		if(this.cmbNombreSucursal != null) {
-			if(((String)this.cmbNombreSucursal.getSelectedItem()).length() < 1 || ((String)this.cmbNombreSucursal.getSelectedItem()).isEmpty()) {
+
+		if (this.cmbNombreSucursal != null) {
+			if (((String) this.cmbNombreSucursal.getSelectedItem()).length() < 1
+					|| ((String) this.cmbNombreSucursal.getSelectedItem()).isEmpty()) {
 				return true;
 			}
 		}
-		
-		if(this.txfNombreSucursal != null) {
-			if(this.txfNombreSucursal.getText().isEmpty() || this.txfNombreSucursal.getText().length() < 1) {
+
+		if (this.txfNombreSucursal != null) {
+			if (this.txfNombreSucursal.getText().isEmpty() || this.txfNombreSucursal.getText().length() < 1) {
 				return true;
 			}
 		}
-		
-		if(this.txfTelefonoSucursal.getText().length() < 1 || this.txfTelefonoSucursal.getText().isEmpty()) {
+
+		if (this.txfTelefonoSucursal.getText().length() < 1 || this.txfTelefonoSucursal.getText().isEmpty()) {
 			return true;
 		}
-		
-		if(this.txfEmailSucursal.getText().length() < 1 || this.txfEmailSucursal.getText().isEmpty()) {
+
+		if (this.txfEmailSucursal.getText().length() < 1 || this.txfEmailSucursal.getText().isEmpty()) {
 			return true;
 		}
-		
-		if(this.txfEstadoSucursal.getText().length() < 1 || this.txfEstadoSucursal.getText().isEmpty()) {
+
+		if (this.txfEstadoSucursal.getText().length() < 1 || this.txfEstadoSucursal.getText().isEmpty()) {
 			return true;
 		}
-		
-		if(this.txfCiudadSucursal.getText().length() < 1 || this.txfCiudadSucursal.getText().isEmpty()) {
+
+		if (this.txfCiudadSucursal.getText().length() < 1 || this.txfCiudadSucursal.getText().isEmpty()) {
 			return true;
 		}
-		
-		if(this.txfCodigoPostalSucursal.getText().length() < 1 || this.txfCodigoPostalSucursal.getText().isEmpty()) {
+
+		if (this.txfCodigoPostalSucursal.getText().length() < 1 || this.txfCodigoPostalSucursal.getText().isEmpty()) {
 			return true;
 		}
-		
-		if(this.txaDireccionSucursal.getText().length() < 1 || this.txaDireccionSucursal.getText().isEmpty()) {
+
+		if (this.txaDireccionSucursal.getText().length() < 1 || this.txaDireccionSucursal.getText().isEmpty()) {
 			return true;
 		}
-		
+
 		return false;
-		
+
 	}
-	
+
+	/**
+	 * borra el texto de todos los del formulario
+	 */
+	private void borrarCampos() {
+
+		if (this.txfNombreSucursal != null) {
+			this.txfNombreSucursal.setText("");
+		}
+
+		this.txaDescripcionSucursal.setText("");
+		this.txfTelefonoSucursal.setText("");
+		this.txfEmailSucursal.setText("");
+		this.txfEstadoSucursal.setText("");
+		this.txfCiudadSucursal.setText("");
+		this.txfCodigoPostalSucursal.setText("");
+		this.txaDireccionSucursal.setText("");
+
+	}
+
 	private void consultarSucursal() {
-		
-		if(this.cmbNombreSucursal == null) {
+
+		if (this.cmbNombreSucursal == null) {
 			return;
 		}
-		
+
 		Sucursal sucursal = sucursalController.consultarSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
-		
+
 		this.txaDescripcionSucursal.setText(sucursal.getDescripcion());
 		this.txfTelefonoSucursal.setText(sucursal.getTelefono());
 		this.txfEmailSucursal.setText(sucursal.getEmail());
@@ -432,6 +478,6 @@ public class Fr_DatosSucursal extends JFrame {
 		this.txfCiudadSucursal.setText(sucursal.getCiudad());
 		this.txfCodigoPostalSucursal.setText(sucursal.getCodigoPostal());
 		this.txaDireccionSucursal.setText(sucursal.getDireccion());
-		
-	}	
+
+	}
 }

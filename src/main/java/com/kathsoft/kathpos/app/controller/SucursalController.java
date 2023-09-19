@@ -120,10 +120,11 @@ public class SucursalController implements java.io.Serializable {
 			}
 		}
 	}
-	
+
 	/**
-	 * consulta todos lo registros de las sucursales en la base de datos y los agrega a un
-	 * table model para ser mostrado en la vista
+	 * consulta todos lo registros de las sucursales en la base de datos y los
+	 * agrega a un table model para ser mostrado en la vista
+	 * 
 	 * @param model
 	 */
 	public void verSucursalesEnTabla(DefaultTableModel model) {
@@ -164,20 +165,21 @@ public class SucursalController implements java.io.Serializable {
 		}
 
 	}
-	
+
 	/**
 	 * inserta una nueva sucursal en la base de datos
+	 * 
 	 * @param sucursal
 	 */
 	public void insertarNuevaSucursal(Sucursal sucursal) {
-		
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL insert_nueva_sucursal(?,?,?,?,?,?,?,?);");
-			
+
 			stm.setString(1, sucursal.getNombre());
 			stm.setString(2, sucursal.getDescripcion());
 			stm.setString(3, sucursal.getTelefono());
@@ -186,12 +188,14 @@ public class SucursalController implements java.io.Serializable {
 			stm.setString(6, sucursal.getCiudad());
 			stm.setString(7, sucursal.getDireccion());
 			stm.setString(8, sucursal.getCodigoPostal());
-			
-		}catch(SQLException er) {
+
+			stm.execute();
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				if (cn != null) {
 					cn.close();
@@ -199,23 +203,23 @@ public class SucursalController implements java.io.Serializable {
 				if (stm != null) {
 					stm.close();
 				}
-				
-			}catch(SQLException er) {
+
+			} catch (SQLException er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	public void actualizarSucursal(Sucursal sucursal) {
-		
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL update_sucursal(?,?,?,?,?,?,?,?,?);");
-			
+
 			stm.setInt(1, sucursal.getIdSucursal());
 			stm.setString(2, sucursal.getNombre());
 			stm.setString(3, sucursal.getDescripcion());
@@ -225,12 +229,14 @@ public class SucursalController implements java.io.Serializable {
 			stm.setString(7, sucursal.getCiudad());
 			stm.setString(8, sucursal.getDireccion());
 			stm.setString(9, sucursal.getCodigoPostal());
-			
-		}catch(SQLException er) {
+
+			stm.execute();
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				if (cn != null) {
 					cn.close();
@@ -238,30 +244,30 @@ public class SucursalController implements java.io.Serializable {
 				if (stm != null) {
 					stm.close();
 				}
-				
-			}catch(SQLException er) {
+
+			} catch (SQLException er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	public Sucursal consultarSucursal(int idSucursal) {
-		
+
 		Sucursal sucursal = new Sucursal();
 		CallableStatement stm = null;
 		ResultSet rset = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL buscar_sucursal_por_id(?);");
-			
+
 			stm.setInt(1, idSucursal);
-			
+
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				sucursal.setNombre(rset.getString(1));
 				sucursal.setDescripcion(rset.getString(2));
 				sucursal.setTelefono(rset.getString(3));
@@ -271,27 +277,27 @@ public class SucursalController implements java.io.Serializable {
 				sucursal.setDireccion(rset.getString(7));
 				sucursal.setCodigoPostal(rset.getString(8));
 			}
-			
+
 			return sucursal;
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
 			return null;
-		}catch (Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
-		}finally {
+		} finally {
 			try {
-				if(rset != null) {
+				if (rset != null) {
 					rset.close();
 				}
-				if(stm != null) {
+				if (stm != null) {
 					stm.close();
 				}
-				if(cn != null) {
+				if (cn != null) {
 					cn.close();
 				}
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
 			}
 		}
