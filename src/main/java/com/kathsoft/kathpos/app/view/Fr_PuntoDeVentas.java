@@ -6,10 +6,17 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.sql.Date;
+import java.time.LocalDate;
+
 import javax.swing.BoxLayout;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.model.Empleado;
+
 import javax.swing.border.LineBorder;
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -26,6 +33,10 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.SoftBevelBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -38,6 +49,8 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 * 
 	 * 
 	 */
+	private int idSucursal;
+	private EmpleadoController empleadoController = new EmpleadoController();
 	private DefaultTableModel modelTablaArticulo;
 	private JPanel contentPane;
 	private JPanel panelSuperiorDatos;
@@ -121,8 +134,10 @@ public class Fr_PuntoDeVentas extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_PuntoDeVentas() {
-
+	public Fr_PuntoDeVentas(int idSucursal) {
+		
+		this.idSucursal = idSucursal;
+		
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		setTitle("Punto de venta");
@@ -209,7 +224,12 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalStrut_5 = Box.createHorizontalStrut(5);
 		horizontalBox_1.add(horizontalStrut_5);
 
-		cmbAliasEmpleado = new JComboBox<String>();
+		cmbAliasEmpleado = new JComboBox<String>();		
+		cmbAliasEmpleado.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				consultarEmpleado();
+			}
+		});
 		horizontalBox_1.add(cmbAliasEmpleado);
 
 		verticalStrut = Box.createVerticalStrut(5);
@@ -445,7 +465,27 @@ public class Fr_PuntoDeVentas extends JFrame {
 
 		panelDatosArticulo = new JPanel();
 		panelCentralContenedor.add(panelDatosArticulo, BorderLayout.SOUTH);
+		
+		this.asignarFecha();
+		this.llenarCmbEmpleados();
 
+	}
+	
+	private void asignarFecha() {
+		String fecha = LocalDate.now().toString();
+		this.txfFechaVenta.setText(fecha);
+	}
+	
+	private void llenarCmbEmpleados() {
+		this.cmbAliasEmpleado.removeAllItems();
+		this.cmbAliasEmpleado.updateUI();
+		
+		this.empleadoController.consultaNombresCortosEmpleados(cmbAliasEmpleado, this.idSucursal);
+	}
+	
+	private void consultarEmpleado() {		
+		Empleado empleado = this.empleadoController.consultarEmpleadoPorNombre((String)this.cmbAliasEmpleado.getSelectedItem());		
+		this.txfNombreEmpleado.setText(empleado.getNombre());		
 	}
 
 }

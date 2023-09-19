@@ -374,5 +374,49 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
+	
+	public Empleado consultarEmpleadoPorNombre(String nombre) {
+		
+		Empleado empleado = new Empleado();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_empleado_por_nombre(?);");
+			stm.setString(1, empleado.getNombreCorto());
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				empleado.setId(rset.getInt(1));
+				empleado.setNombre(rset.getString(2));
+			}
+			
+			return empleado;
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return null;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}finally {
+			try {
+				if(rset != null) {
+					rset.close();
+				}
+				if(stm != null) {
+					stm.close();
+				}
+				if(cn != null) {
+					cn.close();
+				}
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
+	}
 
 }

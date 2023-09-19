@@ -494,7 +494,7 @@ public class Fr_principal extends JFrame {
 		opcionRegistrarVenta = new JMenuItem("Registrar");
 		opcionRegistrarVenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormVentas();
+				abrirFormVentas(sucursal.getIdSucursal());
 			}
 		});
 		subMenuVentas.add(opcionRegistrarVenta);
@@ -1252,7 +1252,7 @@ public class Fr_principal extends JFrame {
 		btNuevaVenta = new JButton("Punto de venta");
 		btNuevaVenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormVentas();
+				abrirFormVentas(sucursal.getIdSucursal());
 			}
 		});
 		btNuevaVenta.setIcon(
@@ -1497,7 +1497,7 @@ public class Fr_principal extends JFrame {
 		btn_irAVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				abrirFormVentas();
+				abrirFormVentas(sucursal.getIdSucursal());
 
 			}
 		});
@@ -1871,12 +1871,12 @@ public class Fr_principal extends JFrame {
 	/**
 	 * abre el formulario del punto de ventas
 	 */
-	private void abrirFormVentas() {
+	private void abrirFormVentas(int idSucursal) {
 		Component cm = this;
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas();
+				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas(idSucursal);
 				fr.setLocationRelativeTo(cm);
 				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				fr.setVisible(true);
