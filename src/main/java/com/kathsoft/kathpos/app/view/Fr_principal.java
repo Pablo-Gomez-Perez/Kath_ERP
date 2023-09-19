@@ -1451,7 +1451,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarSucursal = new JButton("Actualizar");
 		btnActualizarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 abrirFormSucursales(1);
+				abrirFormSucursales(1);
 			}
 		});
 		btnActualizarSucursal.setIcon(new ImageIcon(
@@ -1896,7 +1896,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-	
+
 	private void abrirFormSucursales(int opcion) {
 		Component cm = null;
 		EventQueue.invokeLater(new Runnable() {
@@ -1906,7 +1906,7 @@ public class Fr_principal extends JFrame {
 					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion);
 					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
-				}catch(Exception er) {
+				} catch (Exception er) {
 					er.printStackTrace();
 				}
 			}
