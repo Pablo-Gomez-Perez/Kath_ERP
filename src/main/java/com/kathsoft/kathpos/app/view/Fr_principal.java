@@ -1876,7 +1876,8 @@ public class Fr_principal extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas(idSucursal);
+				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas(
+						idSucursal);
 				fr.setLocationRelativeTo(cm);
 				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				fr.setVisible(true);
