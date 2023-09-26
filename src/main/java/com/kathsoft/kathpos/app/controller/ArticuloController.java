@@ -59,15 +59,7 @@ public class ArticuloController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -106,15 +98,7 @@ public class ArticuloController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -171,15 +155,7 @@ public class ArticuloController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -231,12 +207,8 @@ public class ArticuloController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, stm);
+
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
@@ -245,7 +217,7 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 * @param art
@@ -287,12 +259,8 @@ public class ArticuloController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, stm);
+
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
@@ -321,7 +289,6 @@ public class ArticuloController implements java.io.Serializable {
 			stm.setString(1, codigo);
 			stm.setInt(2, idSucursal);
 			rset = stm.executeQuery();
-			
 
 			if (rset.next()) {
 
@@ -355,15 +322,7 @@ public class ArticuloController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (cn != null) {
-					cn.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -373,33 +332,36 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
-	
+
 	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
-		
+
 		CallableStatement stm = null;
 		ResultSet rset = null;
-		
+
 		try {
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL ver_existencias_articulo_sucursal(?);");
 			stm.setInt(1, idArticulo);
 			rset = stm.executeQuery();
-			
-			while(rset.next()) {
-				Object[] fila = {
-					rset.getString(1),
-					rset.getInt(2)
-				};
-				
+
+			while (rset.next()) {
+				Object[] fila = { rset.getString(1), rset.getInt(2) };
+
 				tabla.addRow(fila);
 			}
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			}
 		}
-		
+
 	}
 
 }

@@ -49,15 +49,7 @@ public class ClientesController implements Serializable {
 		} finally {
 			try {
 
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (cn != null) {
-					cn.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -89,15 +81,7 @@ public class ClientesController implements Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -146,15 +130,7 @@ public class ClientesController implements Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -196,12 +172,7 @@ public class ClientesController implements Serializable {
 					JOptionPane.ERROR_MESSAGE);
 		} finally {
 			try {
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, stm);
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
@@ -210,16 +181,16 @@ public class ClientesController implements Serializable {
 		}
 
 	}
-	
-	public void actualizarCliente(Clientes cl) throws SQLException, Exception{
-		
+
+	public void actualizarCliente(Clientes cl) throws SQLException, Exception {
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL update_cliente(?,?,?,?,?,?,?,?,?,?,?);");
-			
+
 			stm.setInt(1, cl.getId());
 			stm.setString(2, cl.getClaveCuentaContable());
 			stm.setString(3, cl.getNombre());
@@ -231,24 +202,19 @@ public class ClientesController implements Serializable {
 			stm.setString(9, cl.getCiudad());
 			stm.setString(10, cl.getDireccion());
 			stm.setString(11, cl.getCodigoPostal());
-			
+
 			stm.executeUpdate();
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
-				if(cn != null) {
-					cn.close();
-				}
-				if(stm != null) {
-					stm.close();
-				}
-			}catch(SQLException er) {
+				Conexion.cerrarConexion(cn, stm);
+			} catch (SQLException er) {
 				er.printStackTrace();
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}

@@ -9,6 +9,8 @@ import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 
+import com.mysql.cj.protocol.Resultset;
+
 public class Conexion {
 
 	/**
@@ -93,6 +95,30 @@ public class Conexion {
 			rset.close();
 		}
 
+	}
+	
+	/**
+	 * Cierra la conexión establecida con el servidor de la base de datos 
+	 * 
+	 * @param cn
+	 * @param rset
+	 * @param stm
+	 * @throws SQLException
+	 */
+	public static void cerrarConexion(Connection cn, ResultSet rset, Statement stm) throws SQLException{
+		
+		if(cn != null) {
+			cn.close();
+		}
+		
+		if(rset != null) {
+			rset.close();
+		}
+		
+		if(stm != null) {
+			stm.close();
+		}
+		
 	}
 
 }
