@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 import javax.swing.BoxLayout;
@@ -14,7 +15,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.model.Clientes;
 import com.kathsoft.kathpos.app.model.Empleado;
 
 import javax.swing.border.LineBorder;
@@ -51,6 +54,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 */
 	private int idSucursal;
 	private EmpleadoController empleadoController = new EmpleadoController();
+	private ClientesController clienteController = new ClientesController();
 	private DefaultTableModel modelTablaArticulo;
 	private JPanel contentPane;
 	private JPanel panelSuperiorDatos;
@@ -225,6 +229,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalBox_1.add(horizontalStrut_5);
 
 		cmbAliasEmpleado = new JComboBox<String>();		
+		this.llenarCmbEmpleados();
 		cmbAliasEmpleado.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				consultarEmpleado();
@@ -267,6 +272,12 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalBox_3.add(horizontalStrut_9);
 
 		cmbRfcCliente = new JComboBox<String>();
+		this.llenarCmbRfcCliente();
+		cmbRfcCliente.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				consultarCliente();
+			}
+		});
 		horizontalBox_3.add(cmbRfcCliente);
 
 		horizontalStrut_10 = Box.createHorizontalStrut(5);
@@ -466,9 +477,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		panelDatosArticulo = new JPanel();
 		panelCentralContenedor.add(panelDatosArticulo, BorderLayout.SOUTH);
 		
-		this.asignarFecha();
-		this.llenarCmbEmpleados();
-
+		this.asignarFecha();						
 	}
 	
 	private void asignarFecha() {
@@ -483,11 +492,42 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.empleadoController.consultaNombresCortosEmpleados(cmbAliasEmpleado, this.idSucursal);
 	}
 	
+	private void llenarCmbRfcCliente() {
+		
+		this.cmbRfcCliente.removeAllItems();
+		this.cmbRfcCliente.updateUI();
+		
+		try {
+			this.clienteController.consultarRFCClientes(cmbRfcCliente);
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
+	}
+	
 	private void consultarEmpleado() {
 		String nombreEmpleado = (String) this.cmbAliasEmpleado.getSelectedItem();
-		System.out.println("Nombre buscado: " + nombreEmpleado);
+		//System.out.println("Nombre buscado: " + nombreEmpleado);
 		Empleado empleado = this.empleadoController.consultarEmpleadoPorNombre(nombreEmpleado);
 		this.txfNombreEmpleado.setText(empleado.getNombre());
 	}
-
+	
+	
+	private void consultarCliente() {
+		
+		try {
+			String rfcCliente = (String) this.cmbRfcCliente.getSelectedItem();
+			Clientes cliente = this.clienteController.buscarClientePorRFC(rfcCliente);
+			
+			this.txfAliasCliente.setText(cliente.getNombreCorto());
+			this.txfNombreCliente.setText(cliente.getNombre());
+			this.txfClaveContableCliente.setText(cliente.getClaveCuentaContable());
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+		
+	}
 }

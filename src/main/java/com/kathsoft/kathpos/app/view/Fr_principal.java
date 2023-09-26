@@ -330,7 +330,7 @@ public class Fr_principal extends JFrame {
 			public void run() {
 				try {
 					Fr_principal frame = new Fr_principal(
-							new Sucursal(2, null, null, null, null, null, null, null, null));
+							new Sucursal(1, null, null, null, null, null, null, null, null));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
