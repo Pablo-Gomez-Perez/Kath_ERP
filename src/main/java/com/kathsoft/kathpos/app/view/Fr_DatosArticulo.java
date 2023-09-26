@@ -3,6 +3,7 @@ package com.kathsoft.kathpos.app.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -132,9 +133,9 @@ public class Fr_DatosArticulo extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_DatosArticulo(int tipoOperacion, int sucursal) {
-		
+
 		this.idSucursal = sucursal;
-		
+
 		if (tipoOperacion == 0) {
 			this.setTitle("Nuevo Articulo");
 		} else if (tipoOperacion == 1) {
@@ -335,11 +336,16 @@ public class Fr_DatosArticulo extends JFrame {
 
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
 		horizontalBox_3.add(horizontalStrut_15);
-		
+
 		btnExistenciaGlobal = new JButton("Global");
+		btnExistenciaGlobal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormExistencias();
+			}
+		});
 		btnExistenciaGlobal.setBackground(new Color(102, 51, 255));
 		horizontalBox_3.add(btnExistenciaGlobal);
-		
+
 		horizontalStrut_21 = Box.createHorizontalStrut(20);
 		horizontalBox_3.add(horizontalStrut_21);
 
@@ -644,7 +650,7 @@ public class Fr_DatosArticulo extends JFrame {
 		try {
 
 			Articulo art = articuloController
-					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem(),this.idSucursal);
+					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem(), this.idSucursal);
 
 			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
 			this.cmbProveedorArticulo.setSelectedItem(art.getNombreProveedor());
@@ -758,11 +764,29 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 
 	}
-	
+
 	private void abrirFormExistencias() {
 		Component componente = this;
-		
-		
+		try {
+
+			Articulo art = articuloController
+					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem(), this.idSucursal);
+
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+
+					Fr_ExistenciasArticulos frame = new Fr_ExistenciasArticulos(art.getIdArticulo());
+					frame.setLocationRelativeTo(componente);
+					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					frame.setVisible(true);
+
+				}
+			});
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+
 	}
 
 	private void limpiarCampos() {

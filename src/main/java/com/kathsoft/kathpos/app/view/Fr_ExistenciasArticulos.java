@@ -31,9 +31,8 @@ public class Fr_ExistenciasArticulos extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_ExistenciasArticulos(int id_articulo) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+	public Fr_ExistenciasArticulos(int id_articulo) {		
+		setBounds(100, 100, 480, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -43,6 +42,7 @@ public class Fr_ExistenciasArticulos extends JFrame {
 		scrollPaneExistenciasArticulo = new JScrollPane();
 		contentPane.add(scrollPaneExistenciasArticulo, BorderLayout.CENTER);
 		
+		modelTablaExistencias = new DefaultTableModel();
 		tablaExistenciasArticulo = new JTable();
 		tablaExistenciasArticulo.setModel(modelTablaExistencias);
 		modelTablaExistencias.addColumn("Sucursal");
@@ -50,8 +50,7 @@ public class Fr_ExistenciasArticulos extends JFrame {
 		scrollPaneExistenciasArticulo.setViewportView(tablaExistenciasArticulo);		
 		
 		this.llenarTablaExistencia(id_articulo);
-		
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				
 	}
 	
 	private void llenarTablaExistencia(int id_articulo) {
