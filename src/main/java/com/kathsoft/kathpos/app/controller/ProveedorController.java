@@ -24,6 +24,10 @@ public class ProveedorController implements java.io.Serializable {
 	 */
 	private static Connection cn = null;
 
+	/**
+	 * 
+	 * @param tabla
+	 */
 	public void verProveedoresEnTabla(DefaultTableModel tabla) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -52,6 +56,12 @@ public class ProveedorController implements java.io.Serializable {
 			er.printStackTrace();
 		} catch (Exception er) {
 			er.printStackTrace();
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			}
 		}
 	}
 
@@ -84,15 +94,7 @@ public class ProveedorController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -102,9 +104,9 @@ public class ProveedorController implements java.io.Serializable {
 		}
 
 	}
-	
+
 	public void consultarNombresProveedor(JComboBox<String> cmb) {
-		
+
 		CallableStatement stm = null;
 		ResultSet rset = null;
 
@@ -125,15 +127,7 @@ public class ProveedorController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -141,7 +135,7 @@ public class ProveedorController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	/**
@@ -186,12 +180,7 @@ public class ProveedorController implements java.io.Serializable {
 					JOptionPane.ERROR_MESSAGE);
 		} finally {
 			try {
-				if (cn != null) {
-					stm.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, null, stm);
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
@@ -227,11 +216,10 @@ public class ProveedorController implements java.io.Serializable {
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		} finally {
-			if (cn != null) {
-				cn.close();
-			}
-			if (stm != null) {
-				stm.close();
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
 			}
 		}
 
@@ -283,15 +271,7 @@ public class ProveedorController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					cn.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (Exception er) {
 				er.printStackTrace();
@@ -300,5 +280,3 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 }
-
-//144,238,144

@@ -387,7 +387,9 @@ public class EmpleadoController implements Serializable {
 	}
 
 	public Empleado consultarEmpleadoPorNombre(String nombre) {
-
+		
+		//System.out.println("En el controlador: " + nombre);
+		
 		Empleado empleado = new Empleado();
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -396,7 +398,7 @@ public class EmpleadoController implements Serializable {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL buscar_empleado_por_nombre(?);");
-			stm.setString(1, empleado.getNombreCorto());
+			stm.setString(1, nombre);
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
@@ -404,7 +406,7 @@ public class EmpleadoController implements Serializable {
 				empleado.setNombre(rset.getString(2));
 			}
 
-			System.out.println(empleado.toString());
+			//System.out.println(empleado.toString());
 
 			return empleado;
 

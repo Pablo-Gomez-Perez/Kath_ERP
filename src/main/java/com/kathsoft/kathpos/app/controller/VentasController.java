@@ -53,8 +53,7 @@ public class VentasController implements java.io.Serializable {
 						rset.getDouble(6), // subtotal
 						rset.getDouble(7), // IVA
 						rset.getDouble(8), // Importe Total de la venta
-						(rset.getShort(9) == 1) ? "Vigente" : "Cancelada",
-				};
+						(rset.getShort(9) == 1) ? "Vigente" : "Cancelada", };
 
 				tabla.addRow(fila);
 			}
@@ -110,7 +109,7 @@ public class VentasController implements java.io.Serializable {
 						rset.getDouble(6), // subtotal
 						rset.getDouble(7), // IVA
 						rset.getDouble(8), // Importe Total de la venta
-						(rset.getShort(9) == 1) ? "Vigente" : "Cancelada"};
+						(rset.getShort(9) == 1) ? "Vigente" : "Cancelada" };
 
 				tabla.addRow(fila);
 			}
@@ -130,7 +129,5 @@ public class VentasController implements java.io.Serializable {
 		}
 
 	}
-	
-	
 
 }

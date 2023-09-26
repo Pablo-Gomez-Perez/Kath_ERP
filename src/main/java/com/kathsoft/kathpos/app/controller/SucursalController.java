@@ -78,6 +78,12 @@ public class SucursalController implements java.io.Serializable {
 		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
 		}
 
 	}
@@ -109,12 +115,7 @@ public class SucursalController implements java.io.Serializable {
 			er.printStackTrace();
 		} finally {
 			try {
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			} catch (Exception er) {
 				er.printStackTrace();
 			}
@@ -150,15 +151,7 @@ public class SucursalController implements java.io.Serializable {
 			er.printStackTrace();
 		} finally {
 			try {
-				if (stm != null) {
-					stm.close();
-				}
-				if (rset != null) {
-					rset.close();
-				}
-				if (cn != null) {
-					cn.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			} catch (SQLException er) {
 				er.printStackTrace();
 			}
@@ -197,12 +190,7 @@ public class SucursalController implements java.io.Serializable {
 			er.printStackTrace();
 		} finally {
 			try {
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -238,12 +226,7 @@ public class SucursalController implements java.io.Serializable {
 			er.printStackTrace();
 		} finally {
 			try {
-				if (cn != null) {
-					cn.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -288,15 +271,7 @@ public class SucursalController implements java.io.Serializable {
 			return null;
 		} finally {
 			try {
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (cn != null) {
-					cn.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			} catch (SQLException er) {
 				er.printStackTrace();
 			}
