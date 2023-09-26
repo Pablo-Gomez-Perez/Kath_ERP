@@ -393,6 +393,8 @@ public class EmpleadoController implements Serializable {
 				empleado.setNombre(rset.getString(2));
 			}
 			
+			System.out.println(empleado.toString());
+			
 			return empleado;
 			
 		}catch(SQLException er) {

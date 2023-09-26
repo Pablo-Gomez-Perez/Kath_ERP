@@ -66,15 +66,7 @@ public class VentasController implements java.io.Serializable {
 		} finally {
 			try {
 
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (cn != null) {
-					cn.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -129,15 +121,7 @@ public class VentasController implements java.io.Serializable {
 			er.printStackTrace();
 		} finally {
 			try {
-				if (rset != null) {
-					rset.close();
-				}
-				if (stm != null) {
-					stm.close();
-				}
-				if (cn != null) {
-					cn.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
@@ -146,5 +130,7 @@ public class VentasController implements java.io.Serializable {
 		}
 
 	}
+	
+	
 
 }

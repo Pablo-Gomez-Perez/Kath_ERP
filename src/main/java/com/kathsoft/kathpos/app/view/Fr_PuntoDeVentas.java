@@ -483,9 +483,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.empleadoController.consultaNombresCortosEmpleados(cmbAliasEmpleado, this.idSucursal);
 	}
 	
-	private void consultarEmpleado() {		
-		Empleado empleado = this.empleadoController.consultarEmpleadoPorNombre((String)this.cmbAliasEmpleado.getSelectedItem());		
-		this.txfNombreEmpleado.setText(empleado.getNombre());		
+	private void consultarEmpleado() {
+		String nombreEmpleado = (String) this.cmbAliasEmpleado.getSelectedItem();
+		System.out.println("Nombre buscado: " + nombreEmpleado);
+		Empleado empleado = this.empleadoController.consultarEmpleadoPorNombre(nombreEmpleado);
+		this.txfNombreEmpleado.setText(empleado.getNombre());
 	}
 
 }

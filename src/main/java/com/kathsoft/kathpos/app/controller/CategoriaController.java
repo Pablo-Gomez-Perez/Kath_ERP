@@ -57,15 +57,7 @@ public class CategoriaController implements Serializable {
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}finally {
 			try {
-				if(cn != null) {
-					cn.close();
-				}
-				if(stm != null) {
-					stm.close();
-				}
-				if(rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			}catch(SQLException er) {
 				er.printStackTrace();
 			}catch (Exception e) {
@@ -97,15 +89,7 @@ public class CategoriaController implements Serializable {
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}finally {
 			try {
-				if(cn != null) {
-					cn.close();
-				}
-				if(stm != null) {
-					stm.close();
-				}
-				if(rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			}catch(SQLException er) {
 				er.printStackTrace();
 			}catch (Exception e) {
@@ -148,15 +132,7 @@ public class CategoriaController implements Serializable {
 			return null;
 		}finally {
 			try {
-				if(cn != null) {
-					cn.close();
-				}
-				if(stm != null) {
-					stm.close();
-				}
-				if(rset != null) {
-					rset.close();
-				}
+				Conexion.cerrarConexion(cn, rset, stm);
 			}catch(SQLException er) {
 				er.printStackTrace();
 			}catch (Exception e) {
@@ -190,12 +166,7 @@ public class CategoriaController implements Serializable {
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}finally {
 			try {
-				if(cn != null) {
-					cn.close();
-				}
-				if(stm != null) {
-					stm.close();
-				}				
+				Conexion.cerrarConexion(cn, stm);		
 			}catch(SQLException er) {
 				er.printStackTrace();
 			}catch (Exception e) {
@@ -226,12 +197,7 @@ public class CategoriaController implements Serializable {
 			er.printStackTrace();
 		}finally {
 			try {
-				if(cn != null) {
-					cn.close();
-				}
-				if(stm != null) {
-					stm.close();
-				}
+				Conexion.cerrarConexion(cn, stm);
 			}catch(SQLException er){
 				er.printStackTrace();
 			}catch(Exception er) {
