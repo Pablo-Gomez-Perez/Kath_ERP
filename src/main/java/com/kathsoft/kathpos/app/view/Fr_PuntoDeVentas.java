@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Clientes;
 import com.kathsoft.kathpos.app.model.Empleado;
 
@@ -55,6 +56,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 	private int idSucursal;
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ClientesController clienteController = new ClientesController();
+	private VentasController ventasController = new VentasController();
 	private DefaultTableModel modelTablaArticulo;
 	private JPanel contentPane;
 	private JPanel panelSuperiorDatos;
@@ -477,6 +479,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		panelDatosArticulo = new JPanel();
 		panelCentralContenedor.add(panelDatosArticulo, BorderLayout.SOUTH);
 		
+		this.txfFolioVenta.setText(String.valueOf(ventasController.buscarUltimaVenta() + 1));
 		this.asignarFecha();						
 	}
 	

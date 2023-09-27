@@ -129,5 +129,65 @@ public class VentasController implements java.io.Serializable {
 		}
 
 	}
-
+	
+	
+	public int buscarUltimaVenta() {
+		
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		int valor = 0;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_ultima_venta();");
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				valor = rset.getInt(1);
+			}
+			
+			return valor;
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return 0;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return 0;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
