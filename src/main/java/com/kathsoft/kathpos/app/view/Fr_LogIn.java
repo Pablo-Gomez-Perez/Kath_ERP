@@ -10,6 +10,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,9 +30,6 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Sucursal;
-
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class Fr_LogIn extends JFrame {
 
