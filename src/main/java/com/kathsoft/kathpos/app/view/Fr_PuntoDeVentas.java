@@ -26,6 +26,8 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
@@ -41,6 +43,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.FlowLayout;
+import javax.swing.JTextArea;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -136,6 +140,37 @@ public class Fr_PuntoDeVentas extends JFrame {
 	private JButton btnCobrar;
 	private Component horizontalStrut_20;
 	private JButton btnSalir;
+	private Box verticalBox_4;
+	private Box horizontalBox_12;
+	private JLabel lblNewLabel_14;
+	private Component horizontalStrut_21;
+	private JTextField txfCodigoArticulo;
+	private JButton btnBuscarArticuloPorCodigo;
+	private Component horizontalStrut_22;
+	private JLabel lblNewLabel_15;
+	private Component horizontalStrut_23;
+	private JTextField txfNombreArticulo;
+	private Component verticalStrut_3;
+	private Box horizontalBox_13;
+	private JPanel panel;
+	private JLabel lblNewLabel_16;
+	private Box horizontalBox_14;
+	private JTextArea txaDescripcionArticulo;
+	private Box verticalBox_5;
+	private Box horizontalBox_15;
+	private JLabel lblNewLabel_17;
+	private Component horizontalStrut_24;
+	private JTextField txfPrecioGeneralArticulo;
+	private Component horizontalStrut_25;
+	private JLabel lblNewLabel_18;
+	private JButton btnBuscarArticuloPorNombre;
+	private Component horizontalStrut_26;
+	private JTextField txfPrecioMayoreoArticulo;
+	private Component horizontalStrut_27;
+	private JButton btnAgregarArticulo;
+	private Component verticalStrut_4;
+	private JScrollPane scrollPaneExistenciaArticulos;
+	private JTable tablaExistenciaPorSucursal;
 
 	/**
 	 * Create the frame.
@@ -353,7 +388,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		panelCentralContenedor.add(panelTotales, BorderLayout.EAST);
 		panelTotales.setLayout(new BoxLayout(panelTotales, BoxLayout.Y_AXIS));
 
-		verticalStrut_6 = Box.createVerticalStrut(250);
+		verticalStrut_6 = Box.createVerticalStrut(180);
 		panelTotales.add(verticalStrut_6);
 
 		verticalBox_3 = Box.createVerticalBox();
@@ -477,7 +512,123 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalBox_11.add(btnSalir);
 
 		panelDatosArticulo = new JPanel();
+		panelDatosArticulo.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
+		FlowLayout flowLayout = (FlowLayout) panelDatosArticulo.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
 		panelCentralContenedor.add(panelDatosArticulo, BorderLayout.SOUTH);
+		
+		verticalBox_4 = Box.createVerticalBox();
+		panelDatosArticulo.add(verticalBox_4);
+		
+		horizontalBox_12 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_12);
+		
+		lblNewLabel_14 = new JLabel("Codigo");
+		horizontalBox_12.add(lblNewLabel_14);
+		
+		horizontalStrut_21 = Box.createHorizontalStrut(5);
+		horizontalBox_12.add(horizontalStrut_21);
+		
+		txfCodigoArticulo = new JTextField();
+		horizontalBox_12.add(txfCodigoArticulo);
+		txfCodigoArticulo.setColumns(15);
+		this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
+		
+		btnBuscarArticuloPorCodigo = new JButton("");
+		btnBuscarArticuloPorCodigo.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		horizontalBox_12.add(btnBuscarArticuloPorCodigo);
+		
+		horizontalStrut_22 = Box.createHorizontalStrut(10);
+		horizontalBox_12.add(horizontalStrut_22);
+		
+		lblNewLabel_15 = new JLabel("Articulo");
+		horizontalBox_12.add(lblNewLabel_15);
+		
+		horizontalStrut_23 = Box.createHorizontalStrut(5);
+		horizontalBox_12.add(horizontalStrut_23);
+		
+		txfNombreArticulo = new JTextField();
+		horizontalBox_12.add(txfNombreArticulo);
+		txfNombreArticulo.setColumns(20);
+		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
+		
+		btnBuscarArticuloPorNombre = new JButton("");
+		btnBuscarArticuloPorNombre.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		horizontalBox_12.add(btnBuscarArticuloPorNombre);
+		
+		verticalStrut_3 = Box.createVerticalStrut(5);
+		verticalBox_4.add(verticalStrut_3);
+		
+		horizontalBox_13 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_13);
+		
+		panel = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel.getLayout();
+		flowLayout_1.setVgap(0);
+		flowLayout_1.setHgap(0);
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		horizontalBox_13.add(panel);
+		
+		lblNewLabel_16 = new JLabel("Descripcion");
+		panel.add(lblNewLabel_16);
+		
+		horizontalBox_14 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_14);
+		
+		txaDescripcionArticulo = new JTextArea();
+		txaDescripcionArticulo.setLineWrap(true);
+		txaDescripcionArticulo.setRows(4);
+		horizontalBox_14.add(txaDescripcionArticulo);
+		
+		verticalBox_5 = Box.createVerticalBox();
+		panelDatosArticulo.add(verticalBox_5);
+		
+		horizontalBox_15 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_15);
+		
+		lblNewLabel_17 = new JLabel("Precio G.");
+		horizontalBox_15.add(lblNewLabel_17);
+		
+		horizontalStrut_24 = Box.createHorizontalStrut(5);
+		horizontalBox_15.add(horizontalStrut_24);
+		
+		txfPrecioGeneralArticulo = new JTextField();
+		horizontalBox_15.add(txfPrecioGeneralArticulo);
+		txfPrecioGeneralArticulo.setColumns(10);
+		this.txfPrecioGeneralArticulo.setMaximumSize(this.txfPrecioGeneralArticulo.getPreferredSize());
+		
+		horizontalStrut_25 = Box.createHorizontalStrut(10);
+		horizontalBox_15.add(horizontalStrut_25);
+		
+		lblNewLabel_18 = new JLabel("Precio M.");
+		horizontalBox_15.add(lblNewLabel_18);
+		
+		horizontalStrut_26 = Box.createHorizontalStrut(5);
+		horizontalBox_15.add(horizontalStrut_26);
+		
+		txfPrecioMayoreoArticulo = new JTextField();
+		horizontalBox_15.add(txfPrecioMayoreoArticulo);
+		txfPrecioMayoreoArticulo.setColumns(10);
+		this.txfPrecioMayoreoArticulo.setMaximumSize(this.txfPrecioMayoreoArticulo.getPreferredSize());
+		
+		horizontalStrut_27 = Box.createHorizontalStrut(5);
+		horizontalBox_15.add(horizontalStrut_27);
+		
+		btnAgregarArticulo = new JButton("");
+		btnAgregarArticulo.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		horizontalBox_15.add(btnAgregarArticulo);
+		
+		verticalStrut_4 = Box.createVerticalStrut(5);
+		verticalBox_5.add(verticalStrut_4);
+		
+		scrollPaneExistenciaArticulos = new JScrollPane();
+		verticalBox_5.add(scrollPaneExistenciaArticulos);
+		
+		tablaExistenciaPorSucursal = new JTable();
+		tablaExistenciaPorSucursal.setFillsViewportHeight(true);
+		
+		scrollPaneExistenciaArticulos.setViewportView(tablaExistenciaPorSucursal);
+		scrollPaneExistenciaArticulos.setPreferredSize(new Dimension(60,90));
 		
 		this.txfFolioVenta.setText(String.valueOf(ventasController.buscarUltimaVenta() + 1));
 		this.asignarFecha();						
