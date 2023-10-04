@@ -701,6 +701,9 @@ public class Fr_PuntoDeVentas extends JFrame {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	private void consultarArticulos() {
 		
 		try {
@@ -717,8 +720,8 @@ public class Fr_PuntoDeVentas extends JFrame {
 				
 			}
 			
-			if(this.txfNombreArticulo.getText().isEmpty() || this.txfNombreArticulo.getText().equals("")) {
-				abrirFormListaArticulos(this.txfNombreArticulo.getText(), this.idSucursal);
+			if(this.txfCodigoArticulo.getText().isEmpty() || this.txfCodigoArticulo.getText().equals("")) {
+				abrirFormListaArticulos(this.txfCodigoArticulo.getText(), this.idSucursal);
 			}
 			
 		} catch (Exception e) {

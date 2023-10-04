@@ -6,6 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
+import com.kathsoft.kathpos.app.controller.ArticuloController;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -17,6 +20,8 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.BevelBorder;
 
 public class Fr_ListaArticulos extends JFrame {
 
@@ -25,9 +30,10 @@ public class Fr_ListaArticulos extends JFrame {
 	 * 
 	 * 
 	 */
-	private DefaultTableModel articulosTableModel;
+	private DefaultTableModel modelTablaArticulos;
+	private ArticuloController articuloController = new ArticuloController();
 	private String nombreArticulo;	
-	private int idSurucsal;
+	private int idSucursal;
 	private JPanel contentPane;
 	private JTextField txfNombreArticulo;
 	private JTable tablaArticulos;
@@ -38,6 +44,17 @@ public class Fr_ListaArticulos extends JFrame {
 	private JButton btnBusquedaArticulo;
 	private JPanel panelCentralTabla;
 	private JScrollPane scrollPaneTablaArticulo;
+	private int[] tablaArticulosColumnsWidth = { 40, /* id */
+			150, /* codigo */
+			200, /* proveedor */
+			180, /* categoría */
+			100, /* codigo sat */
+			300, /* Nombre */
+			450, /* descripcion */
+			100, /* Existencia */
+			100, /* Precio g */
+			100 /* Precio m */
+	};
 
 	/**
 	 * Launch the application.
@@ -62,7 +79,7 @@ public class Fr_ListaArticulos extends JFrame {
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal) {
 		
 		this.nombreArticulo = nombreArticulo;
-		this.idSurucsal = idSucursal;
+		this.idSucursal = idSucursal;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 730, 450);
@@ -73,6 +90,7 @@ public class Fr_ListaArticulos extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		panelSuperiorBusqueda = new JPanel();
+		panelSuperiorBusqueda.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
 		flowLayout = (FlowLayout) panelSuperiorBusqueda.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panelSuperiorBusqueda, BorderLayout.NORTH);
@@ -96,20 +114,56 @@ public class Fr_ListaArticulos extends JFrame {
 		panelSuperiorBusqueda.add(btnBusquedaArticulo);
 		
 		panelCentralTabla = new JPanel();
+		panelCentralTabla.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
 		contentPane.add(panelCentralTabla, BorderLayout.CENTER);
 		panelCentralTabla.setLayout(new BorderLayout(0, 0));
 		
 		scrollPaneTablaArticulo = new JScrollPane();
 		panelCentralTabla.add(scrollPaneTablaArticulo);
 		
-		this.articulosTableModel = new DefaultTableModel();
+		this.modelTablaArticulos = new DefaultTableModel();
 		
-		this.articulosTableModel.addColumn("Id");
+		this.modelTablaArticulos.addColumn("Id");
+		this.modelTablaArticulos.addColumn("Codigo");
+		this.modelTablaArticulos.addColumn("Proveedor");
+		this.modelTablaArticulos.addColumn("Categoría");
+		this.modelTablaArticulos.addColumn("Codigo Sat");
+		this.modelTablaArticulos.addColumn("Nombre");
+		this.modelTablaArticulos.addColumn("Descripción");
+		this.modelTablaArticulos.addColumn("Existencia");
+		this.modelTablaArticulos.addColumn("Precio G.");
+		this.modelTablaArticulos.addColumn("Precio M");
 		
 		tablaArticulos = new JTable();
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
-		tablaArticulos.setModel(this.articulosTableModel);
+		tablaArticulos.setModel(this.modelTablaArticulos);
 		
+		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		for (int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
+			Class<?> colClass = modelTablaArticulos.getColumnClass(i);
+			tablaArticulos.setDefaultEditor(colClass, null);
+		}
+		
+		/**
+		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
+		 * los articulos
+		 */
+		TableColumnModel articulosColumnModel = tablaArticulos.getColumnModel();
+
+		for (int i = 0; i < tablaArticulosColumnsWidth.length; i++) {
+			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
+			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
+		}
+		
+		this.llenarTablaArticulos();
+		
+	}
+	
+	private void llenarTablaArticulos() {
+		this.modelTablaArticulos.getDataVector().removeAllElements();
+		this.tablaArticulos.updateUI();
+		this.articuloController.consultarArticulosPorNombre(this.nombreArticulo, this.modelTablaArticulos, 1, this.idSucursal);
 	}
 
 }
