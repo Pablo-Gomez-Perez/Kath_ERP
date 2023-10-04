@@ -15,9 +15,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.VentasController;
+import com.kathsoft.kathpos.app.model.Articulo;
 import com.kathsoft.kathpos.app.model.Clientes;
 import com.kathsoft.kathpos.app.model.Empleado;
 
@@ -27,6 +29,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -61,7 +64,9 @@ public class Fr_PuntoDeVentas extends JFrame {
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ClientesController clienteController = new ClientesController();
 	private VentasController ventasController = new VentasController();
+	private ArticuloController articuloController = new ArticuloController();
 	private DefaultTableModel modelTablaArticulo;
+	private DefaultTableModel modelTablaExistencias;
 	private JPanel contentPane;
 	private JPanel panelSuperiorDatos;
 	private JTextField txfFolioVenta;
@@ -535,6 +540,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
 		
 		btnBuscarArticuloPorCodigo = new JButton("");
+		btnBuscarArticuloPorCodigo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				consultarArticulos();
+			}
+		});
 		btnBuscarArticuloPorCodigo.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		horizontalBox_12.add(btnBuscarArticuloPorCodigo);
 		
@@ -624,7 +634,13 @@ public class Fr_PuntoDeVentas extends JFrame {
 		scrollPaneExistenciaArticulos = new JScrollPane();
 		verticalBox_5.add(scrollPaneExistenciaArticulos);
 		
+		this.modelTablaExistencias = new DefaultTableModel();
+		
+		this.modelTablaExistencias.addColumn("Sucursal");
+		this.modelTablaExistencias.addColumn("Existencias");
+		
 		tablaExistenciaPorSucursal = new JTable();
+		tablaExistenciaPorSucursal.setModel(modelTablaExistencias);
 		tablaExistenciaPorSucursal.setFillsViewportHeight(true);
 		
 		scrollPaneExistenciaArticulos.setViewportView(tablaExistenciaPorSucursal);
@@ -680,6 +696,59 @@ public class Fr_PuntoDeVentas extends JFrame {
 		}catch(SQLException er) {
 			er.printStackTrace();
 		} catch (Exception er) {
+			er.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 
+	 */
+	private void consultarArticulos() {
+		
+		try {
+			
+			Articulo articulo = this.articuloController.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(), this.idSucursal);
+			
+			if(articulo != null) {
+				
+				this.txfNombreArticulo.setText(articulo.getNombre());
+				this.txaDescripcionArticulo.setText(articulo.getDescripcion());
+				this.txfPrecioGeneralArticulo.setText(String.valueOf(articulo.getPrecioGeneral()));
+				this.txfPrecioMayoreoArticulo.setText(String.valueOf(articulo.getPrecioMayoreo()));
+				this.llenarTablaExistencias(articulo.getIdArticulo());
+				
+			}
+			
+			if(this.txfCodigoArticulo.getText().isEmpty() || this.txfCodigoArticulo.getText().equals("")) {
+				abrirFormListaArticulos(this.txfCodigoArticulo.getText(), this.idSucursal);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+	}
+	
+	private void llenarTablaExistencias(int id) {
+		this.modelTablaExistencias.getDataVector().removeAllElements();
+		this.tablaExistenciaPorSucursal.updateUI();
+		this.articuloController.consultarExistenciasPorSucursal(id, modelTablaExistencias);
+	}
+	
+	private void abrirFormListaArticulos(String nombreArticulo, int idSucursal) {
+		Component cm = this;
+		try {
+			EventQueue.invokeLater(new Runnable() {				
+				@Override
+				public void run() {
+					Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, idSucursal);
+					frame.setLocationRelativeTo(cm);
+					frame.setVisible(true);
+					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				}
+			});
+		}catch(Exception er) {
 			er.printStackTrace();
 		}
 		
