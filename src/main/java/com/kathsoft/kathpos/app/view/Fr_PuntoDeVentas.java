@@ -168,7 +168,6 @@ public class Fr_PuntoDeVentas extends JFrame {
 	private JTextField txfPrecioGeneralArticulo;
 	private Component horizontalStrut_25;
 	private JLabel lblNewLabel_18;
-	private JButton btnBuscarArticuloPorNombre;
 	private Component horizontalStrut_26;
 	private JTextField txfPrecioMayoreoArticulo;
 	private Component horizontalStrut_27;
@@ -562,10 +561,6 @@ public class Fr_PuntoDeVentas extends JFrame {
 		txfNombreArticulo.setColumns(20);
 		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
 		
-		btnBuscarArticuloPorNombre = new JButton("");
-		btnBuscarArticuloPorNombre.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
-		horizontalBox_12.add(btnBuscarArticuloPorNombre);
-		
 		verticalStrut_3 = Box.createVerticalStrut(5);
 		verticalBox_4.add(verticalStrut_3);
 		
@@ -710,7 +705,9 @@ public class Fr_PuntoDeVentas extends JFrame {
 			
 			Articulo articulo = this.articuloController.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(), this.idSucursal);
 			
-			if(articulo != null) {
+			if(articulo.getCodigoArticulo() != null || this.txfCodigoArticulo.getText() != "") {
+				
+				System.out.println(articulo.toString());
 				
 				this.txfNombreArticulo.setText(articulo.getNombre());
 				this.txaDescripcionArticulo.setText(articulo.getDescripcion());
@@ -720,10 +717,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 				
 			}
 			
-			if(this.txfCodigoArticulo.getText().isEmpty() || this.txfCodigoArticulo.getText().equals("")) {
-				abrirFormListaArticulos(this.txfCodigoArticulo.getText(), this.idSucursal);
+			if(articulo.getCodigoArticulo() == null) {
+				this.abrirFormListaArticulos(this.txfCodigoArticulo.getText(), this.idSucursal);
 			}
 			
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

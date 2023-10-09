@@ -22,6 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_ListaArticulos extends JFrame {
 
@@ -110,6 +112,11 @@ public class Fr_ListaArticulos extends JFrame {
 		panelSuperiorBusqueda.add(horizontalStrut_1);
 		
 		btnBusquedaArticulo = new JButton("Buscar");
+		btnBusquedaArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaArticulos(txfNombreArticulo.getText());
+			}
+		});
 		btnBusquedaArticulo.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		panelSuperiorBusqueda.add(btnBusquedaArticulo);
 		
@@ -156,14 +163,15 @@ public class Fr_ListaArticulos extends JFrame {
 			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
 		}
 		
-		this.llenarTablaArticulos();
+		this.llenarTablaArticulos(this.nombreArticulo);
 		
 	}
 	
-	private void llenarTablaArticulos() {
+	private void llenarTablaArticulos(String nombreArticulo) {
+		System.out.println(this.nombreArticulo);
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
-		this.articuloController.consultarArticulosPorNombre(this.nombreArticulo, this.modelTablaArticulos, 1, this.idSucursal);
+		this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1, this.idSucursal);
 	}
 
 }
