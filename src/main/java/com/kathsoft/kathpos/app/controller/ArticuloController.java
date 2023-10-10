@@ -293,17 +293,18 @@ public class ArticuloController implements java.io.Serializable {
 			if (rset.next()) {
 
 				art.setIdArticulo(rset.getInt(1));
-				art.setNombreProveedor(rset.getString(2));
-				art.setNombreCategoria(rset.getString(3));
-				art.setNombre(rset.getString(4));
-				art.setCodigoSat(rset.getString(5));
-				art.setDescripcion(rset.getString(6));
-				art.setExistencia(rset.getInt(7));
-				art.setExento((rset.getInt(8) == 1) ? true : false);
-				art.setCostoUnitario(rset.getDouble(9));
-				art.setPrecioGeneral(rset.getDouble(10));
-				art.setPrecioMayoreo(rset.getDouble(11));
-				art.setCantidadMayoreo(rset.getInt(12));
+				art.setCodigoArticulo(rset.getString(2));
+				art.setNombreProveedor(rset.getString(3));
+				art.setNombreCategoria(rset.getString(4));
+				art.setNombre(rset.getString(5));
+				art.setCodigoSat(rset.getString(6));
+				art.setDescripcion(rset.getString(7));
+				art.setExistencia(rset.getInt(8));
+				art.setExento((rset.getInt(9) == 1) ? true : false);
+				art.setCostoUnitario(rset.getDouble(10));
+				art.setPrecioGeneral(rset.getDouble(11));
+				art.setPrecioMayoreo(rset.getDouble(12));
+				art.setCantidadMayoreo(rset.getInt(13));
 
 			}
 
