@@ -26,6 +26,8 @@ import com.kathsoft.kathpos.app.model.Empleado;
 import javax.swing.border.LineBorder;
 import javax.swing.Box;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -61,6 +63,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 * 
 	 */
 	private int idSucursal;
+	private Articulo articulo;
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ClientesController clienteController = new ClientesController();
 	private VentasController ventasController = new VentasController();
@@ -180,9 +183,9 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_PuntoDeVentas(int idSucursal) {
-		
+
 		this.idSucursal = idSucursal;
-		
+
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		setTitle("Punto de venta");
@@ -269,7 +272,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalStrut_5 = Box.createHorizontalStrut(5);
 		horizontalBox_1.add(horizontalStrut_5);
 
-		cmbAliasEmpleado = new JComboBox<String>();		
+		cmbAliasEmpleado = new JComboBox<String>();
 		this.llenarCmbEmpleados();
 		cmbAliasEmpleado.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -364,6 +367,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.txfClaveContableCliente.setMaximumSize(this.txfClaveContableCliente.getPreferredSize());
 
 		panelCentralContenedor = new JPanel();
+		panelCentralContenedor.setBackground(new Color(255, 215, 0));
 		panelCentralContenedor
 				.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new LineBorder(new Color(0, 0, 0))));
 		contentPane.add(panelCentralContenedor, BorderLayout.CENTER);
@@ -377,14 +381,13 @@ public class Fr_PuntoDeVentas extends JFrame {
 		tablaArticulos = new JTable();
 		tablaArticulos.setModel(modelTablaArticulo);
 		scrollPaneTablaArticulos.setViewportView(tablaArticulos);
-		
+
 		modelTablaArticulo.addColumn("Codigo");
 		modelTablaArticulo.addColumn("Descripción");
 		modelTablaArticulo.addColumn("Precio");
 		modelTablaArticulo.addColumn("Cantidad");
 		modelTablaArticulo.addColumn("Descuento");
 		modelTablaArticulo.addColumn("Subtotal");
-		
 
 		panelTotales = new JPanel();
 		panelTotales.setBackground(new Color(204, 255, 204));
@@ -516,228 +519,253 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalBox_11.add(btnSalir);
 
 		panelDatosArticulo = new JPanel();
-		panelDatosArticulo.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
+		panelDatosArticulo.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
+				new EmptyBorder(5, 5, 5, 5)));
+		this.panelDatosArticulo.setBackground(new Color(204,255,255));
 		FlowLayout flowLayout = (FlowLayout) panelDatosArticulo.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		panelCentralContenedor.add(panelDatosArticulo, BorderLayout.SOUTH);
-		
+
 		verticalBox_4 = Box.createVerticalBox();
 		panelDatosArticulo.add(verticalBox_4);
-		
+
 		horizontalBox_12 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_12);
-		
+
 		lblNewLabel_14 = new JLabel("Codigo");
 		horizontalBox_12.add(lblNewLabel_14);
-		
+
 		horizontalStrut_21 = Box.createHorizontalStrut(5);
 		horizontalBox_12.add(horizontalStrut_21);
-		
+
 		txfCodigoArticulo = new JTextField();
 		horizontalBox_12.add(txfCodigoArticulo);
 		txfCodigoArticulo.setColumns(15);
 		this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
-		
+
 		btnBuscarArticuloPorCodigo = new JButton("");
 		btnBuscarArticuloPorCodigo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				consultarArticulos();
 			}
 		});
-		btnBuscarArticuloPorCodigo.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBuscarArticuloPorCodigo.setIcon(new ImageIcon(
+				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		horizontalBox_12.add(btnBuscarArticuloPorCodigo);
-		
+
 		horizontalStrut_22 = Box.createHorizontalStrut(10);
 		horizontalBox_12.add(horizontalStrut_22);
-		
+
 		lblNewLabel_15 = new JLabel("Articulo");
 		horizontalBox_12.add(lblNewLabel_15);
-		
+
 		horizontalStrut_23 = Box.createHorizontalStrut(5);
 		horizontalBox_12.add(horizontalStrut_23);
-		
+
 		txfNombreArticulo = new JTextField();
 		horizontalBox_12.add(txfNombreArticulo);
 		txfNombreArticulo.setColumns(20);
 		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
-		
+
 		verticalStrut_3 = Box.createVerticalStrut(5);
 		verticalBox_4.add(verticalStrut_3);
-		
+
 		horizontalBox_13 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_13);
-		
+
 		panel = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel.getLayout();
 		flowLayout_1.setVgap(0);
 		flowLayout_1.setHgap(0);
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		horizontalBox_13.add(panel);
-		
+
 		lblNewLabel_16 = new JLabel("Descripcion");
 		panel.add(lblNewLabel_16);
-		
+
 		horizontalBox_14 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_14);
-		
+
 		txaDescripcionArticulo = new JTextArea();
 		txaDescripcionArticulo.setLineWrap(true);
 		txaDescripcionArticulo.setRows(4);
 		horizontalBox_14.add(txaDescripcionArticulo);
-		
+
 		verticalBox_5 = Box.createVerticalBox();
 		panelDatosArticulo.add(verticalBox_5);
-		
+
 		horizontalBox_15 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_15);
-		
+
 		lblNewLabel_17 = new JLabel("Precio G.");
 		horizontalBox_15.add(lblNewLabel_17);
-		
+
 		horizontalStrut_24 = Box.createHorizontalStrut(5);
 		horizontalBox_15.add(horizontalStrut_24);
-		
+
 		txfPrecioGeneralArticulo = new JTextField();
 		horizontalBox_15.add(txfPrecioGeneralArticulo);
 		txfPrecioGeneralArticulo.setColumns(10);
 		this.txfPrecioGeneralArticulo.setMaximumSize(this.txfPrecioGeneralArticulo.getPreferredSize());
-		
+
 		horizontalStrut_25 = Box.createHorizontalStrut(10);
 		horizontalBox_15.add(horizontalStrut_25);
-		
+
 		lblNewLabel_18 = new JLabel("Precio M.");
 		horizontalBox_15.add(lblNewLabel_18);
-		
+
 		horizontalStrut_26 = Box.createHorizontalStrut(5);
 		horizontalBox_15.add(horizontalStrut_26);
-		
+
 		txfPrecioMayoreoArticulo = new JTextField();
 		horizontalBox_15.add(txfPrecioMayoreoArticulo);
 		txfPrecioMayoreoArticulo.setColumns(10);
 		this.txfPrecioMayoreoArticulo.setMaximumSize(this.txfPrecioMayoreoArticulo.getPreferredSize());
-		
+
 		horizontalStrut_27 = Box.createHorizontalStrut(5);
 		horizontalBox_15.add(horizontalStrut_27);
-		
+
 		btnAgregarArticulo = new JButton("");
-		btnAgregarArticulo.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnAgregarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listarArticuloEnTabla();
+			}
+		});
+		btnAgregarArticulo.setIcon(new ImageIcon(
+				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		horizontalBox_15.add(btnAgregarArticulo);
-		
+
 		verticalStrut_4 = Box.createVerticalStrut(5);
 		verticalBox_5.add(verticalStrut_4);
-		
+
 		scrollPaneExistenciaArticulos = new JScrollPane();
 		verticalBox_5.add(scrollPaneExistenciaArticulos);
-		
+
 		this.modelTablaExistencias = new DefaultTableModel();
-		
+
 		this.modelTablaExistencias.addColumn("Sucursal");
 		this.modelTablaExistencias.addColumn("Existencias");
-		
+
 		tablaExistenciaPorSucursal = new JTable();
 		tablaExistenciaPorSucursal.setModel(modelTablaExistencias);
 		tablaExistenciaPorSucursal.setFillsViewportHeight(true);
-		
+
 		scrollPaneExistenciaArticulos.setViewportView(tablaExistenciaPorSucursal);
-		scrollPaneExistenciaArticulos.setPreferredSize(new Dimension(60,90));
-		
+		scrollPaneExistenciaArticulos.setPreferredSize(new Dimension(60, 90));
+
 		this.txfFolioVenta.setText(String.valueOf(ventasController.buscarUltimaVenta() + 1));
-		this.asignarFecha();						
+		this.asignarFecha();
 	}
 	
+	/**
+	 * consulta la fecha actual del ordenador para la venta
+	 */
 	private void asignarFecha() {
 		String fecha = LocalDate.now().toString();
 		this.txfFechaVenta.setText(fecha);
 	}
 	
+	/**
+	 * consulta el listado completo de empleados en la bd de la sucursal de trabajo actual en la que se
+	 * inició sesión y llena un {@code JCombobox} con los nombres de los empleados que pertenecen a esa
+	 * sucursal
+	 */
 	private void llenarCmbEmpleados() {
 		this.cmbAliasEmpleado.removeAllItems();
 		this.cmbAliasEmpleado.updateUI();
-		
+
 		this.empleadoController.consultaNombresCortosEmpleados(cmbAliasEmpleado, this.idSucursal);
 	}
-	
+
 	private void llenarCmbRfcCliente() {
-		
+
 		this.cmbRfcCliente.removeAllItems();
 		this.cmbRfcCliente.updateUI();
-		
+
 		try {
 			this.clienteController.consultarRFCClientes(cmbRfcCliente);
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 		}
-		
+
 	}
-	
+
 	private void consultarEmpleado() {
 		String nombreEmpleado = (String) this.cmbAliasEmpleado.getSelectedItem();
-		//System.out.println("Nombre buscado: " + nombreEmpleado);
+		// System.out.println("Nombre buscado: " + nombreEmpleado);
 		Empleado empleado = this.empleadoController.consultarEmpleadoPorNombre(nombreEmpleado);
 		this.txfNombreEmpleado.setText(empleado.getNombre());
 	}
-	
-	
+
 	private void consultarCliente() {
-		
+
 		try {
 			String rfcCliente = (String) this.cmbRfcCliente.getSelectedItem();
 			Clientes cliente = this.clienteController.buscarClientePorRFC(rfcCliente);
-			
+
 			this.txfAliasCliente.setText(cliente.getNombreCorto());
 			this.txfNombreCliente.setText(cliente.getNombre());
 			this.txfClaveContableCliente.setText(cliente.getClaveCuentaContable());
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
 		} catch (Exception er) {
 			er.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
-	 * 
+	 * Consulta un artículo en la base de datos mediante el código para consulta directa.
+	 * Si no se cuenta con el código del artículo se desplegará un nuevo jframe con el listado
+	 * de articulos cuyo dato para busqueda se asemeje a su nombre.
 	 */
 	private void consultarArticulos() {
-		
+
 		try {
-			
-			Articulo articulo = this.articuloController.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(), this.idSucursal);
-			
-			if(articulo.getCodigoArticulo() != null || this.txfCodigoArticulo.getText() != "") {
-				
+
+			this.articulo = this.articuloController.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(),
+					this.idSucursal);
+
+			if (articulo.getCodigoArticulo() != null || this.txfCodigoArticulo.getText() != "") {
+
 				System.out.println(articulo.toString());
-				
+
 				this.txfNombreArticulo.setText(articulo.getNombre());
 				this.txaDescripcionArticulo.setText(articulo.getDescripcion());
 				this.txfPrecioGeneralArticulo.setText(String.valueOf(articulo.getPrecioGeneral()));
 				this.txfPrecioMayoreoArticulo.setText(String.valueOf(articulo.getPrecioMayoreo()));
 				this.llenarTablaExistencias(articulo.getIdArticulo());
-				
+
 			}
-			
-			if(articulo.getCodigoArticulo() == null) {
+
+			if (articulo.getCodigoArticulo() == null || this.txfCodigoArticulo.getText() == null) {
 				this.abrirFormListaArticulos(this.txfCodigoArticulo.getText(), this.idSucursal);
 			}
-			
-				
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
-		
+		}
+
 	}
-	
+
+	/**
+	 * al momento de realizar la respectiva consulta en la base de datos mediante el
+	 * código indicado la tabla {@code JTable tablaExistenciaPorSucursal} consulta
+	 * las existencias de ese artículo en las demas sucursales listadas
+	 * 
+	 * @param id -> indice del articulo a consultar su existencia en las demás sucursales
+	 */
 	private void llenarTablaExistencias(int id) {
 		this.modelTablaExistencias.getDataVector().removeAllElements();
 		this.tablaExistenciaPorSucursal.updateUI();
 		this.articuloController.consultarExistenciasPorSucursal(id, modelTablaExistencias);
 	}
-	
+
 	private void abrirFormListaArticulos(String nombreArticulo, int idSucursal) {
 		Component cm = this;
 		try {
-			EventQueue.invokeLater(new Runnable() {				
+			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
 					Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, idSucursal);
@@ -746,9 +774,35 @@ public class Fr_PuntoDeVentas extends JFrame {
 					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				}
 			});
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 		}
+
+	}
+
+	/**
+	 * lista el articulo consultado en la tabla de articulos seleccionados para la
+	 * compra
+	 */
+	private void listarArticuloEnTabla() {
+
+		if (this.articulo.getCodigoArticulo() == null) {
+			JOptionPane.showMessageDialog(this, "No ha seleccionado un articulo", "Atención",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		
+		int cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Indique la cantidad a comprar"));
+		double subtotal = cantidad * this.articulo.getPrecioGeneral();
+		
+		modelTablaArticulo.addRow(new Object[] {
+				this.articulo.getCodigoArticulo(),
+				this.articulo.getDescripcion(),
+				this.articulo.getPrecioGeneral(),
+				cantidad,
+				"",
+				subtotal
+		});
+
 	}
 }

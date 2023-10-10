@@ -11,6 +11,7 @@ import javax.swing.table.TableColumnModel;
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import java.awt.Component;
@@ -34,7 +35,7 @@ public class Fr_ListaArticulos extends JFrame {
 	 */
 	private DefaultTableModel modelTablaArticulos;
 	private ArticuloController articuloController = new ArticuloController();
-	private String nombreArticulo;	
+	private String nombreArticulo;
 	private int idSucursal;
 	private JPanel contentPane;
 	private JTextField txfNombreArticulo;
@@ -57,32 +58,28 @@ public class Fr_ListaArticulos extends JFrame {
 			100, /* Precio g */
 			100 /* Precio m */
 	};
+	private JPanel panelInferiorBotones;
+	private JButton btnCancelar;
+	private Component horizontalStrut_2;
+	private JButton btnSeleccionarArticulo;
 
 	/**
 	 * Launch the application.
 	 *
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Fr_ListaArticulos frame = new Fr_ListaArticulos();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	*/
-	
+	 * public static void main(String[] args) { EventQueue.invokeLater(new
+	 * Runnable() { public void run() { try { Fr_ListaArticulos frame = new
+	 * Fr_ListaArticulos(); frame.setVisible(true); } catch (Exception e) {
+	 * e.printStackTrace(); } } }); }
+	 */
+
 	/**
 	 * Create the frame.
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal) {
-		
+
 		this.nombreArticulo = nombreArticulo;
 		this.idSucursal = idSucursal;
-		
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 730, 450);
 		contentPane = new JPanel();
@@ -90,46 +87,49 @@ public class Fr_ListaArticulos extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		panelSuperiorBusqueda = new JPanel();
-		panelSuperiorBusqueda.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
+		panelSuperiorBusqueda.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
+				new EmptyBorder(5, 5, 5, 5)));
 		flowLayout = (FlowLayout) panelSuperiorBusqueda.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panelSuperiorBusqueda, BorderLayout.NORTH);
-		
+
 		lblNewLabel = new JLabel("Articulo");
 		panelSuperiorBusqueda.add(lblNewLabel);
-		
+
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		panelSuperiorBusqueda.add(horizontalStrut);
-		
+
 		txfNombreArticulo = new JTextField();
 		panelSuperiorBusqueda.add(txfNombreArticulo);
 		txfNombreArticulo.setColumns(40);
 		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
-		
+
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		panelSuperiorBusqueda.add(horizontalStrut_1);
-		
+
 		btnBusquedaArticulo = new JButton("Buscar");
 		btnBusquedaArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				llenarTablaArticulos(txfNombreArticulo.getText());
 			}
 		});
-		btnBusquedaArticulo.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBusquedaArticulo.setIcon(new ImageIcon(
+				Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		panelSuperiorBusqueda.add(btnBusquedaArticulo);
-		
+
 		panelCentralTabla = new JPanel();
-		panelCentralTabla.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
+		panelCentralTabla.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
+				new EmptyBorder(5, 5, 5, 5)));
 		contentPane.add(panelCentralTabla, BorderLayout.CENTER);
 		panelCentralTabla.setLayout(new BorderLayout(0, 0));
-		
+
 		scrollPaneTablaArticulo = new JScrollPane();
 		panelCentralTabla.add(scrollPaneTablaArticulo);
-		
+
 		this.modelTablaArticulos = new DefaultTableModel();
-		
+
 		this.modelTablaArticulos.addColumn("Id");
 		this.modelTablaArticulos.addColumn("Codigo");
 		this.modelTablaArticulos.addColumn("Proveedor");
@@ -140,18 +140,38 @@ public class Fr_ListaArticulos extends JFrame {
 		this.modelTablaArticulos.addColumn("Existencia");
 		this.modelTablaArticulos.addColumn("Precio G.");
 		this.modelTablaArticulos.addColumn("Precio M");
-		
+
 		tablaArticulos = new JTable();
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
 		tablaArticulos.setModel(this.modelTablaArticulos);
-		
+
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
+		panelInferiorBotones = new JPanel();
+		panelInferiorBotones.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
+		FlowLayout fl_panelInferiorBotones = (FlowLayout) panelInferiorBotones.getLayout();
+		fl_panelInferiorBotones.setAlignment(FlowLayout.RIGHT);
+		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
+		
+		btnCancelar = new JButton("Cancelar");
+		btnCancelar.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/CancelarIcon.png")));
+		this.btnCancelar.setBackground(new Color(255,51,51));
+		panelInferiorBotones.add(btnCancelar);
+		
+		
+		horizontalStrut_2 = Box.createHorizontalStrut(20);
+		panelInferiorBotones.add(horizontalStrut_2);
+		
+		btnSeleccionarArticulo = new JButton("Seleccionar");
+		btnSeleccionarArticulo.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/palomita.jpg")));
+		this.btnSeleccionarArticulo.setBackground(new Color(204,255,51));
+		panelInferiorBotones.add(btnSeleccionarArticulo);
+
 		for (int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
 			Class<?> colClass = modelTablaArticulos.getColumnClass(i);
 			tablaArticulos.setDefaultEditor(colClass, null);
 		}
-		
+
 		/**
 		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
 		 * los articulos
@@ -162,16 +182,17 @@ public class Fr_ListaArticulos extends JFrame {
 			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
 			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
 		}
-		
+
 		this.llenarTablaArticulos(this.nombreArticulo);
-		
+
 	}
-	
+
 	private void llenarTablaArticulos(String nombreArticulo) {
 		System.out.println(this.nombreArticulo);
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
-		this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1, this.idSucursal);
+		this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1,
+				this.idSucursal);
 	}
 
 }
