@@ -764,11 +764,12 @@ public class Fr_PuntoDeVentas extends JFrame {
 
 	private void abrirFormListaArticulos(String nombreArticulo, int idSucursal) {
 		Component cm = this;
+		Fr_PuntoDeVentas puntoVenta = this;
 		try {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, idSucursal);
+					Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, idSucursal, puntoVenta);
 					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -778,6 +779,10 @@ public class Fr_PuntoDeVentas extends JFrame {
 			er.printStackTrace();
 		}
 
+	}
+	
+	public void listarArticuloDesdeConsulta(Object[] articulo) {
+		modelTablaArticulo.addRow(articulo);
 	}
 
 	/**
