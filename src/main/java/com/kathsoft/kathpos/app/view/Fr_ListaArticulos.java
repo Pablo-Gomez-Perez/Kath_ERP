@@ -9,11 +9,14 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
+import com.kathsoft.kathpos.app.model.Articulo;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JTextField;
@@ -24,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class Fr_ListaArticulos extends JFrame {
@@ -37,6 +41,7 @@ public class Fr_ListaArticulos extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private String nombreArticulo;
 	private int idSucursal;
+	private Fr_PuntoDeVentas puntoVenta;
 	private JPanel contentPane;
 	private JTextField txfNombreArticulo;
 	private JTable tablaArticulos;
@@ -75,10 +80,11 @@ public class Fr_ListaArticulos extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_ListaArticulos(String nombreArticulo, int idSucursal) {
+	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, Fr_PuntoDeVentas frame) {
 
 		this.nombreArticulo = nombreArticulo;
 		this.idSucursal = idSucursal;
+		this.puntoVenta = frame;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 730, 450);
@@ -146,25 +152,32 @@ public class Fr_ListaArticulos extends JFrame {
 		tablaArticulos.setModel(this.modelTablaArticulos);
 
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		panelInferiorBotones = new JPanel();
-		panelInferiorBotones.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), new EmptyBorder(5, 5, 5, 5)));
+		panelInferiorBotones.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
+				new EmptyBorder(5, 5, 5, 5)));
 		FlowLayout fl_panelInferiorBotones = (FlowLayout) panelInferiorBotones.getLayout();
 		fl_panelInferiorBotones.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
-		
+
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/CancelarIcon.png")));
-		this.btnCancelar.setBackground(new Color(255,51,51));
+		btnCancelar.setIcon(new ImageIcon(
+				Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/CancelarIcon.png")));
+		this.btnCancelar.setBackground(new Color(255, 51, 51));
 		panelInferiorBotones.add(btnCancelar);
-		
-		
+
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
 		panelInferiorBotones.add(horizontalStrut_2);
-		
+
 		btnSeleccionarArticulo = new JButton("Seleccionar");
-		btnSeleccionarArticulo.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/palomita.jpg")));
-		this.btnSeleccionarArticulo.setBackground(new Color(204,255,51));
+		btnSeleccionarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listarArticulo();
+			}
+		});
+		btnSeleccionarArticulo.setIcon(
+				new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/palomita.jpg")));
+		this.btnSeleccionarArticulo.setBackground(new Color(204, 255, 51));
 		panelInferiorBotones.add(btnSeleccionarArticulo);
 
 		for (int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
@@ -193,6 +206,43 @@ public class Fr_ListaArticulos extends JFrame {
 		this.tablaArticulos.updateUI();
 		this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1,
 				this.idSucursal);
+	}
+
+	private void listarArticulo() {
+
+		int articuloSeleccionado = this.tablaArticulos.getSelectedRow();
+		Articulo articulo = new Articulo();
+		int cantidad = 0;
+		double subtotal = 0;
+		try {
+
+			if (articuloSeleccionado == -1) {
+				JOptionPane.showMessageDialog(this, "Debe seleccionar un articulo", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			// var m = (DefaultTableModel) this.tablaArticulos.getModel();
+			articulo = this.articuloController.consultarArticuloPorCodigo(
+					(String) this.tablaArticulos.getValueAt(articuloSeleccionado, 1), this.idSucursal);
+			System.out.println(articulo.toString());
+
+			cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos"));
+			subtotal = articulo.getPrecioGeneral() * cantidad;
+			Object[] fila = {
+				articulo.getCodigoArticulo(),
+				articulo.getDescripcion(),
+				articulo.getPrecioGeneral(),
+				cantidad,
+				0,
+				subtotal
+			};
+			
+			this.puntoVenta.listarArticuloDesdeConsulta(fila);
+
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+
 	}
 
 }
