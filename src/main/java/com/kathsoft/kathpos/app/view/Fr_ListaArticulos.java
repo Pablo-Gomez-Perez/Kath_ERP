@@ -214,6 +214,7 @@ public class Fr_ListaArticulos extends JFrame {
 		Articulo articulo = new Articulo();
 		int cantidad = 0;
 		double subtotal = 0;
+		
 		try {
 
 			if (articuloSeleccionado == -1) {

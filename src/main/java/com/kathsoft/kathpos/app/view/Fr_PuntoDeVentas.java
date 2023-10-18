@@ -50,6 +50,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -178,6 +180,9 @@ public class Fr_PuntoDeVentas extends JFrame {
 	private Component verticalStrut_4;
 	private JScrollPane scrollPaneExistenciaArticulos;
 	private JTable tablaExistenciaPorSucursal;
+	private Component verticalStrut_5;
+	private Box horizontalBox_16;
+	private JButton btnEliminarArticuloDeLista;
 
 	/**
 	 * Create the frame.
@@ -395,8 +400,25 @@ public class Fr_PuntoDeVentas extends JFrame {
 		panelCentralContenedor.add(panelTotales, BorderLayout.EAST);
 		panelTotales.setLayout(new BoxLayout(panelTotales, BoxLayout.Y_AXIS));
 
-		verticalStrut_6 = Box.createVerticalStrut(180);
+		verticalStrut_6 = Box.createVerticalStrut(120);
 		panelTotales.add(verticalStrut_6);
+		
+		horizontalBox_16 = Box.createHorizontalBox();
+		panelTotales.add(horizontalBox_16);
+		
+		btnEliminarArticuloDeLista = new JButton("Eliminar Articulo");
+		btnEliminarArticuloDeLista.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarArticuloDeLista();
+			}
+		});
+		btnEliminarArticuloDeLista.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarArticuloDeLista.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btnEliminarArticuloDeLista.setBackground(new Color(255,51,51));
+		horizontalBox_16.add(btnEliminarArticuloDeLista);
+		
+		verticalStrut_5 = Box.createVerticalStrut(20);
+		panelTotales.add(verticalStrut_5);
 
 		verticalBox_3 = Box.createVerticalBox();
 		verticalBox_3.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -781,8 +803,18 @@ public class Fr_PuntoDeVentas extends JFrame {
 
 	}
 	
+	/**
+	 * Método invocado desde el JFrame de consulta. Agrega un nuevo registro al jTable de productos
+	 * para la compra
+	 * @param articulo
+	 */
 	public void listarArticuloDesdeConsulta(Object[] articulo) {
 		modelTablaArticulo.addRow(articulo);
+	}
+	
+	private void eliminarArticuloDeLista() {
+		this.modelTablaArticulo.removeRow(this.tablaArticulos.getSelectedRow());
+		this.tablaArticulos.updateUI();
 	}
 
 	/**
