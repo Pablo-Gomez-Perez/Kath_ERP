@@ -387,9 +387,9 @@ public class EmpleadoController implements Serializable {
 	}
 
 	public Empleado consultarEmpleadoPorNombre(String nombre) {
-		
-		//System.out.println("En el controlador: " + nombre);
-		
+
+		// System.out.println("En el controlador: " + nombre);
+
 		Empleado empleado = new Empleado();
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -406,7 +406,7 @@ public class EmpleadoController implements Serializable {
 				empleado.setNombre(rset.getString(2));
 			}
 
-			//System.out.println(empleado.toString());
+			// System.out.println(empleado.toString());
 
 			return empleado;
 
@@ -418,9 +418,9 @@ public class EmpleadoController implements Serializable {
 			return null;
 		} finally {
 			try {
-				
+
 				Conexion.cerrarConexion(cn, rset, stm);
-				
+
 			} catch (SQLException er) {
 				er.printStackTrace();
 			}

@@ -6,7 +6,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -50,8 +49,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -402,21 +399,22 @@ public class Fr_PuntoDeVentas extends JFrame {
 
 		verticalStrut_6 = Box.createVerticalStrut(120);
 		panelTotales.add(verticalStrut_6);
-		
+
 		horizontalBox_16 = Box.createHorizontalBox();
 		panelTotales.add(horizontalBox_16);
-		
+
 		btnEliminarArticuloDeLista = new JButton("Eliminar Articulo");
 		btnEliminarArticuloDeLista.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eliminarArticuloDeLista();
 			}
 		});
-		btnEliminarArticuloDeLista.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarArticuloDeLista.setIcon(
+				new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		btnEliminarArticuloDeLista.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnEliminarArticuloDeLista.setBackground(new Color(255,51,51));
+		btnEliminarArticuloDeLista.setBackground(new Color(255, 51, 51));
 		horizontalBox_16.add(btnEliminarArticuloDeLista);
-		
+
 		verticalStrut_5 = Box.createVerticalStrut(20);
 		panelTotales.add(verticalStrut_5);
 
@@ -543,7 +541,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		panelDatosArticulo = new JPanel();
 		panelDatosArticulo.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
 				new EmptyBorder(5, 5, 5, 5)));
-		this.panelDatosArticulo.setBackground(new Color(204,255,255));
+		this.panelDatosArticulo.setBackground(new Color(204, 255, 255));
 		FlowLayout flowLayout = (FlowLayout) panelDatosArticulo.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		panelCentralContenedor.add(panelDatosArticulo, BorderLayout.SOUTH);
@@ -678,7 +676,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.txfFolioVenta.setText(String.valueOf(ventasController.buscarUltimaVenta() + 1));
 		this.asignarFecha();
 	}
-	
+
 	/**
 	 * consulta la fecha actual del ordenador para la venta
 	 */
@@ -686,11 +684,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 		String fecha = LocalDate.now().toString();
 		this.txfFechaVenta.setText(fecha);
 	}
-	
+
 	/**
-	 * consulta el listado completo de empleados en la bd de la sucursal de trabajo actual en la que se
-	 * inició sesión y llena un {@code JCombobox} con los nombres de los empleados que pertenecen a esa
-	 * sucursal
+	 * consulta el listado completo de empleados en la bd de la sucursal de trabajo
+	 * actual en la que se inició sesión y llena un {@code JCombobox} con los
+	 * nombres de los empleados que pertenecen a esa sucursal
 	 */
 	private void llenarCmbEmpleados() {
 		this.cmbAliasEmpleado.removeAllItems();
@@ -738,9 +736,10 @@ public class Fr_PuntoDeVentas extends JFrame {
 	}
 
 	/**
-	 * Consulta un artículo en la base de datos mediante el código para consulta directa.
-	 * Si no se cuenta con el código del artículo se desplegará un nuevo jframe con el listado
-	 * de articulos cuyo dato para busqueda se asemeje a su nombre.
+	 * Consulta un artículo en la base de datos mediante el código para consulta
+	 * directa. Si no se cuenta con el código del artículo se desplegará un nuevo
+	 * jframe con el listado de articulos cuyo dato para busqueda se asemeje a su
+	 * nombre.
 	 */
 	private void consultarArticulos() {
 
@@ -776,7 +775,8 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 * código indicado la tabla {@code JTable tablaExistenciaPorSucursal} consulta
 	 * las existencias de ese artículo en las demas sucursales listadas
 	 * 
-	 * @param id -> indice del articulo a consultar su existencia en las demás sucursales
+	 * @param id -> indice del articulo a consultar su existencia en las demás
+	 *           sucursales
 	 */
 	private void llenarTablaExistencias(int id) {
 		this.modelTablaExistencias.getDataVector().removeAllElements();
@@ -802,19 +802,22 @@ public class Fr_PuntoDeVentas extends JFrame {
 		}
 
 	}
-	
+
 	/**
-	 * Método invocado desde el JFrame de consulta. Agrega un nuevo registro al jTable de productos
-	 * para la compra
+	 * Método invocado desde el JFrame de consulta. Agrega un nuevo registro al
+	 * jTable de productos para la compra
+	 * 
 	 * @param articulo
 	 */
 	public void listarArticuloDesdeConsulta(Object[] articulo) {
 		modelTablaArticulo.addRow(articulo);
+		calculoDeTotales();
 	}
-	
+
 	private void eliminarArticuloDeLista() {
 		this.modelTablaArticulo.removeRow(this.tablaArticulos.getSelectedRow());
 		this.tablaArticulos.updateUI();
+		this.calculoDeTotales();
 	}
 
 	/**
@@ -828,18 +831,44 @@ public class Fr_PuntoDeVentas extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		int cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Indique la cantidad a comprar"));
 		double subtotal = cantidad * this.articulo.getPrecioGeneral();
-		
-		modelTablaArticulo.addRow(new Object[] {
-				this.articulo.getCodigoArticulo(),
-				this.articulo.getDescripcion(),
-				this.articulo.getPrecioGeneral(),
-				cantidad,
-				"",
-				subtotal
-		});
+
+		modelTablaArticulo.addRow(new Object[] { this.articulo.getCodigoArticulo(), this.articulo.getDescripcion(),
+				this.articulo.getPrecioGeneral(), cantidad, 0, subtotal });
+
+		this.calculoDeTotales();
+	}
+
+	private void calculoDeTotales() {
+
+		var model = (DefaultTableModel) this.tablaArticulos.getModel();
+		double total = 0;
+		double subtotal = 0;
+		double iva = 0;
+		int totalArticulos = 0;
+
+		try {
+
+			for (int i = 0; i < model.getRowCount(); i++) {
+				total += ((double) model.getValueAt(i, 5));
+				totalArticulos += ((int) model.getValueAt(i, 3));
+			}
+
+			subtotal = total / 1.16;
+			iva = total - subtotal;
+
+			this.txfGranTotalVenta.setText(String.format("%.2f", total));
+			this.txfSubtotal.setText(String.format("%.2f", subtotal));
+			this.txfImpuestoIva.setText(String.format("%.2f", iva));
+			this.txfArticulosTotales.setText(String.valueOf(totalArticulos));
+			this.txfCantidadDePartidas.setText(String.valueOf(model.getRowCount()));
+
+		} catch (Exception er) {
+			er.printStackTrace();
+			return;
+		}
 
 	}
 }
