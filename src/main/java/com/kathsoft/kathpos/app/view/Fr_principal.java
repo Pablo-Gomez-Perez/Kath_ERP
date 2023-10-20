@@ -1526,10 +1526,22 @@ public class Fr_principal extends JFrame {
 		panelFormasDePagoCentral.add(panelFormasDePagoCentralBotones, BorderLayout.NORTH);
 		
 		btnNuevaFormaDePago = new JButton("Agregar");
+		btnNuevaFormaDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnNuevaFormaDePago.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormDatosFormasDePago(1);
+			}
+		});
 		this.btnNuevaFormaDePago.setBackground(new Color(152,251,152));
 		panelFormasDePagoCentralBotones.add(btnNuevaFormaDePago);
 		
 		btnActualizarFormaDePago = new JButton("Actualizar");
+		btnActualizarFormaDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarFormaDePago.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormDatosFormasDePago(2);
+			}
+		});
 		this.btnActualizarFormaDePago.setBackground(new Color(152,251,152));
 		panelFormasDePagoCentralBotones.add(btnActualizarFormaDePago);
 
@@ -2034,6 +2046,27 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaVentas();
 		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(),
 				this.opcionDeBusquedaDeVenta());
+	}
+	
+	private void abrirFormDatosFormasDePago(int opcion) {
+		
+		Component cm = null;
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {				
+				try {
+					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion);
+					frame.setLocationRelativeTo(cm);
+					frame.setVisible(true);
+					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				}catch(Exception er) {
+					er.printStackTrace();					
+				}
+				
+			}
+		});
+		
 	}
 
 }
