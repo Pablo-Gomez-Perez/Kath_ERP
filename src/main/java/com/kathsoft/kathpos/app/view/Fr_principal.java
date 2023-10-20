@@ -40,6 +40,7 @@ import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.controller.FormasDePagoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.controller.VentasController;
@@ -67,6 +68,7 @@ public class Fr_principal extends JFrame {
 	private ClientesController clientesController = new ClientesController();
 	private VentasController ventasController = new VentasController();
 	private SucursalController sucursalController = new SucursalController();
+	private FormasDePagoController formasDePagoController = new FormasDePagoController();
 	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -140,6 +142,7 @@ public class Fr_principal extends JFrame {
 	private DefaultTableModel modelTablaProveedores;
 	private DefaultTableModel modelTablaArticulos;
 	private DefaultTableModel modelTablaVentas;
+	private DefaultTableModel modelTablaFormasDePago;
 	private Component verticalStrut_2;
 	private Component verticalStrut_3;
 	private Box horizontalBox_4;
@@ -320,6 +323,16 @@ public class Fr_principal extends JFrame {
 	private JPanel panelSucursalCentralBotones;
 	private JButton btnNuevaSucursal;
 	private JButton btnActualizarSucursal;
+	private JPanel panelFormasDePago;
+	private JPanel panelEtiquetaFormasDePago;
+	private JPanel panelFormasDePagoCentral;
+	private JLabel lblNewLabel_9;
+	private JScrollPane scrollPaneTablaFormasDePago;
+	private JTable tablaFormasDePago;
+	private JPanel panelFormasDePagoCentralBotones;
+	private JButton btnNuevaFormaDePago;
+	private JButton btnActualizarFormaDePago;
+	private JMenuItem opcionFormasDePago;
 
 	/**
 	 * Launch the application.
@@ -454,6 +467,21 @@ public class Fr_principal extends JFrame {
 		opcionSucursales.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/sucursal.jpg")));
 		menuConsultar.add(opcionSucursales);
+		
+		opcionFormasDePago = new JMenuItem("Formas De Pago");
+		opcionFormasDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/formas_de_pago.png")));
+		opcionFormasDePago.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelFormasDePago");
+				panelPrincipalContenedor.updateUI();
+				
+				llenarTablaFormasDePago();
+				
+			}
+		});
+		menuConsultar.add(opcionFormasDePago);
 
 		separator = new JSeparator();
 		menuConsultar.add(separator);
@@ -1458,6 +1486,52 @@ public class Fr_principal extends JFrame {
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
+		
+		panelFormasDePago = new JPanel();
+		panelFormasDePago.setForeground(new Color(255, 215, 0));
+		panelPrincipalContenedor.add(panelFormasDePago, "panelFormasDePago");
+		panelFormasDePago.setLayout(new BorderLayout(0, 0));
+		
+		panelEtiquetaFormasDePago = new JPanel();
+		panelEtiquetaFormasDePago.setBackground(new Color(0, 0, 128));
+		panelFormasDePago.add(panelEtiquetaFormasDePago, BorderLayout.NORTH);
+		
+		lblNewLabel_9 = new JLabel("Formas De Pago");
+		lblNewLabel_9.setForeground(new Color(255, 255, 255));
+		lblNewLabel_9.setFont(new Font("Tahoma", Font.BOLD, 16));
+		panelEtiquetaFormasDePago.add(lblNewLabel_9);
+		
+		panelFormasDePagoCentral = new JPanel();
+		panelFormasDePagoCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
+		panelFormasDePagoCentral.setBackground(new Color(255, 215, 0));
+		panelFormasDePago.add(panelFormasDePagoCentral, BorderLayout.CENTER);
+		panelFormasDePagoCentral.setLayout(new BorderLayout(0, 0));
+		
+		scrollPaneTablaFormasDePago = new JScrollPane();
+		panelFormasDePagoCentral.add(scrollPaneTablaFormasDePago, BorderLayout.CENTER);
+		
+		modelTablaFormasDePago = new DefaultTableModel();
+		
+		modelTablaFormasDePago.addColumn("Id");
+		modelTablaFormasDePago.addColumn("Forma de pago");
+		
+		tablaFormasDePago = new JTable();
+		tablaFormasDePago.setModel(modelTablaFormasDePago);
+		scrollPaneTablaFormasDePago.setViewportView(tablaFormasDePago);
+		
+		panelFormasDePagoCentralBotones = new JPanel();
+		FlowLayout flowLayout_9 = (FlowLayout) panelFormasDePagoCentralBotones.getLayout();
+		flowLayout_9.setAlignment(FlowLayout.RIGHT);
+		panelFormasDePagoCentralBotones.setBackground(new Color(255, 215, 0));
+		panelFormasDePagoCentral.add(panelFormasDePagoCentralBotones, BorderLayout.NORTH);
+		
+		btnNuevaFormaDePago = new JButton("Agregar");
+		this.btnNuevaFormaDePago.setBackground(new Color(152,251,152));
+		panelFormasDePagoCentralBotones.add(btnNuevaFormaDePago);
+		
+		btnActualizarFormaDePago = new JButton("Actualizar");
+		this.btnActualizarFormaDePago.setBackground(new Color(152,251,152));
+		panelFormasDePagoCentralBotones.add(btnActualizarFormaDePago);
 
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
@@ -1923,6 +1997,12 @@ public class Fr_principal extends JFrame {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
 
+	}
+	
+	private void llenarTablaFormasDePago() {
+		this.modelTablaFormasDePago.getDataVector().removeAllElements();
+		this.tablaFormasDePago.updateUI();
+		this.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
 	}
 
 	/**
