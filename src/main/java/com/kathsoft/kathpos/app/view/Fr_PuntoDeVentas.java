@@ -837,7 +837,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 
 		modelTablaArticulo.addRow(new Object[] { this.articulo.getCodigoArticulo(), this.articulo.getDescripcion(),
 				this.articulo.getPrecioGeneral(), cantidad, 0, subtotal });
-		
+
 		this.calculoDeTotales();
 	}
 
@@ -850,21 +850,21 @@ public class Fr_PuntoDeVentas extends JFrame {
 		int totalArticulos = 0;
 
 		try {
-			
+
 			for (int i = 0; i < model.getRowCount(); i++) {
 				total += ((double) model.getValueAt(i, 5));
-				totalArticulos += ((int)model.getValueAt(i, 3));
+				totalArticulos += ((int) model.getValueAt(i, 3));
 			}
-			
+
 			subtotal = total / 1.16;
 			iva = total - subtotal;
-			
-			this.txfGranTotalVenta.setText(String.format("%.2f",total));
-			this.txfSubtotal.setText(String.format("%.2f",subtotal));
-			this.txfImpuestoIva.setText(String.format("%.2f",iva));
+
+			this.txfGranTotalVenta.setText(String.format("%.2f", total));
+			this.txfSubtotal.setText(String.format("%.2f", subtotal));
+			this.txfImpuestoIva.setText(String.format("%.2f", iva));
 			this.txfArticulosTotales.setText(String.valueOf(totalArticulos));
 			this.txfCantidadDePartidas.setText(String.valueOf(model.getRowCount()));
-			
+
 		} catch (Exception er) {
 			er.printStackTrace();
 			return;
