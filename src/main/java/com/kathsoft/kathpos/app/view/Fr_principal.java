@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -333,6 +334,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnNuevaFormaDePago;
 	private JButton btnActualizarFormaDePago;
 	private JMenuItem opcionFormasDePago;
+	private JButton btnEliminarFormaPago;
 
 	/**
 	 * Launch the application.
@@ -1514,10 +1516,17 @@ public class Fr_principal extends JFrame {
 		
 		modelTablaFormasDePago.addColumn("Id");
 		modelTablaFormasDePago.addColumn("Forma de pago");
+		modelTablaFormasDePago.addColumn("Activo");
 		
 		tablaFormasDePago = new JTable();
 		tablaFormasDePago.setModel(modelTablaFormasDePago);
 		scrollPaneTablaFormasDePago.setViewportView(tablaFormasDePago);
+		
+		// remueve el editor de la tabla de formas de pago
+		for (int i = 0; i < modelTablaFormasDePago.getColumnCount(); i++) {
+			Class<?> colClass = modelTablaFormasDePago.getColumnClass(i);
+			tablaFormasDePago.setDefaultEditor(colClass, null);
+		}
 		
 		panelFormasDePagoCentralBotones = new JPanel();
 		FlowLayout flowLayout_9 = (FlowLayout) panelFormasDePagoCentralBotones.getLayout();
@@ -1544,6 +1553,16 @@ public class Fr_principal extends JFrame {
 		});
 		this.btnActualizarFormaDePago.setBackground(new Color(152,251,152));
 		panelFormasDePagoCentralBotones.add(btnActualizarFormaDePago);
+		
+		btnEliminarFormaPago = new JButton("Eliminar");
+		btnEliminarFormaPago.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {				
+				eliminarFormaDePago();
+			}
+		});
+		btnEliminarFormaPago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarFormaPago.setBackground(new Color(255, 51, 0));
+		panelFormasDePagoCentralBotones.add(btnEliminarFormaPago);
 
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
@@ -2048,6 +2067,7 @@ public class Fr_principal extends JFrame {
 				this.opcionDeBusquedaDeVenta());
 	}
 	
+	
 	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
 		
 		Component cm = null;
@@ -2069,12 +2089,34 @@ public class Fr_principal extends JFrame {
 		
 	}
 	
+	/**
+	 * 
+	 * @return el id del registro seleccionado en la tabla
+	 */
 	private int indiceDeFormaDePago() {
 		int filaSeleccionada = 0;
 		int idFormaDePago = 0;
-		filaSeleccionada = this.tablaFormasDePago.getSelectedRow();
-		idFormaDePago = (int)this.modelTablaFormasDePago.getValueAt(filaSeleccionada, 0);
+		
+		try {
+			filaSeleccionada = this.tablaFormasDePago.getSelectedRow();
+			idFormaDePago = (int)this.modelTablaFormasDePago.getValueAt(filaSeleccionada, 0);
+		}catch(Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Seleccione el registro a eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+		}
+		
 		return idFormaDePago;
+	}
+	
+	private void eliminarFormaDePago() {
+		
+		int input = JOptionPane.showConfirmDialog(null,"Desea eliminar este registro", "Eliminar", JOptionPane.YES_NO_OPTION);
+		
+		if(input > 0) {
+			return;
+		}
+		
+		this.formasDePagoController.eliminarFormaDepAgo(this.indiceDeFormaDePago());
 	}
 
 }
