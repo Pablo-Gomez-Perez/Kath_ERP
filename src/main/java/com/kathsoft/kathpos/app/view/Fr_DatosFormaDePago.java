@@ -5,11 +5,32 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.Box;
+import java.awt.Component;
+import javax.swing.JTextField;
+import java.awt.FlowLayout;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
 
 public class Fr_DatosFormaDePago extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JPanel panelSuperiorEtiqueta;
+	private JLabel lblNewLabel;
+	private JPanel panelCentralFormulario;
+	private JPanel panelInferiorBotones;
+	private Box horizontalBox;
+	private JLabel lblNewLabel_1;
+	private Component horizontalStrut;
+	private JTextField txf_formaDePago;
+	private JButton btn_cancelar;
+	private JButton btnAgregar;
 
 	/**
 	 * Launch the application.
@@ -32,12 +53,63 @@ public class Fr_DatosFormaDePago extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_DatosFormaDePago(int opcion) {
+		setTitle("Forma De Pago");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 500, 360);
+		setBounds(100, 100, 500, 150);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		panelSuperiorEtiqueta = new JPanel();
+		this.panelSuperiorEtiqueta.setBackground(new Color(0,0,128));
+		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
+		
+		lblNewLabel = new JLabel();
+		lblNewLabel.setForeground(new Color(255, 255, 255));
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		
+		if(opcion == 1) {
+			this.lblNewLabel.setText("Agregar Forma De Pago");
+		}else if(opcion == 2) {
+			this.lblNewLabel.setText("Editar Forma De Pago");
+		}
+		
+		panelSuperiorEtiqueta.add(lblNewLabel);
+		
+		panelCentralFormulario = new JPanel();
+		panelCentralFormulario.setBackground(new Color(255, 215, 0));
+		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
+		
+		horizontalBox = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox);
+		
+		lblNewLabel_1 = new JLabel("Forma de pago");
+		horizontalBox.add(lblNewLabel_1);
+		
+		horizontalStrut = Box.createHorizontalStrut(20);
+		horizontalBox.add(horizontalStrut);
+		
+		txf_formaDePago = new JTextField();
+		horizontalBox.add(txf_formaDePago);
+		txf_formaDePago.setColumns(30);
+		this.txf_formaDePago.setMaximumSize(this.txf_formaDePago.getPreferredSize());
+		
+		panelInferiorBotones = new JPanel();		
+		FlowLayout flowLayout = (FlowLayout) panelInferiorBotones.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		this.panelInferiorBotones.setBackground(new Color(30,144,255));		
+		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
+		
+		btn_cancelar = new JButton("Cancelar");
+		btn_cancelar.setIcon(new ImageIcon(Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		panelInferiorBotones.add(btn_cancelar);
+		
+		btnAgregar = new JButton("Agregar");
+		btnAgregar.setIcon(new ImageIcon(Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		panelInferiorBotones.add(btnAgregar);
 	}
 
 }
