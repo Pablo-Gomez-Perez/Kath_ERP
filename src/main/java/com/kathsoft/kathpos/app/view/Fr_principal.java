@@ -1529,7 +1529,7 @@ public class Fr_principal extends JFrame {
 		btnNuevaFormaDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnNuevaFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(1);
+				abrirFormDatosFormasDePago(1,0);
 			}
 		});
 		this.btnNuevaFormaDePago.setBackground(new Color(152,251,152));
@@ -1539,7 +1539,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarFormaDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(2);
+				abrirFormDatosFormasDePago(2,indiceDeFormaDePago());
 			}
 		});
 		this.btnActualizarFormaDePago.setBackground(new Color(152,251,152));
@@ -2048,7 +2048,7 @@ public class Fr_principal extends JFrame {
 				this.opcionDeBusquedaDeVenta());
 	}
 	
-	private void abrirFormDatosFormasDePago(int opcion) {
+	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
 		
 		Component cm = null;
 		EventQueue.invokeLater(new Runnable() {
@@ -2056,7 +2056,7 @@ public class Fr_principal extends JFrame {
 			@Override
 			public void run() {				
 				try {
-					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion);
+					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion, idFormaDePago);
 					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -2067,6 +2067,14 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		
+	}
+	
+	private int indiceDeFormaDePago() {
+		int filaSeleccionada = 0;
+		int idFormaDePago = 0;
+		filaSeleccionada = this.tablaFormasDePago.getSelectedRow();
+		idFormaDePago = (int)this.modelTablaFormasDePago.getValueAt(filaSeleccionada, 0);
+		return idFormaDePago;
 	}
 
 }
