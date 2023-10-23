@@ -44,7 +44,11 @@ public class FormasDePagoController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				tabla.addRow(new Object[] { rset.getInt(1), rset.getString(2) });
+				tabla.addRow(new Object[] {
+						rset.getInt(1),
+						rset.getString(2),
+						rset.getShort(3) == 1 ? "Activo" : "Inactivo"
+				});
 			}
 
 		} catch (SQLException er) {
@@ -112,6 +116,32 @@ public class FormasDePagoController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
+	}
+	
+	public void eliminarFormaDepAgo(int idFormaDePago) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL eliminar_forma_pago(?);");
+			stm.setInt(1, idFormaDePago);
+			
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
 	}
 	
 	public FormasDePago consultarFormaDePagoPorId(int id) {

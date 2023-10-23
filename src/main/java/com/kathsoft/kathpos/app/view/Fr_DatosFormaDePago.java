@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.Box;
 import java.awt.Component;
@@ -20,6 +22,8 @@ import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_DatosFormaDePago extends JFrame {
 	
@@ -113,10 +117,24 @@ public class Fr_DatosFormaDePago extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 		
 		btn_cancelar = new JButton("Cancelar");
+		btn_cancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cerrarForm();
+			}
+		});
 		btn_cancelar.setIcon(new ImageIcon(Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		panelInferiorBotones.add(btn_cancelar);
 		
 		btnAgregar = new JButton("Agregar");
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(opcion == 1) {
+					insertarFormaDePago();
+				}else if(opcion == 2) {
+					actualizarFormaDePago(idFormaDePago);
+				}
+			}
+		});
 		btnAgregar.setIcon(new ImageIcon(Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnAgregar);
 	}
@@ -127,6 +145,31 @@ public class Fr_DatosFormaDePago extends JFrame {
 		FormasDePago fpago = this.formaDePagoController.consultarFormaDePagoPorId(id);
 		this.txf_formaDePago.setText(fpago.getTipoDePago());
 		
+	}
+	
+	
+	private void insertarFormaDePago() {
+		
+		FormasDePago fpago = new FormasDePago();		
+		fpago.setTipoDePago(this.txf_formaDePago.getText());		
+		this.formaDePagoController.insertarFormaDePago(fpago);
+		JOptionPane.showMessageDialog(this, "Registro Agregado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
+		
+	}
+	
+	private void actualizarFormaDePago(int id) {
+		
+		FormasDePago fpago = new FormasDePago();
+		fpago.setId(id);
+		fpago.setTipoDePago(this.txf_formaDePago.getText());
+		this.formaDePagoController.actualizarFormaDePago(fpago);
+		JOptionPane.showMessageDialog(this, "Registro actualizado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
+		cerrarForm();
+		
+	}
+	
+	private void cerrarForm() {
+		this.dispose();
 	}
 
 }
