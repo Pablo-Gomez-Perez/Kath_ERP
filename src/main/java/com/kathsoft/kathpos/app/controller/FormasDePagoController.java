@@ -113,5 +113,36 @@ public class FormasDePagoController implements java.io.Serializable {
 			}
 		}
 	}
+	
+	public FormasDePago consultarFormaDePagoPorId(int id) {
+		
+		ResultSet rset = null;
+		CallableStatement stm = null;
+		FormasDePago fpago = new FormasDePago();
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL bucar_forma_pago_por_id(?);");
+			stm.setInt(1, id);
+			
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				fpago.setId(rset.getInt(1));
+				fpago.setTipoDePago(rset.getString(2));
+			}
+			
+			return fpago;
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return null;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}
+		
+	}
 
 }

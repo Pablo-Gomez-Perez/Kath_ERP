@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.kathsoft.kathpos.app.controller.FormasDePagoController;
+import com.kathsoft.kathpos.app.model.FormasDePago;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 
@@ -18,7 +22,8 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 
 public class Fr_DatosFormaDePago extends JFrame {
-
+	
+	private FormasDePagoController formaDePagoController = new FormasDePagoController();
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
@@ -52,7 +57,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosFormaDePago(int opcion) {
+	public Fr_DatosFormaDePago(int opcion, int idFormaDePago) {
 		setTitle("Forma De Pago");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 500, 150);
@@ -74,7 +79,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 		if(opcion == 1) {
 			this.lblNewLabel.setText("Agregar Forma De Pago");
 		}else if(opcion == 2) {
-			this.lblNewLabel.setText("Editar Forma De Pago");
+			this.lblNewLabel.setText("Editar Forma De Pago");			
 		}
 		
 		panelSuperiorEtiqueta.add(lblNewLabel);
@@ -97,6 +102,10 @@ public class Fr_DatosFormaDePago extends JFrame {
 		txf_formaDePago.setColumns(30);
 		this.txf_formaDePago.setMaximumSize(this.txf_formaDePago.getPreferredSize());
 		
+		if(opcion == 2) {
+			this.consultarFormaPago(idFormaDePago);
+		}
+		
 		panelInferiorBotones = new JPanel();		
 		FlowLayout flowLayout = (FlowLayout) panelInferiorBotones.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -110,6 +119,14 @@ public class Fr_DatosFormaDePago extends JFrame {
 		btnAgregar = new JButton("Agregar");
 		btnAgregar.setIcon(new ImageIcon(Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnAgregar);
+	}
+	
+	
+	private void consultarFormaPago(int id) {
+		
+		FormasDePago fpago = this.formaDePagoController.consultarFormaDePagoPorId(id);
+		this.txf_formaDePago.setText(fpago.getTipoDePago());
+		
 	}
 
 }
