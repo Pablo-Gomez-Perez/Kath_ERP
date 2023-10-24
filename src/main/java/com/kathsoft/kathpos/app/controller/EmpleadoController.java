@@ -167,7 +167,54 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
+	
+	public Empleado consultarEmpleadoPorId(int id) {
+		Empleado empl = new Empleado();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		try {
 
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			stm = cn.prepareCall("CALL buscar_empleado_por_id(?)");
+			stm.setInt(1, id);
+
+			rset = stm.executeQuery();
+
+			if (rset.next()) {
+				empl.setId(rset.getInt(1));
+				empl.setIdSucursal(rset.getInt(2));
+				empl.setRfc(rset.getString(3));
+				empl.setCurp(rset.getString(4));
+				empl.setNombre(rset.getString(5));
+				empl.setNombreCorto(rset.getString(6));
+				empl.setFechaNacimiento(rset.getDate(7));
+				empl.setEmail(rset.getString(8));
+				empl.setEstado(rset.getString(9));
+				empl.setCiudad(rset.getString(10));
+				empl.setDireccion(rset.getString(11));
+				empl.setCodigoPostal(rset.getString(12));
+				empl.setPassword(rset.getString(13));
+			}
+			
+			return empl;
+			
+		} catch (SQLException er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} catch (Exception er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public Empleado consultarEmpleadoPorRfc(String rfc) {
 		Empleado empl = new Empleado();
 		CallableStatement stm = null;
@@ -221,11 +268,13 @@ public class EmpleadoController implements Serializable {
 
 			while (rset.next()) {
 				Object[] fila = { rset.getInt(1), // id
-						rset.getString(2), // rfc
-						rset.getString(3), // curp
-						rset.getString(4), // nombre completo
-						rset.getString(5), // nombre corto
-						rset.getString(6), // correo
+						rset.getString(2),
+						rset.getString(3), // rfc
+						rset.getString(4), // curp
+						rset.getString(5), // nombre completo
+						rset.getString(6), // nombre corto
+						rset.getString(7), // correo
+						rset.getInt(8) == 1 ? "Activo": "Inactivo" //activo
 				};
 				tabla.addRow(fila);
 			}
@@ -322,16 +371,17 @@ public class EmpleadoController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?);");
-			stm.setString(1, empl.getRfc());
-			stm.setString(2, empl.getNombre());
-			stm.setString(3, empl.getNombreCorto());
-			stm.setDate(4, empl.getFechaNacimiento());
-			stm.setString(5, empl.getEmail());
-			stm.setString(6, empl.getEstado());
-			stm.setString(7, empl.getCiudad());
-			stm.setString(8, empl.getDireccion());
-			stm.setString(9, empl.getCodigoPostal());
+			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?,?);");
+			stm.setInt(1, empl.getIdSucursal());
+			stm.setString(2, empl.getRfc());
+			stm.setString(3, empl.getNombre());
+			stm.setString(4, empl.getNombreCorto());
+			stm.setDate(5, empl.getFechaNacimiento());
+			stm.setString(6, empl.getEmail());
+			stm.setString(7, empl.getEstado());
+			stm.setString(8, empl.getCiudad());
+			stm.setString(9, empl.getDireccion());
+			stm.setString(10, empl.getCodigoPostal());
 			stm.execute();
 
 		} catch (SQLException er) {
@@ -352,6 +402,32 @@ public class EmpleadoController implements Serializable {
 
 		}
 
+	}
+	
+	public void eliminarEmpleado(int idEmpleado) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL eliminar_empleado(?)");
+			stm.setInt(1, idEmpleado);
+			
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
 	}
 
 	public void actualizarContrasenia(Empleado empl) {

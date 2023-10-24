@@ -169,7 +169,15 @@ public class Fr_principal extends JFrame {
 	private DefaultTableModel modelTablaSucursales;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
-	private int[] tableEmpleadosColumnsWidth = { 40, 180, 180, 180, 100, 200 };
+	private int[] tableEmpleadosColumnsWidth = { 40, //id
+			150, //sucursal
+			180, //RFC
+			180, //Curp
+			180, //Nombre completo
+			100, //nombre corto
+			200, //email
+			150  //activo o inactivo
+	};
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
@@ -311,7 +319,6 @@ public class Fr_principal extends JFrame {
 	private JTable tableEmpleados;
 	private JPanel panelEmpleadosCentralbotones;
 	private JButton btnAgregarEmpleado;
-	private Component horizontalStrut_3;
 	private JButton btnActualizarEmpleado;
 	private JLabel lblNewLabel_7;
 	private JPanel panelSucursales;
@@ -335,6 +342,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarFormaDePago;
 	private JMenuItem opcionFormasDePago;
 	private JButton btnEliminarFormaPago;
+	private JButton btnEliminarEmpleado;
 
 	/**
 	 * Launch the application.
@@ -885,11 +893,13 @@ public class Fr_principal extends JFrame {
 		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		modelTablaEmpleados.addColumn("id");
+		modelTablaEmpleados.addColumn("Sucursal");
 		modelTablaEmpleados.addColumn("RFC");
 		modelTablaEmpleados.addColumn("CURP");
 		modelTablaEmpleados.addColumn("Nombre");
 		modelTablaEmpleados.addColumn("Nick");
 		modelTablaEmpleados.addColumn("Email");
+		modelTablaEmpleados.addColumn("Activo");
 
 		// remueve el editor del jtable
 		for (int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
@@ -911,13 +921,10 @@ public class Fr_principal extends JFrame {
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		btnAgregarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormularioEmpleados(0);
+				abrirFormularioEmpleados(0, 0);
 			}
 		});
 		panelEmpleadosCentralbotones.add(btnAgregarEmpleado);
-
-		horizontalStrut_3 = Box.createHorizontalStrut(20);
-		panelEmpleadosCentralbotones.add(horizontalStrut_3);
 
 		btnActualizarEmpleado = new JButton("Actualizar");
 		btnActualizarEmpleado.setIcon(new ImageIcon(
@@ -925,10 +932,20 @@ public class Fr_principal extends JFrame {
 		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
 		btnActualizarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormularioEmpleados(1);
+				abrirFormularioEmpleados(1, indiceDeEmpleado());
 			}
 		});
 		panelEmpleadosCentralbotones.add(btnActualizarEmpleado);
+		
+		btnEliminarEmpleado = new JButton("Eliminar");
+		btnEliminarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarEmpleado();				
+			}
+		});
+		btnEliminarEmpleado.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarEmpleado.setBackground(new Color(255,51,0));
+		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
 
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
@@ -1732,6 +1749,27 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaEmpleados();
 		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
 	}
+	
+	private void eliminarEmpleado() {
+		
+		int indiceEmpleadoSeleccionado = -1;
+		int input = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el registro seleccionado?", "Error", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+		
+		if(input > 0) {
+			return;
+		}
+		
+		try {
+			
+			indiceEmpleadoSeleccionado = this.indiceDeEmpleado();
+			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);						
+			
+		}catch(Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
 
 	private void llenarTablaProveedor() {
 		this.borrarElementosDeLaTablaProveedor();
@@ -1893,7 +1931,7 @@ public class Fr_principal extends JFrame {
 
 	}
 
-	private void abrirFormularioEmpleados(int opcion) {
+	private void abrirFormularioEmpleados(int opcion, int idEmpleado) {
 		Component cm = this;
 
 		EventQueue.invokeLater(new Runnable() {
@@ -1901,7 +1939,7 @@ public class Fr_principal extends JFrame {
 			public void run() {
 				try {
 
-					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion);
+					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion, idEmpleado);
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
@@ -1929,6 +1967,20 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaArticulos();
 		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos,
 				opcionDeBusquedaDeArticulo(), this.sucursal.getIdSucursal());
+	}
+	
+	private int indiceDeEmpleado() {
+		int filaSeleccionada = 0;
+		int indiceDeEmpleado = 0;
+		
+		try {
+			filaSeleccionada = tableEmpleados.getSelectedRow();
+			indiceDeEmpleado = (int)modelTablaEmpleados.getValueAt(filaSeleccionada, 0);
+			return indiceDeEmpleado;
+		}catch(Exception er) {
+			er.printStackTrace();			
+			return 0;
+		}
 	}
 
 	/**

@@ -125,7 +125,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosEmpleado(int opcion) {
+	public Fr_DatosEmpleado(int opcion, int idEmpleado) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
 		contentPane = new JPanel();
@@ -167,22 +167,12 @@ public class Fr_DatosEmpleado extends JFrame {
 		lblNewLabel_1 = new JLabel("RFC Empleado");
 		horizontalBox.add(lblNewLabel_1);
 		
-		if(opcion == 0) {
-			this.txfRfcEmpleado = new JTextField();
-			this.txfRfcEmpleado.setColumns(60);
-			this.txfRfcEmpleado.setMaximumSize(this.txfRfcEmpleado.getPreferredSize());
-			horizontalBox.add(txfRfcEmpleado);
-		}else if(opcion == 1) {
-			cmbRFCEmpleado = new JComboBox<String>();
-			llenarCmbRfcEmpleados();
-			cmbRFCEmpleado.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					consultarEmpleadoPorRfc((String)cmbRFCEmpleado.getSelectedItem());
-				}
-			});
-			cmbRFCEmpleado.setEditable(true);
-			horizontalBox.add(cmbRFCEmpleado);
-		}			
+		
+		this.txfRfcEmpleado = new JTextField();
+		this.txfRfcEmpleado.setColumns(60);
+		this.txfRfcEmpleado.setMaximumSize(this.txfRfcEmpleado.getPreferredSize());
+		horizontalBox.add(txfRfcEmpleado);
+					
 		
 		verticalStrut_1 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_1);
@@ -195,7 +185,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		
 		txfCurpEmpleado = new JTextField();
 		txfCurpEmpleado.setMaximumSize(new Dimension(166, 20));
-		txfCurpEmpleado.setColumns(40);
+		txfCurpEmpleado.setColumns(35);
 		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
 		horizontalBox_1.add(txfCurpEmpleado);
 		
@@ -440,7 +430,7 @@ public class Fr_DatosEmpleado extends JFrame {
 				if(opcion == 0) {
 					insertarEmpleado();
 				}else if(opcion == 1) {
-					actualizarEmpleado();
+					actualizarEmpleado(idEmpleado);
 				}
 			}
 		});
@@ -448,8 +438,14 @@ public class Fr_DatosEmpleado extends JFrame {
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		horizontalBox_7.add(btnAgregarEmpleado);			
 		
-		this.llenarCmbSucursales();
+		if(opcion == 1) {
+			
+		}
 		
+		this.llenarCmbSucursales();
+		if(opcion == 1) {
+			this.consultarEmpleadoPorId(idEmpleado);
+		}
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
@@ -461,13 +457,13 @@ public class Fr_DatosEmpleado extends JFrame {
 	/**
 	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos
 	 * retornados por la vista almacenada
-	 */
+	 *
 	private void llenarCmbRfcEmpleados() {
 		this.cmbRFCEmpleado.removeAllItems();
 		this.cmbRFCEmpleado.updateUI();
 		empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
 		cmbRFCEmpleado.setSelectedIndex(1);
-	}
+	}*/
 	
 	/**
 	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como
@@ -476,20 +472,24 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * 
 	 * @param rfc
 	 */
-	private void consultarEmpleadoPorRfc(String rfc) {
-		Empleado empl = empleadoController.consultarEmpleadoPorRfc(rfc);
+	private void consultarEmpleadoPorId(int idEmpleado) {
+		Empleado empl = empleadoController.consultarEmpleadoPorId(idEmpleado);
 		String dia = "";
 		String mes = "";
 		String anio = "";
-
+		
 		if (empl.getFechaNacimiento() != null) {
 			String[] fecha = empl.getFechaNacimiento().toString().split("-");
 			dia = fecha[2];
 			mes = fecha[1];
 			anio = fecha[0];
 		}
-
+		
+		System.out.println(empl.toString());
+		
+		this.txfRfcEmpleado.setText(empl.getRfc());
 		this.txfCurpEmpleado.setText(empl.getCurp());
+		this.cmbSucursalEmpleado.setSelectedIndex(empl.getIdSucursal());
 		this.txfNombreCortoEmpleado.setText(empl.getNombreCorto());
 		this.txfNombreCompletoEmpleado.setText(empl.getNombre());
 		this.txfFechaNacEmpleadoDD.setText(dia);
@@ -537,22 +537,60 @@ public class Fr_DatosEmpleado extends JFrame {
 			
 			this.empleadoController.insertarNuevoEmpleado(empl);
 			
+			JOptionPane.showMessageDialog(this, "Registro almacenado", "Operacion exitosa", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.cerrarForm();
+			
 		}catch(Exception er) {
 			System.out.println("Error en vista :-> " + er.getMessage() + "\n"); 
 			er.printStackTrace();
 		}
 		
-		JOptionPane.showMessageDialog(this, "Registro almacenado", "Operacion exitosa", JOptionPane.INFORMATION_MESSAGE);
+		
 	}
 	
 	/**
 	 * actualiza un registro existente de un empleado en la base de datos
 	 */
-	private void actualizarEmpleado() {
+	private void actualizarEmpleado(int idEmpleado) {
 		
 		if(!this.validarCamposVacios()) {
 			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
+		}
+		
+		
+		Empleado empl = new Empleado();
+		
+		//formato de fecha para el estandar SQL
+		String dia = this.txfFechaNacEmpleadoDD.getText();
+		String mes = this.txfFechaNacEmpleadoMM.getText();
+		String anio = this.txfFechaNacEmpleadoYY.getText();
+		String fecha = anio + "-" + mes + "-" + dia;			
+		
+		try {
+			
+			empl.setIdSucursal(this.cmbSucursalEmpleado.getSelectedIndex());
+			empl.setRfc(this.txfRfcEmpleado.getText());
+			empl.setCurp(this.txfCurpEmpleado.getText());
+			empl.setNombre(this.txfNombreCompletoEmpleado.getText());
+			empl.setNombreCorto(this.txfNombreCortoEmpleado.getText());
+			empl.setFechaNacimiento(Date.valueOf(fecha));
+			empl.setEmail(this.txfEmailEmpleado.getText());
+			empl.setEstado(this.txfEstadoEmpleado.getText());
+			empl.setCiudad(this.txfCiudadEmpleado.getText());
+			empl.setDireccion(this.txfDireccionEmpleado.getText());
+			empl.setCodigoPostal(this.txfCodigoPostalEmpleado.getText());
+			
+			this.empleadoController.actualizarEmpleado(empl);
+			
+			JOptionPane.showMessageDialog(this, "Registro actualizado", "Operación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.cerrarForm();
+			
+		}catch(Exception er) {
+			System.out.println("Error en vista :-> " + er.getMessage() + "\n"); 
+			er.printStackTrace();
 		}
 		
 	}
@@ -622,11 +660,11 @@ public class Fr_DatosEmpleado extends JFrame {
 	
 	private void abrirVentanaPasswordEmpleado() {
 		
-		if(this.cmbRFCEmpleado == null) {
+		if(this.txfRfcEmpleado.getText() == null) {
 			return;
 		}
 		
-		String rfcEmpleado = (String)this.cmbRFCEmpleado.getSelectedItem();
+		String rfcEmpleado = this.txfRfcEmpleado.getText();
 		String nombreCortoEmpleado = this.txfNombreCortoEmpleado.getText();
 		Component cmp = this;
 		
