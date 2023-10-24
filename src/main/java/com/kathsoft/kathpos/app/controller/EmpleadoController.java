@@ -167,7 +167,7 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
-	
+
 	public Empleado consultarEmpleadoPorId(int id) {
 		Empleado empl = new Empleado();
 		CallableStatement stm = null;
@@ -195,9 +195,9 @@ public class EmpleadoController implements Serializable {
 				empl.setCodigoPostal(rset.getString(12));
 				empl.setPassword(rset.getString(13));
 			}
-			
+
 			return empl;
-			
+
 		} catch (SQLException er) {
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -214,7 +214,7 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
-	
+
 	public Empleado consultarEmpleadoPorRfc(String rfc) {
 		Empleado empl = new Empleado();
 		CallableStatement stm = null;
@@ -268,13 +268,12 @@ public class EmpleadoController implements Serializable {
 
 			while (rset.next()) {
 				Object[] fila = { rset.getInt(1), // id
-						rset.getString(2),
-						rset.getString(3), // rfc
+						rset.getString(2), rset.getString(3), // rfc
 						rset.getString(4), // curp
 						rset.getString(5), // nombre completo
 						rset.getString(6), // nombre corto
 						rset.getString(7), // correo
-						rset.getInt(8) == 1 ? "Activo": "Inactivo" //activo
+						rset.getInt(8) == 1 ? "Activo" : "Inactivo" // activo
 				};
 				tabla.addRow(fila);
 			}
@@ -403,31 +402,31 @@ public class EmpleadoController implements Serializable {
 		}
 
 	}
-	
+
 	public void eliminarEmpleado(int idEmpleado) {
-		
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL eliminar_empleado(?)");
 			stm.setInt(1, idEmpleado);
-			
+
 			stm.execute();
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	public void actualizarContrasenia(Empleado empl) {
