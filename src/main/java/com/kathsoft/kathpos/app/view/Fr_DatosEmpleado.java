@@ -462,7 +462,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * parametro y asigna los valores correspondientes a sus respectivos campos en
 	 * el formulario
 	 * 
-	 * @param rfc
+	 * @param idEmpleado
 	 */
 	private void consultarEmpleadoPorId(int idEmpleado) {
 		Empleado empl = empleadoController.consultarEmpleadoPorId(idEmpleado);
@@ -515,7 +515,7 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		try {
 
-			empl.setIdSucursal(this.cmbSucursalEmpleado.getSelectedIndex());
+			empl.setIdSucursal(this.cmbSucursalEmpleado.getSelectedIndex() + 1);
 			empl.setRfc(this.txfRfcEmpleado.getText());
 			empl.setCurp(this.txfCurpEmpleado.getText());
 			empl.setNombre(this.txfNombreCompletoEmpleado.getText());

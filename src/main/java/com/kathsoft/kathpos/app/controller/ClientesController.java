@@ -34,11 +34,19 @@ public class ClientesController implements Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-
-				Object[] fila = { rset.getString(1), rset.getString(2), rset.getString(3), rset.getString(4),
-						rset.getString(5), rset.getString(6), rset.getString(7), rset.getString(8), rset.getString(9) };
-
-				tabla.addRow(fila);
+				
+				tabla.addRow(new Object[] {
+					rset.getInt(1), //indice
+					rset.getString(2), //rfc
+					rset.getString(3), //cuenta contable
+					rset.getString(4), //nombre completo
+					rset.getString(5), //nombre corto
+					rset.getString(6), //correo electronico
+					rset.getString(7), //estado
+					rset.getString(8), //ciudad
+					rset.getString(9), //direccion
+					rset.getString(10) //codigo postal
+				});
 
 			}
 
@@ -58,6 +66,26 @@ public class ClientesController implements Serializable {
 			}
 		}
 
+	}
+	
+	public void eliminarCliente(int idCliente) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL eliminar_cliente(?);");
+			stm.setInt(1, idCliente);
+			
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
 	}
 
 	public void consultarRFCClientes(JComboBox<String> cmb) throws SQLException, Exception {
