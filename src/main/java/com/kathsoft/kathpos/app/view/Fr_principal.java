@@ -195,7 +195,17 @@ public class Fr_principal extends JFrame {
 			100 /* Precio m */
 	};
 
-	private int[] tablaClientesColumnsWidth = { 150, 100, 300, 100, 180, 100, 100, 400, 100 };
+	private int[] tablaClientesColumnsWidth = {30, //indice
+			150, //Rfc
+			100, //cuenta contable
+			300, //nombre completo
+			100, //nombre corto
+			180, //correo electrónico
+			100, //estado
+			100, //ciudad
+			400, //direccion
+			100 //codigo postal
+	};
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
 			120, // fecha venta
@@ -263,7 +273,6 @@ public class Fr_principal extends JFrame {
 	private JPanel panelClientesCentral;
 	private JPanel panelClientesCentralBotones;
 	private JButton btnAgregarCliente;
-	private Component horizontalStrut_20;
 	private JButton btnActualizarCliente;
 	private JScrollPane scrollPaneTablaClientes;
 	private JTable tablaClientes;
@@ -343,6 +352,7 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionFormasDePago;
 	private JButton btnEliminarFormaPago;
 	private JButton btnEliminarEmpleado;
+	private JButton btnEliminarCliente;
 
 	/**
 	 * Launch the application.
@@ -799,9 +809,6 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelClientesCentralBotones.add(btnAgregarCliente);
 
-		horizontalStrut_20 = Box.createHorizontalStrut(20);
-		panelClientesCentralBotones.add(horizontalStrut_20);
-
 		btnActualizarCliente = new JButton("Actualizar");
 		btnActualizarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -812,6 +819,14 @@ public class Fr_principal extends JFrame {
 		btnActualizarCliente.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelClientesCentralBotones.add(btnActualizarCliente);
+		
+		btnEliminarCliente = new JButton("Eliminar");
+		btnEliminarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarCliente();
+			}
+		});
+		panelClientesCentralBotones.add(btnEliminarCliente);
 
 		scrollPaneTablaClientes = new JScrollPane();
 		panelClientesCentral.add(scrollPaneTablaClientes, BorderLayout.CENTER);
@@ -822,6 +837,7 @@ public class Fr_principal extends JFrame {
 		tablaClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaClientes.setViewportView(tablaClientes);
 
+		modelTablaClientes.addColumn("Id");
 		modelTablaClientes.addColumn("RFC");
 		modelTablaClientes.addColumn("Cta Contable");
 		modelTablaClientes.addColumn("Nombre completo");
@@ -2053,6 +2069,42 @@ public class Fr_principal extends JFrame {
 				frame.setVisible(true);
 			}
 		});
+	}
+	
+	/**
+	 * 
+	 * @return el id del cliente seleccionado en la tabla
+	 */
+	private int indiceDeCliente() {
+		
+		int filaSeleccionada = -1;
+		int indiceClienteSeleccionado = -1;
+		
+		try {
+			
+			filaSeleccionada = this.tablaArticulos.getSelectedRow();
+			indiceClienteSeleccionado = (int)this.modelTablaClientes.getValueAt(filaSeleccionada, 0);
+			return indiceClienteSeleccionado;
+			
+		}catch(Exception er) {
+			er.printStackTrace();
+			return -1;
+		}
+		
+	}
+	
+	private void eliminarCliente() {
+		
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Cliente", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+		
+		if(input > 0) {
+			return;
+		}
+		
+		this.clientesController.eliminarCliente(this.indiceDeCliente());
+		
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
+		
 	}
 
 	private void abrirFormSucursales(int opcion) {
