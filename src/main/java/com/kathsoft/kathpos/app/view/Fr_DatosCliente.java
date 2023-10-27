@@ -58,7 +58,7 @@ public class Fr_DatosCliente extends JFrame {
 	private JLabel lblNewLabel_1;
 	private Component horizontalStrut_1;
 	private JTextField txfRfcCliente;
-	private JComboBox<String> cmbRfcCliente;
+	//private JComboBox<String> cmbRfcCliente;
 	private Component horizontalStrut_2;
 	private JLabel lblNewLabel_2;
 	private Component horizontalStrut_3;
@@ -108,7 +108,6 @@ public class Fr_DatosCliente extends JFrame {
 	private JLabel lblNewLabel_10;
 	private JTextArea txaDireccion;
 	private Component verticalStrut_6;
-
 	private int indiceCliente;
 	private Component horizontalStrut_15;
 	private JButton btnHistorialCred;
@@ -116,7 +115,10 @@ public class Fr_DatosCliente extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosCliente(int tipoOperacion) {
+	public Fr_DatosCliente(int tipoOperacion, int indiceCliente) {
+		
+		this.indiceCliente = indiceCliente;
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosCliente.class.getResource(
 				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 
@@ -166,28 +168,11 @@ public class Fr_DatosCliente extends JFrame {
 
 		horizontalStrut_1 = Box.createHorizontalStrut(5);
 		horizontalBox.add(horizontalStrut_1);
-
-		if (tipoOperacion == 0) {
-
-			txfRfcCliente = new JTextField();
-			horizontalBox.add(this.txfRfcCliente);
-			txfRfcCliente.setColumns(30);
-			txfRfcCliente.setMaximumSize(this.txfRfcCliente.getPreferredSize());
-
-		} else if (tipoOperacion == 1) {
-			cmbRfcCliente = new JComboBox<String>();
-			cmbRfcCliente.setEditable(true);
-			horizontalBox.add(cmbRfcCliente);
-			cmbRfcCliente.setEditable(false);
-			this.llenarCmbRfcClientes();
-			this.cmbRfcCliente.addItemListener(new ItemListener() {
-
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					consultarClientePorRFC();
-				}
-			});
-		}
+		
+		txfRfcCliente = new JTextField();
+		horizontalBox.add(this.txfRfcCliente);
+		txfRfcCliente.setColumns(30);
+		txfRfcCliente.setMaximumSize(this.txfRfcCliente.getPreferredSize());
 
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut_2);
@@ -405,8 +390,13 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
+		
+		if(tipoOperacion == 1) {
+			this.consultarClientePorId();
+		}
 	}
-
+	
+	/*
 	private void llenarCmbRfcClientes() {
 
 		this.limpiarCmbClientes();
@@ -428,9 +418,9 @@ public class Fr_DatosCliente extends JFrame {
 	private void limpiarCmbClientes() {
 		this.cmbRfcCliente.removeAllItems();
 		this.cmbRfcCliente.updateUI();
-	}
-
-	private void consultarClientePorRFC() {
+	}*/
+	
+	private void consultarClientePorId() {
 
 		String dia = "";
 		String mes = "";
@@ -438,7 +428,7 @@ public class Fr_DatosCliente extends JFrame {
 
 		try {
 
-			Clientes cl = clientesController.buscarClientePorRFC((String) this.cmbRfcCliente.getSelectedItem());
+			Clientes cl = clientesController.buscarClientePorId(this.indiceCliente);
 
 			if (cl.getFechaNacimiento() != null) {
 				String[] fecha = cl.getFechaNacimiento().toString().split("-");
@@ -448,6 +438,7 @@ public class Fr_DatosCliente extends JFrame {
 			}
 
 			this.indiceCliente = cl.getId();
+			this.txfRfcCliente.setText(cl.getRfc());
 			this.txfCtaContableCliente.setText(cl.getClaveCuentaContable());
 			this.txfNombreCompleto.setText(cl.getNombre());
 			this.txfNombreCorto.setText(cl.getNombreCorto());
@@ -460,11 +451,7 @@ public class Fr_DatosCliente extends JFrame {
 			this.txfCiudad.setText(cl.getCiudad());
 			this.txfCodigoPostal.setText(cl.getCodigoPostal());
 			this.txaDireccion.setText(cl.getDireccion());
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			
 		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",

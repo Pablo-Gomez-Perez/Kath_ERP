@@ -45,7 +45,8 @@ public class ClientesController implements Serializable {
 					rset.getString(7), //estado
 					rset.getString(8), //ciudad
 					rset.getString(9), //direccion
-					rset.getString(10) //codigo postal
+					rset.getString(10), //codigo postal
+					rset.getShort(11) == 1 ? "Activo" : "Inactivo" //status
 				});
 
 			}
@@ -84,6 +85,12 @@ public class ClientesController implements Serializable {
 			er.printStackTrace();
 		}catch(Exception er) {
 			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
 		}
 		
 	}
@@ -166,6 +173,56 @@ public class ClientesController implements Serializable {
 				er.printStackTrace();
 			}
 		}
+	}
+	
+	public Clientes buscarClientePorId(int idCliente) {
+		
+		Clientes cl = new Clientes();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_cliente_por_id(?);");
+			stm.setInt(1, idCliente);
+
+			rset = stm.executeQuery();
+
+			if (rset.next()) {
+				cl.setId(rset.getInt(1));
+				cl.setRfc(rset.getString(2));
+				cl.setClaveCuentaContable(rset.getString(3));
+				cl.setDescripcion(rset.getString(4));
+				cl.setNombre(rset.getString(5));
+				cl.setNombreCorto(rset.getString(6));
+				cl.setFechaNacimiento(rset.getDate(7));
+				cl.setEmail(rset.getString(8));
+				cl.setEstado(rset.getString(9));
+				cl.setCiudad(rset.getString(10));
+				cl.setDireccion(rset.getString(11));
+				cl.setCodigoPostal(rset.getString(12));
+			}
+
+			return cl;
+		} catch (SQLException er) {
+			er.printStackTrace();
+			return null;
+		} catch (Exception er) {
+			er.printStackTrace();
+			return null;
+		} finally {
+			try {
+
+				Conexion.cerrarConexion(cn, rset, stm);
+
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+		
 	}
 
 	public void insertarNuevoCliente(Clientes cl) throws SQLException, Exception {

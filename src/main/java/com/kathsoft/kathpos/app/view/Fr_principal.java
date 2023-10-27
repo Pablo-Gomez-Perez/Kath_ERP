@@ -204,7 +204,8 @@ public class Fr_principal extends JFrame {
 			100, //estado
 			100, //ciudad
 			400, //direccion
-			100 //codigo postal
+			100, //codigo postal
+			150 //activo o inactivo
 	};
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
@@ -801,7 +802,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarCliente = new JButton("Agregar");
 		btnAgregarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(0);
+				abrirFormClientes(0,0);
 			}
 		});
 		btnAgregarCliente.setBackground(new Color(144, 238, 144));
@@ -812,7 +813,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarCliente = new JButton("Actualizar");
 		btnActualizarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(1);
+				abrirFormClientes(1, indiceDeCliente());
 			}
 		});
 		btnActualizarCliente.setBackground(new Color(144, 238, 144));
@@ -821,6 +822,8 @@ public class Fr_principal extends JFrame {
 		panelClientesCentralBotones.add(btnActualizarCliente);
 		
 		btnEliminarCliente = new JButton("Eliminar");
+		btnEliminarCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarCliente.setBackground(new Color(255,51,0));
 		btnEliminarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eliminarCliente();
@@ -847,6 +850,7 @@ public class Fr_principal extends JFrame {
 		modelTablaClientes.addColumn("Ciudad");
 		modelTablaClientes.addColumn("Direccion");
 		modelTablaClientes.addColumn("Codigo P.");
+		modelTablaClientes.addColumn("Activo");
 
 		// se remueve el editor de la tabla provedoores
 		for (int i = 0; i < modelTablaClientes.getColumnCount(); i++) {
@@ -2058,13 +2062,13 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void abrirFormClientes(int tipoOperacion) {
+	private void abrirFormClientes(int tipoOperacion, int indiceCliente) {
 		Component cm = this;
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion);
+				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion, indiceCliente);
 				frame.setLocationRelativeTo(cm);
 				frame.setVisible(true);
 			}
@@ -2082,7 +2086,7 @@ public class Fr_principal extends JFrame {
 		
 		try {
 			
-			filaSeleccionada = this.tablaArticulos.getSelectedRow();
+			filaSeleccionada = this.tablaClientes.getSelectedRow();
 			indiceClienteSeleccionado = (int)this.modelTablaClientes.getValueAt(filaSeleccionada, 0);
 			return indiceClienteSeleccionado;
 			
