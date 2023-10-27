@@ -169,14 +169,14 @@ public class Fr_principal extends JFrame {
 	private DefaultTableModel modelTablaSucursales;
 
 	// Array que define el ancho de cada columna de la tabla de empleados
-	private int[] tableEmpleadosColumnsWidth = { 40, //id
-			150, //sucursal
-			180, //RFC
-			180, //Curp
-			180, //Nombre completo
-			100, //nombre corto
-			200, //email
-			150  //activo o inactivo
+	private int[] tableEmpleadosColumnsWidth = { 40, // id
+			150, // sucursal
+			180, // RFC
+			180, // Curp
+			180, // Nombre completo
+			100, // nombre corto
+			200, // email
+			150 // activo o inactivo
 	};
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
@@ -195,17 +195,17 @@ public class Fr_principal extends JFrame {
 			100 /* Precio m */
 	};
 
-	private int[] tablaClientesColumnsWidth = {30, //indice
-			150, //Rfc
-			100, //cuenta contable
-			300, //nombre completo
-			100, //nombre corto
-			180, //correo electrónico
-			100, //estado
-			100, //ciudad
-			400, //direccion
-			100, //codigo postal
-			150 //activo o inactivo
+	private int[] tablaClientesColumnsWidth = { 30, // indice
+			150, // Rfc
+			100, // cuenta contable
+			300, // nombre completo
+			100, // nombre corto
+			180, // correo electrónico
+			100, // estado
+			100, // ciudad
+			400, // direccion
+			100, // codigo postal
+			150 // activo o inactivo
 	};
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
@@ -488,18 +488,19 @@ public class Fr_principal extends JFrame {
 		opcionSucursales.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/sucursal.jpg")));
 		menuConsultar.add(opcionSucursales);
-		
+
 		opcionFormasDePago = new JMenuItem("Formas De Pago");
-		opcionFormasDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/formas_de_pago.png")));
+		opcionFormasDePago.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/formas_de_pago.png")));
 		opcionFormasDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelFormasDePago");
 				panelPrincipalContenedor.updateUI();
-				
+
 				llenarTablaFormasDePago();
-				
+
 			}
 		});
 		menuConsultar.add(opcionFormasDePago);
@@ -802,7 +803,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarCliente = new JButton("Agregar");
 		btnAgregarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(0,0);
+				abrirFormClientes(0, 0);
 			}
 		});
 		btnAgregarCliente.setBackground(new Color(144, 238, 144));
@@ -820,10 +821,11 @@ public class Fr_principal extends JFrame {
 		btnActualizarCliente.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelClientesCentralBotones.add(btnActualizarCliente);
-		
+
 		btnEliminarCliente = new JButton("Eliminar");
-		btnEliminarCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
-		this.btnEliminarCliente.setBackground(new Color(255,51,0));
+		btnEliminarCliente.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarCliente.setBackground(new Color(255, 51, 0));
 		btnEliminarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eliminarCliente();
@@ -956,15 +958,16 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		panelEmpleadosCentralbotones.add(btnActualizarEmpleado);
-		
+
 		btnEliminarEmpleado = new JButton("Eliminar");
 		btnEliminarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eliminarEmpleado();				
+				eliminarEmpleado();
 			}
 		});
-		btnEliminarEmpleado.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
-		this.btnEliminarEmpleado.setBackground(new Color(255,51,0));
+		btnEliminarEmpleado.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
 		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
 
 		panelProveedor = new JPanel();
@@ -1525,79 +1528,82 @@ public class Fr_principal extends JFrame {
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
-		
+
 		panelFormasDePago = new JPanel();
 		panelFormasDePago.setForeground(new Color(255, 215, 0));
 		panelPrincipalContenedor.add(panelFormasDePago, "panelFormasDePago");
 		panelFormasDePago.setLayout(new BorderLayout(0, 0));
-		
+
 		panelEtiquetaFormasDePago = new JPanel();
 		panelEtiquetaFormasDePago.setBackground(new Color(0, 0, 128));
 		panelFormasDePago.add(panelEtiquetaFormasDePago, BorderLayout.NORTH);
-		
+
 		lblNewLabel_9 = new JLabel("Formas De Pago");
 		lblNewLabel_9.setForeground(new Color(255, 255, 255));
 		lblNewLabel_9.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelEtiquetaFormasDePago.add(lblNewLabel_9);
-		
+
 		panelFormasDePagoCentral = new JPanel();
 		panelFormasDePagoCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelFormasDePagoCentral.setBackground(new Color(255, 215, 0));
 		panelFormasDePago.add(panelFormasDePagoCentral, BorderLayout.CENTER);
 		panelFormasDePagoCentral.setLayout(new BorderLayout(0, 0));
-		
+
 		scrollPaneTablaFormasDePago = new JScrollPane();
 		panelFormasDePagoCentral.add(scrollPaneTablaFormasDePago, BorderLayout.CENTER);
-		
+
 		modelTablaFormasDePago = new DefaultTableModel();
-		
+
 		modelTablaFormasDePago.addColumn("Id");
 		modelTablaFormasDePago.addColumn("Forma de pago");
 		modelTablaFormasDePago.addColumn("Activo");
-		
+
 		tablaFormasDePago = new JTable();
 		tablaFormasDePago.setModel(modelTablaFormasDePago);
 		scrollPaneTablaFormasDePago.setViewportView(tablaFormasDePago);
-		
+
 		// remueve el editor de la tabla de formas de pago
 		for (int i = 0; i < modelTablaFormasDePago.getColumnCount(); i++) {
 			Class<?> colClass = modelTablaFormasDePago.getColumnClass(i);
 			tablaFormasDePago.setDefaultEditor(colClass, null);
 		}
-		
+
 		panelFormasDePagoCentralBotones = new JPanel();
 		FlowLayout flowLayout_9 = (FlowLayout) panelFormasDePagoCentralBotones.getLayout();
 		flowLayout_9.setAlignment(FlowLayout.RIGHT);
 		panelFormasDePagoCentralBotones.setBackground(new Color(255, 215, 0));
 		panelFormasDePagoCentral.add(panelFormasDePagoCentralBotones, BorderLayout.NORTH);
-		
+
 		btnNuevaFormaDePago = new JButton("Agregar");
-		btnNuevaFormaDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnNuevaFormaDePago.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnNuevaFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(1,0);
+				abrirFormDatosFormasDePago(1, 0);
 			}
 		});
-		this.btnNuevaFormaDePago.setBackground(new Color(152,251,152));
+		this.btnNuevaFormaDePago.setBackground(new Color(152, 251, 152));
 		panelFormasDePagoCentralBotones.add(btnNuevaFormaDePago);
-		
+
 		btnActualizarFormaDePago = new JButton("Actualizar");
-		btnActualizarFormaDePago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarFormaDePago.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(2,indiceDeFormaDePago());
+				abrirFormDatosFormasDePago(2, indiceDeFormaDePago());
 			}
 		});
-		this.btnActualizarFormaDePago.setBackground(new Color(152,251,152));
+		this.btnActualizarFormaDePago.setBackground(new Color(152, 251, 152));
 		panelFormasDePagoCentralBotones.add(btnActualizarFormaDePago);
-		
+
 		btnEliminarFormaPago = new JButton("Eliminar");
-		btnEliminarFormaPago.addActionListener(new ActionListener() {			
-			public void actionPerformed(ActionEvent e) {				
+		btnEliminarFormaPago.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				eliminarFormaDePago();
 			}
 		});
-		btnEliminarFormaPago.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarFormaPago.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		btnEliminarFormaPago.setBackground(new Color(255, 51, 0));
 		panelFormasDePagoCentralBotones.add(btnEliminarFormaPago);
 
@@ -1769,26 +1775,28 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaEmpleados();
 		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
 	}
-	
+
 	private void eliminarEmpleado() {
-		
+
 		int indiceEmpleadoSeleccionado = -1;
-		int input = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el registro seleccionado?", "Error", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-		
-		if(input > 0) {
+		int input = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el registro seleccionado?", "Error",
+				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+
+		if (input > 0) {
 			return;
 		}
-		
+
 		try {
-			
+
 			indiceEmpleadoSeleccionado = this.indiceDeEmpleado();
-			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);						
-			
-		}catch(Exception er) {
+			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
+
+		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 	}
 
 	private void llenarTablaProveedor() {
@@ -1988,17 +1996,17 @@ public class Fr_principal extends JFrame {
 		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos,
 				opcionDeBusquedaDeArticulo(), this.sucursal.getIdSucursal());
 	}
-	
+
 	private int indiceDeEmpleado() {
 		int filaSeleccionada = 0;
 		int indiceDeEmpleado = 0;
-		
+
 		try {
 			filaSeleccionada = tableEmpleados.getSelectedRow();
-			indiceDeEmpleado = (int)modelTablaEmpleados.getValueAt(filaSeleccionada, 0);
+			indiceDeEmpleado = (int) modelTablaEmpleados.getValueAt(filaSeleccionada, 0);
 			return indiceDeEmpleado;
-		}catch(Exception er) {
-			er.printStackTrace();			
+		} catch (Exception er) {
+			er.printStackTrace();
 			return 0;
 		}
 	}
@@ -2074,41 +2082,42 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-	
+
 	/**
 	 * 
 	 * @return el id del cliente seleccionado en la tabla
 	 */
 	private int indiceDeCliente() {
-		
+
 		int filaSeleccionada = -1;
 		int indiceClienteSeleccionado = -1;
-		
+
 		try {
-			
+
 			filaSeleccionada = this.tablaClientes.getSelectedRow();
-			indiceClienteSeleccionado = (int)this.modelTablaClientes.getValueAt(filaSeleccionada, 0);
+			indiceClienteSeleccionado = (int) this.modelTablaClientes.getValueAt(filaSeleccionada, 0);
 			return indiceClienteSeleccionado;
-			
-		}catch(Exception er) {
+
+		} catch (Exception er) {
 			er.printStackTrace();
 			return -1;
 		}
-		
+
 	}
-	
+
 	private void eliminarCliente() {
-		
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Cliente", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-		
-		if(input > 0) {
+
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Cliente",
+				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+
+		if (input > 0) {
 			return;
 		}
-		
+
 		this.clientesController.eliminarCliente(this.indiceDeCliente());
-		
+
 		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
-		
+
 	}
 
 	private void abrirFormSucursales(int opcion) {
@@ -2137,7 +2146,7 @@ public class Fr_principal extends JFrame {
 		this.tablaVentas.updateUI();
 
 	}
-	
+
 	private void llenarTablaFormasDePago() {
 		this.modelTablaFormasDePago.getDataVector().removeAllElements();
 		this.tablaFormasDePago.updateUI();
@@ -2174,29 +2183,28 @@ public class Fr_principal extends JFrame {
 		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(),
 				this.opcionDeBusquedaDeVenta());
 	}
-	
-	
+
 	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
-		
+
 		Component cm = null;
 		EventQueue.invokeLater(new Runnable() {
-			
+
 			@Override
-			public void run() {				
+			public void run() {
 				try {
 					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion, idFormaDePago);
 					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				}catch(Exception er) {
-					er.printStackTrace();					
+				} catch (Exception er) {
+					er.printStackTrace();
 				}
-				
+
 			}
 		});
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return el id del registro seleccionado en la tabla
@@ -2204,26 +2212,28 @@ public class Fr_principal extends JFrame {
 	private int indiceDeFormaDePago() {
 		int filaSeleccionada = 0;
 		int idFormaDePago = 0;
-		
+
 		try {
 			filaSeleccionada = this.tablaFormasDePago.getSelectedRow();
-			idFormaDePago = (int)this.modelTablaFormasDePago.getValueAt(filaSeleccionada, 0);
-		}catch(Exception er) {
+			idFormaDePago = (int) this.modelTablaFormasDePago.getValueAt(filaSeleccionada, 0);
+		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Seleccione el registro a eliminar", "Error", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Seleccione el registro a eliminar", "Error",
+					JOptionPane.WARNING_MESSAGE);
 		}
-		
+
 		return idFormaDePago;
 	}
-	
+
 	private void eliminarFormaDePago() {
-		
-		int input = JOptionPane.showConfirmDialog(null,"Desea eliminar este registro", "Eliminar", JOptionPane.YES_NO_OPTION);
-		
-		if(input > 0) {
+
+		int input = JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Eliminar",
+				JOptionPane.YES_NO_OPTION);
+
+		if (input > 0) {
 			return;
 		}
-		
+
 		this.formasDePagoController.eliminarFormaDepAgo(this.indiceDeFormaDePago());
 	}
 

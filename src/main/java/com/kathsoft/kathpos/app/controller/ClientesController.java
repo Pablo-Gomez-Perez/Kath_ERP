@@ -34,19 +34,18 @@ public class ClientesController implements Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				
-				tabla.addRow(new Object[] {
-					rset.getInt(1), //indice
-					rset.getString(2), //rfc
-					rset.getString(3), //cuenta contable
-					rset.getString(4), //nombre completo
-					rset.getString(5), //nombre corto
-					rset.getString(6), //correo electronico
-					rset.getString(7), //estado
-					rset.getString(8), //ciudad
-					rset.getString(9), //direccion
-					rset.getString(10), //codigo postal
-					rset.getShort(11) == 1 ? "Activo" : "Inactivo" //status
+
+				tabla.addRow(new Object[] { rset.getInt(1), // indice
+						rset.getString(2), // rfc
+						rset.getString(3), // cuenta contable
+						rset.getString(4), // nombre completo
+						rset.getString(5), // nombre corto
+						rset.getString(6), // correo electronico
+						rset.getString(7), // estado
+						rset.getString(8), // ciudad
+						rset.getString(9), // direccion
+						rset.getString(10), // codigo postal
+						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
 				});
 
 			}
@@ -68,31 +67,31 @@ public class ClientesController implements Serializable {
 		}
 
 	}
-	
+
 	public void eliminarCliente(int idCliente) {
-		
+
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL eliminar_cliente(?);");
 			stm.setInt(1, idCliente);
-			
+
 			stm.execute();
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	public void consultarRFCClientes(JComboBox<String> cmb) throws SQLException, Exception {
@@ -174,9 +173,9 @@ public class ClientesController implements Serializable {
 			}
 		}
 	}
-	
+
 	public Clientes buscarClientePorId(int idCliente) {
-		
+
 		Clientes cl = new Clientes();
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -222,7 +221,7 @@ public class ClientesController implements Serializable {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	public void insertarNuevoCliente(Clientes cl) throws SQLException, Exception {
