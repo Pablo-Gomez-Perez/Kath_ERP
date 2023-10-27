@@ -58,7 +58,7 @@ public class Fr_DatosCliente extends JFrame {
 	private JLabel lblNewLabel_1;
 	private Component horizontalStrut_1;
 	private JTextField txfRfcCliente;
-	//private JComboBox<String> cmbRfcCliente;
+	// private JComboBox<String> cmbRfcCliente;
 	private Component horizontalStrut_2;
 	private JLabel lblNewLabel_2;
 	private Component horizontalStrut_3;
@@ -116,9 +116,9 @@ public class Fr_DatosCliente extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_DatosCliente(int tipoOperacion, int indiceCliente) {
-		
+
 		this.indiceCliente = indiceCliente;
-		
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosCliente.class.getResource(
 				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 
@@ -168,7 +168,7 @@ public class Fr_DatosCliente extends JFrame {
 
 		horizontalStrut_1 = Box.createHorizontalStrut(5);
 		horizontalBox.add(horizontalStrut_1);
-		
+
 		txfRfcCliente = new JTextField();
 		horizontalBox.add(this.txfRfcCliente);
 		txfRfcCliente.setColumns(30);
@@ -354,12 +354,13 @@ public class Fr_DatosCliente extends JFrame {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panelInferiorBotones.setBackground(new Color(30, 144, 255));
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
-		
+
 		btnHistorialCred = new JButton("Historial");
 		btnHistorialCred.setBackground(new Color(0, 255, 255));
-		btnHistorialCred.setIcon(new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/creditoLogo2.png")));
+		btnHistorialCred.setIcon(new ImageIcon(
+				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/creditoLogo2.png")));
 		panelInferiorBotones.add(btnHistorialCred);
-		
+
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
 		panelInferiorBotones.add(horizontalStrut_15);
 
@@ -370,7 +371,8 @@ public class Fr_DatosCliente extends JFrame {
 			}
 		});
 		btnCancelar.setBackground(new Color(205, 92, 92));
-		btnCancelar.setIcon(new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnCancelar.setIcon(
+				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		panelInferiorBotones.add(btnCancelar);
 
 		horizontalStrut = Box.createHorizontalStrut(20);
@@ -379,9 +381,9 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar = new JButton("Guardar");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(tipoOperacion == 0) {
+				if (tipoOperacion == 0) {
 					insertarNuevoCliente();
-				}else if(tipoOperacion == 1) {
+				} else if (tipoOperacion == 1) {
 					actualizarCliente();
 				}
 			}
@@ -390,36 +392,30 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
-		
-		if(tipoOperacion == 1) {
+
+		if (tipoOperacion == 1) {
 			this.consultarClientePorId();
 		}
 	}
-	
+
 	/*
-	private void llenarCmbRfcClientes() {
+	 * private void llenarCmbRfcClientes() {
+	 * 
+	 * this.limpiarCmbClientes();
+	 * 
+	 * try { clientesController.consultarRFCClientes(cmbRfcCliente); } catch
+	 * (SQLException er) { er.printStackTrace(); JOptionPane.showMessageDialog(this,
+	 * "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
+	 * JOptionPane.ERROR_MESSAGE); } catch (Exception er) { er.printStackTrace();
+	 * JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " +
+	 * er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); }
+	 * 
+	 * }
+	 * 
+	 * private void limpiarCmbClientes() { this.cmbRfcCliente.removeAllItems();
+	 * this.cmbRfcCliente.updateUI(); }
+	 */
 
-		this.limpiarCmbClientes();
-
-		try {
-			clientesController.consultarRFCClientes(cmbRfcCliente);
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
-	}
-
-	private void limpiarCmbClientes() {
-		this.cmbRfcCliente.removeAllItems();
-		this.cmbRfcCliente.updateUI();
-	}*/
-	
 	private void consultarClientePorId() {
 
 		String dia = "";
@@ -451,7 +447,7 @@ public class Fr_DatosCliente extends JFrame {
 			this.txfCiudad.setText(cl.getCiudad());
 			this.txfCodigoPostal.setText(cl.getCodigoPostal());
 			this.txaDireccion.setText(cl.getDireccion());
-			
+
 		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
@@ -547,9 +543,9 @@ public class Fr_DatosCliente extends JFrame {
 			cl.setCodigoPostal(this.txfCodigoPostal.getText());
 
 			clientesController.insertarNuevoCliente(cl);
-			
+
 			JOptionPane.showMessageDialog(this, "Cliente registrado", "Exito", JOptionPane.INFORMATION_MESSAGE);
-			
+
 			this.limpiarCamposFormulario();
 
 		} catch (SQLException er) {
@@ -562,9 +558,9 @@ public class Fr_DatosCliente extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	private void actualizarCliente() {
-		
+
 		Clientes cl = new Clientes();
 		String fecha = null;
 
@@ -626,9 +622,9 @@ public class Fr_DatosCliente extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
+
 		try {
-			
+
 			cl.setId(this.indiceCliente);
 			cl.setClaveCuentaContable(this.txfCtaContableCliente.getText());
 			cl.setNombre(this.txfNombreCompleto.getText());
@@ -640,26 +636,26 @@ public class Fr_DatosCliente extends JFrame {
 			cl.setCiudad(this.txfCiudad.getText());
 			cl.setDireccion(this.txaDireccion.getText());
 			cl.setCodigoPostal(this.txfCodigoPostal.getText());
-			
+
 			clientesController.actualizarCliente(cl);
-			
-			JOptionPane.showMessageDialog(this, "Cliente actualizado","Exito" , JOptionPane.INFORMATION_MESSAGE);
-		}catch(SQLException er) {
+
+			JOptionPane.showMessageDialog(this, "Cliente actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	/**
 	 * borra el contenido de todos los campos del formulario
 	 */
 	private void limpiarCamposFormulario() {
-		
+
 		this.txfRfcCliente.setText("");
 		this.txfNombreCompleto.setText("");
 		this.txfNombreCorto.setText("");
@@ -672,9 +668,9 @@ public class Fr_DatosCliente extends JFrame {
 		this.txfCiudad.setText("");
 		this.txaDireccion.setText("");
 		this.txfCodigoPostal.setText("");
-		
+
 	}
-	
+
 	private void cerrarForm() {
 		this.dispose();
 	}
