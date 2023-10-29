@@ -246,7 +246,6 @@ public class Fr_principal extends JFrame {
 	private JTable tablaProveedores;
 	private JPanel panelProveedorCentralBotones;
 	private JButton btnAgregarProveedor;
-	private Component horizontalStrut_10;
 	private JButton btnActualizarProveedor;
 	private JScrollPane scrollPaneTablaArticulos;
 	private JTable tablaArticulos;
@@ -365,6 +364,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnEliminarFormaPago;
 	private JButton btnEliminarEmpleado;
 	private JButton btnEliminarCliente;
+	private JButton btnEliminarProveedor;
 
 	/**
 	 * Launch the application.
@@ -1021,7 +1021,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarProveedor = new JButton("Agregar");
 		btnAgregarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(0);
+				abrirVentanaFormularioProveedor(0, 0);
 			}
 		});
 		btnAgregarProveedor.setBackground(new Color(144, 238, 144));
@@ -1029,19 +1029,26 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelProveedorCentralBotones.add(btnAgregarProveedor);
 
-		horizontalStrut_10 = Box.createHorizontalStrut(5);
-		panelProveedorCentralBotones.add(horizontalStrut_10);
-
 		btnActualizarProveedor = new JButton("Actualizar");
 		btnActualizarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(1);
+				abrirVentanaFormularioProveedor(1, indiceDeProveedor());
 			}
 		});
 		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
 		btnActualizarProveedor.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelProveedorCentralBotones.add(btnActualizarProveedor);
+		
+		btnEliminarProveedor = new JButton("Eliminar");
+		btnEliminarProveedor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarProveedor();
+			}
+		});
+		btnEliminarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarProveedor.setBackground(new Color(255,51,0));
+		panelProveedorCentralBotones.add(btnEliminarProveedor);
 		
 		modelTablaProveedores.addColumn("Id");
 		modelTablaProveedores.addColumn("RFC");
@@ -1924,8 +1931,44 @@ public class Fr_principal extends JFrame {
 	private void limpiarCamposPanelCategoria() {
 		this.txaDescripcionCategoria.setText("");
 	}
+	
+	/**
+	 * 
+	 * @return el id del registro seleccionado en la tabla
+	 */
+	private int indiceDeProveedor() {
+		int filaSeleccionada = -1;
+		int indiceDeProveedor = -1;
+		
+		try {
+			
+			filaSeleccionada = this.tablaProveedores.getSelectedRow();
+			indiceDeProveedor = (int) this.modelTablaProveedores.getValueAt(filaSeleccionada, 0);
+			return indiceDeProveedor;
+		}catch(Exception er) {
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
+			return -1;
+		}
+	}
+	
+	/**
+	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
+	 */
+	private void eliminarProveedor() {
+		
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminar el registro", "Eliminar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		
+		if(input > 0) {
+			return;
+		}
+		
+		proveedorController.eliminarProveedor(this.indiceDeProveedor());
+		
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
+	}
 
-	private void abrirVentanaFormularioProveedor(int opcion) {
+	private void abrirVentanaFormularioProveedor(int opcion, int indiceProveedor) {
 
 		Component cm = this;
 
@@ -1934,7 +1977,7 @@ public class Fr_principal extends JFrame {
 			@Override
 			public void run() {
 				try {
-					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion);
+					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion, indiceProveedor);
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
