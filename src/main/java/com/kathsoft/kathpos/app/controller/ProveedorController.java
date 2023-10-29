@@ -74,6 +74,7 @@ public class ProveedorController implements java.io.Serializable {
 		
 		try {
 			
+			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL eliminar_proveedor(?);");
 			stm.setInt(1, idProveedor);
 			stm.execute();
@@ -88,8 +89,7 @@ public class ProveedorController implements java.io.Serializable {
 			}catch(SQLException er) {
 				er.printStackTrace();
 			}
-		}
-		
+		}		
 	}
 
 	/**
@@ -305,5 +305,55 @@ public class ProveedorController implements java.io.Serializable {
 			}
 		}
 
+	}
+	
+	public Proveedor buscarProveedorPorId(int idProveedor) {
+		
+		Proveedor prv = new Proveedor();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_proveedor_por_id(?);");
+			stm.setInt(1, idProveedor);
+
+			rset = stm.executeQuery();
+
+			if (rset.next()) {
+				prv.setId(rset.getInt(1));
+				prv.setRfc(rset.getString(2));
+				prv.setIdCuentaContable(rset.getInt(3));
+				prv.setClaveCuentaContable(rset.getString(4));
+				prv.setNombre(rset.getString(5));
+				prv.setDescripcion(rset.getString(6));
+				prv.setEmail(rset.getString(7));
+				prv.setEstado(rset.getString(8));
+				prv.setCiudad(rset.getString(9));
+				prv.setDireccion(rset.getString(10));
+				prv.setCodigoPostal(rset.getString(11));
+			}
+
+			return prv;
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} finally {
+			try {
+
+				Conexion.cerrarConexion(cn, rset, stm);
+
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+		
 	}
 }
