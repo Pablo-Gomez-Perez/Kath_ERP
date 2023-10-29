@@ -39,17 +39,20 @@ public class ProveedorController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				Object[] fila = { rset.getString(1), // RFC
-						rset.getString(2), // clave contable
-						rset.getString(3), // Nombre
-						rset.getString(4), // Descripcion
-						rset.getString(5), // Correo Electronico
-						rset.getString(6), // Estado
-						rset.getString(7), // Ciudad
-						rset.getString(8), // Direccion
-						rset.getString(9), // Codigo Postal;
-				};
-				tabla.addRow(fila);
+				
+				tabla.addRow(new Object[] {
+						rset.getInt(1),	//Id
+						rset.getString(2), // RFC
+						rset.getString(3), // clave contable
+						rset.getString(4), // Nombre
+						rset.getString(5), // Descripcion
+						rset.getString(6), // Correo Electronico
+						rset.getString(7), // Estado
+						rset.getString(8), // Ciudad
+						rset.getString(9), // Direccion
+						rset.getString(10), // Codigo Postal;
+						rset.getShort(11) == 1 ? "Activo" : "Inactivo" //status
+				});
 			}
 
 		} catch (SQLException er) {
@@ -63,6 +66,30 @@ public class ProveedorController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
+	}
+	
+	public void eliminarProveedor(int idProveedor) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			stm = cn.prepareCall("CALL eliminar_proveedor(?);");
+			stm.setInt(1, idProveedor);
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
 	}
 
 	/**

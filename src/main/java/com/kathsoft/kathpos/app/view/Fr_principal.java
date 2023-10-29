@@ -181,7 +181,18 @@ public class Fr_principal extends JFrame {
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
-	private int[] tablaProveedoresColumnsWidth = { 150, 150, 180, 400, 200, 100, 100, 300, 90 };
+	private int[] tablaProveedoresColumnsWidth = { 30, //Indice
+			150, //Rfc
+			150, //Clave contable
+			180, //Nombre
+			400, //Descripcion
+			200, //Correo
+			100, //Estado
+			100, //Ciudad
+			300, //Direccion
+			90, // Codigo postal
+			150 // activo o inactivo
+	};
 	// Array que define el ancho de cada columna de la tabla de Articulos
 	private int[] tablaArticulosColumnsWidth = { 40, /* id */
 			150, /* codigo */
@@ -1031,7 +1042,8 @@ public class Fr_principal extends JFrame {
 		btnActualizarProveedor.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelProveedorCentralBotones.add(btnActualizarProveedor);
-
+		
+		modelTablaProveedores.addColumn("Id");
 		modelTablaProveedores.addColumn("RFC");
 		modelTablaProveedores.addColumn("Cta Contable");
 		modelTablaProveedores.addColumn("Nombre");
@@ -1041,6 +1053,7 @@ public class Fr_principal extends JFrame {
 		modelTablaProveedores.addColumn("Ciudad");
 		modelTablaProveedores.addColumn("Direccion");
 		modelTablaProveedores.addColumn("Codigo P.");
+		modelTablaProveedores.addColumn("Activo");
 
 		// se remueve el editor de la tabla provedoores
 		for (int i = 0; i < modelTablaProveedores.getColumnCount(); i++) {
