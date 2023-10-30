@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Proveedor;
+import com.kathsoft.kathpos.tools.Conexion;
 
 public class ProveedorController implements java.io.Serializable {
 
