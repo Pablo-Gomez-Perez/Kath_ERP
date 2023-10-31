@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Categoria;
+import com.kathsoft.kathpos.tools.Conexion;
 
 public class CategoriaController implements Serializable {
 	

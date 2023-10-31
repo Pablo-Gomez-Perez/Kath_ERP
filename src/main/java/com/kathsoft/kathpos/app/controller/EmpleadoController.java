@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.tools.Conexion;
+
 import java.sql.CallableStatement;
 
 public class EmpleadoController implements Serializable {

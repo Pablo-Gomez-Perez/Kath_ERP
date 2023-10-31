@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.controller;
+package com.kathsoft.kathpos.tools;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

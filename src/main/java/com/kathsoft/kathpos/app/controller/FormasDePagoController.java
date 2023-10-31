@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.FormasDePago;
+import com.kathsoft.kathpos.tools.Conexion;
 
 public class FormasDePagoController implements java.io.Serializable {
 

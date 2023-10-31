@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Clientes;
+import com.kathsoft.kathpos.tools.Conexion;
 
 public class ClientesController implements Serializable {
 

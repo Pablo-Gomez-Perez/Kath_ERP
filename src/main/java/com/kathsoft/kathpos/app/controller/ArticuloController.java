@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.tools.Conexion;
 
 public class ArticuloController implements java.io.Serializable {
 

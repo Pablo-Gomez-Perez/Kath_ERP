@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 import javax.swing.table.DefaultTableModel;
 
+import com.kathsoft.kathpos.tools.Conexion;
+
 public class VentasController implements java.io.Serializable {
 
 	/**

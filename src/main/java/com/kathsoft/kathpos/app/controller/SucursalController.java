@@ -9,6 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.tools.Conexion;
 
 public class SucursalController implements java.io.Serializable {
 
