@@ -1,8 +1,11 @@
 package com.kathsoft.kathpos.tools;
 
+import java.sql.SQLException;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class DataTools {
 	
@@ -23,6 +26,29 @@ public class DataTools {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(tabla, "Ha ocurrido un error: " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			return -1;
+		}
+		
+	}
+	
+	/**
+	 * Asigna un tamaño a las columnas de un JTable específicado en un Array de valores enteros
+	 * @param medidas -> arreglo con los valores de las medidas de cada columna
+	 * @param tabla -> tabla a la que se le asignan las medidas
+	 */
+	public static void definirTamanioDeColumnas(int[] medidas, JTable tabla) {
+		
+		TableColumnModel model = tabla.getColumnModel();
+		
+		try {
+			
+			for(int i = 0; i < medidas.length; i++) {
+				model.getColumn(i).setPreferredWidth(medidas[i]);
+				model.getColumn(i).setMinWidth(medidas[i]);
+			}
+			
+		}catch(Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(tabla, "Ha ocurrido un error: " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}

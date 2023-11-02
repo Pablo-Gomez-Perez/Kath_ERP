@@ -47,6 +47,7 @@ import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.tools.DataTools;
 
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
@@ -181,15 +182,15 @@ public class Fr_principal extends JFrame {
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
-	private int[] tablaProveedoresColumnsWidth = { 30, //Indice
-			150, //Rfc
-			150, //Clave contable
-			180, //Nombre
-			400, //Descripcion
-			200, //Correo
-			100, //Estado
-			100, //Ciudad
-			300, //Direccion
+	private int[] tablaProveedoresColumnsWidth = { 30, // Indice
+			150, // Rfc
+			150, // Clave contable
+			180, // Nombre
+			400, // Descripcion
+			200, // Correo
+			100, // Estado
+			100, // Ciudad
+			300, // Direccion
 			90, // Codigo postal
 			150 // activo o inactivo
 	};
@@ -825,7 +826,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarCliente = new JButton("Actualizar");
 		btnActualizarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(1, indiceDeCliente());
+				abrirFormClientes(1, DataTools.getIndiceElementoSeleccionado(tablaClientes, modelTablaClientes, 0));
 			}
 		});
 		btnActualizarCliente.setBackground(new Color(144, 238, 144));
@@ -965,7 +966,8 @@ public class Fr_principal extends JFrame {
 		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
 		btnActualizarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormularioEmpleados(1, indiceDeEmpleado());
+				abrirFormularioEmpleados(1,
+						DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados, 0));
 			}
 		});
 		panelEmpleadosCentralbotones.add(btnActualizarEmpleado);
@@ -1032,24 +1034,26 @@ public class Fr_principal extends JFrame {
 		btnActualizarProveedor = new JButton("Actualizar");
 		btnActualizarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(1, indiceDeProveedor());
+				abrirVentanaFormularioProveedor(1,
+						DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
 			}
 		});
 		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
 		btnActualizarProveedor.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelProveedorCentralBotones.add(btnActualizarProveedor);
-		
+
 		btnEliminarProveedor = new JButton("Eliminar");
 		btnEliminarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				eliminarProveedor();
 			}
 		});
-		btnEliminarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
-		this.btnEliminarProveedor.setBackground(new Color(255,51,0));
+		btnEliminarProveedor.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
 		panelProveedorCentralBotones.add(btnEliminarProveedor);
-		
+
 		modelTablaProveedores.addColumn("Id");
 		modelTablaProveedores.addColumn("RFC");
 		modelTablaProveedores.addColumn("Cta Contable");
@@ -1610,7 +1614,8 @@ public class Fr_principal extends JFrame {
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(2, indiceDeFormaDePago());
+				abrirFormDatosFormasDePago(2,
+						DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
 			}
 		});
 		this.btnActualizarFormaDePago.setBackground(new Color(152, 251, 152));
@@ -1673,78 +1678,19 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
-		TableColumnModel empleadosColumnModel = tableEmpleados.getColumnModel();
+		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
-		for (int i = 0; i < tableEmpleadosColumnsWidth.length; i++) {
-			empleadosColumnModel.getColumn(i).setPreferredWidth(tableEmpleadosColumnsWidth[i]);
-			empleadosColumnModel.getColumn(i).setMinWidth(tableEmpleadosColumnsWidth[i]);
-		}
+		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
 
-		/**
-		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * categorías
-		 */
-		TableColumnModel categoriaColumnModel = tablaCategorias.getColumnModel();
+		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
 
-		for (int i = 0; i < tablaCategoriaColumnsWidth.length; i++) {
-			categoriaColumnModel.getColumn(i).setPreferredWidth(tablaCategoriaColumnsWidth[i]);
-			categoriaColumnModel.getColumn(i).setMinWidth(tablaCategoriaColumnsWidth[i]);
-		}
+		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
 
-		/**
-		 * Se establecen los tamaños preestablcidos para cada columna de la tabla de los
-		 * proveedores
-		 */
-		TableColumnModel proveedoresColumnModel = tablaProveedores.getColumnModel();
+		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes);
 
-		for (int i = 0; i < tablaProveedoresColumnsWidth.length; i++) {
-			proveedoresColumnModel.getColumn(i).setPreferredWidth(tablaProveedoresColumnsWidth[i]);
-			proveedoresColumnModel.getColumn(i).setMinWidth(tablaProveedoresColumnsWidth[i]);
-		}
+		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
-		/**
-		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * los articulos
-		 */
-		TableColumnModel articulosColumnModel = tablaArticulos.getColumnModel();
-
-		for (int i = 0; i < tablaArticulosColumnsWidth.length; i++) {
-			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
-			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
-		}
-
-		TableColumnModel clientesColumnModel = tablaClientes.getColumnModel();
-
-		/**
-		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * los clientes registrados
-		 */
-		for (int i = 0; i < tablaClientesColumnsWidth.length; i++) {
-			clientesColumnModel.getColumn(i).setPreferredWidth(tablaClientesColumnsWidth[i]);
-			clientesColumnModel.getColumn(i).setMinWidth(tablaClientesColumnsWidth[i]);
-		}
-
-		/**
-		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * las ventas registradas
-		 */
-		TableColumnModel ventasColumnModel = tablaVentas.getColumnModel();
-
-		for (int i = 0; i < tablaVentasColumnsWidth.length; i++) {
-			ventasColumnModel.getColumn(i).setPreferredWidth(tablaVentasColumnsWidth[i]);
-			ventasColumnModel.getColumn(i).setMinWidth(tablaVentasColumnsWidth[i]);
-		}
-
-		/**
-		 * Se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * las sucursales registradas
-		 */
-		TableColumnModel sucursalColumnModel = tablaSucursales.getColumnModel();
-
-		for (int i = 0; i < tablaSucursalesColumnWidth.length; i++) {
-			sucursalColumnModel.getColumn(i).setPreferredWidth(tablaSucursalesColumnWidth[i]);
-			sucursalColumnModel.getColumn(i).setMinWidth(tablaSucursalesColumnWidth[i]);
-		}
+		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1808,7 +1754,8 @@ public class Fr_principal extends JFrame {
 
 		try {
 
-			indiceEmpleadoSeleccionado = this.indiceDeEmpleado();
+			indiceEmpleadoSeleccionado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados,
+					0);
 			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
 
 		} catch (Exception er) {
@@ -1931,40 +1878,22 @@ public class Fr_principal extends JFrame {
 	private void limpiarCamposPanelCategoria() {
 		this.txaDescripcionCategoria.setText("");
 	}
-	
-	/**
-	 * 
-	 * @return el id del registro seleccionado en la tabla
-	 */
-	private int indiceDeProveedor() {
-		int filaSeleccionada = -1;
-		int indiceDeProveedor = -1;
-		
-		try {
-			
-			filaSeleccionada = this.tablaProveedores.getSelectedRow();
-			indiceDeProveedor = (int) this.modelTablaProveedores.getValueAt(filaSeleccionada, 0);
-			return indiceDeProveedor;
-		}catch(Exception er) {
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			er.printStackTrace();
-			return -1;
-		}
-	}
-	
+
 	/**
 	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
 	 */
 	private void eliminarProveedor() {
-		
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminar el registro", "Eliminar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-		
-		if(input > 0) {
+
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminar el registro", "Eliminar",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		if (input > 0) {
 			return;
 		}
-		
-		proveedorController.eliminarProveedor(this.indiceDeProveedor());
-		
+
+		proveedorController
+				.eliminarProveedor(DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
+
 		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
 	}
 
@@ -2053,20 +1982,6 @@ public class Fr_principal extends JFrame {
 				opcionDeBusquedaDeArticulo(), this.sucursal.getIdSucursal());
 	}
 
-	private int indiceDeEmpleado() {
-		int filaSeleccionada = 0;
-		int indiceDeEmpleado = 0;
-
-		try {
-			filaSeleccionada = tableEmpleados.getSelectedRow();
-			indiceDeEmpleado = (int) modelTablaEmpleados.getValueAt(filaSeleccionada, 0);
-			return indiceDeEmpleado;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return 0;
-		}
-	}
-
 	/**
 	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
 	 * 
@@ -2139,28 +2054,6 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	/**
-	 * 
-	 * @return el id del cliente seleccionado en la tabla
-	 */
-	private int indiceDeCliente() {
-
-		int filaSeleccionada = -1;
-		int indiceClienteSeleccionado = -1;
-
-		try {
-
-			filaSeleccionada = this.tablaClientes.getSelectedRow();
-			indiceClienteSeleccionado = (int) this.modelTablaClientes.getValueAt(filaSeleccionada, 0);
-			return indiceClienteSeleccionado;
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			return -1;
-		}
-
-	}
-
 	private void eliminarCliente() {
 
 		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Cliente",
@@ -2170,7 +2063,8 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 
-		this.clientesController.eliminarCliente(this.indiceDeCliente());
+		this.clientesController.eliminarCliente(
+				DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
 
 		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
 
@@ -2261,26 +2155,6 @@ public class Fr_principal extends JFrame {
 
 	}
 
-	/**
-	 * 
-	 * @return el id del registro seleccionado en la tabla
-	 */
-	private int indiceDeFormaDePago() {
-		int filaSeleccionada = 0;
-		int idFormaDePago = 0;
-
-		try {
-			filaSeleccionada = this.tablaFormasDePago.getSelectedRow();
-			idFormaDePago = (int) this.modelTablaFormasDePago.getValueAt(filaSeleccionada, 0);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Seleccione el registro a eliminar", "Error",
-					JOptionPane.WARNING_MESSAGE);
-		}
-
-		return idFormaDePago;
-	}
-
 	private void eliminarFormaDePago() {
 
 		int input = JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Eliminar",
@@ -2290,7 +2164,8 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 
-		this.formasDePagoController.eliminarFormaDepAgo(this.indiceDeFormaDePago());
+		this.formasDePagoController.eliminarFormaDepAgo(
+				DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
 	}
 
 }
