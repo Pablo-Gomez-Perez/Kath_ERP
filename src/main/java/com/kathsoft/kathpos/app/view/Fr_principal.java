@@ -1525,7 +1525,7 @@ public class Fr_principal extends JFrame {
 		btnNuevaSucursal = new JButton("Agregar");
 		btnNuevaSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormSucursales(0);
+				abrirFormSucursales(0, 0);
 			}
 		});
 		btnNuevaSucursal.setIcon(
@@ -1536,7 +1536,9 @@ public class Fr_principal extends JFrame {
 		btnActualizarSucursal = new JButton("Actualizar");
 		btnActualizarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormSucursales(1);
+				int index = DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0);
+				System.out.println(index);
+				abrirFormSucursales(1,index);
 			}
 		});
 		btnActualizarSucursal.setIcon(new ImageIcon(
@@ -1544,12 +1546,14 @@ public class Fr_principal extends JFrame {
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
 
-		btnEliminarSucursal = new JButton("New button");
+		btnEliminarSucursal = new JButton("Eliminar");
+		btnEliminarSucursal.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		btnEliminarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliminarSucursal();
 			}
 		});
+		this.btnEliminarSucursal.setBackground(new Color(255,51,0));
 		panelSucursalCentralBotones.add(btnEliminarSucursal);
 
 		panelFormasDePago = new JPanel();
@@ -2069,13 +2073,13 @@ public class Fr_principal extends JFrame {
 
 	}
 
-	private void abrirFormSucursales(int opcion) {
+	private void abrirFormSucursales(int opcion, int idSucursal) {
 		Component cm = null;
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion);
+					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion, idSucursal);
 					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
 				} catch (Exception er) {

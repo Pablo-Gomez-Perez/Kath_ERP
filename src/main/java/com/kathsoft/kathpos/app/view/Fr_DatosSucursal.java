@@ -68,6 +68,7 @@ public class Fr_DatosSucursal extends JFrame {
 	private JButton btn_Cancelar;
 	private JButton btn_Guardar;
 	private JTextArea txaDescripcionSucursal;
+	private int idSucursal;
 
 	/**
 	 * Launch the application.
@@ -81,7 +82,10 @@ public class Fr_DatosSucursal extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosSucursal(int opcion) {
+	public Fr_DatosSucursal(int opcion, int idSucursal) {
+
+		this.idSucursal = idSucursal;
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
 		contentPane = new JPanel();
@@ -127,24 +131,10 @@ public class Fr_DatosSucursal extends JFrame {
 		Component horizontalStrut = Box.createHorizontalStrut(5);
 		horizontalBox.add(horizontalStrut);
 
-		if (opcion == 0) {
-			this.txfNombreSucursal = new JTextField();
-			this.txfNombreSucursal.setColumns(90);
-			this.txfNombreSucursal.setMaximumSize(this.txfNombreSucursal.getPreferredSize());
-			horizontalBox.add(this.txfNombreSucursal);
-		} else if (opcion == 1) {
-			cmbNombreSucursal = new JComboBox<String>();
-			horizontalBox.add(cmbNombreSucursal);
-			this.cmbNombreSucursal.addItemListener(new ItemListener() {
-
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-
-					consultarSucursal();
-
-				}
-			});
-		}
+		this.txfNombreSucursal = new JTextField();
+		this.txfNombreSucursal.setColumns(90);
+		this.txfNombreSucursal.setMaximumSize(this.txfNombreSucursal.getPreferredSize());
+		horizontalBox.add(this.txfNombreSucursal);
 
 		Component verticalStrut_1 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_1);
@@ -305,8 +295,12 @@ public class Fr_DatosSucursal extends JFrame {
 		btn_Guardar.setIcon(new ImageIcon(
 				Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btn_Guardar);
+		
+		if(opcion == 1) {
+			this.consultarSucursalPorId();
+		}
 
-		this.llenarCmbSucursales();
+		//this.llenarCmbSucursales();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
@@ -344,7 +338,7 @@ public class Fr_DatosSucursal extends JFrame {
 
 			this.borrarCampos();
 
-			JOptionPane.showMessageDialog(this, "Proceso exitoso", "Registro almacenado con exito",
+			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrat Sucursal" ,
 					JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (Exception er) {
@@ -367,8 +361,8 @@ public class Fr_DatosSucursal extends JFrame {
 
 		try {
 
-			sucursal.setIdSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
-			sucursal.setNombre((String) this.cmbNombreSucursal.getSelectedItem());
+			sucursal.setIdSucursal(this.idSucursal);
+			sucursal.setNombre(this.txfNombreSucursal.getText());
 			sucursal.setDescripcion(this.txaDescripcionSucursal.getText());
 			sucursal.setTelefono(this.txfTelefonoSucursal.getText());
 			sucursal.setEmail(this.txfEmailSucursal.getText());
@@ -381,7 +375,7 @@ public class Fr_DatosSucursal extends JFrame {
 
 			this.borrarCampos();
 
-			JOptionPane.showMessageDialog(this, "Proceso exitoso", "Registro actualizado con exito",
+			JOptionPane.showMessageDialog(this, "Registro actualizado con exito", "Actualizar Sucursal",
 					JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (Exception er) {
@@ -389,7 +383,8 @@ public class Fr_DatosSucursal extends JFrame {
 		}
 
 	}
-
+	
+	/*
 	private void llenarCmbSucursales() {
 
 		if (this.cmbNombreSucursal == null) {
@@ -399,7 +394,7 @@ public class Fr_DatosSucursal extends JFrame {
 		this.cmbNombreSucursal.removeAll();
 		this.cmbNombreSucursal.updateUI();
 		this.sucursalController.consultarNombreSucursales(cmbNombreSucursal);
-	}
+	}*/
 
 	private boolean validarCamposVacios() {
 
@@ -463,14 +458,11 @@ public class Fr_DatosSucursal extends JFrame {
 
 	}
 
-	private void consultarSucursal() {
-
-		if (this.cmbNombreSucursal == null) {
-			return;
-		}
-
-		Sucursal sucursal = sucursalController.consultarSucursal(this.cmbNombreSucursal.getSelectedIndex() + 1);
-
+	private void consultarSucursalPorId() {
+		
+		Sucursal sucursal = sucursalController.consultarSucursal(this.idSucursal);
+		
+		this.txfNombreSucursal.setText(sucursal.getNombre());
 		this.txaDescripcionSucursal.setText(sucursal.getDescripcion());
 		this.txfTelefonoSucursal.setText(sucursal.getTelefono());
 		this.txfEmailSucursal.setText(sucursal.getEmail());
