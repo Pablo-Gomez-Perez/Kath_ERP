@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Sucursal implements Serializable {
-	
-	
+
 	/**
 	 * 
 	 */
@@ -24,7 +23,34 @@ public class Sucursal implements Serializable {
 	private String ciudad;
 	private String direccion;
 	private String codigoPostal;
-	
+	private boolean activo;
+
+	/**
+	 * @param idSucursal
+	 * @param nombre
+	 * @param descripcion
+	 * @param telefono
+	 * @param email
+	 * @param estado
+	 * @param ciudad
+	 * @param direccion
+	 * @param codigoPostal
+	 */
+	public Sucursal(int idSucursal, String nombre, String descripcion, String telefono, String email, String estado,
+			String ciudad, String direccion, String codigoPostal, boolean activo) {
+		super();
+		this.idSucursal = idSucursal;
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.telefono = telefono;
+		this.email = email;
+		this.estado = estado;
+		this.ciudad = ciudad;
+		this.direccion = direccion;
+		this.codigoPostal = codigoPostal;
+		this.activo = activo;
+	}
+
 	/**
 	 * @param idSucursal
 	 * @param nombre
@@ -47,11 +73,11 @@ public class Sucursal implements Serializable {
 		this.estado = estado;
 		this.ciudad = ciudad;
 		this.direccion = direccion;
-		this.codigoPostal = codigoPostal;
+		this.codigoPostal = codigoPostal;		
 	}
-	
+
 	public Sucursal() {
-		
+
 	}
 
 	/**
@@ -180,6 +206,20 @@ public class Sucursal implements Serializable {
 		this.codigoPostal = codigoPostal;
 	}
 
+	/**
+	 * @return the activo
+	 */
+	public boolean isActivo() {
+		return activo;
+	}
+
+	/**
+	 * @param activo the activo to set
+	 */
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(idSucursal, nombre);
@@ -221,7 +261,5 @@ public class Sucursal implements Serializable {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
-	
+
 }

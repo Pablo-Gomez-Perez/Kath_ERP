@@ -231,14 +231,16 @@ public class Fr_principal extends JFrame {
 			90, // Accion
 	};
 
-	private int[] tablaSucursalesColumnWidth = { 150, // nombre
+	private int[] tablaSucursalesColumnWidth = { 40, // indice
+			150, // nombre
 			300, // descripcion
 			200, // telefono
 			200, // email
 			150, // estado
 			200, // ciudad
 			300, // direccion
-			120 // codigo postal
+			120, // codigo postal
+			150 // activo o inactivo
 
 	};
 	private JLabel lblNewLabel_2;
@@ -252,9 +254,7 @@ public class Fr_principal extends JFrame {
 	private JTable tablaArticulos;
 	private JPanel panelArticulosCentralBotones;
 	private JButton btnAgregarArticulo;
-	private Component horizontalStrut_11;
 	private JButton btnActualizarArticulo;
-	private Component horizontalStrut_12;
 	private JButton btnExportarArticuloExcel;
 	private JButton btnCalculadora;
 	private JPanel panelArticulosCentralBuscar;
@@ -366,6 +366,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnEliminarEmpleado;
 	private JButton btnEliminarCliente;
 	private JButton btnEliminarProveedor;
+	private JButton btnEliminarSucursal;
 
 	/**
 	 * Launch the application.
@@ -656,9 +657,6 @@ public class Fr_principal extends JFrame {
 		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnAgregarArticulo);
 
-		horizontalStrut_11 = Box.createHorizontalStrut(5);
-		panelArticulosCentralBotones.add(horizontalStrut_11);
-
 		btnActualizarArticulo = new JButton("Actualizar");
 		btnActualizarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -671,9 +669,6 @@ public class Fr_principal extends JFrame {
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
-
-		horizontalStrut_12 = Box.createHorizontalStrut(5);
-		panelArticulosCentralBotones.add(horizontalStrut_12);
 
 		btnExportarArticuloExcel = new JButton("Exportar a Excel");
 		btnExportarArticuloExcel.setIcon(
@@ -867,10 +862,7 @@ public class Fr_principal extends JFrame {
 		modelTablaClientes.addColumn("Activo");
 
 		// se remueve el editor de la tabla provedoores
-		for (int i = 0; i < modelTablaClientes.getColumnCount(); i++) {
-			Class<?> colClass = tablaClientes.getColumnClass(i);
-			tablaClientes.setDefaultEditor(colClass, null);
-		}
+		DataTools.removerEditorDeTabla(tablaClientes, modelTablaClientes);
 
 		panelClientesCentralBuscar = new JPanel();
 		panelClientesCentralBuscar.setBackground(new Color(255, 215, 0));
@@ -1508,6 +1500,7 @@ public class Fr_principal extends JFrame {
 		tablaSucursales.setModel(modelTablaSucursales);
 		scrollPaneTablaSucursales.setViewportView(tablaSucursales);
 
+		modelTablaSucursales.addColumn("Id");
 		modelTablaSucursales.addColumn("Nombre");
 		modelTablaSucursales.addColumn("Descripcion");
 		modelTablaSucursales.addColumn("Telefono");
@@ -1516,14 +1509,12 @@ public class Fr_principal extends JFrame {
 		modelTablaSucursales.addColumn("Ciudad");
 		modelTablaSucursales.addColumn("Dirección");
 		modelTablaSucursales.addColumn("Codigo Postal");
+		modelTablaSucursales.addColumn("Activo");
 
 		tablaSucursales.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		// remueve el editor de la tabla de sucursales
-		for (int i = 0; i < modelTablaSucursales.getColumnCount(); i++) {
-			Class<?> colClass = modelTablaSucursales.getColumnClass(i);
-			tablaSucursales.setDefaultEditor(colClass, null);
-		}
+		DataTools.removerEditorDeTabla(tablaSucursales, modelTablaSucursales);
 
 		panelSucursalCentralBotones = new JPanel();
 		panelSucursalCentralBotones.setBackground(new Color(255, 215, 0));
@@ -1552,6 +1543,14 @@ public class Fr_principal extends JFrame {
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
+
+		btnEliminarSucursal = new JButton("New button");
+		btnEliminarSucursal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliminarSucursal();
+			}
+		});
+		panelSucursalCentralBotones.add(btnEliminarSucursal);
 
 		panelFormasDePago = new JPanel();
 		panelFormasDePago.setForeground(new Color(255, 215, 0));
@@ -2157,7 +2156,7 @@ public class Fr_principal extends JFrame {
 
 	private void eliminarFormaDePago() {
 
-		int input = JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Eliminar",
+		int input = JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Eliminar Forma de Pago",
 				JOptionPane.YES_NO_OPTION);
 
 		if (input > 0) {
@@ -2166,6 +2165,25 @@ public class Fr_principal extends JFrame {
 
 		this.formasDePagoController.eliminarFormaDepAgo(
 				DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
+
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Forma de Pago",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void aliminarSucursal() {
+
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Sucursal",
+				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+
+		if (input > 0) {
+			return;
+		}
+
+		this.sucursalController
+				.eliminarSucursal(DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
+
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Sucursal", JOptionPane.INFORMATION_MESSAGE);
+
 	}
 
 }

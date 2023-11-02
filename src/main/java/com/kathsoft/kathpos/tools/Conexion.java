@@ -12,7 +12,9 @@ import javax.swing.JOptionPane;
 import com.mysql.cj.protocol.Resultset;
 
 public class Conexion {
-
+	
+	public static final String DATA_BASE = "kath_erp";
+	
 	/**
 	 * bloque estatico para carga del controlador al momento de instanciar la clase
 	 */

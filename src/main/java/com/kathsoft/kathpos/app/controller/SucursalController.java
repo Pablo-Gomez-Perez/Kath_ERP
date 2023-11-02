@@ -10,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.tools.Conexion;
+import com.kathsoft.kathpos.tools.DataTools;
 
 public class SucursalController implements java.io.Serializable {
 
@@ -79,10 +80,10 @@ public class SucursalController implements java.io.Serializable {
 		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
-		}finally {
+		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);
-			}catch(SQLException er) {
+			} catch (SQLException er) {
 				er.printStackTrace();
 			}
 		}
@@ -141,9 +142,17 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				Object[] fila = { rset.getString(1), rset.getString(2), rset.getString(3), rset.getString(4),
-						rset.getString(5), rset.getString(6), rset.getString(7), rset.getString(8) };
-				model.addRow(fila);
+				model.addRow(new Object[] { rset.getInt(1), // indice
+						rset.getString(2), // nombre
+						rset.getString(3), // descripcion
+						rset.getString(4), // telefono
+						rset.getString(5), // email
+						rset.getString(6), // estado
+						rset.getString(7), // ciudad
+						rset.getString(8), // direccion
+						rset.getString(9), // codigo postal
+						rset.getShort(10) == 1 ? "Activo" : "Inactivo" // sucursar activa o inactiva
+				});
 			}
 
 		} catch (SQLException er) {
@@ -279,4 +288,33 @@ public class SucursalController implements java.io.Serializable {
 		}
 	}
 
+	public void eliminarSucursal(int idSucursal) {
+
+		CallableStatement stm = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL eliminar_sucursal(?);");
+
+			stm.setInt(1, idSucursal);
+
+			stm.execute();
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			}
+		}
+
+	}
+
 }
+
+//
