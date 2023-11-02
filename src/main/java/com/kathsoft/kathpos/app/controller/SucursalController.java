@@ -23,29 +23,7 @@ public class SucursalController implements java.io.Serializable {
 	 * 
 	 * 
 	 */
-	private static Connection cn = null;
-
-	/*
-	 * public void consultarSucursales(JComboBox<String> cmb) {
-	 * 
-	 * CallableStatement stm = null; ResultSet rset = null;
-	 * 
-	 * try {
-	 * 
-	 * cn = Conexion.establecerConexionLocal("kath_erp"); stm =
-	 * cn.prepareCall("CALL ver_nombres_sucursal();");
-	 * 
-	 * rset = stm.executeQuery();
-	 * 
-	 * while(rset.next()) { cmb.addItem(rset.getString(2)); }
-	 * 
-	 * }catch(SQLException er) { er.printStackTrace(); }catch(Exception er) {
-	 * er.printStackTrace(); }finally { try { if(rset != null) { rset.close(); }
-	 * if(stm != null) { stm.close(); } if(cn != null) { cn.close(); }
-	 * }catch(Exception er) { er.printStackTrace(); } }
-	 * 
-	 * }
-	 */
+	private static Connection cn = null;	
 
 	public Sucursal consultarSucursalPorId(int id) {
 
@@ -55,7 +33,7 @@ public class SucursalController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL ver_sucursal_por_id(?)");
 			stm.setInt(1, id);
 
@@ -102,7 +80,7 @@ public class SucursalController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 
 			stm = cn.prepareCall("CALL ver_sucursales_nombres();");
 			rset = stm.executeQuery();
@@ -137,7 +115,7 @@ public class SucursalController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL ver_sucursales();");
 			rset = stm.executeQuery();
 
@@ -180,7 +158,7 @@ public class SucursalController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL insert_nueva_sucursal(?,?,?,?,?,?,?,?);");
 
 			stm.setString(1, sucursal.getNombre());
@@ -215,7 +193,7 @@ public class SucursalController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL update_sucursal(?,?,?,?,?,?,?,?,?);");
 
 			stm.setInt(1, sucursal.getIdSucursal());
@@ -253,7 +231,7 @@ public class SucursalController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL buscar_sucursal_por_id(?);");
 
 			stm.setInt(1, idSucursal);
@@ -261,14 +239,16 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				sucursal.setNombre(rset.getString(1));
-				sucursal.setDescripcion(rset.getString(2));
-				sucursal.setTelefono(rset.getString(3));
-				sucursal.setEmail(rset.getString(4));
-				sucursal.setEstado(rset.getString(5));
-				sucursal.setCiudad(rset.getString(6));
-				sucursal.setDireccion(rset.getString(7));
-				sucursal.setCodigoPostal(rset.getString(8));
+				sucursal.setIdSucursal(rset.getInt(1));
+				sucursal.setNombre(rset.getString(2));
+				sucursal.setDescripcion(rset.getString(3));
+				sucursal.setTelefono(rset.getString(4));
+				sucursal.setEmail(rset.getString(5));
+				sucursal.setEstado(rset.getString(6));
+				sucursal.setCiudad(rset.getString(7));
+				sucursal.setDireccion(rset.getString(8));
+				sucursal.setCodigoPostal(rset.getString(9));
+				sucursal.setActivo(rset.getShort(10) == 1 ? true : false);
 			}
 
 			return sucursal;
