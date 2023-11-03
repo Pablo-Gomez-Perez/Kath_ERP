@@ -1,36 +1,30 @@
 package com.kathsoft.kathpos.app.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Font;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Sucursal;
-
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JTextField;
-import java.awt.FlowLayout;
-import javax.swing.JTextArea;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.sql.SQLException;
-import java.awt.event.ActionEvent;
 
 public class Fr_DatosSucursal extends JFrame {
 	/**
@@ -300,7 +294,10 @@ public class Fr_DatosSucursal extends JFrame {
 			this.consultarSucursalPorId();
 		}
 
-		//this.llenarCmbSucursales();
+		if (opcion == 1) {
+			this.consultarSucursalPorId();
+		}
+
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
@@ -338,7 +335,8 @@ public class Fr_DatosSucursal extends JFrame {
 
 			this.borrarCampos();
 
-			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrat Sucursal" ,
+
+			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrat Sucursal",
 					JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (Exception er) {
@@ -383,18 +381,19 @@ public class Fr_DatosSucursal extends JFrame {
 		}
 
 	}
-	
+
+
 	/*
-	private void llenarCmbSucursales() {
+	 * private void llenarCmbSucursales() {
+	 * 
+	 * if (this.cmbNombreSucursal == null) { return; }
+	 * 
+	 * this.cmbNombreSucursal.removeAll(); this.cmbNombreSucursal.updateUI();
+	 * this.sucursalController.consultarNombreSucursales(cmbNombreSucursal); }
+	 */
 
-		if (this.cmbNombreSucursal == null) {
-			return;
-		}
+	
 
-		this.cmbNombreSucursal.removeAll();
-		this.cmbNombreSucursal.updateUI();
-		this.sucursalController.consultarNombreSucursales(cmbNombreSucursal);
-	}*/
 
 	private boolean validarCamposVacios() {
 
@@ -459,9 +458,11 @@ public class Fr_DatosSucursal extends JFrame {
 	}
 
 	private void consultarSucursalPorId() {
-		
+
+
 		Sucursal sucursal = sucursalController.consultarSucursal(this.idSucursal);
-		
+
+
 		this.txfNombreSucursal.setText(sucursal.getNombre());
 		this.txaDescripcionSucursal.setText(sucursal.getDescripcion());
 		this.txfTelefonoSucursal.setText(sucursal.getTelefono());

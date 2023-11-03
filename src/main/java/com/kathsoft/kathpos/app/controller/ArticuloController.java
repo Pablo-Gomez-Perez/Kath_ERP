@@ -365,5 +365,9 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
+	
+	public void consultarArticuloPorId(int id) {
+		
+	}
 
 }
