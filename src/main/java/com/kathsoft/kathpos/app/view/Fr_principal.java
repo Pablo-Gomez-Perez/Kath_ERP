@@ -1549,7 +1549,9 @@ public class Fr_principal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int index = DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0);
 				System.out.println(index);
+
 				abrirFormSucursales(1, index);
+
 			}
 		});
 		btnActualizarSucursal.setIcon(new ImageIcon(
@@ -1558,14 +1560,18 @@ public class Fr_principal extends JFrame {
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
 
 		btnEliminarSucursal = new JButton("Eliminar");
+
 		btnEliminarSucursal.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+
 		btnEliminarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliminarSucursal();
 			}
 		});
+
 		this.btnEliminarSucursal.setBackground(new Color(255, 51, 0));
+
 		panelSucursalCentralBotones.add(btnEliminarSucursal);
 
 		panelFormasDePago = new JPanel();

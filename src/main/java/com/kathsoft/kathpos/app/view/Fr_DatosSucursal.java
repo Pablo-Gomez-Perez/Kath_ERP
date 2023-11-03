@@ -289,12 +289,15 @@ public class Fr_DatosSucursal extends JFrame {
 		btn_Guardar.setIcon(new ImageIcon(
 				Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btn_Guardar);
+		
+		if(opcion == 1) {
+			this.consultarSucursalPorId();
+		}
 
 		if (opcion == 1) {
 			this.consultarSucursalPorId();
 		}
 
-		// this.llenarCmbSucursales();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
@@ -331,6 +334,7 @@ public class Fr_DatosSucursal extends JFrame {
 			this.sucursalController.insertarNuevaSucursal(sucursal);
 
 			this.borrarCampos();
+
 
 			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrat Sucursal",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -378,6 +382,7 @@ public class Fr_DatosSucursal extends JFrame {
 
 	}
 
+
 	/*
 	 * private void llenarCmbSucursales() {
 	 * 
@@ -386,6 +391,9 @@ public class Fr_DatosSucursal extends JFrame {
 	 * this.cmbNombreSucursal.removeAll(); this.cmbNombreSucursal.updateUI();
 	 * this.sucursalController.consultarNombreSucursales(cmbNombreSucursal); }
 	 */
+
+	
+
 
 	private boolean validarCamposVacios() {
 
@@ -451,7 +459,9 @@ public class Fr_DatosSucursal extends JFrame {
 
 	private void consultarSucursalPorId() {
 
+
 		Sucursal sucursal = sucursalController.consultarSucursal(this.idSucursal);
+
 
 		this.txfNombreSucursal.setText(sucursal.getNombre());
 		this.txaDescripcionSucursal.setText(sucursal.getDescripcion());
