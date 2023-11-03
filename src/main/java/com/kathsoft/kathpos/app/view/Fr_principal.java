@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -25,7 +26,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -35,7 +38,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
@@ -48,9 +50,6 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.tools.DataTools;
-
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 
 public class Fr_principal extends JFrame {
 
@@ -367,6 +366,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnEliminarCliente;
 	private JButton btnEliminarProveedor;
 	private JButton btnEliminarSucursal;
+	private JButton btnEliminarArticulo;
 
 	/**
 	 * Launch the application.
@@ -669,6 +669,17 @@ public class Fr_principal extends JFrame {
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
+
+		btnEliminarArticulo = new JButton("Eliminar");
+		btnEliminarArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarArticulo();
+			}
+		});
+		btnEliminarArticulo.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		this.btnEliminarArticulo.setBackground(new Color(255, 51, 0));
+		panelArticulosCentralBotones.add(btnEliminarArticulo);
 
 		btnExportarArticuloExcel = new JButton("Exportar a Excel");
 		btnExportarArticuloExcel.setIcon(
@@ -1538,7 +1549,7 @@ public class Fr_principal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int index = DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0);
 				System.out.println(index);
-				abrirFormSucursales(1,index);
+				abrirFormSucursales(1, index);
 			}
 		});
 		btnActualizarSucursal.setIcon(new ImageIcon(
@@ -1547,13 +1558,14 @@ public class Fr_principal extends JFrame {
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
 
 		btnEliminarSucursal = new JButton("Eliminar");
-		btnEliminarSucursal.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarSucursal.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		btnEliminarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliminarSucursal();
 			}
 		});
-		this.btnEliminarSucursal.setBackground(new Color(255,51,0));
+		this.btnEliminarSucursal.setBackground(new Color(255, 51, 0));
 		panelSucursalCentralBotones.add(btnEliminarSucursal);
 
 		panelFormasDePago = new JPanel();
@@ -2097,7 +2109,6 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaVentas() {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
-
 	}
 
 	private void llenarTablaFormasDePago() {
@@ -2187,6 +2198,10 @@ public class Fr_principal extends JFrame {
 				.eliminarSucursal(DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
 
 		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Sucursal", JOptionPane.INFORMATION_MESSAGE);
+
+	}
+
+	private void eliminarArticulo() {
 
 	}
 

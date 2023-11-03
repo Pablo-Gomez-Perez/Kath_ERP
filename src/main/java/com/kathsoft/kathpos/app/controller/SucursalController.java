@@ -23,7 +23,7 @@ public class SucursalController implements java.io.Serializable {
 	 * 
 	 * 
 	 */
-	private static Connection cn = null;	
+	private static Connection cn = null;
 
 	public Sucursal consultarSucursalPorId(int id) {
 
