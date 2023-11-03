@@ -126,41 +126,11 @@ public class Fr_principal extends JFrame {
 	private JPanel panelMarcasEtiquetaSuperior;
 	private JLabel lblNewLabel_1;
 	private JPanel panelMarcasCentral;
-	private Box boxVerticalMarcasFormulario;
-	private Box boxVerticalMarcasTabla;
-	private Box horizontalBox;
-	private Box horizontalBox_1;
-	private JLabel lblNewLabel_3;
-	private Box horizontalBox_2;
-	private JLabel lblNewLabel_4;
-	private Component horizontalStrut;
-	private JTextField txtBuscarMarcaEnTabla;
-	private Component verticalStrut_1;
-	private Box horizontalBox_3;
-	private JScrollPane scrollPane;
-	private JTable tablaCategorias;
 	private DefaultTableModel modelTablaCategoriaArticulo;
 	private DefaultTableModel modelTablaProveedores;
 	private DefaultTableModel modelTablaArticulos;
 	private DefaultTableModel modelTablaVentas;
 	private DefaultTableModel modelTablaFormasDePago;
-	private Component verticalStrut_2;
-	private Component verticalStrut_3;
-	private Box horizontalBox_4;
-	private Component verticalStrut_4;
-	private JButton btnActualizarCategoria;
-	private Component horizontalStrut_1;
-	private JButton btnAgregarCategoria;
-	private Component verticalStrut_5;
-	private Component verticalStrut_6;
-	private JScrollPane scrollPane_1;
-	private JTextArea txaDescripcionCategoria;
-	private Box horizontalBox_5;
-	private JLabel lblNewLabel_5;
-	private JComboBox<String> cmbNombreDeCategoria;
-	private Component verticalStrut_7;
-	private Component horizontalStrut_2;
-	private JButton btnBuscarCategoriaEnTabla;
 	private JPanel panelProveedorEtiqueta;
 	private JPanel panelEmpleadosEtiqueta;
 	private JLabel lblNewLabel_6;
@@ -367,6 +337,17 @@ public class Fr_principal extends JFrame {
 	private JButton btnEliminarProveedor;
 	private JButton btnEliminarSucursal;
 	private JButton btnEliminarArticulo;
+	private JScrollPane scrollPaneTablaCategorias;
+	private JTable tablaCategorias;
+	private JPanel panelCategoriasCentralBotones;
+	private JButton btnAgregarCategoria;
+	private JButton btnActualizarCategoria;
+	private JButton btnEliminarCategoria;
+	private JPanel panelMarcasCentralBuscar;
+	private JLabel lblNewLabel_3;
+	private Component horizontalStrut;
+	private JTextField txfBuscarCategoria;
+	private JButton btnBuscarCategoria;
 
 	/**
 	 * Launch the application.
@@ -480,8 +461,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
-
-				llenarComboBoxCategoria();
+				
 				llenarTablaCategoria();
 			}
 		});
@@ -1092,164 +1072,65 @@ public class Fr_principal extends JFrame {
 		panelMarcasEtiquetaSuperior.add(lblNewLabel_1);
 
 		panelMarcasCentral = new JPanel();
+		panelMarcasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelMarcasCentral.setBackground(new Color(255, 215, 0));
 		panelMarcas.add(panelMarcasCentral, BorderLayout.CENTER);
-		panelMarcasCentral.setLayout(new BoxLayout(panelMarcasCentral, BoxLayout.X_AXIS));
-
-		boxVerticalMarcasFormulario = Box.createVerticalBox();
-		boxVerticalMarcasFormulario.setBorder(
-				new CompoundBorder(new EmptyBorder(0, 3, 0, 3), new TitledBorder(new LineBorder(new Color(0, 0, 0)),
-						"Datos y actualizacion", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
-		boxVerticalMarcasFormulario.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panelMarcasCentral.add(boxVerticalMarcasFormulario);
-
-		verticalStrut_7 = Box.createVerticalStrut(20);
-		boxVerticalMarcasFormulario.add(verticalStrut_7);
-
-		horizontalBox_5 = Box.createHorizontalBox();
-		boxVerticalMarcasFormulario.add(horizontalBox_5);
-
-		lblNewLabel_5 = new JLabel("Marca");
-		horizontalBox_5.add(lblNewLabel_5);
-
-		cmbNombreDeCategoria = new JComboBox<String>();
-		// ==================================================================================================================================================================================================================
-		cmbNombreDeCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if ((String) cmbNombreDeCategoria.getSelectedItem() == null
-						|| cmbNombreDeCategoria.getSelectedItem().equals("")
-						|| ((String) cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
-					return;
-				}
-
-				consultarCategoriaPorNombre((String) cmbNombreDeCategoria.getSelectedItem());
-			}
-		});
-		// ==================================================================================================================================================================================================================
-		cmbNombreDeCategoria.setEditable(true);
-
-		horizontalBox_5.add(cmbNombreDeCategoria);
-
-		verticalStrut_5 = Box.createVerticalStrut(20);
-		boxVerticalMarcasFormulario.add(verticalStrut_5);
-
-		horizontalBox = Box.createHorizontalBox();
-		boxVerticalMarcasFormulario.add(horizontalBox);
-
-		// ================================================= Configuracion tabla
-		// Empleados ==============================================================
-
-		// =================================================================================================================================================
-
-		horizontalBox_1 = Box.createHorizontalBox();
-		boxVerticalMarcasFormulario.add(horizontalBox_1);
-
-		lblNewLabel_3 = new JLabel("Descripcion");
-		horizontalBox_1.add(lblNewLabel_3);
-
-		scrollPane_1 = new JScrollPane();
-		horizontalBox_1.add(scrollPane_1);
-
-		txaDescripcionCategoria = new JTextArea();
-		txaDescripcionCategoria.setLineWrap(true);
-		txaDescripcionCategoria.setRows(10);
-		txaDescripcionCategoria.setColumns(25);
-		scrollPane_1.setViewportView(txaDescripcionCategoria);
-
-		verticalStrut_3 = Box.createVerticalStrut(5);
-		boxVerticalMarcasFormulario.add(verticalStrut_3);
-
-		horizontalBox_4 = Box.createHorizontalBox();
-		boxVerticalMarcasFormulario.add(horizontalBox_4);
-
-		verticalStrut_4 = Box.createVerticalStrut(20);
-		horizontalBox_4.add(verticalStrut_4);
-
-		btnActualizarCategoria = new JButton("Actualizar");
-		btnActualizarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actualizarCategoria();
-			}
-		});
-		btnActualizarCategoria.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
-		btnActualizarCategoria.setBackground(new Color(144, 238, 144));
-		horizontalBox_4.add(btnActualizarCategoria);
-
-		horizontalStrut_1 = Box.createHorizontalStrut(20);
-		horizontalBox_4.add(horizontalStrut_1);
-
-		btnAgregarCategoria = new JButton("Agregar");
-		btnAgregarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insertarCategoria();
-			}
-		});
-		btnAgregarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
-		btnAgregarCategoria.setBackground(new Color(144, 238, 144));
-		horizontalBox_4.add(btnAgregarCategoria);
-
-		verticalStrut_6 = Box.createVerticalStrut(150);
-		boxVerticalMarcasFormulario.add(verticalStrut_6);
-
-		boxVerticalMarcasTabla = Box.createVerticalBox();
-		boxVerticalMarcasTabla.setBorder(
-				new CompoundBorder(new EmptyBorder(0, 3, 0, 3), new TitledBorder(new LineBorder(new Color(0, 0, 0)),
-						"Registros", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
-		panelMarcasCentral.add(boxVerticalMarcasTabla);
-
-		verticalStrut_2 = Box.createVerticalStrut(20);
-		boxVerticalMarcasTabla.add(verticalStrut_2);
-
-		horizontalBox_2 = Box.createHorizontalBox();
-		boxVerticalMarcasTabla.add(horizontalBox_2);
-
-		lblNewLabel_4 = new JLabel("Buscar");
-		horizontalBox_2.add(lblNewLabel_4);
-
-		horizontalStrut = Box.createHorizontalStrut(20);
-		horizontalBox_2.add(horizontalStrut);
-
-		txtBuscarMarcaEnTabla = new JTextField();
-		horizontalBox_2.add(txtBuscarMarcaEnTabla);
-		txtBuscarMarcaEnTabla.setColumns(80);
-		this.txtBuscarMarcaEnTabla.setMaximumSize(this.txtBuscarMarcaEnTabla.getPreferredSize());
-
-		horizontalStrut_2 = Box.createHorizontalStrut(20);
-		horizontalBox_2.add(horizontalStrut_2);
-
-		btnBuscarCategoriaEnTabla = new JButton("Buscar");
-		btnBuscarCategoriaEnTabla.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
-		btnBuscarCategoriaEnTabla.setBackground(new Color(184, 134, 11));
-		horizontalBox_2.add(btnBuscarCategoriaEnTabla);
-
-		verticalStrut_1 = Box.createVerticalStrut(20);
-		boxVerticalMarcasTabla.add(verticalStrut_1);
-
-		horizontalBox_3 = Box.createHorizontalBox();
-		boxVerticalMarcasTabla.add(horizontalBox_3);
-
-		scrollPane = new JScrollPane();
-		horizontalBox_3.add(scrollPane);
-
-		// ================================================= Configuracion tabla
-		// categorías ==============================================================
+		panelMarcasCentral.setLayout(new BorderLayout(0, 0));
+		
 		modelTablaCategoriaArticulo = new DefaultTableModel();
-		tablaCategorias = new JTable(this.modelTablaCategoriaArticulo);
-		tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPane.setViewportView(tablaCategorias);
 
 		modelTablaCategoriaArticulo.addColumn("id Categoria");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
-
-		// remueve el editor del jtable de categorias
-		for (int i = 0; i < modelTablaCategoriaArticulo.getColumnCount(); i++) {
-			Class<?> colClass = tablaCategorias.getColumnClass(i);
-			tablaCategorias.setDefaultEditor(colClass, null);
-		}
+		modelTablaCategoriaArticulo.addColumn("Activo");
+		
+		scrollPaneTablaCategorias = new JScrollPane();
+		panelMarcasCentral.add(scrollPaneTablaCategorias, BorderLayout.CENTER);
+		
+		tablaCategorias = new JTable();
+		this.tablaCategorias.setModel(modelTablaCategoriaArticulo);
+		scrollPaneTablaCategorias.setViewportView(tablaCategorias);
+		
+		DataTools.removerEditorDeTabla(this.tablaCategorias, modelTablaCategoriaArticulo);
+		
+		panelCategoriasCentralBotones = new JPanel();
+		panelCategoriasCentralBotones.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_10 = (FlowLayout) panelCategoriasCentralBotones.getLayout();
+		flowLayout_10.setAlignment(FlowLayout.RIGHT);
+		panelMarcasCentral.add(panelCategoriasCentralBotones, BorderLayout.NORTH);
+		
+		btnAgregarCategoria = new JButton("Agregar");
+		btnAgregarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		panelCategoriasCentralBotones.add(btnAgregarCategoria);
+		
+		btnActualizarCategoria = new JButton("Actualizar");
+		btnActualizarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		panelCategoriasCentralBotones.add(btnActualizarCategoria);
+		
+		btnEliminarCategoria = new JButton("Eliminar");
+		btnEliminarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		panelCategoriasCentralBotones.add(btnEliminarCategoria);
+		
+		panelMarcasCentralBuscar = new JPanel();
+		FlowLayout flowLayout_11 = (FlowLayout) panelMarcasCentralBuscar.getLayout();
+		flowLayout_11.setAlignment(FlowLayout.RIGHT);
+		panelMarcasCentral.add(panelMarcasCentralBuscar, BorderLayout.SOUTH);
+		
+		lblNewLabel_3 = new JLabel("Buscar categoría");
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelMarcasCentralBuscar.add(lblNewLabel_3);
+		
+		horizontalStrut = Box.createHorizontalStrut(20);
+		panelMarcasCentralBuscar.add(horizontalStrut);
+		
+		txfBuscarCategoria = new JTextField();
+		panelMarcasCentralBuscar.add(txfBuscarCategoria);
+		txfBuscarCategoria.setColumns(70);
+		
+		btnBuscarCategoria = new JButton("Buscar");
+		btnBuscarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		this.btnBuscarCategoria.setBackground(new Color(184,134,11));
+		panelMarcasCentralBuscar.add(btnBuscarCategoria);
 
 		panelVentas = new JPanel();
 		panelVentas.setBackground(new Color(255, 215, 0));
@@ -1701,8 +1582,6 @@ public class Fr_principal extends JFrame {
 
 		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
-		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
-
 		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
 
 		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
@@ -1793,86 +1672,6 @@ public class Fr_principal extends JFrame {
 	}
 
 	/**
-	 * llena el JCombobox del panel de categorias con todos los indices encontrados
-	 * en la bd
-	 */
-	private void llenarComboBoxCategoria() {
-		this.cmbNombreDeCategoria.removeAllItems();
-		this.cmbNombreDeCategoria.updateUI();
-		categoriaController.obtenerIndicesDeCategorias(this.cmbNombreDeCategoria);
-		this.cmbNombreDeCategoria.setSelectedIndex(0);
-	}
-
-	/**
-	 * coloca los valores de la consulta en sus respectivos campos de texto
-	 */
-	private void consultarCategoriaPorNombre(String nombre) {
-		Categoria cta = categoriaController.buscarCategoriaPorNombre(nombre);
-		this.txaDescripcionCategoria.setText(cta.getDescripcion());
-	}
-
-	/**
-	 * inserta una nueva categoría en la bd
-	 */
-	private void insertarCategoria() {
-
-		Categoria categoria = new Categoria();
-
-		if (((String) this.cmbNombreDeCategoria.getSelectedItem()).equals(null)
-				|| ((String) this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
-			return;
-		}
-
-		try {
-
-			categoria.setNombre((String) this.cmbNombreDeCategoria.getSelectedItem());
-			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
-			this.categoriaController.insertarNuevaCategoria(categoria);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-		}
-
-		this.llenarComboBoxCategoria();
-		this.llenarTablaCategoria();
-		this.limpiarCamposPanelCategoria();
-
-	}
-
-	/**
-	 * actualiza los datos de una categoria específico en la bd
-	 */
-	private void actualizarCategoria() {
-
-		if (((String) this.cmbNombreDeCategoria.getSelectedItem()).equals(null)
-				|| ((String) this.cmbNombreDeCategoria.getSelectedItem()).equals("")
-				|| ((String) this.cmbNombreDeCategoria.getSelectedItem()).length() < 1) {
-			return;
-		}
-
-		Categoria categoria = categoriaController
-				.buscarCategoriaPorNombre((String) this.cmbNombreDeCategoria.getSelectedItem());
-
-		int idCategoria = categoria.getIdCategoria();
-
-		try {
-
-			categoria.setIdCategoria(idCategoria);
-			categoria.setNombre((String) this.cmbNombreDeCategoria.getSelectedItem());
-			categoria.setDescripcion(this.txaDescripcionCategoria.getText());
-
-			categoriaController.actualizarCategoria(categoria);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-		}
-
-		this.llenarComboBoxCategoria();
-		this.llenarTablaCategoria();
-
-	}
-
-	/**
 	 * borra todos los elementos contenidos en la tabla categorias
 	 */
 	private void borrarElementosDeLaTablaCategorias() {
@@ -1891,13 +1690,6 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaEmpleados() {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
 		this.tableEmpleados.updateUI();
-	}
-
-	/**
-	 * limpia los campos te texto del formulario
-	 */
-	private void limpiarCamposPanelCategoria() {
-		this.txaDescripcionCategoria.setText("");
 	}
 
 	/**

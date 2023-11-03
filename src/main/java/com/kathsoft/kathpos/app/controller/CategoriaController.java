@@ -48,14 +48,17 @@ public class CategoriaController implements Serializable {
 			stm = cn.prepareCall("CALL ver_marcas()");
 			rset = stm.executeQuery();
 			
-			while(rset.next()) {
-				Object[] fila = {rset.getInt(1), rset.getString(2), rset.getString(3)};
-				tabla.addRow(fila);
+			while(rset.next()) {				
+				tabla.addRow(new Object[] {
+						rset.getInt(1), //indice
+						rset.getString(2), //nombre
+						rset.getString(3), //descripcion
+						rset.getShort(4) == 1 ? "Activo" : "Inactivo"
+				});
 			}
 			
 		}catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();			
 		}finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);
