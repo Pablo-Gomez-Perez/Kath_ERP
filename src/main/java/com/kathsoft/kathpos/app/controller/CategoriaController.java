@@ -102,16 +102,14 @@ public class CategoriaController implements Serializable {
 		}
 	}
 	
-	/**
-	 * busca el nombre y la descripción de una categoria en concreto en función del indice
-	 * y coloca los valores en sus respetivos campos de fomulario
+	/** 
 	 * @param txf
 	 * @param txa
 	 */
-	public Categoria buscarCategoriaPorNombre(String nombre) {
+	public void buscarCategoriaPorNombre(String nombre, DefaultTableModel model) {
 		CallableStatement stm = null; 
 		ResultSet rset= null;
-		Categoria cta = new Categoria();
+		
 		try {
 			
 			cn = Conexion.establecerConexionLocal("Kath_erp");
@@ -120,20 +118,19 @@ public class CategoriaController implements Serializable {
 			
 			rset = stm.executeQuery();
 			
-			if(rset.next()) {
-				cta.setIdCategoria(rset.getInt(1));
-				cta.setDescripcion(rset.getString(2));
+			while(rset.next()) {
+				model.addRow(new Object[] {
+						rset.getInt(1), //indice
+						rset.getString(2), //Nombre
+						rset.getString(3), //Descripcion
+						rset.getShort(4) == 1 ? "Activo" : "Inactivo" //Estatus
+				});
 			}
-			
-			return cta;
+						
 		}catch (SQLException er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			return null;
 		}catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			return null;
+			er.printStackTrace();			
 		}finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);
