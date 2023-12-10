@@ -1112,6 +1112,7 @@ public class Fr_principal extends JFrame {
 		panelCategoriasCentralBotones.add(btnEliminarCategoria);
 		
 		panelMarcasCentralBuscar = new JPanel();
+		panelMarcasCentralBuscar.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_11 = (FlowLayout) panelMarcasCentralBuscar.getLayout();
 		flowLayout_11.setAlignment(FlowLayout.RIGHT);
 		panelMarcasCentral.add(panelMarcasCentralBuscar, BorderLayout.SOUTH);
