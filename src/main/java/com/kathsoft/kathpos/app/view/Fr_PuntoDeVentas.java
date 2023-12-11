@@ -917,6 +917,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 			return;
 		}
 		
+		if (this.empleado == null || this.cliente == null) {
+			JOptionPane.showMessageDialog(this, "Cliente o empleado no seleccionado", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		var venta = new Ventas();
 		venta.setIdVenta(Integer.parseInt(this.txfFolioVenta.getText()));
 		venta.setEmpleado(empleado);
@@ -933,12 +938,25 @@ public class Fr_PuntoDeVentas extends JFrame {
 		
 	}
 	
-	private void abrirFormFormaDePago(Ventas venta){			
+	public void refreshAll() {
+		this.txfFolioVenta.setText(String.valueOf(ventasController.buscarUltimaVenta() + 1));
+		this.asignarFecha();
+		this.modelTablaArticulo.getDataVector().removeAllElements();
+		this.tablaArticulos.updateUI();
+		this.txfCantidadDePartidas.setText("");
+		this.txfArticulosTotales.setText("");
+		this.txfSubtotal.setText("");
+		this.txfImpuestoIva.setText("");
+		this.txfGranTotalVenta.setText("");
+	}
+	
+	private void abrirFormFormaDePago(Ventas venta){		
 		Component cmp = this;
+		Fr_PuntoDeVentas fr = this;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					var form = new Fr_FormasDePago(venta, articulosVendidos);
+					var form = new Fr_FormasDePago(venta, articulosVendidos, fr);
 					form.setVisible(true);
 					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					form.setLocationRelativeTo(cmp);

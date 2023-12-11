@@ -162,14 +162,26 @@ public class VentasController implements java.io.Serializable {
 	}
 	
 	
-	public void insertarNuevaVenta(Ventas venta) {
+	public void insertarNuevaVenta(Ventas venta) throws SQLException {
 		
 		CallableStatement stm = null;		
 		
 		try {
 			
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL insert_nueva_venta");
+			stm = cn.prepareCall("CALL insert_nueva_venta(?,?,?,?,?,?,?,?,?);");
+			
+			stm.setInt(1, venta.getIdSucursal());
+			stm.setDate(2, venta.getFechaVenta());
+			stm.setBoolean(3, venta.isVentaContado());
+			stm.setInt(4, venta.getEmpleado().getId());
+			stm.setInt(5, venta.getCliente().getId());
+			stm.setDouble(6, venta.getSubTotal());
+			stm.setDouble(7, venta.getIva());
+			stm.setDouble(8, venta.getTotal());
+			stm.setBoolean(9, venta.isStatusVenta());
+			
+			stm.execute();
 			
 			
 		}catch(SQLException er) {
