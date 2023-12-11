@@ -65,6 +65,38 @@ public class FormasDePagoController implements java.io.Serializable {
 		}
 
 	}
+	
+	public void verFormasDePagoEnTablaVentas(DefaultTableModel tabla) {
+		ResultSet rset = null;
+		CallableStatement stm = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL ver_formas_de_pago();");
+
+			rset = stm.executeQuery();
+
+			while (rset.next()) {
+				tabla.addRow(new Object[] {
+						rset.getInt(1),
+						rset.getString(2),
+						""
+				});
+			}
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+		} catch (Exception er) {
+			er.printStackTrace();
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * 

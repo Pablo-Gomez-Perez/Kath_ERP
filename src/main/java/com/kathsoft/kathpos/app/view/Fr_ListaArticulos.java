@@ -1,34 +1,32 @@
 package com.kathsoft.kathpos.app.view;
 
-import java.awt.EventQueue;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.model.Articulo;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.BevelBorder;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.awt.event.ActionEvent;
+import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 
 public class Fr_ListaArticulos extends JFrame {
 
@@ -161,8 +159,7 @@ public class Fr_ListaArticulos extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.setIcon(new ImageIcon(
-				Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/CancelarIcon.png")));
+		btnCancelar.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnCancelar.setBackground(new Color(255, 51, 51));
 		panelInferiorBotones.add(btnCancelar);
 
@@ -207,7 +204,10 @@ public class Fr_ListaArticulos extends JFrame {
 		this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1,
 				this.idSucursal);
 	}
-
+	
+	/**
+	 * inserta los articulos seleccionados en la tabla principal del formulario y calcula los totales de compra
+	 */
 	private void listarArticulo() {
 
 		int articuloSeleccionado = this.tablaArticulos.getSelectedRow();
@@ -229,6 +229,7 @@ public class Fr_ListaArticulos extends JFrame {
 
 			cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos"));
 			subtotal = articulo.getPrecioGeneral() * cantidad;
+						
 			Object[] fila = {
 				articulo.getCodigoArticulo(),
 				articulo.getDescripcion(),
@@ -238,7 +239,12 @@ public class Fr_ListaArticulos extends JFrame {
 				subtotal
 			};
 			
-			this.puntoVenta.listarArticuloDesdeConsulta(fila);
+			var vendidos = new ArticulosPorVentas();
+			vendidos.setId_articulo(articulo.getIdArticulo());
+			vendidos.setCantidad(cantidad);
+			vendidos.setSubtotal(subtotal);
+			
+			this.puntoVenta.listarArticuloDesdeConsulta(fila, vendidos);
 
 		} catch (Exception er) {
 			er.printStackTrace();
