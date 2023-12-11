@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import javax.swing.table.DefaultTableModel;
 
+import com.kathsoft.kathpos.app.model.Ventas;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class VentasController implements java.io.Serializable {
@@ -160,6 +161,24 @@ public class VentasController implements java.io.Serializable {
 		}
 	}
 	
+	
+	public void insertarNuevaVenta(Ventas venta) {
+		
+		CallableStatement stm = null;		
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL insert_nueva_venta");
+			
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
+	}
 	
 }
 

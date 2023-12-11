@@ -80,8 +80,7 @@ public class FormasDePagoController implements java.io.Serializable {
 			while (rset.next()) {
 				tabla.addRow(new Object[] {
 						rset.getInt(1),
-						rset.getString(2),
-						""
+						rset.getString(2)						
 				});
 			}
 

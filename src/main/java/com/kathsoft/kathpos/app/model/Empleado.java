@@ -127,19 +127,11 @@ public class Empleado extends Usuario {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Empleado [idSucursal=");
-		builder.append(idSucursal);
-		builder.append(", curp=");
-		builder.append(curp);
-		builder.append(", nombreCorto=");
-		builder.append(nombreCorto);
-		builder.append(", password=");
-		builder.append(password);
-		builder.append("]");
-		return builder.toString();
+		return "Empleado [idSucursal=" + idSucursal + ", curp=" + curp + ", nombreCorto=" + nombreCorto + ", password="
+				+ password + ", getId()=" + getId() + "]";
 	}
 
+	
 	
 	
 	
