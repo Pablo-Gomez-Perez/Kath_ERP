@@ -15,7 +15,6 @@ import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.Box;
@@ -834,7 +833,6 @@ public class Fr_PuntoDeVentas extends JFrame {
 		modelTablaArticulo.addRow(articulo);
 		if(this.articulosVendidos == null) {
 			this.articulosVendidos = new ArrayList<ArticulosPorVentas>();
-			this.articulosVendidos.add(art);
 		}
 		
 		art.setId_venta(Integer.parseInt(this.txfFolioVenta.getText()));
@@ -920,7 +918,8 @@ public class Fr_PuntoDeVentas extends JFrame {
 		}
 		
 		var venta = new Ventas();
-		venta .setEmpleado(empleado);
+		venta.setIdVenta(Integer.parseInt(this.txfFolioVenta.getText()));
+		venta.setEmpleado(empleado);
 		venta.setCliente(cliente);
 		venta.setIdSucursal(idSucursal);
 		venta.setFechaVenta(java.sql.Date.valueOf(this.txfFechaVenta.getText()));
@@ -934,18 +933,15 @@ public class Fr_PuntoDeVentas extends JFrame {
 		
 	}
 	
-	private void abrirFormFormaDePago(Ventas venta){
-		
-		this.articulosVendidos.stream().forEach(a -> {
-			System.out.println(a.toString());
-		});
-		
+	private void abrirFormFormaDePago(Ventas venta){			
+		Component cmp = this;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					var form = new Fr_FormasDePago(venta, articulosVendidos);
 					form.setVisible(true);
 					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					form.setLocationRelativeTo(cmp);
 				}catch(Exception er) {
 					er.printStackTrace();
 				}

@@ -10,6 +10,7 @@ import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
+import com.kathsoft.kathpos.app.model.PagosPorVenta;
 import com.kathsoft.kathpos.app.model.Ventas;
 
 import java.awt.BorderLayout;
@@ -19,8 +20,14 @@ import javax.swing.JTable;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_FormasDePago extends JFrame {
 
@@ -41,6 +48,9 @@ public class Fr_FormasDePago extends JFrame {
 	private JButton btnCancelar;
 	private JButton btnRegistrar;
 	private JLabel lblNewLabel;
+	private List<ArticulosPorVentas> articulos;
+	private List<PagosPorVenta> fpagos;
+	private Ventas venta;
 
 	/**
 	 * Launch the application.
@@ -88,11 +98,17 @@ public class Fr_FormasDePago extends JFrame {
 		panelInferiorBotones.setBackground(new Color(30, 144, 255));
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 		
-		btnCancelar = new JButton("New button");
+		btnCancelar = new JButton("Cancelar");
 		btnCancelar.setBackground(new Color(255, 51, 51));
 		panelInferiorBotones.add(btnCancelar);
 		
-		btnRegistrar = new JButton("New button");
+		btnRegistrar = new JButton("Cobrar");
+		btnRegistrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				finalizarVenta();
+			}
+		});
+		btnRegistrar.setBackground(new Color(204, 255, 51));
 		panelInferiorBotones.add(btnRegistrar);
 		
 		panelCentralTabla = new JPanel();
@@ -118,12 +134,60 @@ public class Fr_FormasDePago extends JFrame {
 		}
 		
 		this.llenarTablaFormasDePago();
+		
+		this.articulos = articulos;
+		this.venta = venta;
 	}
 	
 	private void llenarTablaFormasDePago() {
 		this.modelTablaFormasDePago.getDataVector().removeAllElements();
 		this.tablaFormasDePago.updateUI();
 		this.formasDePagoController.verFormasDePagoEnTablaVentas(modelTablaFormasDePago);
+	}
+	
+	private List<PagosPorVenta> formasDePago(){
+		var fpagosList = new ArrayList<PagosPorVenta>();
+		var model = (DefaultTableModel) this.tablaFormasDePago.getModel();
+		
+		try {
+			
+			for(int i = 0; i < model.getRowCount(); i++) {
+				if((model.getValueAt(i, 2)) != null) {
+					
+					var formasPagoReg = PagosPorVenta.builder()
+							.idVenta(this.venta.getIdVenta())
+							.idFormaDePago((int)model.getValueAt(i, 0))
+							.importe(Double.parseDouble(model.getValueAt(i,2).toString()))
+							.build();
+					
+					fpagosList.add(formasPagoReg);
+					
+				}
+			}
+
+			return fpagosList;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}
+				
+	}
+	
+	private void finalizarVenta() {
+		
+		if(this.venta == null || this.articulos == null) {
+			JOptionPane.showMessageDialog(this, "Error al procesar venta", "Error", JOptionPane.ERROR_MESSAGE);		
+			return;
+		}			
+					
+		this.fpagos = this.formasDePago();		
+		
+		double totalVenta = fpagos.stream().mapToDouble(PagosPorVenta::getImporte).sum();
+		
+		if(totalVenta < this.venta.getTotal()) {
+			JOptionPane.showMessageDialog(this, "El importe no puede ser menor a la venta", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 	}
 
 }
