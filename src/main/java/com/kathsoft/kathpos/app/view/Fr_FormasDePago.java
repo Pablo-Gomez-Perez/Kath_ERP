@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
+import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.PagosPorVenta;
 import com.kathsoft.kathpos.app.model.Ventas;
@@ -32,6 +33,7 @@ import java.awt.event.ActionEvent;
 public class Fr_FormasDePago extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private VentasController ventasController = new VentasController();
 	private DefaultTableModel modelTablaFormasDePago = new DefaultTableModel();
 	private JPanel contentPane;
 	private JTable tablaFormasDePago;
@@ -51,6 +53,7 @@ public class Fr_FormasDePago extends JFrame {
 	private List<ArticulosPorVentas> articulos;
 	private List<PagosPorVenta> fpagos;
 	private Ventas venta;
+	private Fr_PuntoDeVentas formVentas;
 
 	/**
 	 * Launch the application.
@@ -71,7 +74,10 @@ public class Fr_FormasDePago extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_FormasDePago(Ventas venta, List<ArticulosPorVentas> articulos) {
+	public Fr_FormasDePago(Ventas venta, List<ArticulosPorVentas> articulos, Fr_PuntoDeVentas formVentas) {
+		
+		this.formVentas = formVentas;
+		
 		setTitle("Forma de pago");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 501, 402);
@@ -173,6 +179,12 @@ public class Fr_FormasDePago extends JFrame {
 				
 	}
 	
+	/**
+	 * realiza escencialmente tres operaciones
+	 * 	1. registra los datos de la venta.
+	 * 	2. registra los artículos que fueron vendidos
+	 * 	3. registra la forma en la que la venta fué efectivamente pagada
+	 */
 	private void finalizarVenta() {
 		
 		if(this.venta == null || this.articulos == null) {
@@ -180,13 +192,29 @@ public class Fr_FormasDePago extends JFrame {
 			return;
 		}			
 					
-		this.fpagos = this.formasDePago();		
-		
-		double totalVenta = fpagos.stream().mapToDouble(PagosPorVenta::getImporte).sum();
-		
-		if(totalVenta < this.venta.getTotal()) {
-			JOptionPane.showMessageDialog(this, "El importe no puede ser menor a la venta", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+		try {
+			this.fpagos = this.formasDePago();		
+			
+			double totalVenta = fpagos.stream().mapToDouble(PagosPorVenta::getImporte).sum();
+			
+			if(totalVenta < this.venta.getTotal()) {
+				JOptionPane.showMessageDialog(this, "El importe no puede ser menor a la venta", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			double cambio = totalVenta - this.venta.getTotal();
+			
+			//se registran los datos de la venta
+			this.ventasController.insertarNuevaVenta(venta);
+			
+			this.formVentas.refreshAll();
+			
+			JOptionPane.showMessageDialog(this, "Venta registrada, Gracias por su compra, su cambio es $" + cambio, "Ventas", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.dispose();
+		}catch(Exception er) {
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error " + er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
 		}
 	}
 
