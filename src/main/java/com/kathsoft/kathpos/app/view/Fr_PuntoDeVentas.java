@@ -1,16 +1,44 @@
 package com.kathsoft.kathpos.app.view;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,36 +47,10 @@ import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Clientes;
 import com.kathsoft.kathpos.app.model.Empleado;
-
-import javax.swing.border.LineBorder;
-import javax.swing.Box;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
-import javax.swing.JComboBox;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.border.SoftBevelBorder;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.FlowLayout;
-import javax.swing.JTextArea;
+import com.kathsoft.kathpos.app.model.Ventas;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -63,6 +65,9 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 */
 	private int idSucursal;
 	private Articulo articulo;
+	private Empleado empleado;
+	private Clientes cliente;
+	private List<ArticulosPorVentas> articulosVendidos;
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ClientesController clienteController = new ClientesController();
 	private VentasController ventasController = new VentasController();
@@ -526,6 +531,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 		panelTotales.add(horizontalBox_11);
 
 		btnCobrar = new JButton("Cobrar");
+		btnCobrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				registrarVenta();
+			}
+		});
 		btnCobrar.setBackground(new Color(204, 255, 51));
 		btnCobrar.setFont(new Font("Tahoma", Font.BOLD, 20));
 		horizontalBox_11.add(btnCobrar);
@@ -534,6 +544,11 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalBox_11.add(horizontalStrut_20);
 
 		btnSalir = new JButton("Cancelar");
+		btnSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cerrarForm();
+			}
+		});
 		btnSalir.setBackground(new Color(255, 51, 51));
 		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 20));
 		horizontalBox_11.add(btnSalir);
@@ -711,17 +726,23 @@ public class Fr_PuntoDeVentas extends JFrame {
 	}
 
 	private void consultarEmpleado() {
-		String nombreEmpleado = (String) this.cmbAliasEmpleado.getSelectedItem();
+		
 		// System.out.println("Nombre buscado: " + nombreEmpleado);
-		Empleado empleado = this.empleadoController.consultarEmpleadoPorNombre(nombreEmpleado);
-		this.txfNombreEmpleado.setText(empleado.getNombre());
+		try {
+			String nombreEmpleado = (String) this.cmbAliasEmpleado.getSelectedItem();
+			empleado = this.empleadoController.consultarEmpleadoPorNombre(nombreEmpleado);
+			this.txfNombreEmpleado.setText(empleado.getNombre());	
+		}catch(Exception er) {
+			er.printStackTrace();
+		}
+		
 	}
 
 	private void consultarCliente() {
 
 		try {
 			String rfcCliente = (String) this.cmbRfcCliente.getSelectedItem();
-			Clientes cliente = this.clienteController.buscarClientePorRFC(rfcCliente);
+			cliente = this.clienteController.buscarClientePorRFC(rfcCliente);
 
 			this.txfAliasCliente.setText(cliente.getNombreCorto());
 			this.txfNombreCliente.setText(cliente.getNombre());
@@ -809,8 +830,15 @@ public class Fr_PuntoDeVentas extends JFrame {
 	 * 
 	 * @param articulo
 	 */
-	public void listarArticuloDesdeConsulta(Object[] articulo) {
+	public void listarArticuloDesdeConsulta(Object[] articulo, ArticulosPorVentas art) {		
 		modelTablaArticulo.addRow(articulo);
+		if(this.articulosVendidos == null) {
+			this.articulosVendidos = new ArrayList<ArticulosPorVentas>();
+			this.articulosVendidos.add(art);
+		}
+		
+		art.setId_venta(Integer.parseInt(this.txfFolioVenta.getText()));
+		this.articulosVendidos.add(art);
 		calculoDeTotales();
 	}
 
@@ -870,5 +898,58 @@ public class Fr_PuntoDeVentas extends JFrame {
 			return;
 		}
 
+	}
+	
+	private void cerrarForm() {
+		int opt = JOptionPane.showConfirmDialog(this, "Está seguro que desea cerrar la venta", "", JOptionPane.YES_NO_OPTION);
+		
+		if(opt > 0) {
+			return;
+		}
+		this.dispose();
+		
+	}
+	
+	private void registrarVenta() {
+		var totalVenta = this.txfGranTotalVenta.getText();
+		var subTotal = this.txfSubtotal.getText();
+		var iva = this.txfImpuestoIva.getText();
+		if(totalVenta == null || totalVenta.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "No existen datos a registrar", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		var venta = new Ventas();
+		venta .setEmpleado(empleado);
+		venta.setCliente(cliente);
+		venta.setIdSucursal(idSucursal);
+		venta.setFechaVenta(java.sql.Date.valueOf(this.txfFechaVenta.getText()));
+		venta.setVentaContado(true);
+		venta.setSubTotal(Double.parseDouble(subTotal));
+		venta.setIva(Double.parseDouble(iva));
+		venta.setTotal(Double.parseDouble(totalVenta));
+		venta.setStatusVenta(true);
+		
+		this.abrirFormFormaDePago(venta);
+		
+	}
+	
+	private void abrirFormFormaDePago(Ventas venta){
+		
+		this.articulosVendidos.stream().forEach(a -> {
+			System.out.println(a.toString());
+		});
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					var form = new Fr_FormasDePago(venta, articulosVendidos);
+					form.setVisible(true);
+					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
+			}
+		});
 	}
 }
