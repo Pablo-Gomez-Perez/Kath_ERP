@@ -366,8 +366,60 @@ public class ArticuloController implements java.io.Serializable {
 
 	}
 	
-	public void consultarArticuloPorId(int id) {
-		
+	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
+		Articulo art = new Articulo();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+
+		try {
+
+			cn = Conexion.establecerConexionLocal("kath_erp");
+			stm = cn.prepareCall("CALL buscar_articulo_por_id(?,?);");
+			stm.setInt(1, id);
+			stm.setInt(2, idSucursal);			
+			rset = stm.executeQuery();
+
+			if (rset.next()) {
+
+				art.setIdArticulo(rset.getInt(1));
+				art.setCodigoArticulo(rset.getString(2));
+				art.setNombreProveedor(rset.getString(3));
+				art.setNombreCategoria(rset.getString(4));
+				art.setNombre(rset.getString(5));
+				art.setCodigoSat(rset.getString(6));
+				art.setDescripcion(rset.getString(7));
+				art.setExistencia(rset.getInt(8));
+				art.setExento((rset.getInt(9) == 1) ? true : false);
+				art.setCostoUnitario(rset.getDouble(10));
+				art.setPrecioGeneral(rset.getDouble(11));
+				art.setPrecioMayoreo(rset.getDouble(12));
+				art.setCantidadMayoreo(rset.getInt(13));
+
+			}
+
+			return art;
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		} catch (Exception er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		} finally {
+			try {
+
+				Conexion.cerrarConexion(cn, rset, stm);
+
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
 	}
 
 }

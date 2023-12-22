@@ -628,7 +628,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				abrirVentanaFormularioArticulo(0, sucursal.getIdSucursal());
+				abrirVentanaFormularioArticulo(0, 0,sucursal.getIdSucursal());
 
 			}
 		});
@@ -641,7 +641,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				abrirVentanaFormularioArticulo(1, sucursal.getIdSucursal());
+				abrirVentanaFormularioArticulo(1, DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0) ,sucursal.getIdSucursal());
 
 			}
 		});
@@ -1733,7 +1733,7 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void abrirVentanaFormularioArticulo(int opcion, int sucursal) {
+	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo,int sucursal) {
 
 		Component cm = this;
 
@@ -1744,7 +1744,7 @@ public class Fr_principal extends JFrame {
 
 				try {
 
-					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion, sucursal);
+					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion, idArticulo, idArticulo);
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
