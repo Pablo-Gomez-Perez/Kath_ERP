@@ -52,6 +52,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private CategoriaController categoriaController = new CategoriaController();
 	private ProveedorController proveedorController = new ProveedorController();
 	private int idSucursal;
+	private int idArticulo;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelCentralFormulario;
@@ -130,9 +131,10 @@ public class Fr_DatosArticulo extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosArticulo(int tipoOperacion, int sucursal) {
+	public Fr_DatosArticulo(int tipoOperacion,int idArticulo, int sucursal) {
 
 		this.idSucursal = sucursal;
+		this.idArticulo = idArticulo;
 
 		if (tipoOperacion == 0) {
 			this.setTitle("Nuevo Articulo");
@@ -201,30 +203,17 @@ public class Fr_DatosArticulo extends JFrame {
 		horizontalStrut_2 = Box.createHorizontalStrut(5);
 		horizontalBox.add(horizontalStrut_2);
 
-		if (tipoOperacion == 0) {
-
-			this.txfCodigoArticulo = new JTextField();
-			this.txfCodigoArticulo.setColumns(50);
-			this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
-			horizontalBox.add(this.txfCodigoArticulo);
-
-		} else if (tipoOperacion == 1) {
-
-			cmbCodigoArticulo = new JComboBox<String>();
-			cmbCodigoArticulo.setEditable(false);
-			horizontalBox.add(cmbCodigoArticulo);
-
-			this.llenarCmbCodigoArticulos();
-
-			this.cmbCodigoArticulo.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-
-					consultarArticuloPorCodigo();
-
-				}
-			});
+		this.txfCodigoArticulo = new JTextField();
+		this.txfCodigoArticulo.setColumns(50);
+		this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
+		
+		if(tipoOperacion == 1) {
+			this.txfCodigoArticulo.setEditable(false);
+		}else {
+			this.txfCodigoArticulo.setEditable(true);
 		}
+		
+		horizontalBox.add(this.txfCodigoArticulo);
 
 		verticalStrut_1 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_1);
@@ -516,7 +505,11 @@ public class Fr_DatosArticulo extends JFrame {
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
-
+		
+		if(tipoOperacion == 1) {
+			this.consultarArticuloPorId();
+		}
+		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
@@ -643,14 +636,15 @@ public class Fr_DatosArticulo extends JFrame {
 	 * coloca valores de forma dinámica en cada uno de los campos correspondientes
 	 * al consultar la información de un artículo en específico en la bd
 	 */
-	private void consultarArticuloPorCodigo() {
+	private void consultarArticuloPorId() {
 
 		try {
 
-			Articulo art = articuloController
-					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem(), this.idSucursal);
+			Articulo art = articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
+					
 
 			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
+			this.txfCodigoArticulo.setText(art.getCodigoArticulo());
 			this.cmbProveedorArticulo.setSelectedItem(art.getNombreProveedor());
 			this.cmbMarcaArticulo.setSelectedItem(art.getNombreCategoria());
 			this.txfNombreArticulo.setText(art.getNombre());
