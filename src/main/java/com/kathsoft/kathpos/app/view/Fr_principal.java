@@ -992,6 +992,19 @@ public class Fr_principal extends JFrame {
 		// Configuracion de la tabla Proveedores
 		// ================================================================
 		modelTablaProveedores = new DefaultTableModel();
+		
+		modelTablaProveedores.addColumn("Id");
+		modelTablaProveedores.addColumn("RFC");
+		modelTablaProveedores.addColumn("Cta Contable");
+		modelTablaProveedores.addColumn("Nombre");
+		modelTablaProveedores.addColumn("Descripcion");
+		modelTablaProveedores.addColumn("Email");
+		modelTablaProveedores.addColumn("Estado");
+		modelTablaProveedores.addColumn("Ciudad");
+		modelTablaProveedores.addColumn("Direccion");
+		modelTablaProveedores.addColumn("Codigo P.");
+		modelTablaProveedores.addColumn("Activo");
+		
 		tablaProveedores = new JTable();
 		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
@@ -1035,25 +1048,9 @@ public class Fr_principal extends JFrame {
 		btnEliminarProveedor.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
-		panelProveedorCentralBotones.add(btnEliminarProveedor);
+		panelProveedorCentralBotones.add(btnEliminarProveedor);	
 
-		modelTablaProveedores.addColumn("Id");
-		modelTablaProveedores.addColumn("RFC");
-		modelTablaProveedores.addColumn("Cta Contable");
-		modelTablaProveedores.addColumn("Nombre");
-		modelTablaProveedores.addColumn("Descripcion");
-		modelTablaProveedores.addColumn("Email");
-		modelTablaProveedores.addColumn("Estado");
-		modelTablaProveedores.addColumn("Ciudad");
-		modelTablaProveedores.addColumn("Direccion");
-		modelTablaProveedores.addColumn("Codigo P.");
-		modelTablaProveedores.addColumn("Activo");
-
-		// se remueve el editor de la tabla provedoores
-		for (int i = 0; i < modelTablaProveedores.getColumnCount(); i++) {
-			Class<?> colClass = tablaProveedores.getColumnClass(i);
-			tablaProveedores.setDefaultEditor(colClass, null);
-		}
+		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
 
 		// =================================================================================================================================================================================
 
@@ -1070,7 +1067,7 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_1.setForeground(new Color(255, 255, 255));
 		panelMarcasEtiquetaSuperior.add(lblNewLabel_1);
-
+		
 		panelMarcasCentral = new JPanel();
 		panelMarcasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelMarcasCentral.setBackground(new Color(255, 215, 0));
@@ -1079,7 +1076,7 @@ public class Fr_principal extends JFrame {
 		
 		modelTablaCategoriaArticulo = new DefaultTableModel();
 
-		modelTablaCategoriaArticulo.addColumn("id Categoria");
+		modelTablaCategoriaArticulo.addColumn("Id");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
 		modelTablaCategoriaArticulo.addColumn("Activo");
@@ -1089,6 +1086,7 @@ public class Fr_principal extends JFrame {
 		
 		tablaCategorias = new JTable();
 		this.tablaCategorias.setModel(modelTablaCategoriaArticulo);
+		this.tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaCategorias.setViewportView(tablaCategorias);
 		
 		DataTools.removerEditorDeTabla(this.tablaCategorias, modelTablaCategoriaArticulo);
@@ -1100,14 +1098,27 @@ public class Fr_principal extends JFrame {
 		panelMarcasCentral.add(panelCategoriasCentralBotones, BorderLayout.NORTH);
 		
 		btnAgregarCategoria = new JButton("Agregar");
+		btnAgregarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirVentanaFormularioCategoria(0,0);
+			}
+		});
+		btnAgregarCategoria.setBackground(new Color(144,238,144));
 		btnAgregarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelCategoriasCentralBotones.add(btnAgregarCategoria);
 		
 		btnActualizarCategoria = new JButton("Actualizar");
+		btnActualizarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirVentanaFormularioCategoria(2, DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
+			}
+		});
+		btnActualizarCategoria.setBackground(new Color(144,238,144));
 		btnActualizarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelCategoriasCentralBotones.add(btnActualizarCategoria);
 		
 		btnEliminarCategoria = new JButton("Eliminar");
+		btnEliminarCategoria.setBackground(new Color(255, 51, 0));
 		btnEliminarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		panelCategoriasCentralBotones.add(btnEliminarCategoria);
 		
@@ -1592,6 +1603,8 @@ public class Fr_principal extends JFrame {
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
 		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
+		
+		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1771,6 +1784,24 @@ public class Fr_principal extends JFrame {
 					fr.setVisible(true);
 
 				} catch (Exception er) {
+					er.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
+		Component cm = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Fr_DatosCategoria fr = new Fr_DatosCategoria(opcion, idCategoria);
+					fr.setLocationRelativeTo(cm);
+					fr.setVisible(true);
+					fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				}catch(Exception er) {
 					er.printStackTrace();
 				}
 			}

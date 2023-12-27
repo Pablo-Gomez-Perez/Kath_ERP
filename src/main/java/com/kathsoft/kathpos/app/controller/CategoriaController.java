@@ -208,4 +208,30 @@ public class CategoriaController implements Serializable {
 		
 	}
 	
+	public Categoria buscarCategoriaPorId(int id) {
+		var categoria = new Categoria();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			
+			
+			return categoria;
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return null;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException e) { 
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 }
