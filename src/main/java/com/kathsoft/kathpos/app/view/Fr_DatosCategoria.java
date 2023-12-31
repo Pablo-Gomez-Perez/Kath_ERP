@@ -235,7 +235,7 @@ public class Fr_DatosCategoria extends JFrame {
 		this.txfNombreMarca.setText("");
 		this.txaDescripcion.setText("");
 	}
-	
+
 	private void insertNuevaCategoria() {
 		if (this.validarCamposVacios()) {
 			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
@@ -252,9 +252,9 @@ public class Fr_DatosCategoria extends JFrame {
 			this.categoriaController.insertarNuevaCategoria(categoria);
 
 			JOptionPane.showMessageDialog(this, "Categoria almacenada", "Exito", JOptionPane.INFORMATION_MESSAGE);
-			
+
 			this.borrarCampos();
-			
+
 		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error" + er.getMessage(), "Error",

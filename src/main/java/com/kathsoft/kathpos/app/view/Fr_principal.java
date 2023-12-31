@@ -461,7 +461,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
-				
+
 				llenarTablaCategoria();
 			}
 		});
@@ -628,7 +628,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				abrirVentanaFormularioArticulo(0, 0,sucursal.getIdSucursal());
+				abrirVentanaFormularioArticulo(0, 0, sucursal.getIdSucursal());
 
 			}
 		});
@@ -641,7 +641,9 @@ public class Fr_principal extends JFrame {
 		btnActualizarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				abrirVentanaFormularioArticulo(1, DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0) ,sucursal.getIdSucursal());
+				abrirVentanaFormularioArticulo(1,
+						DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0),
+						sucursal.getIdSucursal());
 
 			}
 		});
@@ -992,7 +994,7 @@ public class Fr_principal extends JFrame {
 		// Configuracion de la tabla Proveedores
 		// ================================================================
 		modelTablaProveedores = new DefaultTableModel();
-		
+
 		modelTablaProveedores.addColumn("Id");
 		modelTablaProveedores.addColumn("RFC");
 		modelTablaProveedores.addColumn("Cta Contable");
@@ -1004,7 +1006,7 @@ public class Fr_principal extends JFrame {
 		modelTablaProveedores.addColumn("Direccion");
 		modelTablaProveedores.addColumn("Codigo P.");
 		modelTablaProveedores.addColumn("Activo");
-		
+
 		tablaProveedores = new JTable();
 		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
@@ -1048,7 +1050,7 @@ public class Fr_principal extends JFrame {
 		btnEliminarProveedor.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
-		panelProveedorCentralBotones.add(btnEliminarProveedor);	
+		panelProveedorCentralBotones.add(btnEliminarProveedor);
 
 		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
 
@@ -1067,56 +1069,59 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_1.setForeground(new Color(255, 255, 255));
 		panelMarcasEtiquetaSuperior.add(lblNewLabel_1);
-		
+
 		panelMarcasCentral = new JPanel();
 		panelMarcasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelMarcasCentral.setBackground(new Color(255, 215, 0));
 		panelMarcas.add(panelMarcasCentral, BorderLayout.CENTER);
 		panelMarcasCentral.setLayout(new BorderLayout(0, 0));
-		
+
 		modelTablaCategoriaArticulo = new DefaultTableModel();
 
 		modelTablaCategoriaArticulo.addColumn("Id");
 		modelTablaCategoriaArticulo.addColumn("Nombre");
 		modelTablaCategoriaArticulo.addColumn("Descripcion");
 		modelTablaCategoriaArticulo.addColumn("Activo");
-		
+
 		scrollPaneTablaCategorias = new JScrollPane();
 		panelMarcasCentral.add(scrollPaneTablaCategorias, BorderLayout.CENTER);
-		
+
 		tablaCategorias = new JTable();
 		this.tablaCategorias.setModel(modelTablaCategoriaArticulo);
 		this.tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaCategorias.setViewportView(tablaCategorias);
-		
+
 		DataTools.removerEditorDeTabla(this.tablaCategorias, modelTablaCategoriaArticulo);
-		
+
 		panelCategoriasCentralBotones = new JPanel();
 		panelCategoriasCentralBotones.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_10 = (FlowLayout) panelCategoriasCentralBotones.getLayout();
 		flowLayout_10.setAlignment(FlowLayout.RIGHT);
 		panelMarcasCentral.add(panelCategoriasCentralBotones, BorderLayout.NORTH);
-		
+
 		btnAgregarCategoria = new JButton("Agregar");
 		btnAgregarCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(1,0);
+				abrirVentanaFormularioCategoria(1, 0);
 			}
 		});
-		btnAgregarCategoria.setBackground(new Color(144,238,144));
-		btnAgregarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnAgregarCategoria.setBackground(new Color(144, 238, 144));
+		btnAgregarCategoria.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelCategoriasCentralBotones.add(btnAgregarCategoria);
-		
+
 		btnActualizarCategoria = new JButton("Actualizar");
 		btnActualizarCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(2, DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
+				abrirVentanaFormularioCategoria(2,
+						DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
 			}
 		});
-		btnActualizarCategoria.setBackground(new Color(144,238,144));
-		btnActualizarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarCategoria.setBackground(new Color(144, 238, 144));
+		btnActualizarCategoria.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		panelCategoriasCentralBotones.add(btnActualizarCategoria);
-		
+
 		btnEliminarCategoria = new JButton("Eliminar");
 		btnEliminarCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1124,34 +1129,36 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnEliminarCategoria.setBackground(new Color(255, 51, 0));
-		btnEliminarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarCategoria.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		panelCategoriasCentralBotones.add(btnEliminarCategoria);
-		
+
 		panelMarcasCentralBuscar = new JPanel();
 		panelMarcasCentralBuscar.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_11 = (FlowLayout) panelMarcasCentralBuscar.getLayout();
 		flowLayout_11.setAlignment(FlowLayout.RIGHT);
 		panelMarcasCentral.add(panelMarcasCentralBuscar, BorderLayout.SOUTH);
-		
+
 		lblNewLabel_3 = new JLabel("Buscar categoría");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 13));
 		panelMarcasCentralBuscar.add(lblNewLabel_3);
-		
+
 		horizontalStrut = Box.createHorizontalStrut(20);
 		panelMarcasCentralBuscar.add(horizontalStrut);
-		
+
 		txfBuscarCategoria = new JTextField();
 		panelMarcasCentralBuscar.add(txfBuscarCategoria);
 		txfBuscarCategoria.setColumns(70);
-		
+
 		btnBuscarCategoria = new JButton("Buscar");
 		btnBuscarCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				consultarCategoriaPorNombre();
 			}
 		});
-		btnBuscarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
-		this.btnBuscarCategoria.setBackground(new Color(184,134,11));
+		btnBuscarCategoria.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		this.btnBuscarCategoria.setBackground(new Color(184, 134, 11));
 		panelMarcasCentralBuscar.add(btnBuscarCategoria);
 
 		panelVentas = new JPanel();
@@ -1613,7 +1620,7 @@ public class Fr_principal extends JFrame {
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
 		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
-		
+
 		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
 
 		this.setLocationRelativeTo(null);
@@ -1756,7 +1763,7 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo,int sucursal) {
+	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
 
 		Component cm = this;
 
@@ -1799,10 +1806,10 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-	
+
 	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
 		Component cm = this;
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -1811,7 +1818,7 @@ public class Fr_principal extends JFrame {
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 					fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				}catch(Exception er) {
+				} catch (Exception er) {
 					er.printStackTrace();
 				}
 			}
@@ -2042,9 +2049,9 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void eliminarArticulo() {
-		
+
 	}
-	
+
 	private void eliminarCategoria() {
 		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Categoría",
 				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
@@ -2053,15 +2060,18 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 
-		this.categoriaController.eliminarCategoria(DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
+		this.categoriaController.eliminarCategoria(
+				DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
 
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	private void consultarCategoriaPorNombre() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
-		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(), modelTablaCategoriaArticulo);
+		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
+				modelTablaCategoriaArticulo);
 	}
 
 }
