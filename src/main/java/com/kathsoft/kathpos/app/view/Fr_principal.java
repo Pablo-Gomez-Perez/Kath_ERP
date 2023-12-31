@@ -1145,6 +1145,11 @@ public class Fr_principal extends JFrame {
 		txfBuscarCategoria.setColumns(70);
 		
 		btnBuscarCategoria = new JButton("Buscar");
+		btnBuscarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				consultarCategoriaPorNombre();
+			}
+		});
 		btnBuscarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		this.btnBuscarCategoria.setBackground(new Color(184,134,11));
 		panelMarcasCentralBuscar.add(btnBuscarCategoria);
@@ -2051,6 +2056,12 @@ public class Fr_principal extends JFrame {
 		this.categoriaController.eliminarCategoria(DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
 
 		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private void consultarCategoriaPorNombre() {
+		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
+		this.tablaCategorias.updateUI();
+		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(), modelTablaCategoriaArticulo);
 	}
 
 }
