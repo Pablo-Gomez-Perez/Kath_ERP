@@ -452,7 +452,7 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
 		menuConsultar.add(opcionProveedores);
 
-		opcionMarcas = new JMenuItem("Marcas");
+		opcionMarcas = new JMenuItem("Categorias");
 		opcionMarcas.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/iconoMarca.png")));
 		opcionMarcas.addActionListener(new ActionListener() {
@@ -1100,7 +1100,7 @@ public class Fr_principal extends JFrame {
 		btnAgregarCategoria = new JButton("Agregar");
 		btnAgregarCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(0,0);
+				abrirVentanaFormularioCategoria(1,0);
 			}
 		});
 		btnAgregarCategoria.setBackground(new Color(144,238,144));
@@ -1118,6 +1118,11 @@ public class Fr_principal extends JFrame {
 		panelCategoriasCentralBotones.add(btnActualizarCategoria);
 		
 		btnEliminarCategoria = new JButton("Eliminar");
+		btnEliminarCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarCategoria();
+			}
+		});
 		btnEliminarCategoria.setBackground(new Color(255, 51, 0));
 		btnEliminarCategoria.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		panelCategoriasCentralBotones.add(btnEliminarCategoria);
@@ -2032,7 +2037,20 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void eliminarArticulo() {
+		
+	}
+	
+	private void eliminarCategoria() {
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Categoría",
+				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
 
+		if (input > 0) {
+			return;
+		}
+
+		this.categoriaController.eliminarCategoria(DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
+
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 }

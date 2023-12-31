@@ -144,12 +144,7 @@ public class CategoriaController implements Serializable {
 	
 	public void insertarNuevaCategoria(Categoria categoria) {
 		
-		CallableStatement stm= null;
-		
-		if(categoria.getNombre().isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Campo Vacio", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+		CallableStatement stm= null;				
 		
 		try {
 			
@@ -160,11 +155,9 @@ public class CategoriaController implements Serializable {
 			stm.execute();
 			
 		}catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();			
 		}catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);		
@@ -178,11 +171,7 @@ public class CategoriaController implements Serializable {
 	
 	public void actualizarCategoria(Categoria categoria) {
 		CallableStatement stm = null;
-		
-		if(categoria.getNombre().isEmpty()) {
-			return;
-		}
-		
+
 		try {
 			
 			cn = Conexion.establecerConexionLocal("kath_erp");
@@ -208,6 +197,30 @@ public class CategoriaController implements Serializable {
 		
 	}
 	
+	public void eliminarCategoria(int id) {
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL eliminar_categoria(?)");
+			stm.setInt(1, id);
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch(SQLException er) {
+				er.printStackTrace();
+			}
+		}
+		
+	}
+	
 	public Categoria buscarCategoriaPorId(int id) {
 		var categoria = new Categoria();
 		CallableStatement stm = null;
@@ -215,7 +228,16 @@ public class CategoriaController implements Serializable {
 		try {
 			
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL buscar_categoria_por_indice(?);");
+			stm.setInt(1, id);
+			rset = stm.executeQuery();
 			
+			if(rset.next()) {
+				categoria.setIdCategoria(rset.getInt(1));
+				categoria.setNombre(rset.getString(2));
+				categoria.setDescripcion(rset.getString(3));
+				categoria.setActivo(rset.getBoolean(4));
+			}
 			
 			return categoria;
 		}catch(SQLException er) {
