@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -2055,10 +2056,16 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 
-		this.articuloController
-				.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
+		try {
+			this.articuloController
+			.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
+			
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Articulo", JOptionPane.INFORMATION_MESSAGE);
+		}catch(SQLException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Sucursal", JOptionPane.INFORMATION_MESSAGE);
+		
 	}
 
 	private void eliminarCategoria() {
