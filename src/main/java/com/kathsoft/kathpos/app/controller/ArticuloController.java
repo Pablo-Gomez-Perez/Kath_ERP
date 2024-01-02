@@ -388,28 +388,16 @@ public class ArticuloController implements java.io.Serializable {
 				
 	}
 	
-	public void eliminarArticulo(int idArticulo) {
+	public void eliminarArticulo(int idArticulo) throws SQLException {
 		
 		CallableStatement stm = null;
+			
+		cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+		stm = cn.prepareCall("CALL eliminar_articulo(?)");
+		stm.setInt(1, idArticulo);
+		stm.execute();
 		
-		try {
-			
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL eliminar_articulo(?)");
-			stm.setInt(1, idArticulo);
-			stm.execute();
-			
-		}catch(SQLException er) {
-			er.printStackTrace();
-		}catch(Exception er) {
-			er.printStackTrace();
-		}finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			}catch(SQLException er) {
-				er.printStackTrace();
-			}
-		}
+		Conexion.cerrarConexion(cn, stm);
 	}
 
 }
