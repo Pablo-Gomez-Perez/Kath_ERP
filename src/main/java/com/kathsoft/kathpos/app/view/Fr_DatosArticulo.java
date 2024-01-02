@@ -65,8 +65,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private JTextField txfIdArticulo;
 	private Component horizontalStrut_1;
 	private JLabel lblNewLabel_2;
-	private Component horizontalStrut_2;
-	private JComboBox<String> cmbCodigoArticulo;
+	private Component horizontalStrut_2;	
 	private JTextField txfCodigoArticulo;
 	private Component verticalStrut_1;
 	private Box horizontalBox_1;
@@ -131,7 +130,7 @@ public class Fr_DatosArticulo extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_DatosArticulo(int tipoOperacion,int idArticulo, int sucursal) {
+	public Fr_DatosArticulo(int tipoOperacion, int idArticulo, int sucursal) {
 
 		this.idSucursal = sucursal;
 		this.idArticulo = idArticulo;
@@ -206,13 +205,13 @@ public class Fr_DatosArticulo extends JFrame {
 		this.txfCodigoArticulo = new JTextField();
 		this.txfCodigoArticulo.setColumns(50);
 		this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
-		
-		if(tipoOperacion == 1) {
+
+		if (tipoOperacion == 1) {
 			this.txfCodigoArticulo.setEditable(false);
-		}else {
+		} else {
 			this.txfCodigoArticulo.setEditable(true);
 		}
-		
+
 		horizontalBox.add(this.txfCodigoArticulo);
 
 		verticalStrut_1 = Box.createVerticalStrut(20);
@@ -505,23 +504,13 @@ public class Fr_DatosArticulo extends JFrame {
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
-		
-		if(tipoOperacion == 1) {
+
+		if (tipoOperacion == 1) {
 			this.consultarArticuloPorId();
 		}
-		
+
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	}
-
-	private void llenarCmbCodigoArticulos() {
-		this.limpiarCmbCodigoArticulos();
-		articuloController.consultarCodigosArticulos(this.cmbCodigoArticulo);
-	}
-
-	private void limpiarCmbCodigoArticulos() {
-		this.cmbCodigoArticulo.removeAllItems();
-		this.cmbCodigoArticulo.updateUI();
-	}
+	}	
 
 	private void llenarCmbMarca() {
 		this.limpiarCmbMarca();
@@ -550,52 +539,8 @@ public class Fr_DatosArticulo extends JFrame {
 	private void insertarNuevoArticulo() {
 
 		Articulo art = new Articulo();
-
-		if (this.txfCodigoArticulo.getText().length() < 1 || this.txfCodigoArticulo.getText().equals(null)
-				|| this.txfCodigoArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfCodigoSat.getText().length() < 1 || this.txfCodigoSat.getText().equals(null)
-				|| this.txfCodigoSat.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo agrupador SAT", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreArticulo.getText().length() < 1 || this.txfNombreArticulo.getText().equals(null)
-				|| this.txfNombreArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el nombre comercial del acrticulo", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfCostoArticulo.getText().length() < 1 || this.txfCostoArticulo.getText().equals(null)
-				|| this.txfCostoArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el costo del articulo", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-				.parseDouble(this.txfPrecioGArticulo.getText())) {
-			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-				.parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
-			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
-				|| this.txfPrecioGArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
-					JOptionPane.WARNING_MESSAGE);
+		
+		if(this.verificarCamposVacios()) {
 			return;
 		}
 
@@ -616,6 +561,8 @@ public class Fr_DatosArticulo extends JFrame {
 			// System.out.println(art.toString());
 
 			articuloController.insertarNuevoArticulo(art);
+			
+			JOptionPane.showMessageDialog(this, "Articulo Agregado", "Exito", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -641,7 +588,6 @@ public class Fr_DatosArticulo extends JFrame {
 		try {
 
 			Articulo art = articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
-					
 
 			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
 			this.txfCodigoArticulo.setText(art.getCodigoArticulo());
@@ -679,53 +625,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 		Articulo art = new Articulo();
 
-		if (((String) this.cmbCodigoArticulo.getSelectedItem()).length() < 1
-				|| ((String) this.cmbCodigoArticulo.getSelectedItem()).equals(null)
-				|| ((String) this.cmbCodigoArticulo.getSelectedItem()).isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Se debe indicar el código del artículo", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfCodigoSat.getText().length() < 1 || this.txfCodigoSat.getText().equals(null)
-				|| this.txfCodigoSat.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo agrupador SAT", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreArticulo.getText().length() < 1 || this.txfNombreArticulo.getText().equals(null)
-				|| this.txfNombreArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el nombre comercial del acrticulo", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfCostoArticulo.getText().length() < 1 || this.txfCostoArticulo.getText().equals(null)
-				|| this.txfCostoArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el costo del articulo", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-				.parseDouble(this.txfPrecioGArticulo.getText())) {
-			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-				.parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
-			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
-				|| this.txfPrecioGArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
-					JOptionPane.WARNING_MESSAGE);
+		if(this.verificarCamposVacios()) {
 			return;
 		}
 
@@ -744,6 +644,8 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
 			articuloController.actualizarArticulo(art);
+			
+			JOptionPane.showMessageDialog(this, "Articulo actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -762,7 +664,7 @@ public class Fr_DatosArticulo extends JFrame {
 		try {
 
 			Articulo art = articuloController
-					.consultarArticuloPorCodigo((String) this.cmbCodigoArticulo.getSelectedItem(), this.idSucursal);
+					.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(), this.idSucursal);
 
 			EventQueue.invokeLater(new Runnable() {
 				@Override
@@ -781,6 +683,59 @@ public class Fr_DatosArticulo extends JFrame {
 
 	}
 
+	private boolean verificarCamposVacios() {
+		
+		if (this.txfCodigoArticulo.getText().length() < 1 || this.txfCodigoArticulo.getText().equals(null)
+				|| this.txfCodigoArticulo.getText().isEmpty() || this.txfCodigoArticulo.getText().isBlank()) {
+			JOptionPane.showMessageDialog(this, "Se debe indicar un codigo de articulo", "Error", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+
+		if (this.txfCodigoSat.getText().length() < 1 || this.txfCodigoSat.getText().equals(null)
+				|| this.txfCodigoSat.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo agrupador SAT", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+
+		if (this.txfNombreArticulo.getText().length() < 1 || this.txfNombreArticulo.getText().equals(null)
+				|| this.txfNombreArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el nombre comercial del acrticulo", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
+
+		if (this.txfCostoArticulo.getText().length() < 1 || this.txfCostoArticulo.getText().equals(null)
+				|| this.txfCostoArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el costo del articulo", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
+
+		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+				.parseDouble(this.txfPrecioGArticulo.getText())) {
+			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
+
+		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+				.parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
+			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
+
+		if (this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
+				|| this.txfPrecioGArticulo.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
+					JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private void limpiarCampos() {
 
 		this.txfCodigoArticulo.setText("");

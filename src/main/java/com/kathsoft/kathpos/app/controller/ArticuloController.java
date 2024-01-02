@@ -48,6 +48,7 @@ public class ArticuloController implements java.io.Serializable {
 						rset.getString(8), // existencia
 						rset.getString(9), // precio general
 						rset.getString(10), // precio mayoreo
+						rset.getInt(11) == 1 ? "Activo" : "Inactivo" //Estatus
 				};
 
 				tabla.addRow(fila);
@@ -70,44 +71,7 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
-
-	/**
-	 * consulta mediante un procedimiento almacenado en la bd el listado completo de
-	 * los códigos de cada artículo y los agrega a un JComboBox
-	 * 
-	 * @param cmb
-	 */
-	public void consultarCodigosArticulos(JComboBox<String> cmb) {
-
-		ResultSet rset = null;
-		CallableStatement stm = null;
-
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_codigos_articulos();");
-			rset = stm.executeQuery();
-
-			while (rset.next()) {
-				cmb.addItem(rset.getString(1));
-			}
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, rset, stm);
-
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
-		}
-	}
+	
 
 	/**
 	 * consulta el listado de articulos registrados en la base de datos de manera
@@ -144,6 +108,7 @@ public class ArticuloController implements java.io.Serializable {
 						rset.getString(8), // existencia
 						rset.getString(9), // precio general
 						rset.getString(10), // precio mayoreo
+						rset.getInt(11) == 1 ? "Activo" : "Inactivo" //Estatus
 				};
 
 				tabla.addRow(fila);
@@ -417,6 +382,31 @@ public class ArticuloController implements java.io.Serializable {
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
+				
+	}
+	
+	public void eliminarArticulo(int idArticulo) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL eliminar_articulo(?)");
+			stm.setInt(1, idArticulo);
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch(SQLException er) {
 				er.printStackTrace();
 			}
 		}

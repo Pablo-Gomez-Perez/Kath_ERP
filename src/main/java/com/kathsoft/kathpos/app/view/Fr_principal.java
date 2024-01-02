@@ -173,7 +173,8 @@ public class Fr_principal extends JFrame {
 			450, /* descripcion */
 			100, /* Existencia */
 			100, /* Precio g */
-			100 /* Precio m */
+			100, /* Precio m */
+			100 /* activo o inactivo*/
 	};
 
 	private int[] tablaClientesColumnsWidth = { 30, // indice
@@ -609,12 +610,10 @@ public class Fr_principal extends JFrame {
 		modelTablaArticulos.addColumn("Existencia");
 		modelTablaArticulos.addColumn("Precio G");
 		modelTablaArticulos.addColumn("Precio M");
+		modelTablaArticulos.addColumn("Estatus");
 
 		// se remueve el editor de la tabla de articulos
-		for (int i = 0; i < modelTablaArticulos.getColumnCount(); i++) {
-			Class<?> colClass = modelTablaArticulos.getColumnClass(i);
-			tablaArticulos.setDefaultEditor(colClass, null);
-		}
+		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos);
 
 		// =================================================================================================================================================================================
 
@@ -1774,7 +1773,7 @@ public class Fr_principal extends JFrame {
 
 				try {
 
-					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion, idArticulo, idArticulo);
+					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion, idArticulo, sucursal);
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
@@ -2049,7 +2048,17 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void eliminarArticulo() {
+		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Articulo",
+				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
 
+		if (input > 0) {
+			return;
+		}
+
+		this.articuloController
+				.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
+
+		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Sucursal", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void eliminarCategoria() {
