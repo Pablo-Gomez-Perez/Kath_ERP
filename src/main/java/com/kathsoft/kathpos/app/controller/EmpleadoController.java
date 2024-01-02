@@ -405,29 +405,17 @@ public class EmpleadoController implements Serializable {
 
 	}
 
-	public void eliminarEmpleado(int idEmpleado) {
+	public void eliminarEmpleado(int idEmpleado) throws SQLException{
 
 		CallableStatement stm = null;
 
-		try {
+		cn = Conexion.establecerConexionLocal("kath_erp");
+		stm = cn.prepareCall("CALL eliminar_empleado(?)");
+		stm.setInt(1, idEmpleado);
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL eliminar_empleado(?)");
-			stm.setInt(1, idEmpleado);
+		stm.execute();
 
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
+		Conexion.cerrarConexion(cn, stm);
 
 	}
 

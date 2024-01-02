@@ -879,6 +879,11 @@ public class Fr_principal extends JFrame {
 		panelClientesCentralBuscar.add(horizontalStrut_22);
 
 		btnBuscarCliente = new JButton("Buscar");
+		btnBuscarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buscarClientePorNombre();
+			}
+		});
 		btnBuscarCliente.setBackground(new Color(184, 134, 11));
 		btnBuscarCliente.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
@@ -1691,7 +1696,7 @@ public class Fr_principal extends JFrame {
 
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + er.getMessage(), "Error",
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -1925,10 +1930,16 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 
-		this.clientesController.eliminarCliente(
-				DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
+		try {
+			
+			this.clientesController.eliminarCliente(
+					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
 
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
+			
+		}catch(SQLException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
+		}
 
 	}
 
@@ -2069,18 +2080,28 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void eliminarCategoria() {
+		
 		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Categoría",
 				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
 
 		if (input > 0) {
 			return;
 		}
+		
+		try {
+			
+			this.categoriaController.eliminarCategoria(
+					DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
 
-		this.categoriaController.eliminarCategoria(
-				DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
-
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria",
-				JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria",
+					JOptionPane.INFORMATION_MESSAGE);
+			
+		}catch(SQLException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Categoria",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		
 	}
 
 	private void consultarCategoriaPorNombre() {
@@ -2088,6 +2109,12 @@ public class Fr_principal extends JFrame {
 		this.tablaCategorias.updateUI();
 		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
 				modelTablaCategoriaArticulo);
+	}
+	
+	private void buscarClientePorNombre() {
+		this.modelTablaClientes.getDataVector().removeAllElements();
+		this.tablaClientes.updateUI();
+		this.clientesController.buscarClintePorNombre(this.txfBuscarCliente.getText(), this.modelTablaClientes);
 	}
 
 }
