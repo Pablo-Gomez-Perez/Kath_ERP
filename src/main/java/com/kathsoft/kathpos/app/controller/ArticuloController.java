@@ -4,7 +4,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -48,7 +47,7 @@ public class ArticuloController implements java.io.Serializable {
 						rset.getString(8), // existencia
 						rset.getString(9), // precio general
 						rset.getString(10), // precio mayoreo
-						rset.getInt(11) == 1 ? "Activo" : "Inactivo" //Estatus
+						rset.getInt(11) == 1 ? "Activo" : "Inactivo" // Estatus
 				};
 
 				tabla.addRow(fila);
@@ -71,7 +70,6 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
-	
 
 	/**
 	 * consulta el listado de articulos registrados en la base de datos de manera
@@ -108,7 +106,7 @@ public class ArticuloController implements java.io.Serializable {
 						rset.getString(8), // existencia
 						rset.getString(9), // precio general
 						rset.getString(10), // precio mayoreo
-						rset.getInt(11) == 1 ? "Activo" : "Inactivo" //Estatus
+						rset.getInt(11) == 1 ? "Activo" : "Inactivo" // Estatus
 				};
 
 				tabla.addRow(fila);
@@ -330,7 +328,7 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 	}
-	
+
 	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
 		Articulo art = new Articulo();
 		CallableStatement stm = null;
@@ -341,7 +339,7 @@ public class ArticuloController implements java.io.Serializable {
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL buscar_articulo_por_id(?,?);");
 			stm.setInt(1, id);
-			stm.setInt(2, idSucursal);			
+			stm.setInt(2, idSucursal);
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
@@ -385,18 +383,18 @@ public class ArticuloController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
-				
+
 	}
-	
+
 	public void eliminarArticulo(int idArticulo) throws SQLException {
-		
+
 		CallableStatement stm = null;
-			
+
 		cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 		stm = cn.prepareCall("CALL eliminar_articulo(?)");
 		stm.setInt(1, idArticulo);
 		stm.execute();
-		
+
 		Conexion.cerrarConexion(cn, stm);
 	}
 

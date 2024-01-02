@@ -65,7 +65,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private JTextField txfIdArticulo;
 	private Component horizontalStrut_1;
 	private JLabel lblNewLabel_2;
-	private Component horizontalStrut_2;	
+	private Component horizontalStrut_2;
 	private JTextField txfCodigoArticulo;
 	private Component verticalStrut_1;
 	private Box horizontalBox_1;
@@ -510,7 +510,7 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	}	
+	}
 
 	private void llenarCmbMarca() {
 		this.limpiarCmbMarca();
@@ -539,8 +539,8 @@ public class Fr_DatosArticulo extends JFrame {
 	private void insertarNuevoArticulo() {
 
 		Articulo art = new Articulo();
-		
-		if(this.verificarCamposVacios()) {
+
+		if (this.verificarCamposVacios()) {
 			return;
 		}
 
@@ -561,7 +561,7 @@ public class Fr_DatosArticulo extends JFrame {
 			// System.out.println(art.toString());
 
 			articuloController.insertarNuevoArticulo(art);
-			
+
 			JOptionPane.showMessageDialog(this, "Articulo Agregado", "Exito", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (SQLException er) {
@@ -625,7 +625,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 		Articulo art = new Articulo();
 
-		if(this.verificarCamposVacios()) {
+		if (this.verificarCamposVacios()) {
 			return;
 		}
 
@@ -644,7 +644,7 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
 			articuloController.actualizarArticulo(art);
-			
+
 			JOptionPane.showMessageDialog(this, "Articulo actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (SQLException er) {
@@ -663,8 +663,8 @@ public class Fr_DatosArticulo extends JFrame {
 		Component componente = this;
 		try {
 
-			Articulo art = articuloController
-					.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(), this.idSucursal);
+			Articulo art = articuloController.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(),
+					this.idSucursal);
 
 			EventQueue.invokeLater(new Runnable() {
 				@Override
@@ -684,10 +684,11 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private boolean verificarCamposVacios() {
-		
+
 		if (this.txfCodigoArticulo.getText().length() < 1 || this.txfCodigoArticulo.getText().equals(null)
 				|| this.txfCodigoArticulo.getText().isEmpty() || this.txfCodigoArticulo.getText().isBlank()) {
-			JOptionPane.showMessageDialog(this, "Se debe indicar un codigo de articulo", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Se debe indicar un codigo de articulo", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 
@@ -732,10 +733,10 @@ public class Fr_DatosArticulo extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	private void limpiarCampos() {
 
 		this.txfCodigoArticulo.setText("");

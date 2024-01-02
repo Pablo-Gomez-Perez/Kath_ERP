@@ -2058,14 +2058,14 @@ public class Fr_principal extends JFrame {
 
 		try {
 			this.articuloController
-			.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
-			
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Articulo", JOptionPane.INFORMATION_MESSAGE);
-		}catch(SQLException er) {
+					.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
+
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Articulo",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (SQLException er) {
 			JOptionPane.showMessageDialog(this, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
-		
 	}
 
 	private void eliminarCategoria() {
