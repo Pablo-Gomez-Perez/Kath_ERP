@@ -161,6 +161,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox.add(lblNewLabel_1);
 
 		this.txfRfcEmpleado = new JTextField();
+		txfRfcEmpleado.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {				
+				if(txfCurpEmpleado.getText().length() > 18) {
+					e.consume();
+				}
+				txfRfcEmpleado.setText(txfRfcEmpleado.getText().toUpperCase());
+			}
+		});
 		this.txfRfcEmpleado.setColumns(60);
 		this.txfRfcEmpleado.setMaximumSize(this.txfRfcEmpleado.getPreferredSize());
 		horizontalBox.add(txfRfcEmpleado);
@@ -175,6 +184,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_1.add(lblNewLabel_2);
 
 		txfCurpEmpleado = new JTextField();
+		txfCurpEmpleado.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {				
+				if(txfRfcEmpleado.getText().length() > 13) {
+					e.consume();
+				}
+				txfCurpEmpleado.setText(txfCurpEmpleado.getText().toUpperCase());
+			}
+		});
 		txfCurpEmpleado.setMaximumSize(new Dimension(166, 20));
 		txfCurpEmpleado.setColumns(35);
 		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
@@ -211,6 +229,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		horizontalBox_2.add(horizontalStrut);
 
 		txfNombreCortoEmpleado = new JTextField();
+		txfNombreCortoEmpleado.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(txfNombreCortoEmpleado.getText().length() > 10) {
+					e.consume();
+				}
+				
+			}
+		});
 		horizontalBox_2.add(txfNombreCortoEmpleado);
 		txfNombreCortoEmpleado.setMaximumSize(new Dimension(86, 20));
 		txfNombreCortoEmpleado.setColumns(40);
