@@ -68,18 +68,35 @@ public class ClientesController implements Serializable {
 		}
 
 	}
-
-	public void eliminarCliente(int idCliente) {
+	
+	public void buscarClintePorNombre(String nombre,DefaultTableModel tabla) {
 
 		CallableStatement stm = null;
+		ResultSet rset = null;
 
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL eliminar_cliente(?);");
-			stm.setInt(1, idCliente);
+			stm = cn.prepareCall("CALL buscar_cliente_por_nombre(?);");
+			stm.setString(1, nombre);
+			rset = stm.executeQuery();
 
-			stm.execute();
+			while (rset.next()) {
+
+				tabla.addRow(new Object[] { rset.getInt(1), // indice
+						rset.getString(2), // rfc
+						rset.getString(3), // cuenta contable
+						rset.getString(4), // nombre completo
+						rset.getString(5), // nombre corto
+						rset.getString(6), // correo electronico
+						rset.getString(7), // estado
+						rset.getString(8), // ciudad
+						rset.getString(9), // direccion
+						rset.getString(10), // codigo postal
+						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
+				});
+
+			}
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -87,11 +104,30 @@ public class ClientesController implements Serializable {
 			er.printStackTrace();
 		} finally {
 			try {
-				Conexion.cerrarConexion(cn, stm);
+
+				Conexion.cerrarConexion(cn, rset, stm);
+
 			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
+
+	}
+	
+
+	public void eliminarCliente(int idCliente) throws SQLException {
+
+		CallableStatement stm = null;
+
+		cn = Conexion.establecerConexionLocal("kath_erp");
+		stm = cn.prepareCall("CALL eliminar_cliente(?);");
+		stm.setInt(1, idCliente);
+
+		stm.execute();
+
+		Conexion.cerrarConexion(cn, stm);
 
 	}
 

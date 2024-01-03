@@ -195,27 +195,15 @@ public class CategoriaController implements Serializable {
 
 	}
 
-	public void eliminarCategoria(int id) {
+	public void eliminarCategoria(int id) throws SQLException {
 		CallableStatement stm = null;
 
-		try {
+		cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+		stm = cn.prepareCall("CALL eliminar_categoria(?)");
+		stm.setInt(1, id);
+		stm.execute();
 
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL eliminar_categoria(?)");
-			stm.setInt(1, id);
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
+		Conexion.cerrarConexion(cn, stm);
 
 	}
 
