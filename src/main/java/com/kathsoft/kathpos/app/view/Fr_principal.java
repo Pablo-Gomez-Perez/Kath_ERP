@@ -355,6 +355,12 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_1;
 	private JTextField txfBuscarEmpleado;
 	private JButton btnBuscarEmpleado;
+	private JPanel panelProveedorCentralBuscar;
+	private JLabel lblNewLabel_5;
+	private Component horizontalStrut_2;
+	private JTextField txfBuscarProveedor;
+	private Component horizontalStrut_3;
+	private JButton btnBuscarProveedor;
 
 	/**
 	 * Launch the application.
@@ -1089,6 +1095,36 @@ public class Fr_principal extends JFrame {
 		panelProveedorCentralBotones.add(btnEliminarProveedor);
 
 		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
+		
+		panelProveedorCentralBuscar = new JPanel();
+		FlowLayout flowLayout_13 = (FlowLayout) panelProveedorCentralBuscar.getLayout();
+		flowLayout_13.setAlignment(FlowLayout.RIGHT);
+		panelProveedorCentralBuscar.setBackground(new Color(255, 215, 0));
+		panelProovedorCentral.add(panelProveedorCentralBuscar, BorderLayout.SOUTH);
+		
+		lblNewLabel_5 = new JLabel("Buscar Proveedor");
+		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelProveedorCentralBuscar.add(lblNewLabel_5);
+		
+		horizontalStrut_2 = Box.createHorizontalStrut(20);
+		panelProveedorCentralBuscar.add(horizontalStrut_2);
+		
+		txfBuscarProveedor = new JTextField();
+		panelProveedorCentralBuscar.add(txfBuscarProveedor);
+		txfBuscarProveedor.setColumns(70);
+		
+		horizontalStrut_3 = Box.createHorizontalStrut(20);
+		panelProveedorCentralBuscar.add(horizontalStrut_3);
+		
+		btnBuscarProveedor = new JButton("Buscar");
+		btnBuscarProveedor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 buscarProveedorPorNombre();
+			}
+		});
+		btnBuscarProveedor.setBackground(new Color(184, 134, 11));
+		btnBuscarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		panelProveedorCentralBuscar.add(btnBuscarProveedor);
 
 		// =================================================================================================================================================================================
 
@@ -1647,7 +1683,7 @@ public class Fr_principal extends JFrame {
 
 		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);			
 
-		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
+		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);				
 
 		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
 
@@ -2152,6 +2188,12 @@ public class Fr_principal extends JFrame {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
 		this.tableEmpleados.updateUI();
 		this.empleadoController.buscarEmpleadoPorNombre(this.txfBuscarEmpleado.getText(), this.modelTablaEmpleados);
+	}
+	
+	private void buscarProveedorPorNombre() {
+		this.modelTablaProveedores.getDataVector().removeAllElements();
+		this.tablaProveedores.updateUI();
+		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(), this.modelTablaProveedores);
 	}
 
 }
