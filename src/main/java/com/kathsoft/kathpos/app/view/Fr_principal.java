@@ -175,7 +175,7 @@ public class Fr_principal extends JFrame {
 			100, /* Existencia */
 			100, /* Precio g */
 			100, /* Precio m */
-			100 /* activo o inactivo*/
+			100 /* activo o inactivo */
 	};
 
 	private int[] tablaClientesColumnsWidth = { 30, // indice
@@ -982,32 +982,33 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
 		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
-		
+
 		panelEmpleadosCentralBuscar = new JPanel();
 		panelEmpleadosCentralBuscar.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_12 = (FlowLayout) panelEmpleadosCentralBuscar.getLayout();
 		flowLayout_12.setAlignment(FlowLayout.RIGHT);
 		panelEmpleadosCentral.add(panelEmpleadosCentralBuscar, BorderLayout.SOUTH);
-		
+
 		lblNewLabel_4 = new JLabel("Buscar Empleado");
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 13));
 		panelEmpleadosCentralBuscar.add(lblNewLabel_4);
-		
+
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		panelEmpleadosCentralBuscar.add(horizontalStrut_1);
-		
+
 		txfBuscarEmpleado = new JTextField();
 		panelEmpleadosCentralBuscar.add(txfBuscarEmpleado);
 		txfBuscarEmpleado.setColumns(70);
-		
+
 		btnBuscarEmpleado = new JButton("Buscar");
 		btnBuscarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buscarEmpleadoPorNombre();
 			}
 		});
-		btnBuscarEmpleado.setBackground(new Color(184,134,11));
-		btnBuscarEmpleado.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBuscarEmpleado.setBackground(new Color(184, 134, 11));
+		btnBuscarEmpleado.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		panelEmpleadosCentralBuscar.add(btnBuscarEmpleado);
 
 		panelProveedor = new JPanel();
@@ -1095,35 +1096,36 @@ public class Fr_principal extends JFrame {
 		panelProveedorCentralBotones.add(btnEliminarProveedor);
 
 		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
-		
+
 		panelProveedorCentralBuscar = new JPanel();
 		FlowLayout flowLayout_13 = (FlowLayout) panelProveedorCentralBuscar.getLayout();
 		flowLayout_13.setAlignment(FlowLayout.RIGHT);
 		panelProveedorCentralBuscar.setBackground(new Color(255, 215, 0));
 		panelProovedorCentral.add(panelProveedorCentralBuscar, BorderLayout.SOUTH);
-		
+
 		lblNewLabel_5 = new JLabel("Buscar Proveedor");
 		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 13));
 		panelProveedorCentralBuscar.add(lblNewLabel_5);
-		
+
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
 		panelProveedorCentralBuscar.add(horizontalStrut_2);
-		
+
 		txfBuscarProveedor = new JTextField();
 		panelProveedorCentralBuscar.add(txfBuscarProveedor);
 		txfBuscarProveedor.setColumns(70);
-		
+
 		horizontalStrut_3 = Box.createHorizontalStrut(20);
 		panelProveedorCentralBuscar.add(horizontalStrut_3);
-		
+
 		btnBuscarProveedor = new JButton("Buscar");
 		btnBuscarProveedor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 buscarProveedorPorNombre();
+				buscarProveedorPorNombre();
 			}
 		});
 		btnBuscarProveedor.setBackground(new Color(184, 134, 11));
-		btnBuscarProveedor.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBuscarProveedor.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		panelProveedorCentralBuscar.add(btnBuscarProveedor);
 
 		// =================================================================================================================================================================================
@@ -1681,9 +1683,9 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
-		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);			
+		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
-		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);				
+		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
 
 		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
 
@@ -1763,8 +1765,7 @@ public class Fr_principal extends JFrame {
 
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
@@ -1807,10 +1808,17 @@ public class Fr_principal extends JFrame {
 			return;
 		}
 
-		proveedorController
-				.eliminarProveedor(DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
+		try {
 
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
+			proveedorController.eliminarProveedor(
+					DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
+
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Proveedor", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void abrirVentanaFormularioProveedor(int opcion, int indiceProveedor) {
@@ -1998,14 +2006,15 @@ public class Fr_principal extends JFrame {
 		}
 
 		try {
-			
+
 			this.clientesController.eliminarCliente(
 					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
 
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
-			
-		}catch(SQLException er) {
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Cliente", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente",
+					JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (SQLException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Cliente", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
@@ -2097,17 +2106,22 @@ public class Fr_principal extends JFrame {
 	private void eliminarFormaDePago() {
 
 		int input = JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Eliminar Forma de Pago",
-				JOptionPane.YES_NO_OPTION);
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 		if (input > 0) {
 			return;
 		}
 
-		this.formasDePagoController.eliminarFormaDepAgo(
-				DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
+		try {
+			this.formasDePagoController.eliminarFormaDepAgo(
+					DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
 
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Forma de Pago",
-				JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Forma de Pago",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Forma de Pago", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void aliminarSucursal() {
@@ -2147,28 +2161,26 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void eliminarCategoria() {
-		
+
 		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Categoría",
 				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
 
 		if (input > 0) {
 			return;
 		}
-		
+
 		try {
-			
+
 			this.categoriaController.eliminarCategoria(
 					DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
 
 			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria",
 					JOptionPane.INFORMATION_MESSAGE);
-			
-		}catch(SQLException er) {
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Categoria",
-					JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (SQLException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Categoria", JOptionPane.INFORMATION_MESSAGE);
 		}
-		
-		
+
 	}
 
 	private void consultarCategoriaPorNombre() {
@@ -2177,23 +2189,24 @@ public class Fr_principal extends JFrame {
 		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
 				modelTablaCategoriaArticulo);
 	}
-	
+
 	private void buscarClientePorNombre() {
 		this.modelTablaClientes.getDataVector().removeAllElements();
 		this.tablaClientes.updateUI();
 		this.clientesController.buscarClintePorNombre(this.txfBuscarCliente.getText(), this.modelTablaClientes);
 	}
-	
+
 	private void buscarEmpleadoPorNombre() {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
 		this.tableEmpleados.updateUI();
 		this.empleadoController.buscarEmpleadoPorNombre(this.txfBuscarEmpleado.getText(), this.modelTablaEmpleados);
 	}
-	
+
 	private void buscarProveedorPorNombre() {
 		this.modelTablaProveedores.getDataVector().removeAllElements();
 		this.tablaProveedores.updateUI();
-		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(), this.modelTablaProveedores);
+		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(),
+				this.modelTablaProveedores);
 	}
 
 }

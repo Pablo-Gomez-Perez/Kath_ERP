@@ -45,11 +45,8 @@ public class FormasDePagoController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				tabla.addRow(new Object[] {
-						rset.getInt(1),
-						rset.getString(2),
-						rset.getShort(3) == 1 ? "Activo" : "Inactivo"
-				});
+				tabla.addRow(new Object[] { rset.getInt(1), rset.getString(2),
+						rset.getShort(3) == 1 ? "Activo" : "Inactivo" });
 			}
 
 		} catch (SQLException er) {
@@ -65,7 +62,7 @@ public class FormasDePagoController implements java.io.Serializable {
 		}
 
 	}
-	
+
 	public void verFormasDePagoEnTablaVentas(DefaultTableModel tabla) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -78,10 +75,7 @@ public class FormasDePagoController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				tabla.addRow(new Object[] {
-						rset.getInt(1),
-						rset.getString(2)						
-				});
+				tabla.addRow(new Object[] { rset.getInt(1), rset.getString(2) });
 			}
 
 		} catch (SQLException er) {
@@ -149,62 +143,50 @@ public class FormasDePagoController implements java.io.Serializable {
 			}
 		}
 	}
-	
-	public void eliminarFormaDepAgo(int idFormaDePago) {
-		
+
+	public void eliminarFormaDepAgo(int idFormaDePago) throws SQLException {
+
 		CallableStatement stm = null;
-		
-		try {
-			
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL eliminar_forma_pago(?);");
-			stm.setInt(1, idFormaDePago);
-			
-			stm.execute();
-			
-		}catch(SQLException er) {
-			er.printStackTrace();
-		}catch(Exception er) {
-			er.printStackTrace();
-		}finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			}catch(SQLException er) {
-				er.printStackTrace();
-			}
-		}
-		
+
+		cn = Conexion.establecerConexionLocal("kath_erp");
+		stm = cn.prepareCall("CALL eliminar_forma_pago(?);");
+		stm.setInt(1, idFormaDePago);
+
+		stm.execute();
+
+		Conexion.cerrarConexion(cn, stm);
+
 	}
-	
+
 	public FormasDePago consultarFormaDePagoPorId(int id) {
-		
+
 		ResultSet rset = null;
 		CallableStatement stm = null;
 		FormasDePago fpago = new FormasDePago();
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL bucar_forma_pago_por_id(?);");
 			stm.setInt(1, id);
-			
+
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				fpago.setId(rset.getInt(1));
 				fpago.setTipoDePago(rset.getString(2));
 			}
-			
+
 			return fpago;
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
 			return null;
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 }
