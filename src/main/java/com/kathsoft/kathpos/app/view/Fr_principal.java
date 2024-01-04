@@ -350,6 +350,11 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut;
 	private JTextField txfBuscarCategoria;
 	private JButton btnBuscarCategoria;
+	private JPanel panelEmpleadosCentralBuscar;
+	private JLabel lblNewLabel_4;
+	private Component horizontalStrut_1;
+	private JTextField txfBuscarEmpleado;
+	private JButton btnBuscarEmpleado;
 
 	/**
 	 * Launch the application.
@@ -912,10 +917,6 @@ public class Fr_principal extends JFrame {
 		panelEmpleadosCentral.add(scrollPaneTablaEmpleados, BorderLayout.CENTER);
 
 		modelTablaEmpleados = new DefaultTableModel();
-		tableEmpleados = new JTable();
-		tableEmpleados.setModel(this.modelTablaEmpleados);
-		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
 		modelTablaEmpleados.addColumn("id");
 		modelTablaEmpleados.addColumn("Sucursal");
 		modelTablaEmpleados.addColumn("RFC");
@@ -924,6 +925,9 @@ public class Fr_principal extends JFrame {
 		modelTablaEmpleados.addColumn("Nick");
 		modelTablaEmpleados.addColumn("Email");
 		modelTablaEmpleados.addColumn("Activo");
+		tableEmpleados = new JTable();
+		tableEmpleados.setModel(this.modelTablaEmpleados);
+		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		// remueve el editor del jtable
 		for (int i = 0; i < modelTablaEmpleados.getColumnCount(); i++) {
@@ -972,6 +976,33 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
 		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
+		
+		panelEmpleadosCentralBuscar = new JPanel();
+		panelEmpleadosCentralBuscar.setBackground(new Color(255, 215, 0));
+		FlowLayout flowLayout_12 = (FlowLayout) panelEmpleadosCentralBuscar.getLayout();
+		flowLayout_12.setAlignment(FlowLayout.RIGHT);
+		panelEmpleadosCentral.add(panelEmpleadosCentralBuscar, BorderLayout.SOUTH);
+		
+		lblNewLabel_4 = new JLabel("Buscar Empleado");
+		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panelEmpleadosCentralBuscar.add(lblNewLabel_4);
+		
+		horizontalStrut_1 = Box.createHorizontalStrut(20);
+		panelEmpleadosCentralBuscar.add(horizontalStrut_1);
+		
+		txfBuscarEmpleado = new JTextField();
+		panelEmpleadosCentralBuscar.add(txfBuscarEmpleado);
+		txfBuscarEmpleado.setColumns(70);
+		
+		btnBuscarEmpleado = new JButton("Buscar");
+		btnBuscarEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buscarEmpleadoPorNombre();
+			}
+		});
+		btnBuscarEmpleado.setBackground(new Color(184,134,11));
+		btnBuscarEmpleado.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		panelEmpleadosCentralBuscar.add(btnBuscarEmpleado);
 
 		panelProveedor = new JPanel();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
@@ -1614,7 +1645,7 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
-		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
+		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);			
 
 		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
 
@@ -2115,6 +2146,12 @@ public class Fr_principal extends JFrame {
 		this.modelTablaClientes.getDataVector().removeAllElements();
 		this.tablaClientes.updateUI();
 		this.clientesController.buscarClintePorNombre(this.txfBuscarCliente.getText(), this.modelTablaClientes);
+	}
+	
+	private void buscarEmpleadoPorNombre() {
+		this.modelTablaEmpleados.getDataVector().removeAllElements();
+		this.tableEmpleados.updateUI();
+		this.empleadoController.buscarEmpleadoPorNombre(this.txfBuscarEmpleado.getText(), this.modelTablaEmpleados);
 	}
 
 }

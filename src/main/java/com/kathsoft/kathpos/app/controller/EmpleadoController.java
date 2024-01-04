@@ -492,5 +492,42 @@ public class EmpleadoController implements Serializable {
 		}
 
 	}
+	
+	public void buscarEmpleadoPorNombre(String nombre, DefaultTableModel tabla) {
+		ResultSet rset = null;
+		CallableStatement stm = null;
+
+		try {
+			cn = Conexion.establecerConexionLocal("Kath_erp");
+			stm = cn.prepareCall("CALL buscar_empleado(?)");
+			stm.setString(1, nombre);
+			rset = stm.executeQuery();
+
+			while (rset.next()) {
+				Object[] fila = { rset.getInt(1), // id
+						rset.getString(2), //nombre 
+						rset.getString(3), // rfc
+						rset.getString(4), // curp
+						rset.getString(5), // nombre completo
+						rset.getString(6), // nombre corto
+						rset.getString(7), // correo
+						rset.getInt(8) == 1 ? "Activo" : "Inactivo" // activo
+				};
+				tabla.addRow(fila);
+			}
+		} catch (SQLException er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
+		} catch (Exception er) {
+			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			}
+		}
+	}
 
 }
