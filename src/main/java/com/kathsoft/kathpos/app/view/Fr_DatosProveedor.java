@@ -30,6 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.border.LineBorder;
 import javax.swing.border.CompoundBorder;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Fr_DatosProveedor extends JFrame {
 
@@ -156,6 +158,14 @@ public class Fr_DatosProveedor extends JFrame {
 		horizontalBox.add(horizontalStrut);
 
 		this.txfRfcProveedor = new JTextField();
+		txfRfcProveedor.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(txfRfcProveedor.getText().length() >= 13) {
+					e.consume();
+				}
+			}
+		});
 		this.txfRfcProveedor.setColumns(50);
 		this.txfRfcProveedor.setMaximumSize(this.txfRfcProveedor.getPreferredSize());
 		this.horizontalBox.add(txfRfcProveedor);
@@ -276,6 +286,15 @@ public class Fr_DatosProveedor extends JFrame {
 		horizontalBox_5.add(horizontalStrut_9);
 
 		txfCodigoPostalProveedor = new JTextField();
+		txfCodigoPostalProveedor.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char ch = e.getKeyChar();
+				if (ch < '0' || ch > '9' || txfCodigoPostalProveedor.getText().length() >= 5) {
+					e.consume();
+				}
+			}
+		});
 		horizontalBox_5.add(txfCodigoPostalProveedor);
 		txfCodigoPostalProveedor.setColumns(15);
 		this.txfCodigoPostalProveedor.setMaximumSize(this.txfCodigoPostalProveedor.getPreferredSize());

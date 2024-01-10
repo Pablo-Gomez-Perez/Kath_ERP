@@ -253,7 +253,7 @@ public class Fr_DatosCategoria extends JFrame {
 
 			JOptionPane.showMessageDialog(this, "Categoria almacenada", "Exito", JOptionPane.INFORMATION_MESSAGE);
 
-			this.borrarCampos();
+			this.borrarCampos();			
 
 		} catch (Exception er) {
 			er.printStackTrace();
@@ -278,6 +278,8 @@ public class Fr_DatosCategoria extends JFrame {
 			this.categoriaController.actualizarCategoria(categoria);
 
 			JOptionPane.showMessageDialog(this, "Categoria almacenada", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.cerrarForm();
 
 		} catch (Exception er) {
 			er.printStackTrace();

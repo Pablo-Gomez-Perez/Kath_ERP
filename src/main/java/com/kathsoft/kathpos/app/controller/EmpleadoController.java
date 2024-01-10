@@ -60,10 +60,7 @@ public class EmpleadoController implements Serializable {
 		CallableStatement stm = null;
 		ResultSet rset = null;
 
-		String pswd = "";
-
-		System.out.println(empl.getNombreCorto());
-		System.out.println(empl.getPassword());
+		String pswd = "";		
 
 		try {
 
@@ -77,9 +74,7 @@ public class EmpleadoController implements Serializable {
 				pswd = rset.getString(1);
 				System.out.println(pswd);
 			}
-
-			System.out.println(empl.getPassword());
-
+			
 			return true;
 
 		} catch (SQLException er) {
@@ -428,7 +423,7 @@ public class EmpleadoController implements Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL actualizarPassWordEmpleado(?,?);");
 			stm.setString(1, empl.getRfc());
 			stm.setString(2, empl.getPassword());

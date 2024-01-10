@@ -86,7 +86,7 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				cmb.addItem(rset.getString(2));
+				cmb.addItem(rset.getString(2));				
 			}
 
 		} catch (SQLException er) {
