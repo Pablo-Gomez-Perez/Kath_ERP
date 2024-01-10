@@ -271,6 +271,8 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 			JOptionPane.showMessageDialog(this, "Contraseña actualizada", 
 					"Kat-Pos - Info", JOptionPane.INFORMATION_MESSAGE);
 			
+			this.dispose();
+			
 		} catch (Exception er) {
 			er.printStackTrace();
 		}

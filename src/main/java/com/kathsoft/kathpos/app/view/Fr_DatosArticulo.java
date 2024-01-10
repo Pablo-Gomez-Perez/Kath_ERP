@@ -563,6 +563,8 @@ public class Fr_DatosArticulo extends JFrame {
 			articuloController.insertarNuevoArticulo(art);
 
 			JOptionPane.showMessageDialog(this, "Articulo Agregado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.limpiarCampos();
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -646,6 +648,8 @@ public class Fr_DatosArticulo extends JFrame {
 			articuloController.actualizarArticulo(art);
 
 			JOptionPane.showMessageDialog(this, "Articulo actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.cerrarForm();
 
 		} catch (SQLException er) {
 			er.printStackTrace();

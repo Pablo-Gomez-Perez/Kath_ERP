@@ -1,38 +1,34 @@
 package com.kathsoft.kathpos.app.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.Date;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.BoxLayout;
-import javax.swing.Box;
-import javax.swing.JComboBox;
-import java.awt.Component;
-import javax.swing.JTextField;
-import java.awt.Dimension;
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import java.awt.FlowLayout;
-import java.awt.event.ItemListener;
-import java.sql.Date;
-import java.awt.event.ItemEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class Fr_DatosEmpleado extends JFrame {
 	/**
@@ -164,7 +160,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfRfcEmpleado.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {				
-				if(txfCurpEmpleado.getText().length() > 18) {
+				if(txfRfcEmpleado.getText().length() >= 13) {
 					e.consume();
 				}
 				txfRfcEmpleado.setText(txfRfcEmpleado.getText().toUpperCase());
@@ -187,7 +183,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfCurpEmpleado.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {				
-				if(txfRfcEmpleado.getText().length() > 13) {
+				if(txfCurpEmpleado.getText().length() >= 18) {
 					e.consume();
 				}
 				txfCurpEmpleado.setText(txfCurpEmpleado.getText().toUpperCase());
@@ -502,9 +498,7 @@ public class Fr_DatosEmpleado extends JFrame {
 			dia = fecha[2];
 			mes = fecha[1];
 			anio = fecha[0];
-		}
-
-		System.out.println(empl.toString());
+		}		
 
 		this.txfRfcEmpleado.setText(empl.getRfc());
 		this.txfCurpEmpleado.setText(empl.getCurp());
