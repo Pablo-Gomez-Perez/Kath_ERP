@@ -37,6 +37,7 @@ import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_DatosArticulo extends JFrame {
 
@@ -562,7 +563,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 			articuloController.insertarNuevoArticulo(art);
 
-			JOptionPane.showMessageDialog(this, "Articulo Agregado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
 			
 			this.limpiarCampos();
 
@@ -644,7 +645,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 			articuloController.actualizarArticulo(art);
 
-			JOptionPane.showMessageDialog(this, "Articulo actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
 			
 			this.cerrarForm();
 

@@ -86,7 +86,7 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				cmb.addItem(rset.getString(2));				
+				cmb.addItem(rset.getString(2));
 			}
 
 		} catch (SQLException er) {
@@ -268,30 +268,18 @@ public class SucursalController implements java.io.Serializable {
 		}
 	}
 
-	public void eliminarSucursal(int idSucursal) {
+	public void eliminarSucursal(int idSucursal) throws SQLException {
 
 		CallableStatement stm = null;
 
-		try {
+		cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+		stm = cn.prepareCall("CALL eliminar_sucursal(?);");
 
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL eliminar_sucursal(?);");
+		stm.setInt(1, idSucursal);
 
-			stm.setInt(1, idSucursal);
+		stm.execute();
 
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
+		Conexion.cerrarConexion(cn, stm);
 
 	}
 

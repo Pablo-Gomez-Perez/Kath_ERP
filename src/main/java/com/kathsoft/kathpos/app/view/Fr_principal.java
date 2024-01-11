@@ -51,6 +51,7 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.tools.DataTools;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_principal extends JFrame {
 
@@ -1998,8 +1999,7 @@ public class Fr_principal extends JFrame {
 
 	private void eliminarCliente() {
 
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Cliente",
-				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
 
 		if (input > 0) {
 			return;
@@ -2010,11 +2010,11 @@ public class Fr_principal extends JFrame {
 			this.clientesController.eliminarCliente(
 					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
 
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Cliente",
-					JOptionPane.INFORMATION_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
 
 		} catch (SQLException er) {
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Cliente", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 
 	}
@@ -2105,8 +2105,7 @@ public class Fr_principal extends JFrame {
 
 	private void eliminarFormaDePago() {
 
-		int input = JOptionPane.showConfirmDialog(null, "Desea eliminar este registro", "Eliminar Forma de Pago",
-				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
 
 		if (input > 0) {
 			return;
@@ -2116,33 +2115,36 @@ public class Fr_principal extends JFrame {
 			this.formasDePagoController.eliminarFormaDepAgo(
 					DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
 
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Forma de Pago",
-					JOptionPane.INFORMATION_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
 		} catch (SQLException er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Forma de Pago", JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
 		}
 	}
 
 	private void aliminarSucursal() {
 
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Sucursal",
-				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
 
 		if (input > 0) {
 			return;
 		}
 
-		this.sucursalController
-				.eliminarSucursal(DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
+		try {
+			this.sucursalController
+			.eliminarSucursal(DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
+		}catch(SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());		
+		}
 
-		JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Sucursal", JOptionPane.INFORMATION_MESSAGE);
+		MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
 
 	}
 
 	private void eliminarArticulo() {
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Articulo",
-				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+		
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
 
 		if (input > 0) {
 			return;
@@ -2152,10 +2154,10 @@ public class Fr_principal extends JFrame {
 			this.articuloController
 					.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
 
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Articulo",
-					JOptionPane.INFORMATION_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
+			
 		} catch (SQLException er) {
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 
 	}
