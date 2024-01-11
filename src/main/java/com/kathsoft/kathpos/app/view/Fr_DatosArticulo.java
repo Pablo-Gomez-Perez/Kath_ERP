@@ -575,10 +575,7 @@ public class Fr_DatosArticulo extends JFrame {
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-
-		this.limpiarCampos();
-		JOptionPane.showMessageDialog(this, "Articulo almacenado", "Registro almacenado",
-				JOptionPane.INFORMATION_MESSAGE);
+		
 	}
 
 	/**

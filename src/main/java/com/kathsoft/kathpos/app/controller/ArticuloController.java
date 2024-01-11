@@ -141,44 +141,24 @@ public class ArticuloController implements java.io.Serializable {
 
 		CallableStatement stm = null;
 
-		try {
+		cn = Conexion.establecerConexionLocal("kath_erp");
+		stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?,?,?,?);");
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+		stm.setString(1, art.getCodigoArticulo());
+		stm.setString(2, art.getNombreProveedor());
+		stm.setString(3, art.getNombreCategoria());
+		stm.setString(4, art.getCodigoSat());
+		stm.setString(5, art.getNombre());
+		stm.setString(6, art.getDescripcion());
+		stm.setInt(7, art.isExento() == true ? 1 : 0);
+		stm.setDouble(8, art.getCostoUnitario());
+		stm.setDouble(9, art.getPrecioGeneral());
+		stm.setDouble(10, art.getPrecioMayoreo());
+		stm.setInt(11, art.getCantidadMayoreo());
 
-			stm.setString(1, art.getCodigoArticulo());
-			stm.setString(2, art.getNombreProveedor());
-			stm.setString(3, art.getNombreCategoria());
-			stm.setString(4, art.getCodigoSat());
-			stm.setString(5, art.getNombre());
-			stm.setString(6, art.getDescripcion());
-			stm.setInt(7, art.isExento() == true ? 1 : 0);
-			stm.setDouble(8, art.getCostoUnitario());
-			stm.setDouble(9, art.getPrecioGeneral());
-			stm.setDouble(10, art.getPrecioMayoreo());
-			stm.setInt(11, art.getCantidadMayoreo());
+		stm.execute();
 
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, stm);
-
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
-		}
+		Conexion.cerrarConexion(cn, stm);
 
 	}
 
@@ -192,45 +172,25 @@ public class ArticuloController implements java.io.Serializable {
 
 		CallableStatement stm = null;
 
-		try {
+		cn = Conexion.establecerConexionLocal("kath_erp");
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+		stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
 
-			stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+		stm.setInt(1, art.getIdArticulo());
+		stm.setString(2, art.getNombreProveedor());
+		stm.setString(3, art.getNombreCategoria());
+		stm.setString(4, art.getCodigoSat());
+		stm.setString(5, art.getNombre());
+		stm.setString(6, art.getDescripcion());
+		stm.setInt(7, art.isExento() == true ? 1 : 0);
+		stm.setDouble(8, art.getCostoUnitario());
+		stm.setDouble(9, art.getPrecioGeneral());
+		stm.setDouble(10, art.getPrecioMayoreo());
+		stm.setInt(11, art.getCantidadMayoreo());
 
-			stm.setInt(1, art.getIdArticulo());
-			stm.setString(2, art.getNombreProveedor());
-			stm.setString(3, art.getNombreCategoria());
-			stm.setString(4, art.getCodigoSat());
-			stm.setString(5, art.getNombre());
-			stm.setString(6, art.getDescripcion());
-			stm.setInt(7, art.isExento() == true ? 1 : 0);
-			stm.setDouble(8, art.getCostoUnitario());
-			stm.setDouble(9, art.getPrecioGeneral());
-			stm.setDouble(10, art.getPrecioMayoreo());
-			stm.setInt(11, art.getCantidadMayoreo());
+		stm.execute();
 
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, stm);
-
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
-		}
+		Conexion.cerrarConexion(cn, stm);
 
 	}
 
