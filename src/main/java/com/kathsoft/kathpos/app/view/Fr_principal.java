@@ -1751,8 +1751,7 @@ public class Fr_principal extends JFrame {
 	private void eliminarEmpleado() {
 
 		int indiceEmpleadoSeleccionado = -1;
-		int input = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el registro seleccionado?", "Error",
-				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
 
 		if (input > 0) {
 			return;
@@ -1763,10 +1762,12 @@ public class Fr_principal extends JFrame {
 			indiceEmpleadoSeleccionado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados,
 					0);
 			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
-
+			
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
+			
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this);
 		}
 
 	}
@@ -1802,8 +1803,7 @@ public class Fr_principal extends JFrame {
 	 */
 	private void eliminarProveedor() {
 
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminar el registro", "Eliminar",
-				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);		
 
 		if (input > 0) {
 			return;
@@ -1814,11 +1814,11 @@ public class Fr_principal extends JFrame {
 			proveedorController.eliminarProveedor(
 					DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
 
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
 
 		} catch (SQLException er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Proveedor", JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 
@@ -2131,14 +2131,16 @@ public class Fr_principal extends JFrame {
 		}
 
 		try {
+			
 			this.sucursalController
 			.eliminarSucursal(DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
+			
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
+			
 		}catch(SQLException er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());		
-		}
-
-		MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
+		}		
 
 	}
 
