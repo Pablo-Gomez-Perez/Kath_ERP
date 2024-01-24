@@ -366,6 +366,15 @@ public class Fr_principal extends JFrame {
 	private JButton btnExportarClientesExcel;
 	private JButton btnExportarEmpleadosExcel;
 	private JButton btnExportarProveedoresExcel;
+	private JMenu menuReportes;
+	private JMenu subMenuReportesExcel;
+	private JMenu subMenuReportesPDF;
+	private JMenu subMenuGraficas;
+	private JMenuItem opcionReporteExcelArticulo;
+	private JMenuItem opcionReporteExcelClientes;
+	private JMenuItem opcionReporteExcelEmpleados;
+	private JMenuItem opcionReporteExcelProveedores;
+	private JMenuItem opcionReporteExcelVentas;
 
 	/**
 	 * Launch the application.
@@ -572,6 +581,67 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
+		
+		menuReportes = new JMenu("Reportes");
+		menuReportes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/reportes.jpg")));
+		BarraMenu.add(menuReportes);
+		
+		subMenuReportesExcel = new JMenu("Exportar Tabla");
+		subMenuReportesExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		menuReportes.add(subMenuReportesExcel);
+		
+		opcionReporteExcelArticulo = new JMenuItem("Articulos");
+		opcionReporteExcelArticulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarArticuloExcel();
+			}
+		});
+		opcionReporteExcelArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
+		subMenuReportesExcel.add(opcionReporteExcelArticulo);
+		
+		opcionReporteExcelClientes = new JMenuItem("Clientes");
+		opcionReporteExcelClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarClientesExcel();
+			}
+		});
+		opcionReporteExcelClientes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
+		subMenuReportesExcel.add(opcionReporteExcelClientes);
+		
+		opcionReporteExcelEmpleados = new JMenuItem("Empleados");
+		opcionReporteExcelEmpleados.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarEmpleadosExcel();
+			}
+		});
+		opcionReporteExcelEmpleados.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/empleados.jpg")));
+		subMenuReportesExcel.add(opcionReporteExcelEmpleados);
+		
+		opcionReporteExcelProveedores = new JMenuItem("Proveedores");
+		opcionReporteExcelProveedores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarProveedoresExcel();
+			}
+		});
+		opcionReporteExcelProveedores.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
+		subMenuReportesExcel.add(opcionReporteExcelProveedores);
+		
+		opcionReporteExcelVentas = new JMenuItem("Ventas");
+		opcionReporteExcelVentas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarVentaExcel();
+			}
+		});
+		opcionReporteExcelVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
+		subMenuReportesExcel.add(opcionReporteExcelVentas);
+		
+		subMenuReportesPDF = new JMenu("PDF");
+		subMenuReportesPDF.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/pdfLogo.jpg")));
+		menuReportes.add(subMenuReportesPDF);
+		
+		subMenuGraficas = new JMenu("Analisis Grafico");
+		subMenuGraficas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/grafico.png")));
+		menuReportes.add(subMenuGraficas);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
