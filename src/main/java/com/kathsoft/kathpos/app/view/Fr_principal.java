@@ -363,6 +363,9 @@ public class Fr_principal extends JFrame {
 	private JTextField txfBuscarProveedor;
 	private Component horizontalStrut_3;
 	private JButton btnBuscarProveedor;
+	private JButton btnExportarClientesExcel;
+	private JButton btnExportarEmpleadosExcel;
+	private JButton btnExportarProveedoresExcel;
 
 	/**
 	 * Launch the application.
@@ -850,6 +853,16 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		panelClientesCentralBotones.add(btnEliminarCliente);
+		
+		btnExportarClientesExcel = new JButton("Exportar a Excel");
+		btnExportarClientesExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarClientesExcel();
+			}
+		});
+		btnExportarClientesExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		this.btnExportarClientesExcel.setBackground(new Color(102,205,170));
+		panelClientesCentralBotones.add(btnExportarClientesExcel);
 
 		scrollPaneTablaClientes = new JScrollPane();
 		panelClientesCentral.add(scrollPaneTablaClientes, BorderLayout.CENTER);
@@ -989,6 +1002,16 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
 		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
+		
+		btnExportarEmpleadosExcel = new JButton("Exportar a Excel");
+		btnExportarEmpleadosExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarEmpleadosExcel();
+			}
+		});
+		btnExportarEmpleadosExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		this.btnExportarEmpleadosExcel.setBackground(new Color(105,205,170));
+		panelEmpleadosCentralbotones.add(btnExportarEmpleadosExcel);
 
 		panelEmpleadosCentralBuscar = new JPanel();
 		panelEmpleadosCentralBuscar.setBackground(new Color(255, 215, 0));
@@ -1101,6 +1124,16 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
 		panelProveedorCentralBotones.add(btnEliminarProveedor);
+		
+		btnExportarProveedoresExcel = new JButton("Exportar a Excel");
+		btnExportarProveedoresExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarProveedoresExcel();
+			}
+		});
+		btnExportarProveedoresExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		this.btnExportarProveedoresExcel.setBackground(new Color(102,205,170));
+		panelProveedorCentralBotones.add(btnExportarProveedoresExcel);
 
 		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
 
@@ -1349,6 +1382,11 @@ public class Fr_principal extends JFrame {
 		panelVentasCentralBotones.add(btNuevaVenta);
 
 		btnExportarVentasExcel = new JButton("Exportar a Excel");
+		btnExportarVentasExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarVentaExcel();
+			}
+		});
 		btnExportarVentasExcel.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		btnExportarVentasExcel.setBackground(new Color(102, 205, 170));
@@ -2225,9 +2263,50 @@ public class Fr_principal extends JFrame {
 			DataTools.exportarTablaExcel(modelTablaArticulos, this);						
 			
 		}catch(Exception er) {
+			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
 	}
 	
+	private void exportarVentaExcel() {
+		try {
+			DataTools.exportarTablaExcel(modelTablaVentas, this);
+		}catch(Exception er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			er.printStackTrace();
+		}
+	}
+	
+	private void exportarClientesExcel() {
+		try {
+			DataTools.exportarTablaExcel(modelTablaClientes, this);
+		}catch(Exception er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			er.printStackTrace();
+		}
+	}
+	
+	
+	private void exportarEmpleadosExcel() {
+		try {
+			DataTools.exportarTablaExcel(modelTablaEmpleados, this);
+		}catch(Exception er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			er.printStackTrace();
+		}
+	}
+	
+	private void exportarProveedoresExcel() {
+		try {
+			DataTools.exportarTablaExcel(modelTablaProveedores, this);
+		}catch(Exception er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			er.printStackTrace();
+		}
+	}
 }
