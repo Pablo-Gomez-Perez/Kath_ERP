@@ -12,7 +12,8 @@ public class MessageHandler {
 	public static final short UPDATE_SUCCESS_MESSAGE = 3;
 	public static final short ERROR_MESSAGE = 4;
 	public static final short WARN_MESSAGE = 5;
-	public static final short DELETE_DATA_QUESTION_MESSAGE = 6;
+	public static final short CREATE_SUCCESS_MESSAGE = 6;
+	public static final short DELETE_DATA_QUESTION_MESSAGE = 7;
 
 	public static int displayMessage(int type, Component parentComponent, String... message) {
 
@@ -53,7 +54,12 @@ public class MessageHandler {
 			return JOptionPane.showConfirmDialog(parentComponent, "Desea Eliminar el registro" + messageCompleted,
 					"Eliminar Registro", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		}
+		case CREATE_SUCCESS_MESSAGE: {
+			return 0;
+		}
 		default:
+			JOptionPane.showMessageDialog(parentComponent, "Archivo generado con éxito en la ruta: " + messageCompleted,
+					"Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
 			return 0;
 		}
 

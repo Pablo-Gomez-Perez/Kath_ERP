@@ -20,6 +20,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -676,6 +677,11 @@ public class Fr_principal extends JFrame {
 		panelArticulosCentralBotones.add(btnEliminarArticulo);
 
 		btnExportarArticuloExcel = new JButton("Exportar a Excel");
+		btnExportarArticuloExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarArticuloExcel();
+			}
+		});
 		btnExportarArticuloExcel.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
@@ -2212,5 +2218,16 @@ public class Fr_principal extends JFrame {
 		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(),
 				this.modelTablaProveedores);
 	}
-
+	
+	private void exportarArticuloExcel() {
+		try{
+			
+			DataTools.exportarTablaExcel(modelTablaArticulos, this);						
+			
+		}catch(Exception er) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			er.printStackTrace();
+		}
+	}
+	
 }
