@@ -1,7 +1,13 @@
 package com.kathsoft.kathpos.tools;
 
+import java.awt.Component;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -22,8 +28,7 @@ public class DataTools {
 
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(tabla, "Ha ocurrido un error: " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, null, er.getMessage());
 			return -1;
 		}
 
@@ -75,6 +80,57 @@ public class DataTools {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
+	}
+	
+	/**
+	 * Exporta el contenido de un Jtable a un fichero de tipo CSV
+	 * @param model
+	 * @param ruta
+	 * @throws Exception
+	 */
+	public static void exportarTablaExcel(DefaultTableModel model, Component parent) throws Exception {									
+		
+		new Thread(() -> {			
+			try {
+				var fc = new JFileChooser();
+				fc.setFileFilter(new FileNameExtensionFilter("csv","txt"));				
+				int optionVal = fc.showSaveDialog(parent);				
+				if(optionVal == JFileChooser.APPROVE_OPTION) {					
+					var documento = new FileWriter(fc.getSelectedFile());
+					var contenido = new PrintWriter(documento);
+					String data = GenerarContenidoCsv(model);					
+					contenido.println(data);
+					
+					contenido.close();
+					fc.cancelSelection();
+					MessageHandler.displayMessage(MessageHandler.CREATE_SUCCESS_MESSAGE, parent, fc.getSelectedFile().getCanonicalPath());					
+				}
+				if(optionVal == JFileChooser.ERROR_OPTION) {
+					return;
+				}
+			}catch(Exception er) {
+				er.printStackTrace();
+			}
+		}).start();			
+				
+	}
+	
+	public static String GenerarContenidoCsv(DefaultTableModel model) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		
+		if(model.getDataVector().size() < 1) {
+			throw new Exception("No existen datos a exportar");			
+		}
+		
+		model.getDataVector().forEach(v -> {
+			sb.append("\n");
+			for(int i = 0; i < v.size(); i++) {
+				sb.append(String.valueOf(v.get(i)));
+				sb.append(",");
+			}			
+		});
+		
+		return sb.toString();
 	}
 
 }
