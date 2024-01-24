@@ -93,10 +93,10 @@ public class DataTools {
 		new Thread(() -> {			
 			try {
 				var fc = new JFileChooser();
-				fc.setFileFilter(new FileNameExtensionFilter("csv","txt"));				
+				fc.setFileFilter(new FileNameExtensionFilter("csv","txt"));
 				int optionVal = fc.showSaveDialog(parent);				
 				if(optionVal == JFileChooser.APPROVE_OPTION) {					
-					var documento = new FileWriter(fc.getSelectedFile());
+					var documento = new FileWriter(fc.getSelectedFile().getCanonicalPath().concat(".csv"));
 					var contenido = new PrintWriter(documento);
 					String data = GenerarContenidoCsv(model);					
 					contenido.println(data);
