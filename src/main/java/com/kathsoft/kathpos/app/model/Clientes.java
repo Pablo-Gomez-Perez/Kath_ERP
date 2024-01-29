@@ -20,6 +20,7 @@ public class Clientes extends Usuario {
 	 */
 	private String nombreCorto;
 	private String descripcion;
+	private int idTipoCliente;
 	
 
 	/**
@@ -38,10 +39,11 @@ public class Clientes extends Usuario {
 	 * @param nombreCorto
 	 */
 	public Clientes(int id, String rfc, int idCuentaContable, String claveCuentaContable, String nombre, Date fechaNacimiento, String email,
-			String estado, String ciudad, String direccion, String codigoPostal, String nombreCorto, String descripcion) {
+			String estado, String ciudad, String direccion, String codigoPostal, String nombreCorto, String descripcion, int idTipoCliente) {
 		super(id, rfc, idCuentaContable, claveCuentaContable,nombre, fechaNacimiento, email, estado, ciudad, direccion, codigoPostal);
 		this.nombreCorto = nombreCorto;
 		this.descripcion = descripcion;
+		this.idTipoCliente = idTipoCliente;
 	}
 
 
@@ -96,6 +98,14 @@ public class Clientes extends Usuario {
 	 */
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+	
+	public void setIdTipoCliente(int idTipoCliente) {
+		this.idTipoCliente = idTipoCliente;
+	}
+	
+	public int getIdTipoCliente() {
+		return this.idTipoCliente;
 	}
 
 	@Override

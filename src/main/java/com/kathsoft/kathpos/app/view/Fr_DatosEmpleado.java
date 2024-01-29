@@ -188,8 +188,7 @@ public class Fr_DatosEmpleado extends JFrame {
 				}
 				txfCurpEmpleado.setText(txfCurpEmpleado.getText().toUpperCase());
 			}
-		});
-		txfCurpEmpleado.setMaximumSize(new Dimension(166, 20));
+		});		
 		txfCurpEmpleado.setColumns(35);
 		this.txfCurpEmpleado.setMaximumSize(this.txfCurpEmpleado.getPreferredSize());
 		horizontalBox_1.add(txfCurpEmpleado);
@@ -212,8 +211,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		lblNewLabel_4 = new JLabel("Nombre completo");
 		horizontalBox_2.add(lblNewLabel_4);
 
-		txfNombreCompletoEmpleado = new JTextField();
-		txfNombreCompletoEmpleado.setMaximumSize(new Dimension(286, 20));
+		txfNombreCompletoEmpleado = new JTextField();		
 		txfNombreCompletoEmpleado.setColumns(60);
 		this.txfNombreCompletoEmpleado.setMaximumSize(this.txfNombreCompletoEmpleado.getPreferredSize());
 		horizontalBox_2.add(txfNombreCompletoEmpleado);

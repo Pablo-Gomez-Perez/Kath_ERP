@@ -182,6 +182,7 @@ public class Fr_principal extends JFrame {
 
 	private int[] tablaClientesColumnsWidth = { 30, // indice
 			150, // Rfc
+			100, // tipo de cliente
 			100, // cuenta contable
 			300, // nombre completo
 			100, // nombre corto
@@ -945,6 +946,7 @@ public class Fr_principal extends JFrame {
 
 		modelTablaClientes.addColumn("Id");
 		modelTablaClientes.addColumn("RFC");
+		modelTablaClientes.addColumn("Tipo");
 		modelTablaClientes.addColumn("Cta Contable");
 		modelTablaClientes.addColumn("Nombre completo");
 		modelTablaClientes.addColumn("Alias");
@@ -2067,7 +2069,7 @@ public class Fr_principal extends JFrame {
 
 	private void llenarTablaClientes() {
 		this.borrarElementosDeLaTablaClientes();
-		clientesController.verClientesEnTabla(modelTablaClientes);
+		clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(),modelTablaClientes);
 	}
 
 	/**
@@ -2311,7 +2313,7 @@ public class Fr_principal extends JFrame {
 	private void buscarClientePorNombre() {
 		this.modelTablaClientes.getDataVector().removeAllElements();
 		this.tablaClientes.updateUI();
-		this.clientesController.buscarClintePorNombre(this.txfBuscarCliente.getText(), this.modelTablaClientes);
+		this.clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), this.modelTablaClientes);
 	}
 
 	private void buscarEmpleadoPorNombre() {

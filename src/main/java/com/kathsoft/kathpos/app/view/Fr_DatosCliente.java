@@ -13,7 +13,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.controller.ClientesController;
+import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.model.Clientes;
+import com.kathsoft.kathpos.app.model.TipoCliente;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 import javax.swing.JButton;
 import java.awt.Component;
@@ -32,6 +35,8 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Fr_DatosCliente extends JFrame {
 
@@ -45,6 +50,7 @@ public class Fr_DatosCliente extends JFrame {
 	 * 
 	 */
 	private ClientesController clientesController = new ClientesController();
+	private TipoClienteController tipoClienteController = new TipoClienteController();
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JLabel lblNewLabel;
@@ -111,6 +117,10 @@ public class Fr_DatosCliente extends JFrame {
 	private int indiceCliente;
 	private Component horizontalStrut_15;
 	private JButton btnHistorialCred;
+	private Component horizontalStrut_16;
+	private JLabel lblNewLabel_11;
+	private Component horizontalStrut_17;
+	private JComboBox<String> cmbTipoCliente;
 
 	/**
 	 * Create the frame.
@@ -122,8 +132,8 @@ public class Fr_DatosCliente extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosCliente.class.getResource(
 				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setBounds(100, 100, 581, 512);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 581, 512);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -170,11 +180,19 @@ public class Fr_DatosCliente extends JFrame {
 		horizontalBox.add(horizontalStrut_1);
 
 		txfRfcCliente = new JTextField();
-		horizontalBox.add(this.txfRfcCliente);
-		txfRfcCliente.setColumns(30);
+		txfRfcCliente.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(txfRfcCliente.getText().length() >= 13) {
+					e.consume();
+				}
+			}
+		});
+		txfRfcCliente.setColumns(15);
 		txfRfcCliente.setMaximumSize(this.txfRfcCliente.getPreferredSize());
+		horizontalBox.add(this.txfRfcCliente);
 
-		horizontalStrut_2 = Box.createHorizontalStrut(20);
+		horizontalStrut_2 = Box.createHorizontalStrut(10);
 		horizontalBox.add(horizontalStrut_2);
 
 		lblNewLabel_2 = new JLabel("Cta Contable");
@@ -185,9 +203,21 @@ public class Fr_DatosCliente extends JFrame {
 
 		txfCtaContableCliente = new JTextField();
 		txfCtaContableCliente.setEditable(false);
-		horizontalBox.add(txfCtaContableCliente);
-		txfCtaContableCliente.setColumns(20);
+		txfCtaContableCliente.setColumns(10);
 		this.txfCtaContableCliente.setMaximumSize(this.txfCtaContableCliente.getPreferredSize());
+		horizontalBox.add(txfCtaContableCliente);
+		
+		horizontalStrut_16 = Box.createHorizontalStrut(10);
+		horizontalBox.add(horizontalStrut_16);
+		
+		lblNewLabel_11 = new JLabel("Tipo");
+		horizontalBox.add(lblNewLabel_11);
+		
+		horizontalStrut_17 = Box.createHorizontalStrut(5);
+		horizontalBox.add(horizontalStrut_17);
+		
+		cmbTipoCliente = new JComboBox<String>();
+		horizontalBox.add(cmbTipoCliente);
 
 		verticalStrut_1 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_1);
@@ -216,6 +246,14 @@ public class Fr_DatosCliente extends JFrame {
 		horizontalBox_1.add(horizontalStrut_6);
 
 		txfNombreCorto = new JTextField();
+		txfNombreCorto.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(txfNombreCorto.getText().length() >= 10) {
+					e.consume();
+				}
+			}
+		});
 		horizontalBox_1.add(txfNombreCorto);
 		txfNombreCorto.setColumns(20);
 		this.txfNombreCorto.setMaximumSize(this.txfNombreCorto.getPreferredSize());
@@ -392,7 +430,9 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
-
+		
+		this.llenarCmbTipoCliente();
+		
 		if (tipoOperacion == 1) {
 			this.consultarClientePorId();
 		}
@@ -415,7 +455,15 @@ public class Fr_DatosCliente extends JFrame {
 	 * private void limpiarCmbClientes() { this.cmbRfcCliente.removeAllItems();
 	 * this.cmbRfcCliente.updateUI(); }
 	 */
-
+	
+	private void llenarCmbTipoCliente() {
+		this.cmbTipoCliente.removeAllItems();
+		this.cmbTipoCliente.updateUI();
+		this.tipoClienteController.cmbTipoCliente().stream().forEach(t -> {
+			this.cmbTipoCliente.addItem(t.getNombre());
+		});
+	}
+	
 	private void consultarClientePorId() {
 
 		String dia = "";
@@ -459,76 +507,16 @@ public class Fr_DatosCliente extends JFrame {
 	 * inserta un nuevo registro en la bd
 	 */
 	private void insertarNuevoCliente() {
-
-		Clientes cl = new Clientes();
-		String fecha = null;
-
-		if (this.txfRfcCliente.getText().length() < 10 || this.txfRfcCliente.getText().isEmpty()
-				|| this.txfRfcCliente.getText().equals(null) || this.txfRfcCliente.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el RFC del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
+		
+		if(validarCamposVacios()) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Existen campos obligatorios vacios o error en formato de entrada");
 			return;
 		}
-
-		if (this.txfNombreCompleto.getText().length() < 1 || this.txfNombreCompleto.getText().isEmpty()
-				|| this.txfNombreCompleto.getText().equals("") || this.txfNombreCompleto.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el nombre del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreCorto.getText().length() < 1 || this.txfNombreCorto.getText().isEmpty()
-				|| this.txfNombreCorto.getText().equals(null) || this.txfNombreCorto.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Debe indicar un Alias para el cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfDiaNac.getText().length() < 1 || this.txfMesNac.getText().length() < 1
-				|| this.txfAnioNac.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Error al indicar fecha", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfEmail.getText().length() < 1 || this.txfEmail.getText().isEmpty()
-				|| this.txfEmail.getText().equals(null) || this.txfEmail.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Indique un correo electrónico", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
-
-		if (fecha.isBlank() || fecha.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Indique un correo electrónico", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfEstado.getText().isEmpty() || this.txfEstado.getText().isBlank()
-				|| this.txfEstado.getText().length() < 1 || this.txfEstado.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique el estado del cliente", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfCiudad.getText().isEmpty() || this.txfCiudad.getText().isBlank()
-				|| this.txfCiudad.getText().length() < 1 || this.txfCiudad.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique la ciudad del cliente", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txaDireccion.getText().isEmpty() || this.txaDireccion.getText().isBlank()
-				|| this.txaDireccion.getText().length() < 1 || this.txaDireccion.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique la direccion del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfCodigoPostal.getText().isEmpty() || this.txfCodigoPostal.getText().isBlank()
-				|| this.txfCodigoPostal.getText().length() < 1 || this.txfCodigoPostal.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique el codigo postal del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
+		
+		Clientes cl = new Clientes();		
+		String fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
+		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmbTipoCliente.getSelectedIndex()).getIdTipoCliente();
+		
 		try {
 
 			cl.setRfc(this.txfRfcCliente.getText());
@@ -541,6 +529,7 @@ public class Fr_DatosCliente extends JFrame {
 			cl.setCiudad(this.txfCiudad.getText());
 			cl.setDireccion(this.txaDireccion.getText());
 			cl.setCodigoPostal(this.txfCodigoPostal.getText());
+			cl.setIdTipoCliente(idTipoCliente);
 
 			clientesController.insertarNuevoCliente(cl);
 
@@ -559,70 +548,13 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
-	private void actualizarCliente() {
-
+	private void actualizarCliente() {			
+		
 		Clientes cl = new Clientes();
-		String fecha = null;
-
-		if (this.txfNombreCompleto.getText().length() < 1 || this.txfNombreCompleto.getText().isEmpty()
-				|| this.txfNombreCompleto.getText().equals("") || this.txfNombreCompleto.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el nombre del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfNombreCorto.getText().length() < 1 || this.txfNombreCorto.getText().isEmpty()
-				|| this.txfNombreCorto.getText().equals(null) || this.txfNombreCorto.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Debe indicar un Alias para el cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfDiaNac.getText().length() < 1 || this.txfMesNac.getText().length() < 1
-				|| this.txfAnioNac.getText().length() < 1) {
-			JOptionPane.showMessageDialog(this, "Error al indicar fecha", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.txfEmail.getText().length() < 1 || this.txfEmail.getText().isEmpty()
-				|| this.txfEmail.getText().equals(null) || this.txfEmail.getText().equals("")) {
-			JOptionPane.showMessageDialog(this, "Indique un correo electrónico", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
+		
+		String fecha = null;				
 		fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
-
-		if (fecha.isBlank() || fecha.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Indique un correo electrónico", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfEstado.getText().isEmpty() || this.txfEstado.getText().isBlank()
-				|| this.txfEstado.getText().length() < 1 || this.txfEstado.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique el estado del cliente", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfCiudad.getText().isEmpty() || this.txfCiudad.getText().isBlank()
-				|| this.txfCiudad.getText().length() < 1 || this.txfCiudad.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique la ciudad del cliente", "Error", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txaDireccion.getText().isEmpty() || this.txaDireccion.getText().isBlank()
-				|| this.txaDireccion.getText().length() < 1 || this.txaDireccion.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique la direccion del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (this.txfCodigoPostal.getText().isEmpty() || this.txfCodigoPostal.getText().isBlank()
-				|| this.txfCodigoPostal.getText().length() < 1 || this.txfCodigoPostal.getText().equals(null)) {
-			JOptionPane.showMessageDialog(this, "Indique el codigo postal del cliente", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
+		
 		try {
 
 			cl.setId(this.indiceCliente);
@@ -636,6 +568,7 @@ public class Fr_DatosCliente extends JFrame {
 			cl.setCiudad(this.txfCiudad.getText());
 			cl.setDireccion(this.txaDireccion.getText());
 			cl.setCodigoPostal(this.txfCodigoPostal.getText());
+			cl.setIdTipoCliente(indiceCliente);
 
 			clientesController.actualizarCliente(cl);
 
@@ -670,7 +603,58 @@ public class Fr_DatosCliente extends JFrame {
 		this.txfCodigoPostal.setText("");
 
 	}
+	
+	private boolean validarCamposVacios() {
+						
+		String fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
+		
+		if (this.txfNombreCompleto.getText().length() < 1 || this.txfNombreCompleto.getText().isEmpty()
+				|| this.txfNombreCompleto.getText().equals("") || this.txfNombreCompleto.getText().equals(null)) {			
+			return true;
+		}
 
+		if (this.txfNombreCorto.getText().length() < 1 || this.txfNombreCorto.getText().isEmpty()
+				|| this.txfNombreCorto.getText().equals(null) || this.txfNombreCorto.getText().equals("")) {			
+			return true;
+		}
+
+		if (this.txfDiaNac.getText().length() < 1 || this.txfMesNac.getText().length() < 1
+				|| this.txfAnioNac.getText().length() < 1) {
+			return true;
+		}
+
+		if (this.txfEmail.getText().length() < 1 || this.txfEmail.getText().isEmpty()
+				|| this.txfEmail.getText().equals(null) || this.txfEmail.getText().equals("")) {
+			return true;
+		}		
+
+		if (fecha.isBlank() || fecha.isEmpty()) {
+			return true;
+		}
+
+		if (this.txfEstado.getText().isEmpty() || this.txfEstado.getText().isBlank()
+				|| this.txfEstado.getText().length() < 1 || this.txfEstado.getText().equals(null)) {
+			return true;
+		}
+
+		if (this.txfCiudad.getText().isEmpty() || this.txfCiudad.getText().isBlank()
+				|| this.txfCiudad.getText().length() < 1 || this.txfCiudad.getText().equals(null)) {
+			return true;
+		}
+
+		if (this.txaDireccion.getText().isEmpty() || this.txaDireccion.getText().isBlank()
+				|| this.txaDireccion.getText().length() < 1 || this.txaDireccion.getText().equals(null)) {
+			return true;
+		}
+
+		if (this.txfCodigoPostal.getText().isEmpty() || this.txfCodigoPostal.getText().isBlank()
+				|| this.txfCodigoPostal.getText().length() < 1 || this.txfCodigoPostal.getText().equals(null)) {		
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private void cerrarForm() {
 		this.dispose();
 	}

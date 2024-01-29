@@ -23,7 +23,7 @@ public class ClientesController implements Serializable {
 	 */
 	private Connection cn = null;
 
-	public void verClientesEnTabla(DefaultTableModel tabla) {
+	public void verClientesEnTabla(String nombre ,DefaultTableModel tabla) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -31,22 +31,24 @@ public class ClientesController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_clientes();");
+			stm = cn.prepareCall("CALL ver_clientes(?);");
+			stm.setString(1, nombre);
 			rset = stm.executeQuery();
-
+			
 			while (rset.next()) {
 
 				tabla.addRow(new Object[] { rset.getInt(1), // indice
 						rset.getString(2), // rfc
-						rset.getString(3), // cuenta contable
-						rset.getString(4), // nombre completo
-						rset.getString(5), // nombre corto
-						rset.getString(6), // correo electronico
-						rset.getString(7), // estado
-						rset.getString(8), // ciudad
-						rset.getString(9), // direccion
-						rset.getString(10), // codigo postal
-						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
+						rset.getString(3), //tipo de cliente
+						rset.getString(4), // cuenta contable
+						rset.getString(5), // nombre completo
+						rset.getString(6), // nombre corto
+						rset.getString(7), // correo electronico
+						rset.getString(8), // estado
+						rset.getString(9), // ciudad
+						rset.getString(10), // direccion
+						rset.getString(11), // codigo postal
+						rset.getShort(12) == 1 ? "Activo" : "Inactivo" // status
 				});
 
 			}
@@ -69,7 +71,7 @@ public class ClientesController implements Serializable {
 
 	}
 	
-	public void buscarClintePorNombre(String nombre,DefaultTableModel tabla) {
+	/*public void buscarClintePorNombre(String nombre,DefaultTableModel tabla) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -85,15 +87,16 @@ public class ClientesController implements Serializable {
 
 				tabla.addRow(new Object[] { rset.getInt(1), // indice
 						rset.getString(2), // rfc
-						rset.getString(3), // cuenta contable
-						rset.getString(4), // nombre completo
-						rset.getString(5), // nombre corto
-						rset.getString(6), // correo electronico
-						rset.getString(7), // estado
-						rset.getString(8), // ciudad
-						rset.getString(9), // direccion
-						rset.getString(10), // codigo postal
-						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
+						rset.getString(3), //Tipo de cliente
+						rset.getString(4), // cuenta contable
+						rset.getString(5), // nombre completo
+						rset.getString(6), // nombre corto
+						rset.getString(7), // correo electronico
+						rset.getString(8), // estado
+						rset.getString(9), // ciudad
+						rset.getString(10), // direccion
+						rset.getString(11), // codigo postal
+						rset.getShort(12) == 1 ? "Activo" : "Inactivo" // status
 				});
 
 			}
@@ -114,7 +117,7 @@ public class ClientesController implements Serializable {
 			}
 		}
 
-	}
+	}*/
 	
 
 	public void eliminarCliente(int idCliente) throws SQLException {
@@ -268,18 +271,19 @@ public class ClientesController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_nuevo_cliente(?,?,?,?,?,?,?,?,?,?);");
+			stm = cn.prepareCall("CALL insert_nuevo_cliente(?,?,?,?,?,?,?,?,?,?,?);");
 
 			stm.setString(1, cl.getRfc());
-			stm.setString(2, cl.getNombre());
-			stm.setString(3, cl.getNombreCorto());
-			stm.setString(4, cl.getDescripcion());
-			stm.setDate(5, cl.getFechaNacimiento());
-			stm.setString(6, cl.getEmail());
-			stm.setString(7, cl.getEstado());
-			stm.setString(8, cl.getCiudad());
-			stm.setString(9, cl.getDireccion());
-			stm.setString(10, cl.getCodigoPostal());
+			stm.setInt(2, cl.getIdTipoCliente());
+			stm.setString(3, cl.getNombre());
+			stm.setString(4, cl.getNombreCorto());
+			stm.setString(5, cl.getDescripcion());
+			stm.setDate(6, cl.getFechaNacimiento());
+			stm.setString(7, cl.getEmail());
+			stm.setString(8, cl.getEstado());
+			stm.setString(9, cl.getCiudad());
+			stm.setString(10, cl.getDireccion());
+			stm.setString(11, cl.getCodigoPostal());
 
 			stm.executeUpdate();
 
