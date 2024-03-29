@@ -139,14 +139,16 @@ public class ArticuloController implements java.io.Serializable {
 	 */
 	public void insertarNuevoArticulo(Articulo art) throws SQLException, Exception {
 
+		System.out.println(art);
+		
 		CallableStatement stm = null;
 
 		cn = Conexion.establecerConexionLocal("kath_erp");
 		stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?,?,?,?);");
 
 		stm.setString(1, art.getCodigoArticulo());
-		stm.setString(2, art.getNombreProveedor());
-		stm.setString(3, art.getNombreCategoria());
+		stm.setInt(2, art.getIdProvedor());
+		stm.setInt(3, art.getIdCategoria());
 		stm.setString(4, art.getCodigoSat());
 		stm.setString(5, art.getNombre());
 		stm.setString(6, art.getDescripcion());

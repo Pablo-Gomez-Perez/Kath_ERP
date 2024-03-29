@@ -14,6 +14,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -37,6 +38,7 @@ import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Proveedor;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -53,6 +55,8 @@ public class Fr_DatosArticulo extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private CategoriaController categoriaController = new CategoriaController();
 	private ProveedorController proveedorController = new ProveedorController();
+	private Vector<Proveedor> listProveedores;
+	private Vector<Categoria> listCategoria;
 	private int idSucursal;
 	private int idArticulo;
 	private JPanel contentPane;
@@ -77,7 +81,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private Component horizontalStrut_4;
 	private JLabel lblNewLabel_4;
 	private Component horizontalStrut_5;
-	private JComboBox<String> cmbMarcaArticulo;
+	private JComboBox<Categoria> cmbMarcaArticulo;
 	private Component verticalStrut_2;
 	private Box horizontalBox_2;
 	private JLabel lblNewLabel_5;
@@ -98,18 +102,6 @@ public class Fr_DatosArticulo extends JFrame {
 	private JLabel lblNewLabel_8;
 	private Component horizontalStrut_8;
 	private JTextField txfCostoArticulo;
-	private Component horizontalStrut_9;
-	private JLabel lblNewLabel_9;
-	private Component horizontalStrut_10;
-	private JTextField txfPrecioGArticulo;
-	private Component horizontalStrut_11;
-	private JLabel lblNewLabel_10;
-	private Component horizontalStrut_12;
-	private JTextField txfPrecioMayoreoArticulo;
-	private Component horizontalStrut_13;
-	private JLabel lblNewLabel_11;
-	private Component horizontalStrut_14;
-	private JTextField txfCantidadParaMayoreo;
 	private Component horizontalStrut_15;
 	private Box horizontalBox_5;
 	private ButtonGroup btnRadioGroup;
@@ -128,6 +120,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private JTextField txfCodigoSat;
 	private JButton btnExistenciaGlobal;
 	private Component horizontalStrut_21;
+	private Component horizontalStrut_9;
 
 	/**
 	 * Create the frame.
@@ -136,6 +129,8 @@ public class Fr_DatosArticulo extends JFrame {
 
 		this.idSucursal = sucursal;
 		this.idArticulo = idArticulo;
+		this.listProveedores = this.proveedorController.consultarNombresProveedor();
+		this.listCategoria = this.categoriaController.obtenerIndicesDeCategorias();
 
 		if (tipoOperacion == 0) {
 			this.setTitle("Nuevo Articulo");
@@ -146,7 +141,7 @@ public class Fr_DatosArticulo extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 581, 512);
+		setBounds(100, 100, 850, 670);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -241,7 +236,7 @@ public class Fr_DatosArticulo extends JFrame {
 		horizontalStrut_5 = Box.createHorizontalStrut(5);
 		horizontalBox_1.add(horizontalStrut_5);
 
-		cmbMarcaArticulo = new JComboBox<String>();
+		cmbMarcaArticulo = new JComboBox<Categoria>();
 		horizontalBox_1.add(cmbMarcaArticulo);
 		this.llenarCmbMarca();
 
@@ -319,7 +314,7 @@ public class Fr_DatosArticulo extends JFrame {
 		txfExistenciaArticulo = new JTextField();
 		txfExistenciaArticulo.setEditable(false);
 		horizontalBox_3.add(txfExistenciaArticulo);
-		txfExistenciaArticulo.setColumns(40);
+		txfExistenciaArticulo.setColumns(20);
 		this.txfExistenciaArticulo.setMaximumSize(this.txfExistenciaArticulo.getPreferredSize());
 
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
@@ -367,19 +362,17 @@ public class Fr_DatosArticulo extends JFrame {
 		btnRadioGroup.add(rdbtnExento);
 		btnRadioGroup.add(rdbtnNoObjeto);
 
-		verticalStrut_5 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_5);
-
-		horizontalBox_4 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_4);
+		horizontalStrut_9 = Box.createHorizontalStrut(5);
+		horizontalBox_3.add(horizontalStrut_9);
 
 		lblNewLabel_8 = new JLabel("Costo");
-		horizontalBox_4.add(lblNewLabel_8);
+		horizontalBox_3.add(lblNewLabel_8);
 
 		horizontalStrut_8 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_8);
+		horizontalBox_3.add(horizontalStrut_8);
 
 		txfCostoArticulo = new JTextField();
+		horizontalBox_3.add(txfCostoArticulo);
 		txfCostoArticulo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -391,82 +384,14 @@ public class Fr_DatosArticulo extends JFrame {
 				}
 			}
 		});
-		horizontalBox_4.add(txfCostoArticulo);
 		txfCostoArticulo.setColumns(10);
 		this.txfCostoArticulo.setMaximumSize(this.txfCostoArticulo.getPreferredSize());
 
-		horizontalStrut_9 = Box.createHorizontalStrut(10);
-		horizontalBox_4.add(horizontalStrut_9);
+		verticalStrut_5 = Box.createVerticalStrut(20);
+		panelCentralFormulario.add(verticalStrut_5);
 
-		lblNewLabel_9 = new JLabel("Precio General");
-		horizontalBox_4.add(lblNewLabel_9);
-
-		horizontalStrut_10 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_10);
-
-		txfPrecioGArticulo = new JTextField();
-		txfPrecioGArticulo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!(ch >= '0' && ch <= '9' || ch == '.')) {
-					e.consume();
-				} else if (ch == '.' && txfPrecioGArticulo.getText().contains(".")) {
-					e.consume();
-				}
-			}
-		});
-		horizontalBox_4.add(txfPrecioGArticulo);
-		txfPrecioGArticulo.setColumns(10);
-		this.txfPrecioGArticulo.setMaximumSize(this.txfPrecioGArticulo.getPreferredSize());
-
-		horizontalStrut_11 = Box.createHorizontalStrut(10);
-		horizontalBox_4.add(horizontalStrut_11);
-
-		lblNewLabel_10 = new JLabel("Mayoreo");
-		horizontalBox_4.add(lblNewLabel_10);
-
-		horizontalStrut_12 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_12);
-
-		txfPrecioMayoreoArticulo = new JTextField();
-		txfPrecioMayoreoArticulo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!(ch >= '0' && ch <= '9' || ch == '.')) {
-					e.consume();
-				} else if (ch == '.' && txfPrecioMayoreoArticulo.getText().contains(".")) {
-					e.consume();
-				}
-			}
-		});
-		horizontalBox_4.add(txfPrecioMayoreoArticulo);
-		txfPrecioMayoreoArticulo.setColumns(10);
-		this.txfPrecioMayoreoArticulo.setMaximumSize(this.txfPrecioMayoreoArticulo.getPreferredSize());
-
-		horizontalStrut_13 = Box.createHorizontalStrut(10);
-		horizontalBox_4.add(horizontalStrut_13);
-
-		lblNewLabel_11 = new JLabel("Cant. p/Mayoreo");
-		horizontalBox_4.add(lblNewLabel_11);
-
-		horizontalStrut_14 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_14);
-
-		txfCantidadParaMayoreo = new JTextField();
-		txfCantidadParaMayoreo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!(ch >= '0' && ch <= '9')) {
-					e.consume();
-				}
-			}
-		});
-		horizontalBox_4.add(txfCantidadParaMayoreo);
-		txfCantidadParaMayoreo.setColumns(5);
-		this.txfCantidadParaMayoreo.setMaximumSize(this.txfCantidadParaMayoreo.getPreferredSize());
+		horizontalBox_4 = Box.createHorizontalBox();
+		panelCentralFormulario.add(horizontalBox_4);
 
 		verticalStrut_6 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_6);
@@ -516,7 +441,10 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void llenarCmbMarca() {
 		this.limpiarCmbMarca();
-		this.categoriaController.obtenerIndicesDeCategorias(this.cmbMarcaArticulo);
+		this.listCategoria.stream().forEach(c -> {
+			this.cmbMarcaArticulo.addItem(c);
+		});
+		;
 	}
 
 	private void limpiarCmbMarca() {
@@ -526,7 +454,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void llenarCmbProveedor() {
 		this.limpiarCmbProveedor();
-		this.proveedorController.consultarNombresProveedor().stream().forEach(p -> {
+		this.listProveedores.stream().forEach(p -> {
 			this.cmbProveedorArticulo.addItem(p);
 		});
 	}
@@ -548,38 +476,35 @@ public class Fr_DatosArticulo extends JFrame {
 			return;
 		}
 
+		int idProveedor = this.listProveedores.get(this.cmbProveedorArticulo.getSelectedIndex()).getId();
+		int idCategoria = this.listCategoria.get(this.cmbMarcaArticulo.getSelectedIndex()).getIdCategoria();
+
 		try {
 
+			// art.setNombreCategoria((String) this.cmbMarcaArticulo.getSelectedItem());
+			// art.setNombreProveedor((String) this.cmbProveedorArticulo.getSelectedItem());
 			art.setCodigoArticulo(this.txfCodigoArticulo.getText());
-			art.setNombreProveedor((String) this.cmbProveedorArticulo.getSelectedItem());
-			art.setNombreCategoria((String) this.cmbMarcaArticulo.getSelectedItem());
+			art.setIdProvedor(idProveedor);
+			art.setIdCategoria(idCategoria);
 			art.setCodigoSat(this.txfCodigoSat.getText());
 			art.setNombre(this.txfNombreArticulo.getText());
 			art.setDescripcion(this.txaDescripcionArticulo.getText());
 			art.setExento((this.rdbtnExento.isSelected() || this.rdbtnNoObjeto.isSelected()) ? true : false);
 			art.setCostoUnitario(Double.parseDouble(this.txfCostoArticulo.getText()));
-			art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
-			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
-			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
 
 			// System.out.println(art.toString());
 
 			articuloController.insertarNuevoArticulo(art);
 
 			MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
-			
+
 			this.limpiarCampos();
 
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
-		
+
 	}
 
 	/**
@@ -608,9 +533,13 @@ public class Fr_DatosArticulo extends JFrame {
 
 			this.txfExistenciaArticulo.setText(String.valueOf(art.getExistencia()));
 			this.txfCostoArticulo.setText(String.valueOf(art.getCostoUnitario()));
-			this.txfPrecioGArticulo.setText(String.valueOf(art.getPrecioGeneral()));
-			this.txfPrecioMayoreoArticulo.setText(String.valueOf(art.getPrecioMayoreo()));
-			this.txfCantidadParaMayoreo.setText(String.valueOf(art.getCantidadMayoreo()));
+			/*
+			 * this.txfPrecioGArticulo.setText(String.valueOf(art.getPrecioGeneral()));
+			 * this.txfPrecioMayoreoArticulo.setText(String.valueOf(art.getPrecioMayoreo()))
+			 * ;
+			 * this.txfCantidadParaMayoreo.setText(String.valueOf(art.getCantidadMayoreo()))
+			 * ;
+			 */
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -642,14 +571,18 @@ public class Fr_DatosArticulo extends JFrame {
 			art.setDescripcion(this.txaDescripcionArticulo.getText());
 			art.setExento((this.rdbtnExento.isSelected() || this.rdbtnNoObjeto.isSelected()) ? true : false);
 			art.setCostoUnitario(Double.parseDouble(this.txfCostoArticulo.getText()));
-			art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
-			art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText()));
-			art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()));
+			/*
+			 * art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
+			 * art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText
+			 * ()));
+			 * art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()
+			 * ));
+			 */
 
 			articuloController.actualizarArticulo(art);
 
 			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
-			
+
 			this.cerrarForm();
 
 		} catch (SQLException er) {
@@ -717,28 +650,26 @@ public class Fr_DatosArticulo extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 			return true;
 		}
-
-		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-				.parseDouble(this.txfPrecioGArticulo.getText())) {
-			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return true;
-		}
-
-		if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-				.parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
-			JOptionPane.showMessageDialog(this, "El costo unitario no puede ser superior al precio de venta", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return true;
-		}
-
-		if (this.txfPrecioGArticulo.getText().length() < 1 || this.txfPrecioGArticulo.getText().equals(null)
-				|| this.txfPrecioGArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el precio de venta del articulo", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return true;
-		}
-
+		/*
+		 * if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+		 * .parseDouble(this.txfPrecioGArticulo.getText())) {
+		 * JOptionPane.showMessageDialog(this,
+		 * "El costo unitario no puede ser superior al precio de venta", "Error",
+		 * JOptionPane.WARNING_MESSAGE); return true; }
+		 * 
+		 * if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
+		 * .parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
+		 * JOptionPane.showMessageDialog(this,
+		 * "El costo unitario no puede ser superior al precio de venta", "Error",
+		 * JOptionPane.WARNING_MESSAGE); return true; }
+		 * 
+		 * if (this.txfPrecioGArticulo.getText().length() < 1 ||
+		 * this.txfPrecioGArticulo.getText().equals(null) ||
+		 * this.txfPrecioGArticulo.getText().isEmpty()) {
+		 * JOptionPane.showMessageDialog(this,
+		 * "Debe indicar el precio de venta del articulo", "Error",
+		 * JOptionPane.WARNING_MESSAGE); return true; }
+		 */
 		return false;
 	}
 
@@ -749,9 +680,11 @@ public class Fr_DatosArticulo extends JFrame {
 		this.txfCodigoSat.setText("");
 		this.txaDescripcionArticulo.setText("");
 		this.txfCostoArticulo.setText("");
-		this.txfPrecioGArticulo.setText("");
-		this.txfPrecioMayoreoArticulo.setText("");
-		this.txfCantidadParaMayoreo.setText("");
+		/*
+		 * this.txfPrecioGArticulo.setText("");
+		 * this.txfPrecioMayoreoArticulo.setText("");
+		 * this.txfCantidadParaMayoreo.setText("");
+		 */
 
 	}
 
