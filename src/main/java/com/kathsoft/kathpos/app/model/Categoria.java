@@ -23,7 +23,12 @@ public class Categoria implements Serializable {
 		this.setNombre(nombre);
 		this.setDescripcion(descripcion);
 	}
-
+	
+	public Categoria(int idCategoria, String nombre) {
+		this.idCategoria = idCategoria;
+		this.nombre = nombre;
+	}
+	
 	public Categoria() {
 
 	}
@@ -103,8 +108,12 @@ public class Categoria implements Serializable {
 
 	@Override
 	public String toString() {
+		return this.getNombre();
+	}
+	
+	
+	public String toStringData() {
 		return "Categoria [idCategoria=" + idCategoria + ", nombre=" + nombre + ", descripcion=" + descripcion
 				+ ", activo=" + activo + "]";
 	}
-
 }

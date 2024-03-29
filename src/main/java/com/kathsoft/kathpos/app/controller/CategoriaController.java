@@ -5,6 +5,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -69,11 +70,13 @@ public class CategoriaController implements Serializable {
 		}
 	}
 
-	public void obtenerIndicesDeCategorias(JComboBox<String> jcmb) {
+	public Vector<Categoria> obtenerIndicesDeCategorias() {
 
 		ResultSet rset = null;
 		CallableStatement stm = null;
-
+		var categorias = new Vector<Categoria>();
+		
+		
 		try {
 
 			cn = Conexion.establecerConexionLocal("Kath_erp");
@@ -81,15 +84,19 @@ public class CategoriaController implements Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				jcmb.addItem(rset.getString(1));
+				categorias.add(new Categoria(rset.getInt(1),rset.getString(2)));
 			}
-
+			
+			return categorias;
+			
 		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);

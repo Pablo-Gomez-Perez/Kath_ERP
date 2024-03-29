@@ -84,5 +84,10 @@ public class Proveedor extends Usuario {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getNombre();
+	}
 		
 }
