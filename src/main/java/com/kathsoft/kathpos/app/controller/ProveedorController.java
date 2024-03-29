@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -161,8 +162,9 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 
-	public void consultarNombresProveedor(JComboBox<String> cmb) {
-
+	public Vector<Proveedor> consultarNombresProveedor() {
+		
+		var data = new Vector<Proveedor>();
 		CallableStatement stm = null;
 		ResultSet rset = null;
 
@@ -173,13 +175,19 @@ public class ProveedorController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				cmb.addItem(rset.getString(1));
+				var prov = new Proveedor();
+				prov.setId(rset.getInt(1));
+				prov.setNombre(rset.getString(2));
+				data.add(prov);
 			}
-
+			
+			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return data;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return data;
 		} finally {
 			try {
 

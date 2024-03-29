@@ -120,7 +120,7 @@ public class Fr_DatosCliente extends JFrame {
 	private Component horizontalStrut_16;
 	private JLabel lblNewLabel_11;
 	private Component horizontalStrut_17;
-	private JComboBox<String> cmbTipoCliente;
+	private JComboBox<TipoCliente> cmbTipoCliente;
 
 	/**
 	 * Create the frame.
@@ -216,7 +216,7 @@ public class Fr_DatosCliente extends JFrame {
 		horizontalStrut_17 = Box.createHorizontalStrut(5);
 		horizontalBox.add(horizontalStrut_17);
 		
-		cmbTipoCliente = new JComboBox<String>();
+		cmbTipoCliente = new JComboBox<TipoCliente>();
 		horizontalBox.add(cmbTipoCliente);
 
 		verticalStrut_1 = Box.createVerticalStrut(20);
@@ -460,7 +460,7 @@ public class Fr_DatosCliente extends JFrame {
 		this.cmbTipoCliente.removeAllItems();
 		this.cmbTipoCliente.updateUI();
 		this.tipoClienteController.cmbTipoCliente().stream().forEach(t -> {
-			this.cmbTipoCliente.addItem(t.getNombre());
+			this.cmbTipoCliente.addItem(t);
 		});
 	}
 	
@@ -539,14 +539,12 @@ public class Fr_DatosCliente extends JFrame {
 
 		} catch (SQLException er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();			
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
-	}
+	}	
 
 	private void actualizarCliente() {			
 		
@@ -554,6 +552,9 @@ public class Fr_DatosCliente extends JFrame {
 		
 		String fecha = null;				
 		fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
+		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmbTipoCliente.getSelectedIndex()).getIdTipoCliente();
+		
+		//System.out.println("Tipo cliente: " + idTipoCliente );
 		
 		try {
 
@@ -568,19 +569,17 @@ public class Fr_DatosCliente extends JFrame {
 			cl.setCiudad(this.txfCiudad.getText());
 			cl.setDireccion(this.txaDireccion.getText());
 			cl.setCodigoPostal(this.txfCodigoPostal.getText());
-			cl.setIdTipoCliente(indiceCliente);
+			cl.setIdTipoCliente(idTipoCliente);
 
 			clientesController.actualizarCliente(cl);
 
 			JOptionPane.showMessageDialog(this, "Cliente actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 

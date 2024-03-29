@@ -62,7 +62,7 @@ public class Proveedor extends Usuario {
 		
 		
 		
-	}
+	}	
 
 	/**
 	 * 
