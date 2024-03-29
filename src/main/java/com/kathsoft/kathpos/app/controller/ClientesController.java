@@ -314,19 +314,20 @@ public class ClientesController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL update_cliente(?,?,?,?,?,?,?,?,?,?,?);");
+			stm = cn.prepareCall("CALL update_cliente(?,?,?,?,?,?,?,?,?,?,?,?);");
 
 			stm.setInt(1, cl.getId());
-			stm.setString(2, cl.getClaveCuentaContable());
-			stm.setString(3, cl.getNombre());
-			stm.setString(4, cl.getNombreCorto());
-			stm.setString(5, cl.getDescripcion());
-			stm.setDate(6, cl.getFechaNacimiento());
-			stm.setString(7, cl.getEmail());
-			stm.setString(8, cl.getEstado());
-			stm.setString(9, cl.getCiudad());
-			stm.setString(10, cl.getDireccion());
-			stm.setString(11, cl.getCodigoPostal());
+			stm.setInt(2, cl.getIdTipoCliente());
+			stm.setString(3, cl.getClaveCuentaContable());
+			stm.setString(4, cl.getNombre());
+			stm.setString(5, cl.getNombreCorto());
+			stm.setString(6, cl.getDescripcion());
+			stm.setDate(7, cl.getFechaNacimiento());
+			stm.setString(8, cl.getEmail());
+			stm.setString(9, cl.getEstado());
+			stm.setString(10, cl.getCiudad());
+			stm.setString(11, cl.getDireccion());
+			stm.setString(12, cl.getCodigoPostal());
 
 			stm.executeUpdate();
 

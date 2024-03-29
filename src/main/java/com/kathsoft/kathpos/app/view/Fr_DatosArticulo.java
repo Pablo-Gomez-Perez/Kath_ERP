@@ -37,6 +37,7 @@ import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.app.model.Proveedor;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_DatosArticulo extends JFrame {
@@ -72,7 +73,7 @@ public class Fr_DatosArticulo extends JFrame {
 	private Box horizontalBox_1;
 	private JLabel lblNewLabel_3;
 	private Component horizontalStrut_3;
-	private JComboBox<String> cmbProveedorArticulo;
+	private JComboBox<Proveedor> cmbProveedorArticulo;
 	private Component horizontalStrut_4;
 	private JLabel lblNewLabel_4;
 	private Component horizontalStrut_5;
@@ -227,7 +228,7 @@ public class Fr_DatosArticulo extends JFrame {
 		horizontalStrut_3 = Box.createHorizontalStrut(5);
 		horizontalBox_1.add(horizontalStrut_3);
 
-		cmbProveedorArticulo = new JComboBox<String>();
+		cmbProveedorArticulo = new JComboBox<Proveedor>();
 		horizontalBox_1.add(cmbProveedorArticulo);
 		this.llenarCmbProveedor();
 
@@ -525,7 +526,9 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void llenarCmbProveedor() {
 		this.limpiarCmbProveedor();
-		this.proveedorController.consultarNombresProveedor(this.cmbProveedorArticulo);
+		this.proveedorController.consultarNombresProveedor().stream().forEach(p -> {
+			this.cmbProveedorArticulo.addItem(p);
+		});
 	}
 
 	private void limpiarCmbProveedor() {

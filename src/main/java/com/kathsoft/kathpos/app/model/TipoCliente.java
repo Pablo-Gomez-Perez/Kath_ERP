@@ -99,8 +99,11 @@ public class TipoCliente implements Serializable {
 
 	@Override
 	public String toString() {
-		return "TipoCliente [id_tipoCliente=" + idTipoCliente + ", nombre=" + nombre + ", descripcion=" + descripcion
-				+ "]";
+		return this.nombre;
+	}
+	
+	public String printData() {
+		return this.idTipoCliente + "|" + this.nombre + "|" + this.descripcion;
 	}
 
 }
