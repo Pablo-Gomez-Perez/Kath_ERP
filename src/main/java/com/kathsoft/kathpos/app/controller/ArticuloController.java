@@ -25,7 +25,7 @@ public class ArticuloController implements java.io.Serializable {
 	 */
 	private static Connection cn = null;
 
-	public Vector<Object[]> verArticulosEnTabla(int idSucursal) {
+	public Vector<Object[]> verArticulosEnTabla(int idSucursal, int idTipoCliente) {
 
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -34,8 +34,9 @@ public class ArticuloController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_articulos(?);");
+			stm = cn.prepareCall("CALL ver_articulos(?,?);");
 			stm.setInt(1, idSucursal);
+			stm.setInt(2, idSucursal);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
@@ -88,18 +89,20 @@ public class ArticuloController implements java.io.Serializable {
 	 * @param tabla
 	 * @param opcion
 	 */
-	public void consultarArticulosPorNombre(String nombre, DefaultTableModel tabla, int opcion, int id_sucursal) {
+	public Vector<Object[]> consultarArticulosPorNombre(String nombre, int opcion, int id_sucursal, int idTipoCliente) {
 
 		ResultSet rset = null;
 		CallableStatement stm = null;
+		var articulos = new Vector<Object[]>();
 
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?,?,?);");
+			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?,?,?,?);");
 			stm.setString(1, nombre);
 			stm.setInt(2, opcion);
 			stm.setInt(3, id_sucursal);
+			stm.setInt(4, idTipoCliente);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
@@ -112,18 +115,22 @@ public class ArticuloController implements java.io.Serializable {
 						rset.getString(6), // nombre del articulo
 						rset.getString(7), // descripcion
 						rset.getString(8), // existencia
-						rset.getString(9), // precio general
-						rset.getString(10), // precio mayoreo
-						rset.getInt(11) == 1 ? "Activo" : "Inactivo" // Estatus
+						rset.getString(9), // precio
+						rset.getString(10), // precio especial
+						rset.getString(11), // cantidad para precio especial
+						rset.getInt(12) == 1 ? "Activo" : "Inactivo" // Estatus
 				};
 
-				tabla.addRow(fila);
+				articulos.add(fila);
 			}
-
+			
+			return articulos;
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 

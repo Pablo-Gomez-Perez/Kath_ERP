@@ -48,9 +48,11 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
+import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.TipoCliente;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -73,6 +75,7 @@ public class Fr_principal extends JFrame {
 	private VentasController ventasController = new VentasController();
 	private SucursalController sucursalController = new SucursalController();
 	private FormasDePagoController formasDePagoController = new FormasDePagoController();
+	private TipoClienteController tipoClienteController = new TipoClienteController();
 	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -377,6 +380,9 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionReporteExcelEmpleados;
 	private JMenuItem opcionReporteExcelProveedores;
 	private JMenuItem opcionReporteExcelVentas;
+	private JLabel lblNewLabel_10;
+	private Component horizontalStrut_4;
+	private JComboBox<TipoCliente> cmb_tipoCliente;
 
 	/**
 	 * Launch the application.
@@ -429,6 +435,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelArticulos");
 				panelPrincipalContenedor.updateUI();
 
+				llenarCmbTipoCliente();
 				llenarTablaArticulos();
 			}
 		});
@@ -583,66 +590,75 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
-		
+
 		menuReportes = new JMenu("Reportes");
-		menuReportes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/reportes.jpg")));
+		menuReportes.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/reportes.jpg")));
 		BarraMenu.add(menuReportes);
-		
+
 		subMenuReportesExcel = new JMenu("Exportar Tabla");
-		subMenuReportesExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		subMenuReportesExcel.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
 		menuReportes.add(subMenuReportesExcel);
-		
+
 		opcionReporteExcelArticulo = new JMenuItem("Articulos");
 		opcionReporteExcelArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarArticuloExcel();
 			}
 		});
-		opcionReporteExcelArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
+		opcionReporteExcelArticulo.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelArticulo);
-		
+
 		opcionReporteExcelClientes = new JMenuItem("Clientes");
 		opcionReporteExcelClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarClientesExcel();
 			}
 		});
-		opcionReporteExcelClientes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
+		opcionReporteExcelClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
+				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelClientes);
-		
+
 		opcionReporteExcelEmpleados = new JMenuItem("Empleados");
 		opcionReporteExcelEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarEmpleadosExcel();
 			}
 		});
-		opcionReporteExcelEmpleados.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/empleados.jpg")));
+		opcionReporteExcelEmpleados.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/empleados.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelEmpleados);
-		
+
 		opcionReporteExcelProveedores = new JMenuItem("Proveedores");
 		opcionReporteExcelProveedores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarProveedoresExcel();
 			}
 		});
-		opcionReporteExcelProveedores.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
+		opcionReporteExcelProveedores.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
 		subMenuReportesExcel.add(opcionReporteExcelProveedores);
-		
+
 		opcionReporteExcelVentas = new JMenuItem("Ventas");
 		opcionReporteExcelVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarVentaExcel();
 			}
 		});
-		opcionReporteExcelVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
+		opcionReporteExcelVentas.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
 		subMenuReportesExcel.add(opcionReporteExcelVentas);
-		
+
 		subMenuReportesPDF = new JMenu("PDF");
-		subMenuReportesPDF.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/pdfLogo.jpg")));
+		subMenuReportesPDF.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/pdfLogo.jpg")));
 		menuReportes.add(subMenuReportesPDF);
-		
+
 		subMenuGraficas = new JMenu("Analisis Grafico");
-		subMenuGraficas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/grafico.png")));
+		subMenuGraficas.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/grafico.png")));
 		menuReportes.add(subMenuGraficas);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -783,7 +799,7 @@ public class Fr_principal extends JFrame {
 		lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 12));
 		horizontalBox_17.add(lblNewLabel_20);
 
-		horizontalStrut_14 = Box.createHorizontalStrut(20);
+		horizontalStrut_14 = Box.createHorizontalStrut(10);
 		horizontalBox_17.add(horizontalStrut_14);
 
 		btnRadioGroupArticulos = new ButtonGroup();
@@ -793,7 +809,7 @@ public class Fr_principal extends JFrame {
 		rdbBuscarArtPorNombre.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbBuscarArtPorNombre);
 
-		horizontalStrut_15 = Box.createHorizontalStrut(20);
+		horizontalStrut_15 = Box.createHorizontalStrut(10);
 		horizontalBox_17.add(horizontalStrut_15);
 
 		rdbtBuscarArtPorProveedor = new JRadioButton("Proveedor");
@@ -801,7 +817,7 @@ public class Fr_principal extends JFrame {
 		rdbtBuscarArtPorProveedor.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorProveedor);
 
-		horizontalStrut_16 = Box.createHorizontalStrut(20);
+		horizontalStrut_16 = Box.createHorizontalStrut(10);
 		horizontalBox_17.add(horizontalStrut_16);
 
 		rdbtBuscarArtPorCategoria = new JRadioButton("Categoria");
@@ -809,7 +825,7 @@ public class Fr_principal extends JFrame {
 		rdbtBuscarArtPorCategoria.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorCategoria);
 
-		horizontalStrut_17 = Box.createHorizontalStrut(20);
+		horizontalStrut_17 = Box.createHorizontalStrut(10);
 		horizontalBox_17.add(horizontalStrut_17);
 
 		rdbtBuscarArtPorCodigo = new JRadioButton("Código");
@@ -817,7 +833,7 @@ public class Fr_principal extends JFrame {
 		rdbtBuscarArtPorCodigo.setBackground(new Color(255, 215, 0));
 		horizontalBox_17.add(rdbtBuscarArtPorCodigo);
 
-		horizontalStrut_18 = Box.createHorizontalStrut(20);
+		horizontalStrut_18 = Box.createHorizontalStrut(10);
 		horizontalBox_17.add(horizontalStrut_18);
 
 		rdbtBuscarArtPorDescrip = new JRadioButton("Descripción");
@@ -831,8 +847,18 @@ public class Fr_principal extends JFrame {
 		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorDescrip);
 		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorProveedor);
 
-		horizontalStrut_19 = Box.createHorizontalStrut(300);
+		horizontalStrut_19 = Box.createHorizontalStrut(10);
 		horizontalBox_17.add(horizontalStrut_19);
+
+		lblNewLabel_10 = new JLabel("Tipo de Cliente");
+		lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 12));
+		horizontalBox_17.add(lblNewLabel_10);
+
+		horizontalStrut_4 = Box.createHorizontalStrut(5);
+		horizontalBox_17.add(horizontalStrut_4);
+
+		cmb_tipoCliente = new JComboBox<TipoCliente>();
+		horizontalBox_17.add(cmb_tipoCliente);
 
 		lblNewLabel_19 = new JLabel("Buscar artículo");
 		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -926,15 +952,16 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		panelClientesCentralBotones.add(btnEliminarCliente);
-		
+
 		btnExportarClientesExcel = new JButton("Exportar a Excel");
 		btnExportarClientesExcel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarClientesExcel();
 			}
 		});
-		btnExportarClientesExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
-		this.btnExportarClientesExcel.setBackground(new Color(102,205,170));
+		btnExportarClientesExcel.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		this.btnExportarClientesExcel.setBackground(new Color(102, 205, 170));
 		panelClientesCentralBotones.add(btnExportarClientesExcel);
 
 		scrollPaneTablaClientes = new JScrollPane();
@@ -1076,15 +1103,16 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
 		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
-		
+
 		btnExportarEmpleadosExcel = new JButton("Exportar a Excel");
 		btnExportarEmpleadosExcel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarEmpleadosExcel();
 			}
 		});
-		btnExportarEmpleadosExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
-		this.btnExportarEmpleadosExcel.setBackground(new Color(105,205,170));
+		btnExportarEmpleadosExcel.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		this.btnExportarEmpleadosExcel.setBackground(new Color(105, 205, 170));
 		panelEmpleadosCentralbotones.add(btnExportarEmpleadosExcel);
 
 		panelEmpleadosCentralBuscar = new JPanel();
@@ -1198,15 +1226,16 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
 		panelProveedorCentralBotones.add(btnEliminarProveedor);
-		
+
 		btnExportarProveedoresExcel = new JButton("Exportar a Excel");
 		btnExportarProveedoresExcel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportarProveedoresExcel();
 			}
 		});
-		btnExportarProveedoresExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
-		this.btnExportarProveedoresExcel.setBackground(new Color(102,205,170));
+		btnExportarProveedoresExcel.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+		this.btnExportarProveedoresExcel.setBackground(new Color(102, 205, 170));
 		panelProveedorCentralBotones.add(btnExportarProveedoresExcel);
 
 		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
@@ -1880,9 +1909,9 @@ public class Fr_principal extends JFrame {
 			indiceEmpleadoSeleccionado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados,
 					0);
 			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
-			
+
 			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-			
+
 		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this);
@@ -1921,7 +1950,7 @@ public class Fr_principal extends JFrame {
 	 */
 	private void eliminarProveedor() {
 
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);		
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
 
 		if (input > 0) {
 			return;
@@ -2026,9 +2055,17 @@ public class Fr_principal extends JFrame {
 
 	private void llenarTablaArticulos() {
 		this.borrarElementosDeLaTablaArticulos();
-		articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal()).stream().forEach(a -> {
+		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
+				.getIdTipoCliente();
+		articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal(), idTipoCliente).forEach(a -> {
 			this.modelTablaArticulos.addRow(a);
-		});;		
+		});
+	}
+
+	private void llenarCmbTipoCliente() {
+		this.tipoClienteController.cmbTipoCliente().forEach(Tc -> {
+			this.cmb_tipoCliente.addItem(Tc);
+		});
 	}
 
 	/**
@@ -2041,8 +2078,12 @@ public class Fr_principal extends JFrame {
 
 	private void consultarArticulosPorNombre() {
 		this.borrarElementosDeLaTablaArticulos();
-		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), modelTablaArticulos,
-				opcionDeBusquedaDeArticulo(), this.sucursal.getIdSucursal());
+		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
+				.getIdTipoCliente();
+		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), opcionDeBusquedaDeArticulo(),
+				this.sucursal.getIdSucursal(), idTipoCliente).forEach(Ar -> {
+					this.modelTablaArticulos.addRow(Ar);
+				});;
 	}
 
 	/**
@@ -2073,7 +2114,7 @@ public class Fr_principal extends JFrame {
 
 	private void llenarTablaClientes() {
 		this.borrarElementosDeLaTablaClientes();
-		clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(),modelTablaClientes);
+		clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), modelTablaClientes);
 	}
 
 	/**
@@ -2251,21 +2292,21 @@ public class Fr_principal extends JFrame {
 		}
 
 		try {
-			
-			this.sucursalController
-			.eliminarSucursal(DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
-			
+
+			this.sucursalController.eliminarSucursal(
+					DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
+
 			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());		
-		}		
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
 
 	}
 
 	private void eliminarArticulo() {
-		
+
 		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
 
 		if (input > 0) {
@@ -2277,7 +2318,7 @@ public class Fr_principal extends JFrame {
 					.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
 
 			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-			
+
 		} catch (SQLException er) {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
@@ -2332,56 +2373,60 @@ public class Fr_principal extends JFrame {
 		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(),
 				this.modelTablaProveedores);
 	}
-	
+
 	private void exportarArticuloExcel() {
-		try{
-			
-			DataTools.exportarTablaExcel(modelTablaArticulos, this);						
-			
-		}catch(Exception er) {
+		try {
+
+			DataTools.exportarTablaExcel(modelTablaArticulos, this);
+
+		} catch (Exception er) {
 			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
 	}
-	
+
 	private void exportarVentaExcel() {
 		try {
 			DataTools.exportarTablaExcel(modelTablaVentas, this);
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
 	}
-	
+
 	private void exportarClientesExcel() {
 		try {
 			DataTools.exportarTablaExcel(modelTablaClientes, this);
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
 	}
-	
-	
+
 	private void exportarEmpleadosExcel() {
 		try {
 			DataTools.exportarTablaExcel(modelTablaEmpleados, this);
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
 	}
-	
+
 	private void exportarProveedoresExcel() {
 		try {
 			DataTools.exportarTablaExcel(modelTablaProveedores, this);
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
 	}
