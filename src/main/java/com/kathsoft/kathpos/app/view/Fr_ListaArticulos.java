@@ -228,12 +228,12 @@ public class Fr_ListaArticulos extends JFrame {
 			System.out.println(articulo.toString());
 
 			cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos"));
-			subtotal = articulo.getPrecioGeneral() * cantidad;
+			//subtotal = articulo.getPrecioGeneral() * cantidad;
 						
 			Object[] fila = {
 				articulo.getCodigoArticulo(),
 				articulo.getDescripcion(),
-				articulo.getPrecioGeneral(),
+				//articulo.getPrecioGeneral(),
 				cantidad,
 				0,
 				subtotal

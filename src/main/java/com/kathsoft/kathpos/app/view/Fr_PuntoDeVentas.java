@@ -774,8 +774,8 @@ public class Fr_PuntoDeVentas extends JFrame {
 
 				this.txfNombreArticulo.setText(articulo.getNombre());
 				this.txaDescripcionArticulo.setText(articulo.getDescripcion());
-				this.txfPrecioGeneralArticulo.setText(String.valueOf(articulo.getPrecioGeneral()));
-				this.txfPrecioMayoreoArticulo.setText(String.valueOf(articulo.getPrecioMayoreo()));
+				//this.txfPrecioGeneralArticulo.setText(String.valueOf(articulo.getPrecioGeneral()));
+				//this.txfPrecioMayoreoArticulo.setText(String.valueOf(articulo.getPrecioMayoreo()));
 				this.llenarTablaExistencias(articulo.getIdArticulo());
 
 			}
@@ -859,10 +859,10 @@ public class Fr_PuntoDeVentas extends JFrame {
 		}
 
 		int cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Indique la cantidad a comprar"));
-		double subtotal = cantidad * this.articulo.getPrecioGeneral();
+		//double subtotal = cantidad * this.articulo.getPrecioGeneral();
 
-		modelTablaArticulo.addRow(new Object[] { this.articulo.getCodigoArticulo(), this.articulo.getDescripcion(),
-				this.articulo.getPrecioGeneral(), cantidad, 0, subtotal });
+		//modelTablaArticulo.addRow(new Object[] { this.articulo.getCodigoArticulo(), this.articulo.getDescripcion(),
+		//		this.articulo.getPrecioGeneral(), cantidad, 0, subtotal });
 
 		this.calculoDeTotales();
 	}

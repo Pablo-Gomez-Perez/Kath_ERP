@@ -175,8 +175,9 @@ public class Fr_principal extends JFrame {
 			300, /* Nombre */
 			450, /* descripcion */
 			100, /* Existencia */
-			100, /* Precio g */
-			100, /* Precio m */
+			100, /* Precio G */
+			100, /* Precio E */
+			100, /* Despues de */
 			100 /* activo o inactivo */
 	};
 
@@ -696,8 +697,9 @@ public class Fr_principal extends JFrame {
 		modelTablaArticulos.addColumn("Nombre");
 		modelTablaArticulos.addColumn("Descripción");
 		modelTablaArticulos.addColumn("Existencia");
-		modelTablaArticulos.addColumn("Precio G");
-		modelTablaArticulos.addColumn("Precio M");
+		modelTablaArticulos.addColumn("Precios G");
+		modelTablaArticulos.addColumn("Precio E");
+		modelTablaArticulos.addColumn("Despues de");
 		modelTablaArticulos.addColumn("Estatus");
 
 		// se remueve el editor de la tabla de articulos
@@ -2024,7 +2026,9 @@ public class Fr_principal extends JFrame {
 
 	private void llenarTablaArticulos() {
 		this.borrarElementosDeLaTablaArticulos();
-		articuloController.verArticulosEnTabla(modelTablaArticulos, this.sucursal.getIdSucursal());
+		articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal()).stream().forEach(a -> {
+			this.modelTablaArticulos.addRow(a);
+		});;		
 	}
 
 	/**

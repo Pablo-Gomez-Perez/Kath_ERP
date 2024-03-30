@@ -23,8 +23,8 @@ public class Articulo implements java.io.Serializable {
 	private boolean exento;
 	private double costoUnitario;
 	private double precioGeneral;
-	private double precioMayoreo;
-	private int cantidadMayoreo;
+	private double precioEspecial;
+	private int cantidadParaPrecioEspecial;
 
 	/**
 	 * @param idArticulo
@@ -40,11 +40,12 @@ public class Articulo implements java.io.Serializable {
 	 * @param exento
 	 * @param costoUnitario
 	 * @param precioGeneral
-	 * @param precioMayoreo
+	 * @param precioEspecial
+	 * @param cantidadParaPrecioEspecial
 	 */
 	public Articulo(int idArticulo, String codigoArticulo, int idProvedor, String nombreProveedor, int idCategoria,
 			String nombreCategoria, String codigoSat, String nombre, String descripcion, int existencia, boolean exento,
-			double costoUnitario, double precioGeneral, double precioMayoreo, int cantidadMayoreo) {
+			double costoUnitario, double precioGeneral, double precioEspecial, int cantidadParaPrecioEspecial) {
 		super();
 		this.idArticulo = idArticulo;
 		this.codigoArticulo = codigoArticulo;
@@ -59,109 +60,19 @@ public class Articulo implements java.io.Serializable {
 		this.exento = exento;
 		this.costoUnitario = costoUnitario;
 		this.precioGeneral = precioGeneral;
-		this.precioMayoreo = precioMayoreo;
-		this.cantidadMayoreo = cantidadMayoreo;
+		this.precioEspecial = precioEspecial;
+		this.cantidadParaPrecioEspecial = cantidadParaPrecioEspecial;
 	}
-
+	
 	public Articulo() {
+		
 	}
-
+	
 	/**
 	 * @return the idArticulo
 	 */
 	public int getIdArticulo() {
 		return idArticulo;
-	}
-
-	/**
-	 * @return the codigoArticulo
-	 */
-	public String getCodigoArticulo() {
-		return codigoArticulo;
-	}
-
-	/**
-	 * @return the idProvedor
-	 */
-	public int getIdProvedor() {
-		return idProvedor;
-	}
-
-	/**
-	 * @return the nombreProveedor
-	 */
-	public String getNombreProveedor() {
-		return nombreProveedor;
-	}
-
-	/**
-	 * @return the idCategoria
-	 */
-	public int getIdCategoria() {
-		return idCategoria;
-	}
-
-	/**
-	 * @return the nombreCategoria
-	 */
-	public String getNombreCategoria() {
-		return nombreCategoria;
-	}
-
-	/**
-	 * @return the codigoSat
-	 */
-	public String getCodigoSat() {
-		return codigoSat;
-	}
-
-	/**
-	 * @return the nombre
-	 */
-	public String getNombre() {
-		return nombre;
-	}
-
-	/**
-	 * @return the descripcion
-	 */
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	/**
-	 * @return the existencia
-	 */
-	public int getExistencia() {
-		return existencia;
-	}
-
-	/**
-	 * @return the exento
-	 */
-	public boolean isExento() {
-		return exento;
-	}
-
-	/**
-	 * @return the costoUnitario
-	 */
-	public double getCostoUnitario() {
-		return costoUnitario;
-	}
-
-	/**
-	 * @return the precioGeneral
-	 */
-	public double getPrecioGeneral() {
-		return precioGeneral;
-	}
-
-	/**
-	 * @return the precioMayoreo
-	 */
-	public double getPrecioMayoreo() {
-		return precioMayoreo;
 	}
 
 	/**
@@ -172,10 +83,24 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
+	 * @return the codigoArticulo
+	 */
+	public String getCodigoArticulo() {
+		return codigoArticulo;
+	}
+
+	/**
 	 * @param codigoArticulo the codigoArticulo to set
 	 */
 	public void setCodigoArticulo(String codigoArticulo) {
 		this.codigoArticulo = codigoArticulo;
+	}
+
+	/**
+	 * @return the idProvedor
+	 */
+	public int getIdProvedor() {
+		return idProvedor;
 	}
 
 	/**
@@ -186,10 +111,24 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
+	 * @return the nombreProveedor
+	 */
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+
+	/**
 	 * @param nombreProveedor the nombreProveedor to set
 	 */
 	public void setNombreProveedor(String nombreProveedor) {
 		this.nombreProveedor = nombreProveedor;
+	}
+
+	/**
+	 * @return the idCategoria
+	 */
+	public int getIdCategoria() {
+		return idCategoria;
 	}
 
 	/**
@@ -200,10 +139,24 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
+	 * @return the nombreCategoria
+	 */
+	public String getNombreCategoria() {
+		return nombreCategoria;
+	}
+
+	/**
 	 * @param nombreCategoria the nombreCategoria to set
 	 */
 	public void setNombreCategoria(String nombreCategoria) {
 		this.nombreCategoria = nombreCategoria;
+	}
+
+	/**
+	 * @return the codigoSat
+	 */
+	public String getCodigoSat() {
+		return codigoSat;
 	}
 
 	/**
@@ -214,10 +167,24 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
+	 * @return the nombre
+	 */
+	public String getNombre() {
+		return nombre;
+	}
+
+	/**
 	 * @param nombre the nombre to set
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	/**
+	 * @return the descripcion
+	 */
+	public String getDescripcion() {
+		return descripcion;
 	}
 
 	/**
@@ -228,10 +195,24 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
+	 * @return the existencia
+	 */
+	public int getExistencia() {
+		return existencia;
+	}
+
+	/**
 	 * @param existencia the existencia to set
 	 */
 	public void setExistencia(int existencia) {
 		this.existencia = existencia;
+	}
+
+	/**
+	 * @return the exento
+	 */
+	public boolean isExento() {
+		return exento;
 	}
 
 	/**
@@ -242,10 +223,24 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
+	 * @return the costoUnitario
+	 */
+	public double getCostoUnitario() {
+		return costoUnitario;
+	}
+
+	/**
 	 * @param costoUnitario the costoUnitario to set
 	 */
 	public void setCostoUnitario(double costoUnitario) {
 		this.costoUnitario = costoUnitario;
+	}
+
+	/**
+	 * @return the precioGeneral
+	 */
+	public double getPrecioGeneral() {
+		return precioGeneral;
 	}
 
 	/**
@@ -256,88 +251,31 @@ public class Articulo implements java.io.Serializable {
 	}
 
 	/**
-	 * @param precioMayoreo the precioMayoreo to set
+	 * @return the precioEspecial
 	 */
-	public void setPrecioMayoreo(double precioMayoreo) {
-		this.precioMayoreo = precioMayoreo;
-	}
-	
-	public void setCantidadMayoreo(int cantidadMayoreo) {
-		this.cantidadMayoreo = cantidadMayoreo;
-	}
-	
-	public int getCantidadMayoreo() {
-		return this.cantidadMayoreo;
+	public double getPrecioEspecial() {
+		return precioEspecial;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((descripcion == null) ? 0 : descripcion.hashCode());
-		result = prime * result + idArticulo;
-		return result;
+	/**
+	 * @param precioEspecial the precioEspecial to set
+	 */
+	public void setPrecioEspecial(double precioEspecial) {
+		this.precioEspecial = precioEspecial;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof Articulo)) {
-			return false;
-		}
-		Articulo other = (Articulo) obj;
-		if (descripcion == null) {
-			if (other.descripcion != null) {
-				return false;
-			}
-		} else if (!descripcion.equals(other.descripcion)) {
-			return false;
-		}
-		if (idArticulo != other.idArticulo) {
-			return false;
-		}
-		return true;
+	/**
+	 * @return the cantidadParaPrecioEspecial
+	 */
+	public int getCantidadParaPrecioEspecial() {
+		return cantidadParaPrecioEspecial;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Articulo [getIdArticulo()=");
-		builder.append(getIdArticulo());
-		builder.append(", getCodigoArticulo()=");
-		builder.append(getCodigoArticulo());
-		builder.append(", getIdProvedor()=");
-		builder.append(getIdProvedor());
-		builder.append(", getNombreProveedor()=");
-		builder.append(getNombreProveedor());
-		builder.append(", getIdCategoria()=");
-		builder.append(getIdCategoria());
-		builder.append(", getNombreCategoria()=");
-		builder.append(getNombreCategoria());
-		builder.append(", getCodigoSat()=");
-		builder.append(getCodigoSat());
-		builder.append(", getNombre()=");
-		builder.append(getNombre());
-		builder.append(", getDescripcion()=");
-		builder.append(getDescripcion());
-		builder.append(", getExistencia()=");
-		builder.append(getExistencia());
-		builder.append(", isExento()=");
-		builder.append(isExento());
-		builder.append(", getCostoUnitario()=");
-		builder.append(getCostoUnitario());
-		builder.append(", getPrecioGeneral()=");
-		builder.append(getPrecioGeneral());
-		builder.append(", getPrecioMayoreo()=");		
-		builder.append(getPrecioMayoreo());
-		builder.append(", getCantidadMayoreo()");
-		builder.append(getCantidadMayoreo());
-		builder.append(", hashCode()=");
-		builder.append(hashCode());
-		builder.append("]");
-		return builder.toString();
+	/**
+	 * @param cantidadParaPrecioEspecial the cantidadParaPrecioEspecial to set
+	 */
+	public void setCantidadParaPrecioEspecial(int cantidadParaPrecioEspecial) {
+		this.cantidadParaPrecioEspecial = cantidadParaPrecioEspecial;
 	}
 
 }
