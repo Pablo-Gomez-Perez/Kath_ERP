@@ -3,6 +3,10 @@ package com.kathsoft.kathpos.app.view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.kathsoft.kathpos.app.controller.TipoClienteController;
+import com.kathsoft.kathpos.app.model.TipoCliente;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -140,5 +144,15 @@ public class Fr_DatosTipoCliente extends JFrame {
 		btnAgregar.setBackground(new Color(151,252,151));
 		panelInferiorBotones.add(btnAgregar);
 	}
-
+	
+	private void insertarNuevoTipoCliente() {
+		
+		var data = new TipoCliente();
+		
+		data.setNombre(this.txfNombre.getText());
+		data.setDescripcion(this.txfDescripcion.getText());
+		
+		new TipoClienteController().insertarNuevoTipoCliente(data);
+	}
+	
 }

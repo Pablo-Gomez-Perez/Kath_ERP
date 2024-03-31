@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.swing.JComboBox;
-
 import com.kathsoft.kathpos.app.model.TipoCliente;
 import com.kathsoft.kathpos.tools.Conexion;
 
@@ -82,7 +80,31 @@ public class TipoClienteController {
 		
 	}
 	
-	public static void insertarNuevoTipoCliente(TipoCliente data) {
+	public void insertarNuevoTipoCliente(TipoCliente data) {
+		
+		CallableStatement stm = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL insert_nuevo_tipoCliente(?,?)");
+			stm.setString(1, data.getNombre());
+			stm.setString(2, data.getDescripcion());
+			
+			stm.execute();
+			
+		}catch(SQLException er) {
+			er.printStackTrace();
+		}catch(Exception er) {
+			er.printStackTrace();
+		}finally {
+			try {
+				Conexion.cerrarConexion(cn, stm);
+			}catch (Exception er) {
+				// TODO: handle exception
+				er.printStackTrace();
+			}
+		}
 		
 	}
 
