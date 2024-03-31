@@ -23,7 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class Fr_DatosTipoCliente extends JFrame {
-	
+
 	/**
 	 * 
 	 */
@@ -155,9 +155,9 @@ public class Fr_DatosTipoCliente extends JFrame {
 		btnAgregar = new JButton("Agregar");
 		btnAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(tipoOperacion == 1) {
+				if (tipoOperacion == 1) {
 					insertarNuevoTipoCliente();
-				}else {
+				} else {
 					actualizarTipoCliente();
 				}
 			}
@@ -166,63 +166,63 @@ public class Fr_DatosTipoCliente extends JFrame {
 				Fr_DatosTipoCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnAgregar.setBackground(new Color(151, 252, 151));
 		panelInferiorBotones.add(btnAgregar);
-		
-		if(tipoOperacion != 1) {
+
+		if (tipoOperacion != 1) {
 			this.buscarTipoClientePorid();
 		}
-		
+
 	}
 
 	private void insertarNuevoTipoCliente() {
-		
-		if(this.validarCamposVacios()) {
+
+		if (this.validarCamposVacios()) {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No deje campos vacios");
 			return;
 		}
-		
+
 		var data = new TipoCliente();
 
 		data.setNombre(this.txfNombre.getText());
 		data.setDescripcion(this.txfDescripcion.getText());
 
 		this.tipoClienteController.insertarNuevoTipoCliente(data);
-		
+
 		MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
-		
+
 	}
-	
+
 	private void buscarTipoClientePorid() {
-		
+
 		var data = this.tipoClienteController.buscarPorId(this.idTipoCliente);
-		
+
 		this.txfNombre.setText(data.getNombre());
 		this.txfDescripcion.setText(data.getDescripcion());
-		
+
 	}
-	
+
 	private void actualizarTipoCliente() {
-		
-		if(this.validarCamposVacios()) {
+
+		if (this.validarCamposVacios()) {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No deje campos vacios");
 			return;
 		}
-		
+
 		var data = new TipoCliente();
-		
+
 		data.setId_tipoCliente(this.idTipoCliente);
 		data.setNombre(this.txfNombre.getText());
 		data.setDescripcion(this.txfDescripcion.getText());
-		
+
 		this.tipoClienteController.actualizarTipoCliente(data);
-		
+
 		MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
-					
+
 	}
-	
+
 	private boolean validarCamposVacios() {
 		return this.txfNombre.getText().isBlank() || this.txfDescripcion.getText().isBlank() ? true : false;
 	}
-	
+
 	private void cerrarForm() {
 		this.dispose();
 	}

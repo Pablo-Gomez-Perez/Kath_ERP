@@ -75,7 +75,7 @@ public class TipoClienteController {
 		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
-		} finally{
+		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);
 			} catch (Exception er) {
@@ -112,67 +112,66 @@ public class TipoClienteController {
 		}
 
 	}
-	
+
 	public void actualizarTipoCliente(TipoCliente data) {
-		
+
 		CallableStatement stm = null;
-		
-		//System.out.println(data.printData());
-		
+
+		// System.out.println(data.printData());
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL update_tipoCliente(?,?,?);");
 			stm.setInt(1, data.getIdTipoCliente());
 			stm.setString(2, data.getNombre());
 			stm.setString(3, data.getDescripcion());
-			
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
-		}finally {
+		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	public TipoCliente buscarPorId(int idTipoCliente) {
-		
+
 		var data = new TipoCliente();
 		CallableStatement stm = null;
 		ResultSet rset = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL buscar_tipoCliente_por_id(?);");
 			stm.setInt(1, idTipoCliente);
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				data.setId_tipoCliente(rset.getInt(1));
 				data.setNombre(rset.getString(2));
 				data.setDescripcion(rset.getString(3));
 			}
-			
+
 			return data;
-			
-		}catch(SQLException er) {
+
+		} catch (SQLException er) {
 			er.printStackTrace();
 			return null;
-		}catch(Exception er) {
+		} catch (Exception er) {
 			er.printStackTrace();
 			return null;
-		}finally {
+		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);
-			}catch(Exception er) {
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}

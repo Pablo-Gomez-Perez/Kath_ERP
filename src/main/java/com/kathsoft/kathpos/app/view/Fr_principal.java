@@ -1723,7 +1723,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0);
-				//System.out.println(index);
+				// System.out.println(index);
 
 				abrirFormSucursales(1, index);
 
@@ -1903,7 +1903,7 @@ public class Fr_principal extends JFrame {
 		btnNuevoTipoCliente = new JButton("Agregar");
 		btnNuevoTipoCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormTipoClientes(1,0);
+				abrirFormTipoClientes(1, 0);
 			}
 		});
 		btnNuevoTipoCliente.setIcon(
@@ -1914,10 +1914,10 @@ public class Fr_principal extends JFrame {
 		btnActualizarTipoCliente = new JButton("Actualizar");
 		btnActualizarTipoCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				int index = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);				
+
+				int index = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
 				abrirFormTipoClientes(2, index);
-				
+
 			}
 		});
 		btnActualizarTipoCliente.setIcon(new ImageIcon(
@@ -2070,16 +2070,15 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void abrirFormTipoClientes(int opcion, int idTipoCliente) {
-		
-		
+
 		Component cmp = this;
-		
+
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion,idTipoCliente);
+					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion, idTipoCliente);
 					frame.setLocationRelativeTo(cmp);
 					frame.setVisible(true);
 				} catch (Exception er) {
