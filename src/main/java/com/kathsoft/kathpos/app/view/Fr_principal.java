@@ -55,6 +55,25 @@ public class Fr_principal extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -8970651466053472860L;
+
+	/**
+	 * Launch the application.
+	 *
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Fr_principal frame = new Fr_principal(
+							new Sucursal(1, null, null, null, null, null, null, null, null));
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 	/**
 	 * 
 	 * 
@@ -83,8 +102,8 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionRegistrarVenta;
 	private JMenuItem opcionConsultarVenta;
 	private JPanel panelSuperiorBotones;
-	private JPanel panelArticulos;
 
+	private JPanel panelArticulos;
 	// ============================================================================================
 	// ============================================================================================
 	// panel que agrega una imagen al formulario
@@ -136,8 +155,8 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNewLabel_6;
 	private JPanel panelEmpleadosCentral;
 	private DefaultTableModel modelTablaEmpleados;
-	private DefaultTableModel modelTablaSucursales;
 
+	private DefaultTableModel modelTablaSucursales;
 	// Array que define el ancho de cada columna de la tabla de empleados
 	private int[] tableEmpleadosColumnsWidth = { 40, // id
 			150, // sucursal
@@ -148,11 +167,10 @@ public class Fr_principal extends JFrame {
 			200, // email
 			150 // activo o inactivo
 	};
-	private int[] tablaTipoClienteColumnsWidth = {
-			40, //id
-			150, //nombre de categoria
-			400, //descripcion
-			150 //estatus de la categoria
+	private int[] tablaTipoClienteColumnsWidth = { 40, // id
+			150, // nombre de categoria
+			400, // descripcion
+			150 // estatus de la categoria
 	};
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
@@ -169,6 +187,7 @@ public class Fr_principal extends JFrame {
 			90, // Codigo postal
 			150 // activo o inactivo
 	};
+
 	// Array que define el ancho de cada columna de la tabla de Articulos
 	private int[] tablaArticulosColumnsWidth = { 40, /* id */
 			150, /* codigo */
@@ -208,7 +227,6 @@ public class Fr_principal extends JFrame {
 			120, // Total
 			90, // Accion
 	};
-
 	private int[] tablaSucursalesColumnWidth = { 40, // indice
 			150, // nombre
 			300, // descripcion
@@ -400,25 +418,8 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_5;
 	private JTextField txtBuscarCategoriaCliente;
 	private Component horizontalStrut_6;
-	private JButton btnBuscarCategoriaCliente;
 
-	/**
-	 * Launch the application.
-	 *
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Fr_principal frame = new Fr_principal(
-							new Sucursal(1, null, null, null, null, null, null, null, null));
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JButton btnBuscarCategoriaCliente;
 
 	/**
 	 * Create the frame.
@@ -460,39 +461,41 @@ public class Fr_principal extends JFrame {
 		opcionConsultarArticulos.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
 		menuConsultar.add(opcionConsultarArticulos);
-		
+
 		menuConsultaClientes = new JMenu("Clientes");
-		menuConsultaClientes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_ico_catalog.png")));
+		menuConsultaClientes.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_ico_catalog.png")));
 		menuConsultar.add(menuConsultaClientes);
-		
-				opcionClientes = new JMenuItem("Catálogo Clientes");
-				menuConsultaClientes.add(opcionClientes);
-				opcionClientes.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
 
-						CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
-						cr.show(panelPrincipalContenedor, "panelClientes");
-						panelPrincipalContenedor.updateUI();
+		opcionClientes = new JMenuItem("Catálogo Clientes");
+		menuConsultaClientes.add(opcionClientes);
+		opcionClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 
-						llenarTablaClientes();
-					}
-				});
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelClientes");
+				panelPrincipalContenedor.updateUI();
+
+				llenarTablaClientes();
+			}
+		});
 		opcionClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
 				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
-		
+
 		opcionTipoClientes = new JMenuItem("Categoria Cliente");
 		opcionTipoClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelTipoCliente");
 				panelPrincipalContenedor.updateUI();
-				
+
 				llenarTablaTipoCliente();
 			}
 		});
-		
-		opcionTipoClientes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_categoria_ico.png")));
+
+		opcionTipoClientes.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_categoria_ico.png")));
 		menuConsultaClientes.add(opcionTipoClientes);
 
 		opcionEmpleados = new JMenuItem("Empleados");
@@ -1554,11 +1557,12 @@ public class Fr_principal extends JFrame {
 
 		// se remueve el editor del jtable de ventas
 		DataTools.removerEditorDeTabla(tablaVentas, modelTablaVentas);
-		
-		/*for (int i = 0; i < modelTablaVentas.getColumnCount(); i++) {
-			Class<?> colClass = tablaVentas.getColumnClass(i);
-			tablaVentas.setDefaultEditor(colClass, null);
-		}*/
+
+		/*
+		 * for (int i = 0; i < modelTablaVentas.getColumnCount(); i++) { Class<?>
+		 * colClass = tablaVentas.getColumnClass(i);
+		 * tablaVentas.setDefaultEditor(colClass, null); }
+		 */
 
 		tablaVentas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -1719,7 +1723,7 @@ public class Fr_principal extends JFrame {
 		btnActualizarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0);
-				System.out.println(index);
+				// System.out.println(index);
 
 				abrirFormSucursales(1, index);
 
@@ -1869,101 +1873,108 @@ public class Fr_principal extends JFrame {
 		btn_irAVentas.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
-		
+
 		panelTipoCliente = new JPanel();
 		panelTipoCliente.setBackground(new Color(255, 215, 0));
 		panelPrincipalContenedor.add(panelTipoCliente, "panelTipoCliente");
 		panelTipoCliente.setLayout(new BorderLayout(0, 0));
-		
+
 		panelEtiquetaTipoCliente = new JPanel();
 		panelEtiquetaTipoCliente.setBackground(new Color(0, 0, 128));
 		panelTipoCliente.add(panelEtiquetaTipoCliente, BorderLayout.NORTH);
-		
+
 		lblNewLabel_11 = new JLabel("Categorias de clientes");
 		lblNewLabel_11.setForeground(new Color(255, 255, 255));
 		lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelEtiquetaTipoCliente.add(lblNewLabel_11);
-		
+
 		panelTipoClienteCentral = new JPanel();
 		panelTipoClienteCentral.setBackground(new Color(255, 215, 0));
 		panelTipoClienteCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
 		panelTipoCliente.add(panelTipoClienteCentral, BorderLayout.CENTER);
 		panelTipoClienteCentral.setLayout(new BorderLayout(0, 0));
-		
+
 		panelTipoClienteCentralBotones = new JPanel();
 		FlowLayout flowLayout_14 = (FlowLayout) panelTipoClienteCentralBotones.getLayout();
 		flowLayout_14.setAlignment(FlowLayout.RIGHT);
 		panelTipoClienteCentralBotones.setBackground(new Color(255, 215, 0));
 		panelTipoClienteCentral.add(panelTipoClienteCentralBotones, BorderLayout.NORTH);
-		
+
 		btnNuevoTipoCliente = new JButton("Agregar");
 		btnNuevoTipoCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormTipoClientes(1);
+				abrirFormTipoClientes(1, 0);
 			}
 		});
-		btnNuevoTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
-		btnNuevoTipoCliente.setBackground(new Color(152,251,152));
+		btnNuevoTipoCliente.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnNuevoTipoCliente.setBackground(new Color(152, 251, 152));
 		panelTipoClienteCentralBotones.add(btnNuevoTipoCliente);
-		
+
 		btnActualizarTipoCliente = new JButton("Actualizar");
 		btnActualizarTipoCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormTipoClientes(2);
+
+				int index = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
+				abrirFormTipoClientes(2, index);
+
 			}
 		});
-		btnActualizarTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
-		btnActualizarTipoCliente.setBackground(new Color(152,251,152));
+		btnActualizarTipoCliente.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarTipoCliente.setBackground(new Color(152, 251, 152));
 		panelTipoClienteCentralBotones.add(btnActualizarTipoCliente);
-		
+
 		btnEliminarTipoCliente = new JButton("Eliminar");
-		btnEliminarTipoCliente.setBackground(new Color(255,51,0));
-		btnEliminarTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnEliminarTipoCliente.setBackground(new Color(255, 51, 0));
+		btnEliminarTipoCliente.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
 		panelTipoClienteCentralBotones.add(btnEliminarTipoCliente);
-		
+
 		scrollPaneTablaTipoCliente = new JScrollPane();
 		panelTipoClienteCentral.add(scrollPaneTablaTipoCliente, BorderLayout.CENTER);
-		
+
 		this.modelTablaTipoCliente = new DefaultTableModel();
-		
+
 		modelTablaTipoCliente.addColumn("Id");
 		modelTablaTipoCliente.addColumn("Categoria de cliente");
 		modelTablaTipoCliente.addColumn("Descripción");
 		modelTablaTipoCliente.addColumn("Estatus");
-		
+
 		tableTipoCliente = new JTable();
 		tableTipoCliente.setModel(modelTablaTipoCliente);
 		tableTipoCliente.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaTipoCliente.setViewportView(tableTipoCliente);
-		
+
 		DataTools.removerEditorDeTabla(tableTipoCliente, modelTablaTipoCliente);
-		
+
 		panelInferiorBusqueda = new JPanel();
 		FlowLayout flowLayout_15 = (FlowLayout) panelInferiorBusqueda.getLayout();
 		flowLayout_15.setAlignment(FlowLayout.RIGHT);
 		panelInferiorBusqueda.setBackground(new Color(255, 215, 0));
 		panelTipoClienteCentral.add(panelInferiorBusqueda, BorderLayout.SOUTH);
-		
+
 		lblNewLabel_12 = new JLabel("Buscar Categoria");
 		lblNewLabel_12.setFont(new Font("Tahoma", Font.BOLD, 12));
 		panelInferiorBusqueda.add(lblNewLabel_12);
-		
+
 		horizontalStrut_5 = Box.createHorizontalStrut(10);
 		panelInferiorBusqueda.add(horizontalStrut_5);
-		
+
 		txtBuscarCategoriaCliente = new JTextField();
 		txtBuscarCategoriaCliente.setColumns(70);
 		this.txtBuscarCategoriaCliente.setMaximumSize(this.txtBuscarCategoriaCliente.getPreferredSize());
 		panelInferiorBusqueda.add(txtBuscarCategoriaCliente);
-		
+
 		horizontalStrut_6 = Box.createHorizontalStrut(10);
 		panelInferiorBusqueda.add(horizontalStrut_6);
-		
+
 		btnBuscarCategoriaCliente = new JButton("Buscar");
-		btnBuscarCategoriaCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBuscarCategoriaCliente.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
 		btnBuscarCategoriaCliente.setBackground(new Color(184, 134, 11));
 		panelInferiorBusqueda.add(btnBuscarCategoriaCliente);
-		
+
 		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
 		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
@@ -1977,11 +1988,56 @@ public class Fr_principal extends JFrame {
 		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
 
 		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
-		
+
 		DataTools.definirTamanioDeColumnas(tablaTipoClienteColumnsWidth, tableTipoCliente);
-		
+
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	/**
+	 * abre la calculadora, valido unicamente en windows
+	 */
+	private void abrirCalculadora() {
+		try {
+			Runtime.getRuntime().exec("calc");
+		} catch (Exception er) {
+			er.printStackTrace();
+		}
+	}
+
+	private void abrirFormClientes(int tipoOperacion, int indiceCliente) {
+		Component cm = this;
+
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion, indiceCliente);
+				frame.setLocationRelativeTo(cm);
+				frame.setVisible(true);
+			}
+		});
+	}
+
+	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
+
+		Component cm = null;
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion, idFormaDePago);
+					frame.setLocationRelativeTo(cm);
+					frame.setVisible(true);
+					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				} catch (Exception er) {
+					er.printStackTrace();
+				}
+
+			}
+		});
+
 	}
 
 	private void abrirFormLogin() {
@@ -1997,140 +2053,75 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void cerrarFormPrincipal() {
-		this.dispose();
-		System.exit(0);
+	private void abrirFormSucursales(int opcion, int idSucursal) {
+		Component cm = null;
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion, idSucursal);
+					frame.setLocationRelativeTo(cm);
+					frame.setVisible(true);
+				} catch (Exception er) {
+					er.printStackTrace();
+				}
+			}
+		});
 	}
 
-	/**
-	 * llena el JTable del panel de categorias con todos los registros encontrados
-	 * en la bd
-	 */
-	private void llenarTablaCategoria() {
-		this.borrarElementosDeLaTablaCategorias();
-		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
-	}
+	private void abrirFormTipoClientes(int opcion, int idTipoCliente) {
 
-	/**
-	 * Llena el JTable correspondiente con los registro de las sucursales extraidos
-	 * de la base de datos
-	 */
-	private void llenarTablaSucursales() {
-		this.modelTablaSucursales.getDataVector().removeAllElements();
-		this.tablaSucursales.updateUI();
-		this.sucursalController.verSucursalesEnTabla(modelTablaSucursales);
-	}
-
-	/**
-	 * llena el jTable del panel de empleados con todos los registros encontrados en
-	 * la bd
-	 */
-	private void llenarTablaEmpleados() {
-		this.borrarElementosDeLaTablaEmpleados();
-		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
-	}
-
-	private void eliminarEmpleado() {
-
-		int indiceEmpleadoSeleccionado = -1;
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			indiceEmpleadoSeleccionado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados,
-					0);
-			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this);
-		}
-
-	}
-
-	private void llenarTablaProveedor() {
-		this.borrarElementosDeLaTablaProveedor();
-		proveedorController.verProveedoresEnTabla(modelTablaProveedores);
-	}
-	
-	private void llenarTablaTipoCliente() {
-		this.modelTablaTipoCliente.getDataVector().removeAllElements();
-		this.tableTipoCliente.updateUI();
-		this.tipoClienteController.listarTipoCliente(this.txtBuscarCategoriaCliente.getText()).forEach(Tc -> {
-			this.modelTablaTipoCliente.addRow(Tc);
-		});;
-	}
-	
-	/**
-	 * borra todos los elementos contenidos en la tabla categorias
-	 */
-	private void borrarElementosDeLaTablaCategorias() {
-		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
-		this.tablaCategorias.updateUI();
-	}
-
-	private void borrarElementosDeLaTablaProveedor() {
-		this.modelTablaProveedores.getDataVector().removeAllElements();
-		this.tablaProveedores.updateUI();
-	}
-
-	/**
-	 * borra todos los elementos contenidos en la tabla empleados
-	 */
-	private void borrarElementosDeLaTablaEmpleados() {
-		this.modelTablaEmpleados.getDataVector().removeAllElements();
-		this.tableEmpleados.updateUI();
-	}
-
-	/**
-	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
-	 */
-	private void eliminarProveedor() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			proveedorController.eliminarProveedor(
-					DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-	}
-
-	private void abrirVentanaFormularioProveedor(int opcion, int indiceProveedor) {
-
-		Component cm = this;
+		Component cmp = this;
 
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion, indiceProveedor);
+					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion, idTipoCliente);
+					frame.setLocationRelativeTo(cmp);
+					frame.setVisible(true);
+				} catch (Exception er) {
+					er.printStackTrace();
+				}
+
+			}
+		});
+	}
+
+	private void abrirFormularioEmpleados(int opcion, int idEmpleado) {
+		Component cm = this;
+
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+
+					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion, idEmpleado);
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 
 				} catch (Exception er) {
 					er.printStackTrace();
 				}
-
 			}
+		});
+	}
 
+	/**
+	 * abre el formulario del punto de ventas
+	 */
+	private void abrirFormVentas(int idSucursal) {
+		Component cm = this;
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas(
+						idSucursal);
+				fr.setLocationRelativeTo(cm);
+				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				fr.setVisible(true);
+			}
 		});
 	}
 
@@ -2159,25 +2150,6 @@ public class Fr_principal extends JFrame {
 
 	}
 
-	private void abrirFormularioEmpleados(int opcion, int idEmpleado) {
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-
-					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion, idEmpleado);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
-	}
-
 	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
 		Component cm = this;
 
@@ -2196,254 +2168,26 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void llenarTablaArticulos() {
-		this.borrarElementosDeLaTablaArticulos();
-		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
-				.getIdTipoCliente();
-		articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal(), idTipoCliente).forEach(a -> {
-			this.modelTablaArticulos.addRow(a);
-		});
-	}
+	private void abrirVentanaFormularioProveedor(int opcion, int indiceProveedor) {
 
-	private void llenarCmbTipoCliente() {
-		this.cmb_tipoCliente.removeAllItems();
-		this.cmb_tipoCliente.updateUI();
-		this.tipoClienteController.cmbTipoCliente().forEach(Tc -> {
-			this.cmb_tipoCliente.addItem(Tc);
-		});
-	}
-
-	/**
-	 * borra todos los datos de la tabla de articulos
-	 */
-	private void borrarElementosDeLaTablaArticulos() {
-		this.modelTablaArticulos.getDataVector().removeAllElements();
-		this.tablaArticulos.updateUI();
-	}
-
-	private void consultarArticulosPorNombre() {
-		this.borrarElementosDeLaTablaArticulos();
-		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
-				.getIdTipoCliente();
-		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), opcionDeBusquedaDeArticulo(),
-				this.sucursal.getIdSucursal(), idTipoCliente).forEach(Ar -> {
-					this.modelTablaArticulos.addRow(Ar);
-				});;
-	}
-
-	/**
-	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
-	 * 
-	 * @return
-	 */
-	private int opcionDeBusquedaDeArticulo() {
-
-		if (this.rdbBuscarArtPorNombre.isSelected()) {
-			return 1;
-		} else if (this.rdbtBuscarArtPorProveedor.isSelected()) {
-			return 2;
-		} else if (this.rdbtBuscarArtPorCategoria.isSelected()) {
-			return 3;
-		} else if (this.rdbtBuscarArtPorCodigo.isSelected()) {
-			return 4;
-		} else {
-			return 5;
-		}
-
-	}
-
-	private void borrarElementosDeLaTablaClientes() {
-		this.modelTablaClientes.getDataVector().removeAllElements();
-		this.tablaClientes.updateUI();
-	}
-
-	private void llenarTablaClientes() {
-		this.borrarElementosDeLaTablaClientes();
-		clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), modelTablaClientes);
-	}
-
-	/**
-	 * abre la calculadora, valido unicamente en windows
-	 */
-	private void abrirCalculadora() {
-		try {
-			Runtime.getRuntime().exec("calc");
-		} catch (Exception er) {
-			er.printStackTrace();
-		}
-	}
-
-	/**
-	 * abre el formulario del punto de ventas
-	 */
-	private void abrirFormVentas(int idSucursal) {
-		Component cm = this;
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas(
-						idSucursal);
-				fr.setLocationRelativeTo(cm);
-				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				fr.setVisible(true);
-			}
-		});
-	}
-
-	private void abrirFormClientes(int tipoOperacion, int indiceCliente) {
 		Component cm = this;
 
 		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion, indiceCliente);
-				frame.setLocationRelativeTo(cm);
-				frame.setVisible(true);
-			}
-		});
-	}
-
-	private void eliminarCliente() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			this.clientesController.eliminarCliente(
-					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-
-	}
-
-	private void abrirFormSucursales(int opcion, int idSucursal) {
-		Component cm = null;
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion, idSucursal);
-					frame.setLocationRelativeTo(cm);
-					frame.setVisible(true);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	private void abrirFormTipoClientes(int opcion) {
-		Component cmp = this;
-		EventQueue.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion);
-					frame.setLocationRelativeTo(cmp);
-					frame.setVisible(true);
-				}catch(Exception er) {
-					er.printStackTrace();
-				}
-				
-			}
-		});
-	}
-
-	private void llenarTablaVentas(int opcion) {
-		this.borrarElementosDeLaTablaVentas();
-		ventasController.verVentasEnTabla(modelTablaVentas, opcion, this.sucursal.getIdSucursal());
-	}
-
-	private void borrarElementosDeLaTablaVentas() {
-		this.modelTablaVentas.getDataVector().removeAllElements();
-		this.tablaVentas.updateUI();
-	}
-
-	private void llenarTablaFormasDePago() {
-		this.modelTablaFormasDePago.getDataVector().removeAllElements();
-		this.tablaFormasDePago.updateUI();
-		this.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
-	}
-
-	/**
-	 * en función del RadioButton seleccionado retorna el criterio de busqueda de
-	 * las ventas registradas en la base de datos
-	 * 
-	 * @return el criterio de busqueda
-	 */
-	private int opcionDeBusquedaDeVenta() {
-
-		if (this.rdbBuscarVtPorId.isSelected()) {
-			return 1;
-		}
-		if (this.rdbBuscarVtPorEmpleado.isSelected()) {
-			return 2;
-		}
-		if (this.rdbBuscarVtPorCliente.isSelected()) {
-			return 3;
-		}
-
-		return 4;
-
-	}
-
-	/**
-	 * busca las ventas en la db de acuerdo al RadioButton seleccionado
-	 */
-	private void buscarVentasPor() {
-		this.borrarElementosDeLaTablaVentas();
-		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(),
-				this.opcionDeBusquedaDeVenta());
-	}
-
-	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
-
-		Component cm = null;
-		EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion, idFormaDePago);
-					frame.setLocationRelativeTo(cm);
-					frame.setVisible(true);
-					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion, indiceProveedor);
+					fr.setLocationRelativeTo(cm);
+					fr.setVisible(true);
+
 				} catch (Exception er) {
 					er.printStackTrace();
 				}
 
 			}
+
 		});
-
-	}
-
-	private void eliminarFormaDePago() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-			this.formasDePagoController.eliminarFormaDepAgo(
-					DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
-		}
 	}
 
 	private void aliminarSucursal() {
@@ -2466,6 +2210,96 @@ public class Fr_principal extends JFrame {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 
+	}
+
+	/**
+	 * borra todos los datos de la tabla de articulos
+	 */
+	private void borrarElementosDeLaTablaArticulos() {
+		this.modelTablaArticulos.getDataVector().removeAllElements();
+		this.tablaArticulos.updateUI();
+	}
+
+	/**
+	 * borra todos los elementos contenidos en la tabla categorias
+	 */
+	private void borrarElementosDeLaTablaCategorias() {
+		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
+		this.tablaCategorias.updateUI();
+	}
+
+	private void borrarElementosDeLaTablaClientes() {
+		this.modelTablaClientes.getDataVector().removeAllElements();
+		this.tablaClientes.updateUI();
+	}
+
+	/**
+	 * borra todos los elementos contenidos en la tabla empleados
+	 */
+	private void borrarElementosDeLaTablaEmpleados() {
+		this.modelTablaEmpleados.getDataVector().removeAllElements();
+		this.tableEmpleados.updateUI();
+	}
+
+	private void borrarElementosDeLaTablaProveedor() {
+		this.modelTablaProveedores.getDataVector().removeAllElements();
+		this.tablaProveedores.updateUI();
+	}
+
+	private void borrarElementosDeLaTablaVentas() {
+		this.modelTablaVentas.getDataVector().removeAllElements();
+		this.tablaVentas.updateUI();
+	}
+
+	private void buscarClientePorNombre() {
+		this.modelTablaClientes.getDataVector().removeAllElements();
+		this.tablaClientes.updateUI();
+		this.clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), this.modelTablaClientes);
+	}
+
+	private void buscarEmpleadoPorNombre() {
+		this.modelTablaEmpleados.getDataVector().removeAllElements();
+		this.tableEmpleados.updateUI();
+		this.empleadoController.buscarEmpleadoPorNombre(this.txfBuscarEmpleado.getText(), this.modelTablaEmpleados);
+	}
+
+	private void buscarProveedorPorNombre() {
+		this.modelTablaProveedores.getDataVector().removeAllElements();
+		this.tablaProveedores.updateUI();
+		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(),
+				this.modelTablaProveedores);
+	}
+
+	/**
+	 * busca las ventas en la db de acuerdo al RadioButton seleccionado
+	 */
+	private void buscarVentasPor() {
+		this.borrarElementosDeLaTablaVentas();
+		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(),
+				this.opcionDeBusquedaDeVenta());
+	}
+
+	private void cerrarFormPrincipal() {
+		this.dispose();
+		System.exit(0);
+	}
+
+	private void consultarArticulosPorNombre() {
+		this.borrarElementosDeLaTablaArticulos();
+		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
+				.getIdTipoCliente();
+		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), opcionDeBusquedaDeArticulo(),
+				this.sucursal.getIdSucursal(), idTipoCliente).forEach(Ar -> {
+					this.modelTablaArticulos.addRow(Ar);
+				});
+		;
+	}
+
+	private void consultarCategoriaPorNombre() {
+		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
+		this.tablaCategorias.updateUI();
+		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
+				modelTablaCategoriaArticulo);
 	}
 
 	private void eliminarArticulo() {
@@ -2511,30 +2345,93 @@ public class Fr_principal extends JFrame {
 
 	}
 
-	private void consultarCategoriaPorNombre() {
-		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
-		this.tablaCategorias.updateUI();
-		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
-				modelTablaCategoriaArticulo);
+	private void eliminarCliente() {
+
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
+
+		if (input > 0) {
+			return;
+		}
+
+		try {
+
+			this.clientesController.eliminarCliente(
+					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
+
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
+
 	}
 
-	private void buscarClientePorNombre() {
-		this.modelTablaClientes.getDataVector().removeAllElements();
-		this.tablaClientes.updateUI();
-		this.clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), this.modelTablaClientes);
+	private void eliminarEmpleado() {
+
+		int indiceEmpleadoSeleccionado = -1;
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
+
+		if (input > 0) {
+			return;
+		}
+
+		try {
+
+			indiceEmpleadoSeleccionado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados,
+					0);
+			this.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
+
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
+
+		} catch (Exception er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this);
+		}
+
 	}
 
-	private void buscarEmpleadoPorNombre() {
-		this.modelTablaEmpleados.getDataVector().removeAllElements();
-		this.tableEmpleados.updateUI();
-		this.empleadoController.buscarEmpleadoPorNombre(this.txfBuscarEmpleado.getText(), this.modelTablaEmpleados);
+	private void eliminarFormaDePago() {
+
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
+
+		if (input > 0) {
+			return;
+		}
+
+		try {
+			this.formasDePagoController.eliminarFormaDepAgo(
+					DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
+
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
+		} catch (SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
+		}
 	}
 
-	private void buscarProveedorPorNombre() {
-		this.modelTablaProveedores.getDataVector().removeAllElements();
-		this.tablaProveedores.updateUI();
-		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(),
-				this.modelTablaProveedores);
+	/**
+	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
+	 */
+	private void eliminarProveedor() {
+
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
+
+		if (input > 0) {
+			return;
+		}
+
+		try {
+
+			proveedorController.eliminarProveedor(
+					DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
+
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
 	}
 
 	private void exportarArticuloExcel() {
@@ -2542,17 +2439,6 @@ public class Fr_principal extends JFrame {
 
 			DataTools.exportarTablaExcel(modelTablaArticulos, this);
 
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
-
-	private void exportarVentaExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaVentas, this);
 		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
@@ -2592,5 +2478,134 @@ public class Fr_principal extends JFrame {
 					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
+	}
+
+	private void exportarVentaExcel() {
+		try {
+			DataTools.exportarTablaExcel(modelTablaVentas, this);
+		} catch (Exception er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
+			er.printStackTrace();
+		}
+	}
+
+	private void llenarCmbTipoCliente() {
+		this.cmb_tipoCliente.removeAllItems();
+		this.cmb_tipoCliente.updateUI();
+		this.tipoClienteController.cmbTipoCliente().forEach(Tc -> {
+			this.cmb_tipoCliente.addItem(Tc);
+		});
+	}
+
+	private void llenarTablaArticulos() {
+		this.borrarElementosDeLaTablaArticulos();
+		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
+				.getIdTipoCliente();
+		articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal(), idTipoCliente).forEach(a -> {
+			this.modelTablaArticulos.addRow(a);
+		});
+	}
+
+	/**
+	 * llena el JTable del panel de categorias con todos los registros encontrados
+	 * en la bd
+	 */
+	private void llenarTablaCategoria() {
+		this.borrarElementosDeLaTablaCategorias();
+		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
+	}
+
+	private void llenarTablaClientes() {
+		this.borrarElementosDeLaTablaClientes();
+		clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), modelTablaClientes);
+	}
+
+	/**
+	 * llena el jTable del panel de empleados con todos los registros encontrados en
+	 * la bd
+	 */
+	private void llenarTablaEmpleados() {
+		this.borrarElementosDeLaTablaEmpleados();
+		empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
+	}
+
+	private void llenarTablaFormasDePago() {
+		this.modelTablaFormasDePago.getDataVector().removeAllElements();
+		this.tablaFormasDePago.updateUI();
+		this.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
+	}
+
+	private void llenarTablaProveedor() {
+		this.borrarElementosDeLaTablaProveedor();
+		proveedorController.verProveedoresEnTabla(modelTablaProveedores);
+	}
+
+	/**
+	 * Llena el JTable correspondiente con los registro de las sucursales extraidos
+	 * de la base de datos
+	 */
+	private void llenarTablaSucursales() {
+		this.modelTablaSucursales.getDataVector().removeAllElements();
+		this.tablaSucursales.updateUI();
+		this.sucursalController.verSucursalesEnTabla(modelTablaSucursales);
+	}
+
+	private void llenarTablaTipoCliente() {
+		this.modelTablaTipoCliente.getDataVector().removeAllElements();
+		this.tableTipoCliente.updateUI();
+		this.tipoClienteController.listarTipoCliente(this.txtBuscarCategoriaCliente.getText()).forEach(Tc -> {
+			this.modelTablaTipoCliente.addRow(Tc);
+		});
+		;
+	}
+
+	private void llenarTablaVentas(int opcion) {
+		this.borrarElementosDeLaTablaVentas();
+		ventasController.verVentasEnTabla(modelTablaVentas, opcion, this.sucursal.getIdSucursal());
+	}
+
+	/**
+	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
+	 * 
+	 * @return
+	 */
+	private int opcionDeBusquedaDeArticulo() {
+
+		if (this.rdbBuscarArtPorNombre.isSelected()) {
+			return 1;
+		} else if (this.rdbtBuscarArtPorProveedor.isSelected()) {
+			return 2;
+		} else if (this.rdbtBuscarArtPorCategoria.isSelected()) {
+			return 3;
+		} else if (this.rdbtBuscarArtPorCodigo.isSelected()) {
+			return 4;
+		} else {
+			return 5;
+		}
+
+	}
+
+	/**
+	 * en función del RadioButton seleccionado retorna el criterio de busqueda de
+	 * las ventas registradas en la base de datos
+	 * 
+	 * @return el criterio de busqueda
+	 */
+	private int opcionDeBusquedaDeVenta() {
+
+		if (this.rdbBuscarVtPorId.isSelected()) {
+			return 1;
+		}
+		if (this.rdbBuscarVtPorEmpleado.isSelected()) {
+			return 2;
+		}
+		if (this.rdbBuscarVtPorCliente.isSelected()) {
+			return 3;
+		}
+
+		return 4;
+
 	}
 }
