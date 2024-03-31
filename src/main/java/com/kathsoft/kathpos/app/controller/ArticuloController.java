@@ -30,7 +30,7 @@ public class ArticuloController implements java.io.Serializable {
 		ResultSet rset = null;
 		CallableStatement stm = null;
 		var articulos = new Vector<Object[]>();
-		
+
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
@@ -51,15 +51,15 @@ public class ArticuloController implements java.io.Serializable {
 						rset.getString(8), // existencia
 						rset.getString(9), // precio general
 						rset.getString(10), // precio especial
-						rset.getInt(11), //piezas para precio especial
+						rset.getInt(11), // piezas para precio especial
 						rset.getInt(12) == 1 ? "Activo" : "Inactivo" // Estatus
 				};
 
 				articulos.add(fila);
 			}
-			
+
 			return articulos;
-			
+
 		} catch (SQLException er) {
 			er.printStackTrace();
 			return null;
@@ -81,13 +81,16 @@ public class ArticuloController implements java.io.Serializable {
 	}
 
 	/**
-	 * consulta el listado de articulos registrados en la base de datos de manera
-	 * dinámica, ya séa por nombre, proveedor, categoría, codigo o descripción, y
-	 * los resultados encontrados los imprime en la tabla pasada como parámetro
+	 * 
+	 * retorna un {@code Vector<Object[]>} con el listado completo de los artículos
+	 * almacenado en la bd filtrando por opción de busqueda, sucursal actual y los
+	 * precios por tipo de cliente
 	 * 
 	 * @param nombre
-	 * @param tabla
 	 * @param opcion
+	 * @param id_sucursal
+	 * @param idTipoCliente
+	 * @return Vector<Object[]>
 	 */
 	public Vector<Object[]> consultarArticulosPorNombre(String nombre, int opcion, int id_sucursal, int idTipoCliente) {
 
@@ -123,7 +126,7 @@ public class ArticuloController implements java.io.Serializable {
 
 				articulos.add(fila);
 			}
-			
+
 			return articulos;
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -155,7 +158,7 @@ public class ArticuloController implements java.io.Serializable {
 	public void insertarNuevoArticulo(Articulo art) throws SQLException, Exception {
 
 		System.out.println(art);
-		
+
 		CallableStatement stm = null;
 
 		cn = Conexion.establecerConexionLocal("kath_erp");
@@ -169,9 +172,9 @@ public class ArticuloController implements java.io.Serializable {
 		stm.setString(6, art.getDescripcion());
 		stm.setInt(7, art.isExento() == true ? 1 : 0);
 		stm.setDouble(8, art.getCostoUnitario());
-		//stm.setDouble(9, art.getPrecioGeneral());
-		//stm.setDouble(10, art.getPrecioMayoreo());
-		//stm.setInt(11, art.getCantidadMayoreo());
+		// stm.setDouble(9, art.getPrecioGeneral());
+		// stm.setDouble(10, art.getPrecioMayoreo());
+		// stm.setInt(11, art.getCantidadMayoreo());
 
 		stm.execute();
 
@@ -201,9 +204,9 @@ public class ArticuloController implements java.io.Serializable {
 		stm.setString(6, art.getDescripcion());
 		stm.setInt(7, art.isExento() == true ? 1 : 0);
 		stm.setDouble(8, art.getCostoUnitario());
-		//stm.setDouble(9, art.getPrecioGeneral());
-		//stm.setDouble(10, art.getPrecioMayoreo());
-		//stm.setInt(11, art.getCantidadMayoreo());
+		// stm.setDouble(9, art.getPrecioGeneral());
+		// stm.setDouble(10, art.getPrecioMayoreo());
+		// stm.setInt(11, art.getCantidadMayoreo());
 
 		stm.execute();
 
@@ -243,9 +246,9 @@ public class ArticuloController implements java.io.Serializable {
 				art.setExistencia(rset.getInt(8));
 				art.setExento((rset.getInt(9) == 1) ? true : false);
 				art.setCostoUnitario(rset.getDouble(10));
-				//art.setPrecioGeneral(rset.getDouble(11));
-				//art.setPrecioMayoreo(rset.getDouble(12));
-				//art.setCantidadMayoreo(rset.getInt(13));
+				// art.setPrecioGeneral(rset.getDouble(11));
+				// art.setPrecioMayoreo(rset.getDouble(12));
+				// art.setCantidadMayoreo(rset.getInt(13));
 
 			}
 
@@ -331,9 +334,9 @@ public class ArticuloController implements java.io.Serializable {
 				art.setExistencia(rset.getInt(8));
 				art.setExento((rset.getInt(9) == 1) ? true : false);
 				art.setCostoUnitario(rset.getDouble(10));
-				//art.setPrecioGeneral(rset.getDouble(11));
-				//art.setPrecioMayoreo(rset.getDouble(12));
-				//art.setCantidadMayoreo(rset.getInt(13));
+				// art.setPrecioGeneral(rset.getDouble(11));
+				// art.setPrecioMayoreo(rset.getDouble(12));
+				// art.setCantidadMayoreo(rset.getInt(13));
 
 			}
 

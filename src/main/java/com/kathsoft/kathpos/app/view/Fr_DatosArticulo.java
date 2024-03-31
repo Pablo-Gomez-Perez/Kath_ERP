@@ -443,8 +443,7 @@ public class Fr_DatosArticulo extends JFrame {
 		this.limpiarCmbMarca();
 		this.listCategoria.stream().forEach(c -> {
 			this.cmbMarcaArticulo.addItem(c);
-		});
-		;
+		});		
 	}
 
 	private void limpiarCmbMarca() {

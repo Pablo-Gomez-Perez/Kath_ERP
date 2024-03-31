@@ -137,6 +137,7 @@ public class Fr_principal extends JFrame {
 	private DefaultTableModel modelTablaArticulos;
 	private DefaultTableModel modelTablaVentas;
 	private DefaultTableModel modelTablaFormasDePago;
+	private DefaultTableModel modelTablaTipoCliente;
 	private JPanel panelProveedorEtiqueta;
 	private JPanel panelEmpleadosEtiqueta;
 	private JLabel lblNewLabel_6;
@@ -383,6 +384,18 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNewLabel_10;
 	private Component horizontalStrut_4;
 	private JComboBox<TipoCliente> cmb_tipoCliente;
+	private JMenu menuConsultaClientes;
+	private JMenuItem opcionTipoClientes;
+	private JPanel panelTipoCliente;
+	private JPanel panelEtiquetaTipoCliente;
+	private JPanel panelTipoClienteCentral;
+	private JPanel panelTipoClienteCentralBotones;
+	private JScrollPane scrollPaneTablaTipoCliente;
+	private JLabel lblNewLabel_11;
+	private JButton btnNuevoTipoCliente;
+	private JButton btnActualizarTipoCliente;
+	private JButton btnEliminarTipoCliente;
+	private JTable tableTipoCliente;
 
 	/**
 	 * Launch the application.
@@ -442,21 +455,39 @@ public class Fr_principal extends JFrame {
 		opcionConsultarArticulos.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
 		menuConsultar.add(opcionConsultarArticulos);
+		
+		menuConsultaClientes = new JMenu("Clientes");
+		menuConsultaClientes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_ico_catalog.png")));
+		menuConsultar.add(menuConsultaClientes);
+		
+				opcionClientes = new JMenuItem("Catálogo Clientes");
+				menuConsultaClientes.add(opcionClientes);
+				opcionClientes.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
 
-		opcionClientes = new JMenuItem("Clientes");
-		opcionClientes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+						CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+						cr.show(panelPrincipalContenedor, "panelClientes");
+						panelPrincipalContenedor.updateUI();
 
-				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
-				cr.show(panelPrincipalContenedor, "panelClientes");
-				panelPrincipalContenedor.updateUI();
-
-				llenarTablaClientes();
-			}
-		});
+						llenarTablaClientes();
+					}
+				});
 		opcionClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
 				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
-		menuConsultar.add(opcionClientes);
+		
+		opcionTipoClientes = new JMenuItem("Categoria Cliente");
+		opcionTipoClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelTipoCliente");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+		});
+		
+		opcionTipoClientes.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_categoria_ico.png")));
+		menuConsultaClientes.add(opcionTipoClientes);
 
 		opcionEmpleados = new JMenuItem("Empleados");
 		opcionEmpleados.addActionListener(new ActionListener() {
@@ -1844,6 +1875,60 @@ public class Fr_principal extends JFrame {
 		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
 
 		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
+		
+		panelTipoCliente = new JPanel();
+		panelTipoCliente.setBackground(new Color(255, 215, 0));
+		panelPrincipalContenedor.add(panelTipoCliente, "panelTipoCliente");
+		panelTipoCliente.setLayout(new BorderLayout(0, 0));
+		
+		panelEtiquetaTipoCliente = new JPanel();
+		panelEtiquetaTipoCliente.setBackground(new Color(0, 0, 128));
+		panelTipoCliente.add(panelEtiquetaTipoCliente, BorderLayout.NORTH);
+		
+		lblNewLabel_11 = new JLabel("Categorias de clientes");
+		lblNewLabel_11.setForeground(new Color(255, 255, 255));
+		lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 16));
+		panelEtiquetaTipoCliente.add(lblNewLabel_11);
+		
+		panelTipoClienteCentral = new JPanel();
+		panelTipoClienteCentral.setBackground(new Color(255, 215, 0));
+		panelTipoClienteCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
+		panelTipoCliente.add(panelTipoClienteCentral, BorderLayout.CENTER);
+		panelTipoClienteCentral.setLayout(new BorderLayout(0, 0));
+		
+		panelTipoClienteCentralBotones = new JPanel();
+		FlowLayout flowLayout_14 = (FlowLayout) panelTipoClienteCentralBotones.getLayout();
+		flowLayout_14.setAlignment(FlowLayout.RIGHT);
+		panelTipoClienteCentralBotones.setBackground(new Color(255, 215, 0));
+		panelTipoClienteCentral.add(panelTipoClienteCentralBotones, BorderLayout.NORTH);
+		
+		btnNuevoTipoCliente = new JButton("Agregar");
+		btnNuevoTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+		btnNuevoTipoCliente.setBackground(new Color(152,251,152));
+		panelTipoClienteCentralBotones.add(btnNuevoTipoCliente);
+		
+		btnActualizarTipoCliente = new JButton("Actualizar");
+		btnActualizarTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+		btnActualizarTipoCliente.setBackground(new Color(152,251,152));
+		panelTipoClienteCentralBotones.add(btnActualizarTipoCliente);
+		
+		btnEliminarTipoCliente = new JButton("Eliminar");
+		btnEliminarTipoCliente.setBackground(new Color(255,51,0));
+		btnEliminarTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		panelTipoClienteCentralBotones.add(btnEliminarTipoCliente);
+		
+		scrollPaneTablaTipoCliente = new JScrollPane();
+		panelTipoClienteCentral.add(scrollPaneTablaTipoCliente, BorderLayout.CENTER);
+		
+		this.modelTablaTipoCliente = new DefaultTableModel();
+		
+		modelTablaTipoCliente.addColumn("Id");
+		modelTablaTipoCliente.addColumn("Categoria de cliente");
+		modelTablaTipoCliente.addColumn("Descripción");
+		modelTablaTipoCliente.addColumn("Estatus");
+		
+		tableTipoCliente = new JTable();
+		scrollPaneTablaTipoCliente.setViewportView(tableTipoCliente);
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
