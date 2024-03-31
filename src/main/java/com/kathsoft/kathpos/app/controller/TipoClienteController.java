@@ -47,7 +47,41 @@ public class TipoClienteController {
 			}
 		}
 	}
-
+	
+	public Vector<Object[]> listarTipoCliente(String nombre){
+		
+		var data = new Vector<Object[]>();
+		CallableStatement stm = null;
+		ResultSet rset = null;
+		
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL ver_tipo_clientes(?)");
+			stm.setString(1, nombre);
+			rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				Object[] row = {
+					rset.getInt(1), //id
+					rset.getString(2), //nombre de la categoria
+					rset.getString(3), //Descripcion de la categoria
+					rset.getShort(4) == 0 ? "Inactivo" : "Activo" //Estatus de la categoria
+				};
+				data.add(row);
+			}
+			
+			return data;
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return null;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}
+		
+	}
+	
 	public static void insertarNuevoTipoCliente(TipoCliente data) {
 
 	}

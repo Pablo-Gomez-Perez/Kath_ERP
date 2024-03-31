@@ -155,6 +155,12 @@ public class Fr_principal extends JFrame {
 			200, // email
 			150 // activo o inactivo
 	};
+	private int[] tablaTipoClienteColumnsWidth = {
+			40, //id
+			150, //nombre de categoria
+			400, //descripcion
+			150 //estatus de la categoria
+	};
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
@@ -396,6 +402,12 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarTipoCliente;
 	private JButton btnEliminarTipoCliente;
 	private JTable tableTipoCliente;
+	private JPanel panelInferiorBusqueda;
+	private JLabel lblNewLabel_12;
+	private Component horizontalStrut_5;
+	private JTextField txtBuscarCategoriaCliente;
+	private Component horizontalStrut_6;
+	private JButton btnBuscarCategoriaCliente;
 
 	/**
 	 * Launch the application.
@@ -483,6 +495,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelTipoCliente");
 				panelPrincipalContenedor.updateUI();
 				
+				llenarTablaTipoCliente();
 			}
 		});
 		
@@ -1547,10 +1560,12 @@ public class Fr_principal extends JFrame {
 		scrollPaneTablaVentas.setViewportView(tablaVentas);
 
 		// se remueve el editor del jtable de ventas
-		for (int i = 0; i < modelTablaVentas.getColumnCount(); i++) {
+		DataTools.removerEditorDeTabla(tablaVentas, modelTablaVentas);
+		
+		/*for (int i = 0; i < modelTablaVentas.getColumnCount(); i++) {
 			Class<?> colClass = tablaVentas.getColumnClass(i);
 			tablaVentas.setDefaultEditor(colClass, null);
-		}
+		}*/
 
 		tablaVentas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
@@ -1861,20 +1876,6 @@ public class Fr_principal extends JFrame {
 		btn_irAVentas.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
-
-		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
-
-		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
-
-		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
-
-		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes);
-
-		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
-
-		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
-
-		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
 		
 		panelTipoCliente = new JPanel();
 		panelTipoCliente.setBackground(new Color(255, 215, 0));
@@ -1928,8 +1929,54 @@ public class Fr_principal extends JFrame {
 		modelTablaTipoCliente.addColumn("Estatus");
 		
 		tableTipoCliente = new JTable();
+		tableTipoCliente.setModel(modelTablaTipoCliente);
+		tableTipoCliente.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTablaTipoCliente.setViewportView(tableTipoCliente);
+		
+		DataTools.removerEditorDeTabla(tableTipoCliente, modelTablaTipoCliente);
+		
+		panelInferiorBusqueda = new JPanel();
+		FlowLayout flowLayout_15 = (FlowLayout) panelInferiorBusqueda.getLayout();
+		flowLayout_15.setAlignment(FlowLayout.RIGHT);
+		panelInferiorBusqueda.setBackground(new Color(255, 215, 0));
+		panelTipoClienteCentral.add(panelInferiorBusqueda, BorderLayout.SOUTH);
+		
+		lblNewLabel_12 = new JLabel("Buscar Categoria");
+		lblNewLabel_12.setFont(new Font("Tahoma", Font.BOLD, 12));
+		panelInferiorBusqueda.add(lblNewLabel_12);
+		
+		horizontalStrut_5 = Box.createHorizontalStrut(10);
+		panelInferiorBusqueda.add(horizontalStrut_5);
+		
+		txtBuscarCategoriaCliente = new JTextField();
+		txtBuscarCategoriaCliente.setColumns(70);
+		this.txtBuscarCategoriaCliente.setMaximumSize(this.txtBuscarCategoriaCliente.getPreferredSize());
+		panelInferiorBusqueda.add(txtBuscarCategoriaCliente);
+		
+		horizontalStrut_6 = Box.createHorizontalStrut(10);
+		panelInferiorBusqueda.add(horizontalStrut_6);
+		
+		btnBuscarCategoriaCliente = new JButton("Buscar");
+		btnBuscarCategoriaCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+		btnBuscarCategoriaCliente.setBackground(new Color(184, 134, 11));
+		panelInferiorBusqueda.add(btnBuscarCategoriaCliente);
+		
+		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
+		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
+
+		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
+
+		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes);
+
+		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
+
+		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
+
+		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
+		
+		DataTools.definirTamanioDeColumnas(tablaTipoClienteColumnsWidth, tableTipoCliente);
+		
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -2008,7 +2055,15 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaProveedor();
 		proveedorController.verProveedoresEnTabla(modelTablaProveedores);
 	}
-
+	
+	private void llenarTablaTipoCliente() {
+		this.modelTablaTipoCliente.getDataVector().removeAllElements();
+		this.tableTipoCliente.updateUI();
+		this.tipoClienteController.listarTipoCliente(this.txtBuscarCategoriaCliente.getText()).forEach(Tc -> {
+			this.modelTablaTipoCliente.addRow(Tc);
+		});;
+	}
+	
 	/**
 	 * borra todos los elementos contenidos en la tabla categorias
 	 */
@@ -2148,6 +2203,8 @@ public class Fr_principal extends JFrame {
 	}
 
 	private void llenarCmbTipoCliente() {
+		this.cmb_tipoCliente.removeAllItems();
+		this.cmb_tipoCliente.updateUI();
 		this.tipoClienteController.cmbTipoCliente().forEach(Tc -> {
 			this.cmb_tipoCliente.addItem(Tc);
 		});
