@@ -201,8 +201,8 @@ public class Fr_ListaArticulos extends JFrame {
 		System.out.println(this.nombreArticulo);
 		this.modelTablaArticulos.getDataVector().removeAllElements();
 		this.tablaArticulos.updateUI();
-		this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1,
-				this.idSucursal);
+		/*this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1,
+				this.idSucursal);*/
 	}
 	
 	/**
