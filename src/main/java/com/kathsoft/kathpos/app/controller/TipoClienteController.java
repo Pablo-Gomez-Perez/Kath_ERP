@@ -83,7 +83,7 @@ public class TipoClienteController {
 	}
 	
 	public static void insertarNuevoTipoCliente(TipoCliente data) {
-
+		
 	}
 
 }

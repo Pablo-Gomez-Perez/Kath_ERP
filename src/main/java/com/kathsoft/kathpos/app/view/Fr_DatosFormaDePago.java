@@ -130,6 +130,8 @@ public class Fr_DatosFormaDePago extends JFrame {
 		btnAgregar.setIcon(new ImageIcon(
 				Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		panelInferiorBotones.add(btnAgregar);
+		
+		
 	}
 
 	private void consultarFormaPago(int id) {

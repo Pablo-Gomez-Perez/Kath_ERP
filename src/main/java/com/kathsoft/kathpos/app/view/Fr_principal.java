@@ -15,12 +15,10 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -32,13 +30,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
@@ -50,7 +44,6 @@ import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.controller.VentasController;
-import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.TipoCliente;
 import com.kathsoft.kathpos.tools.DataTools;
@@ -1904,11 +1897,21 @@ public class Fr_principal extends JFrame {
 		panelTipoClienteCentral.add(panelTipoClienteCentralBotones, BorderLayout.NORTH);
 		
 		btnNuevoTipoCliente = new JButton("Agregar");
+		btnNuevoTipoCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormTipoClientes(1);
+			}
+		});
 		btnNuevoTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
 		btnNuevoTipoCliente.setBackground(new Color(152,251,152));
 		panelTipoClienteCentralBotones.add(btnNuevoTipoCliente);
 		
 		btnActualizarTipoCliente = new JButton("Actualizar");
+		btnActualizarTipoCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormTipoClientes(2);
+			}
+		});
 		btnActualizarTipoCliente.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
 		btnActualizarTipoCliente.setBackground(new Color(152,251,152));
 		panelTipoClienteCentralBotones.add(btnActualizarTipoCliente);
@@ -2334,6 +2337,24 @@ public class Fr_principal extends JFrame {
 				} catch (Exception er) {
 					er.printStackTrace();
 				}
+			}
+		});
+	}
+	
+	private void abrirFormTipoClientes(int opcion) {
+		Component cmp = this;
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion);
+					frame.setLocationRelativeTo(cmp);
+					frame.setVisible(true);
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
+				
 			}
 		});
 	}
