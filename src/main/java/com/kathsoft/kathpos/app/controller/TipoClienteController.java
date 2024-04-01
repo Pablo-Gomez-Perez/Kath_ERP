@@ -176,5 +176,12 @@ public class TipoClienteController {
 			}
 		}
 	}
-
+	
+	public void eliminarTipoCliente(int idTipoCliente) {
+		
+		
+		
+		
+	}
+	
 }

@@ -193,7 +193,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.idSucursal = idSucursal;
 
 		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
+				.getImage(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
 		setTitle("Punto de venta");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1100, 700);
@@ -234,7 +234,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		btnBuscarVenta = new JButton("");
 		btnBuscarVenta.setBackground(new Color(184, 134, 11));
 		btnBuscarVenta.setIcon(new ImageIcon(
-				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		horizontalBox.add(btnBuscarVenta);
 
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
@@ -414,7 +414,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 			}
 		});
 		btnEliminarArticuloDeLista.setIcon(
-				new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnEliminarArticuloDeLista.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnEliminarArticuloDeLista.setBackground(new Color(255, 51, 51));
 		horizontalBox_16.add(btnEliminarArticuloDeLista);
@@ -584,7 +584,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 			}
 		});
 		btnBuscarArticuloPorCodigo.setIcon(new ImageIcon(
-				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		horizontalBox_12.add(btnBuscarArticuloPorCodigo);
 
 		horizontalStrut_22 = Box.createHorizontalStrut(10);
@@ -666,7 +666,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 			}
 		});
 		btnAgregarArticulo.setIcon(new ImageIcon(
-				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		horizontalBox_15.add(btnAgregarArticulo);
 
 		verticalStrut_4 = Box.createVerticalStrut(5);

@@ -114,7 +114,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 			}
 		});
 		btn_cancelar.setIcon(new ImageIcon(
-				Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelInferiorBotones.add(btn_cancelar);
 
 		btnAgregar = new JButton("Agregar");
@@ -128,7 +128,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 			}
 		});
 		btnAgregar.setIcon(new ImageIcon(
-				Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosFormaDePago.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnAgregar);
 		
 		

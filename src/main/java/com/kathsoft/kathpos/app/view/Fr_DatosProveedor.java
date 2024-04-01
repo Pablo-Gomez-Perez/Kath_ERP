@@ -110,7 +110,7 @@ public class Fr_DatosProveedor extends JFrame {
 		this.indiceProveedor = indiceProveedor;
 
 		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
+				.getImage(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/proveedores.png")));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
@@ -339,7 +339,7 @@ public class Fr_DatosProveedor extends JFrame {
 			}
 		});
 		btn_Cancelar.setIcon(
-				new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btn_Cancelar.setBackground(new Color(205, 92, 92));
 		panelInferiorBotones.add(btn_Cancelar);
 
@@ -361,7 +361,7 @@ public class Fr_DatosProveedor extends JFrame {
 		});
 		btn_Guardar.setBackground(new Color(144, 238, 144));
 		btn_Guardar.setIcon(new ImageIcon(
-				Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btn_Guardar);
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

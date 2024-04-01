@@ -120,7 +120,7 @@ public class Fr_ListaArticulos extends JFrame {
 			}
 		});
 		btnBusquedaArticulo.setIcon(new ImageIcon(
-				Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		panelSuperiorBusqueda.add(btnBusquedaArticulo);
 
 		panelCentralTabla = new JPanel();
@@ -159,7 +159,7 @@ public class Fr_ListaArticulos extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+		btnCancelar.setIcon(new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnCancelar.setBackground(new Color(255, 51, 51));
 		panelInferiorBotones.add(btnCancelar);
 
@@ -173,7 +173,7 @@ public class Fr_ListaArticulos extends JFrame {
 			}
 		});
 		btnSeleccionarArticulo.setIcon(
-				new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/resources/palomita.jpg")));
+				new ImageIcon(Fr_ListaArticulos.class.getResource("/com/kathsoft/kathpos/app/assets/palomita.jpg")));
 		this.btnSeleccionarArticulo.setBackground(new Color(204, 255, 51));
 		panelInferiorBotones.add(btnSeleccionarArticulo);
 

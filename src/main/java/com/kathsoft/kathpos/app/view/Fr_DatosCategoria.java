@@ -175,7 +175,7 @@ public class Fr_DatosCategoria extends JFrame {
 			}
 		});
 		btnCancelar.setIcon(
-				new ImageIcon(Fr_DatosCategoria.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_DatosCategoria.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		panelInferiorBotones.add(btnCancelar);
 
@@ -194,7 +194,7 @@ public class Fr_DatosCategoria extends JFrame {
 			}
 		});
 		btnGuardar.setIcon(new ImageIcon(
-				Fr_DatosCategoria.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosCategoria.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnGuardar.setBackground(new Color(144, 238, 144));
 		panelInferiorBotones.add(btnGuardar);
 

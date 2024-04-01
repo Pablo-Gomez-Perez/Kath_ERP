@@ -149,7 +149,7 @@ public class Fr_DatosTipoCliente extends JFrame {
 		});
 		btnCancelar.setBackground(new Color(255, 51, 0));
 		btnCancelar.setIcon(new ImageIcon(
-				Fr_DatosTipoCliente.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				Fr_DatosTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelInferiorBotones.add(btnCancelar);
 
 		btnAgregar = new JButton("Agregar");
@@ -163,7 +163,7 @@ public class Fr_DatosTipoCliente extends JFrame {
 			}
 		});
 		btnAgregar.setIcon(new ImageIcon(
-				Fr_DatosTipoCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregar.setBackground(new Color(151, 252, 151));
 		panelInferiorBotones.add(btnAgregar);
 
