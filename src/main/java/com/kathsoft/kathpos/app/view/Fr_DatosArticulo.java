@@ -3,6 +3,7 @@ package com.kathsoft.kathpos.app.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -41,6 +42,8 @@ import com.kathsoft.kathpos.app.model.Articulo;
 import com.kathsoft.kathpos.app.model.Categoria;
 import com.kathsoft.kathpos.app.model.Proveedor;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class Fr_DatosArticulo extends JFrame {
 
@@ -121,6 +124,12 @@ public class Fr_DatosArticulo extends JFrame {
 	private JButton btnExistenciaGlobal;
 	private Component horizontalStrut_21;
 	private Component horizontalStrut_9;
+	private Box verticalBox_1;
+	private JPanel panel_1;
+	private JScrollPane scrollPaneTablaPreciosTipoCliente;
+	private JTable table;
+	private JLabel lblNewLabel_9;
+	private JScrollPane scrollPaneTxaDescripcion;
 
 	/**
 	 * Create the frame.
@@ -141,7 +150,7 @@ public class Fr_DatosArticulo extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 850, 670);
+		setBounds(100, 100, 780, 632);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -282,22 +291,46 @@ public class Fr_DatosArticulo extends JFrame {
 
 		verticalStrut_3 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_3);
+		
+				panel = new JPanel();
+				//panelCentralFormulario.add(panel);
+				FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+				flowLayout.setAlignment(FlowLayout.LEFT);
+				panel.setBackground(new Color(255, 215, 0));
+				
+						lblNewLabel_6 = new JLabel("Descripción");
+						panel.add(lblNewLabel_6);
 
 		verticalBox = Box.createVerticalBox();
-		panelCentralFormulario.add(verticalBox);
-
-		panel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel.setBackground(new Color(255, 215, 0));
 		verticalBox.add(panel);
-
-		lblNewLabel_6 = new JLabel("Descripción");
-		panel.add(lblNewLabel_6);
-
-		txaDescripcionArticulo = new JTextArea();
-		txaDescripcionArticulo.setLineWrap(true);
-		verticalBox.add(txaDescripcionArticulo);
+		panelCentralFormulario.add(verticalBox);
+		
+		scrollPaneTxaDescripcion = new JScrollPane();
+		verticalBox.add(scrollPaneTxaDescripcion);
+		
+				txaDescripcionArticulo = new JTextArea();
+				scrollPaneTxaDescripcion.setViewportView(txaDescripcionArticulo);
+				scrollPaneTxaDescripcion.setPreferredSize(new Dimension(750,150));
+				txaDescripcionArticulo.setLineWrap(true);
+		
+		verticalBox_1 = Box.createVerticalBox();
+		panelCentralFormulario.add(verticalBox_1);
+		
+		panel_1 = new JPanel();
+		FlowLayout flowLayout_2 = (FlowLayout) panel_1.getLayout();
+		flowLayout_2.setAlignment(FlowLayout.LEFT);
+		panel_1.setBackground(new Color(255, 215, 0));
+		verticalBox_1.add(panel_1);
+		
+		lblNewLabel_9 = new JLabel("Precios por categoría de cliente");
+		panel_1.add(lblNewLabel_9);
+		
+		scrollPaneTablaPreciosTipoCliente = new JScrollPane();
+		verticalBox_1.add(scrollPaneTablaPreciosTipoCliente);
+		
+		table = new JTable();
+		scrollPaneTablaPreciosTipoCliente.setViewportView(table);
+		scrollPaneTablaPreciosTipoCliente.setPreferredSize(new Dimension(750,150));
 
 		verticalStrut_4 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_4);
