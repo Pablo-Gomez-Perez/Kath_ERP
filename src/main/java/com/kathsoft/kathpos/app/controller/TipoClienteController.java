@@ -105,8 +105,7 @@ public class TipoClienteController {
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
-			} catch (Exception er) {
-				// TODO: handle exception
+			} catch (Exception er) { 
 				er.printStackTrace();
 			}
 		}
@@ -117,7 +116,7 @@ public class TipoClienteController {
 
 		CallableStatement stm = null;
 
-		// System.out.println(data.printData());
+		System.out.println(data.printData());
 
 		try {
 
@@ -126,6 +125,7 @@ public class TipoClienteController {
 			stm.setInt(1, data.getIdTipoCliente());
 			stm.setString(2, data.getNombre());
 			stm.setString(3, data.getDescripcion());
+			stm.execute();
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -176,5 +176,16 @@ public class TipoClienteController {
 			}
 		}
 	}
-
+	
+	public void eliminarTipoCliente(int idTipoCliente) throws SQLException{
+						
+		cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+		var stm = cn.prepareCall("CALL eliminar_tipoCliente(?)");
+		stm.setInt(1, idTipoCliente);
+		stm.execute();
+		
+		Conexion.cerrarConexion(cn, stm);
+		
+	}
+	
 }

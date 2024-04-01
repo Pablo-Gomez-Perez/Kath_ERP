@@ -56,7 +56,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 
 		@Override
 		public void paint(Graphics g) {
-			this.imagen = new ImageIcon(getClass().getResource("/com/kathsoft/kathpos/app/resources/Contrass.jpg"))
+			this.imagen = new ImageIcon(getClass().getResource("/com/kathsoft/kathpos/app/assets/Contrass.jpg"))
 					.getImage();
 			g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
 			setOpaque(false);

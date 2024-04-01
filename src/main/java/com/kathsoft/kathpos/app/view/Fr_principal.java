@@ -122,7 +122,7 @@ public class Fr_principal extends JFrame {
 		@Override
 		public void paint(Graphics g) {
 			this.imagen = new ImageIcon(
-					getClass().getResource("/com/kathsoft/kathpos/app/resources/control-inventario-erp-3.png"))
+					getClass().getResource("/com/kathsoft/kathpos/app/assets/control-inventario-erp-3.png"))
 					.getImage();
 			g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
 			setOpaque(false);
@@ -429,7 +429,7 @@ public class Fr_principal extends JFrame {
 		this.sucursal = sucursal;
 
 		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/1643231.png")));
+				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/1643231.png")));
 		setTitle("Kath POS");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1150, 601);
@@ -440,7 +440,7 @@ public class Fr_principal extends JFrame {
 
 		menuConsultar = new JMenu("Consultar Catalogo");
 		menuConsultar.setIcon(new ImageIcon(Fr_principal.class
-				.getResource("/com/kathsoft/kathpos/app/resources/icone-point-d-interrogation-question-rouge.jpg")));
+				.getResource("/com/kathsoft/kathpos/app/assets/icone-point-d-interrogation-question-rouge.jpg")));
 		menuConsultar.setHorizontalAlignment(SwingConstants.CENTER);
 		menuConsultar.setFont(new Font("Segoe UI", Font.BOLD, 13));
 		BarraMenu.add(menuConsultar);
@@ -459,12 +459,12 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionConsultarArticulos.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		menuConsultar.add(opcionConsultarArticulos);
 
 		menuConsultaClientes = new JMenu("Clientes");
 		menuConsultaClientes.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_ico_catalog.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cliente_ico_catalog.png")));
 		menuConsultar.add(menuConsultaClientes);
 
 		opcionClientes = new JMenuItem("Catálogo Clientes");
@@ -480,7 +480,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
-				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
+				"/com/kathsoft/kathpos/app/assets/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 
 		opcionTipoClientes = new JMenuItem("Categoria Cliente");
 		opcionTipoClientes.addActionListener(new ActionListener() {
@@ -495,7 +495,7 @@ public class Fr_principal extends JFrame {
 		});
 
 		opcionTipoClientes.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cliente_categoria_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cliente_categoria_ico.png")));
 		menuConsultaClientes.add(opcionTipoClientes);
 
 		opcionEmpleados = new JMenuItem("Empleados");
@@ -511,7 +511,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionEmpleados.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/empleados.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/empleados.jpg")));
 		menuConsultar.add(opcionEmpleados);
 
 		opcionProveedores = new JMenuItem("Proveedores");
@@ -525,12 +525,12 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionProveedores.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/proveedores.png")));
 		menuConsultar.add(opcionProveedores);
 
 		opcionMarcas = new JMenuItem("Categorias");
 		opcionMarcas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/iconoMarca.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/iconoMarca.png")));
 		opcionMarcas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -555,12 +555,12 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionSucursales.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/sucursal.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/sucursal.jpg")));
 		menuConsultar.add(opcionSucursales);
 
 		opcionFormasDePago = new JMenuItem("Formas De Pago");
 		opcionFormasDePago.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/formas_de_pago.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/formas_de_pago.png")));
 		opcionFormasDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -585,7 +585,7 @@ public class Fr_principal extends JFrame {
 		});
 		opcionCerrarSesion.setBackground(new Color(255, 153, 153));
 		opcionCerrarSesion.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cerrarSesion.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cerrarSesion.png")));
 		menuConsultar.add(opcionCerrarSesion);
 
 		opcionSalirDelSistema = new JMenuItem("Salir");
@@ -596,18 +596,18 @@ public class Fr_principal extends JFrame {
 		});
 		opcionSalirDelSistema.setBackground(new Color(255, 0, 51));
 		opcionSalirDelSistema.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/cerrar.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cerrar.png")));
 		menuConsultar.add(opcionSalirDelSistema);
 
 		menuOperaciones = new JMenu("Operaciones");
 		menuOperaciones.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/operaciones.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/operaciones.png")));
 		menuOperaciones.setFont(new Font("Segoe UI", Font.BOLD, 13));
 		BarraMenu.add(menuOperaciones);
 
 		subMenuVentas = new JMenu("Ventas");
 		subMenuVentas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		menuOperaciones.add(subMenuVentas);
 
 		opcionRegistrarVenta = new JMenuItem("Registrar");
@@ -633,12 +633,12 @@ public class Fr_principal extends JFrame {
 
 		menuReportes = new JMenu("Reportes");
 		menuReportes.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/reportes.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/reportes.jpg")));
 		BarraMenu.add(menuReportes);
 
 		subMenuReportesExcel = new JMenu("Exportar Tabla");
 		subMenuReportesExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		menuReportes.add(subMenuReportesExcel);
 
 		opcionReporteExcelArticulo = new JMenuItem("Articulos");
@@ -648,7 +648,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionReporteExcelArticulo.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelArticulo);
 
 		opcionReporteExcelClientes = new JMenuItem("Clientes");
@@ -658,7 +658,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionReporteExcelClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
-				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
+				"/com/kathsoft/kathpos/app/assets/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelClientes);
 
 		opcionReporteExcelEmpleados = new JMenuItem("Empleados");
@@ -668,7 +668,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionReporteExcelEmpleados.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/empleados.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/empleados.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelEmpleados);
 
 		opcionReporteExcelProveedores = new JMenuItem("Proveedores");
@@ -678,7 +678,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionReporteExcelProveedores.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/proveedores.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/proveedores.png")));
 		subMenuReportesExcel.add(opcionReporteExcelProveedores);
 
 		opcionReporteExcelVentas = new JMenuItem("Ventas");
@@ -688,17 +688,17 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionReporteExcelVentas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		subMenuReportesExcel.add(opcionReporteExcelVentas);
 
 		subMenuReportesPDF = new JMenu("PDF");
 		subMenuReportesPDF.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/pdfLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/pdfLogo.jpg")));
 		menuReportes.add(subMenuReportesPDF);
 
 		subMenuGraficas = new JMenu("Analisis Grafico");
 		subMenuGraficas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/grafico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/grafico.png")));
 		menuReportes.add(subMenuGraficas);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -778,7 +778,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnAgregarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnAgregarArticulo);
 
@@ -793,7 +793,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnActualizarArticulo.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
 
@@ -804,7 +804,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnEliminarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminarArticulo.setBackground(new Color(255, 51, 0));
 		panelArticulosCentralBotones.add(btnEliminarArticulo);
 
@@ -815,7 +815,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnExportarArticuloExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
@@ -929,7 +929,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
 		btnBuscarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		// panelArticulosCentralBuscar.add(btnBuscarArticulo);
 
 		verticalBox_1.add(btnBuscarArticulo);
@@ -968,7 +968,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnAgregarCliente.setBackground(new Color(144, 238, 144));
 		btnAgregarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelClientesCentralBotones.add(btnAgregarCliente);
 
 		btnActualizarCliente = new JButton("Actualizar");
@@ -979,12 +979,12 @@ public class Fr_principal extends JFrame {
 		});
 		btnActualizarCliente.setBackground(new Color(144, 238, 144));
 		btnActualizarCliente.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelClientesCentralBotones.add(btnActualizarCliente);
 
 		btnEliminarCliente = new JButton("Eliminar");
 		btnEliminarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminarCliente.setBackground(new Color(255, 51, 0));
 		btnEliminarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1000,7 +1000,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnExportarClientesExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		this.btnExportarClientesExcel.setBackground(new Color(102, 205, 170));
 		panelClientesCentralBotones.add(btnExportarClientesExcel);
 
@@ -1058,7 +1058,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnBuscarCliente.setBackground(new Color(184, 134, 11));
 		btnBuscarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		panelClientesCentralBuscar.add(btnBuscarCliente);
 
 		panelEmpleados = new JPanel();
@@ -1112,7 +1112,7 @@ public class Fr_principal extends JFrame {
 
 		btnAgregarEmpleado = new JButton("Agregar");
 		btnAgregarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		btnAgregarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1123,7 +1123,7 @@ public class Fr_principal extends JFrame {
 
 		btnActualizarEmpleado = new JButton("Actualizar");
 		btnActualizarEmpleado.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
 		btnActualizarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1140,7 +1140,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnEliminarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
 		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
 
@@ -1151,7 +1151,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnExportarEmpleadosExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		this.btnExportarEmpleadosExcel.setBackground(new Color(105, 205, 170));
 		panelEmpleadosCentralbotones.add(btnExportarEmpleadosExcel);
 
@@ -1180,7 +1180,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnBuscarEmpleado.setBackground(new Color(184, 134, 11));
 		btnBuscarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		panelEmpleadosCentralBuscar.add(btnBuscarEmpleado);
 
 		panelProveedor = new JPanel();
@@ -1241,7 +1241,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnAgregarProveedor.setBackground(new Color(144, 238, 144));
 		btnAgregarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelProveedorCentralBotones.add(btnAgregarProveedor);
 
 		btnActualizarProveedor = new JButton("Actualizar");
@@ -1253,7 +1253,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
 		btnActualizarProveedor.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelProveedorCentralBotones.add(btnActualizarProveedor);
 
 		btnEliminarProveedor = new JButton("Eliminar");
@@ -1263,7 +1263,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnEliminarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
 		panelProveedorCentralBotones.add(btnEliminarProveedor);
 
@@ -1274,7 +1274,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnExportarProveedoresExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		this.btnExportarProveedoresExcel.setBackground(new Color(102, 205, 170));
 		panelProveedorCentralBotones.add(btnExportarProveedoresExcel);
 
@@ -1308,7 +1308,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnBuscarProveedor.setBackground(new Color(184, 134, 11));
 		btnBuscarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		panelProveedorCentralBuscar.add(btnBuscarProveedor);
 
 		// =================================================================================================================================================================================
@@ -1364,7 +1364,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnAgregarCategoria.setBackground(new Color(144, 238, 144));
 		btnAgregarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelCategoriasCentralBotones.add(btnAgregarCategoria);
 
 		btnActualizarCategoria = new JButton("Actualizar");
@@ -1376,7 +1376,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnActualizarCategoria.setBackground(new Color(144, 238, 144));
 		btnActualizarCategoria.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelCategoriasCentralBotones.add(btnActualizarCategoria);
 
 		btnEliminarCategoria = new JButton("Eliminar");
@@ -1387,7 +1387,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnEliminarCategoria.setBackground(new Color(255, 51, 0));
 		btnEliminarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelCategoriasCentralBotones.add(btnEliminarCategoria);
 
 		panelMarcasCentralBuscar = new JPanel();
@@ -1414,7 +1414,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnBuscarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		this.btnBuscarCategoria.setBackground(new Color(184, 134, 11));
 		panelMarcasCentralBuscar.add(btnBuscarCategoria);
 
@@ -1520,7 +1520,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btNuevaVenta.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventas.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		btNuevaVenta.setBackground(new Color(152, 251, 152));
 		panelVentasCentralBotones.add(btNuevaVenta);
 
@@ -1531,7 +1531,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnExportarVentasExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/excelLogo.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		btnExportarVentasExcel.setBackground(new Color(102, 205, 170));
 		panelVentasCentralBotones.add(btnExportarVentasExcel);
 
@@ -1650,7 +1650,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnBuscarVenta.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		btnBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnBuscarVenta.setBackground(new Color(184, 134, 11));
 		verticalBox_3.add(btnBuscarVenta);
@@ -1715,7 +1715,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnNuevaSucursal.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnNuevaSucursal.setBackground(new Color(152, 251, 152));
 		panelSucursalCentralBotones.add(btnNuevaSucursal);
 
@@ -1730,14 +1730,14 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnActualizarSucursal.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
 
 		btnEliminarSucursal = new JButton("Eliminar");
 
 		btnEliminarSucursal.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 
 		btnEliminarSucursal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1796,7 +1796,7 @@ public class Fr_principal extends JFrame {
 
 		btnNuevaFormaDePago = new JButton("Agregar");
 		btnNuevaFormaDePago.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnNuevaFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirFormDatosFormasDePago(1, 0);
@@ -1807,7 +1807,7 @@ public class Fr_principal extends JFrame {
 
 		btnActualizarFormaDePago = new JButton("Actualizar");
 		btnActualizarFormaDePago.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirFormDatosFormasDePago(2,
@@ -1824,7 +1824,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnEliminarFormaPago.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnEliminarFormaPago.setBackground(new Color(255, 51, 0));
 		panelFormasDePagoCentralBotones.add(btnEliminarFormaPago);
 
@@ -1847,7 +1847,7 @@ public class Fr_principal extends JFrame {
 		});
 		btn_irAInicio.setBackground(new Color(102, 205, 170));
 		btn_irAInicio.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/inicio_ico.jpg")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/inicio_ico.jpg")));
 		panelSuperiorBotones.add(btn_irAInicio);
 
 		btnCalculadora = new JButton("Calculadora");
@@ -1858,7 +1858,7 @@ public class Fr_principal extends JFrame {
 		});
 		btnCalculadora.setBackground(new Color(135, 206, 250));
 		btnCalculadora.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/Calculadora.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/Calculadora.png")));
 		panelSuperiorBotones.add(btnCalculadora);
 
 		btn_irAVentas = new JButton("Ventas");
@@ -1871,7 +1871,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btn_irAVentas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/ventagr.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
 		panelTipoCliente = new JPanel();
@@ -1907,7 +1907,7 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnNuevoTipoCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnNuevoTipoCliente.setBackground(new Color(152, 251, 152));
 		panelTipoClienteCentralBotones.add(btnNuevoTipoCliente);
 
@@ -1921,14 +1921,19 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnActualizarTipoCliente.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/actualizar_ico.png")));
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarTipoCliente.setBackground(new Color(152, 251, 152));
 		panelTipoClienteCentralBotones.add(btnActualizarTipoCliente);
 
 		btnEliminarTipoCliente = new JButton("Eliminar");
+		btnEliminarTipoCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarTipoCliente();
+			}
+		});
 		btnEliminarTipoCliente.setBackground(new Color(255, 51, 0));
 		btnEliminarTipoCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelTipoClienteCentralBotones.add(btnEliminarTipoCliente);
 
 		scrollPaneTablaTipoCliente = new JScrollPane();
@@ -1970,8 +1975,13 @@ public class Fr_principal extends JFrame {
 		panelInferiorBusqueda.add(horizontalStrut_6);
 
 		btnBuscarCategoriaCliente = new JButton("Buscar");
+		btnBuscarCategoriaCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaTipoCliente();
+			}
+		});
 		btnBuscarCategoriaCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/resources/buscar_ico.png")));
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		btnBuscarCategoriaCliente.setBackground(new Color(184, 134, 11));
 		panelInferiorBusqueda.add(btnBuscarCategoriaCliente);
 
@@ -1981,7 +1991,7 @@ public class Fr_principal extends JFrame {
 
 		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
 
-		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes);
+		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes); 
 
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
@@ -2407,6 +2417,24 @@ public class Fr_principal extends JFrame {
 		} catch (SQLException er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
+		}
+	}
+	
+	private void eliminarTipoCliente() {
+		int indiceTipoClienteSeleccionado = -1;
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
+
+		if (input > 0) {
+			return;
+		}
+		
+		try {
+			
+			indiceTipoClienteSeleccionado = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
+			this.tipoClienteController.eliminarTipoCliente(indiceTipoClienteSeleccionado);
+		}catch(SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 

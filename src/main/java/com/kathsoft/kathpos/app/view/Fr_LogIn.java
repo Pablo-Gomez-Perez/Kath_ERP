@@ -66,7 +66,7 @@ public class Fr_LogIn extends JFrame {
 
 		@Override
 		public void paint(Graphics g) {
-			this.imagen = new ImageIcon(getClass().getResource("/com/kathsoft/kathpos/app/resources/login_ico.png"))
+			this.imagen = new ImageIcon(getClass().getResource("/com/kathsoft/kathpos/app/assets/login_ico.png"))
 					.getImage();
 			g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
 			setOpaque(false);
@@ -120,7 +120,7 @@ public class Fr_LogIn extends JFrame {
 		setResizable(false);
 		setType(Type.UTILITY);
 		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(Fr_LogIn.class.getResource("/com/kathsoft/kathpos/app/resources/login_ico.png")));
+				.getImage(Fr_LogIn.class.getResource("/com/kathsoft/kathpos/app/assets/login_ico.png")));
 		setTitle("Acceso");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 418, 164);

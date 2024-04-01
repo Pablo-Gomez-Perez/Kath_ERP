@@ -269,7 +269,7 @@ public class Fr_DatosSucursal extends JFrame {
 		});
 		btn_Cancelar.setBackground(new Color(205, 92, 92));
 		btn_Cancelar.setIcon(
-				new ImageIcon(Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelInferiorBotones.add(btn_Cancelar);
 
 		Component horizontalStrut_9 = Box.createHorizontalStrut(20);
@@ -287,7 +287,7 @@ public class Fr_DatosSucursal extends JFrame {
 		});
 		btn_Guardar.setBackground(new Color(144, 238, 144));
 		btn_Guardar.setIcon(new ImageIcon(
-				Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosSucursal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btn_Guardar);
 		
 		if(opcion == 1) {
@@ -336,7 +336,7 @@ public class Fr_DatosSucursal extends JFrame {
 			this.borrarCampos();
 
 
-			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrat Sucursal",
+			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrar Sucursal",
 					JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (Exception er) {

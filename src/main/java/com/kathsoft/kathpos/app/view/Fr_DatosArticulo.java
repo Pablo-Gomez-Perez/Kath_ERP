@@ -139,7 +139,7 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/productos_icono.jpg")));
+				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 850, 670);
 		contentPane = new JPanel();
@@ -411,7 +411,7 @@ public class Fr_DatosArticulo extends JFrame {
 		});
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		btnCancelar.setIcon(
-				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelInferiorBotones.add(btnCancelar);
 
 		horizontalStrut_18 = Box.createHorizontalStrut(20);
@@ -429,7 +429,7 @@ public class Fr_DatosArticulo extends JFrame {
 		});
 		btnGuardar.setBackground(new Color(144, 238, 144));
 		btnGuardar.setIcon(new ImageIcon(
-				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
 
 		if (tipoOperacion == 1) {

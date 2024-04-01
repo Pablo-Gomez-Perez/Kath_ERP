@@ -402,7 +402,7 @@ public class Fr_DatosEmpleado extends JFrame {
 			}
 		});
 		btnNuevaContraseniaEmpleado.setIcon(
-				new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/lapiz.png")));
+				new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/lapiz.png")));
 		btnNuevaContraseniaEmpleado.setBackground(new Color(0, 128, 128));
 		if (opcion == 0) {
 			this.btnNuevaContraseniaEmpleado.setEnabled(false);
@@ -431,7 +431,7 @@ public class Fr_DatosEmpleado extends JFrame {
 			}
 		});
 		btnCancelar.setIcon(
-				new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		horizontalBox_7.add(btnCancelar);
 
@@ -449,7 +449,7 @@ public class Fr_DatosEmpleado extends JFrame {
 			}
 		});
 		btnAgregarEmpleado.setIcon(new ImageIcon(
-				Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		horizontalBox_7.add(btnAgregarEmpleado);
 

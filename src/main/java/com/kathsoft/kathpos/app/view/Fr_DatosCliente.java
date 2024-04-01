@@ -130,7 +130,7 @@ public class Fr_DatosCliente extends JFrame {
 		this.indiceCliente = indiceCliente;
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosCliente.class.getResource(
-				"/com/kathsoft/kathpos/app/resources/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
+				"/com/kathsoft/kathpos/app/assets/pngtree-call-center-customer-icon-png-image_4746069.jpg")));
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 581, 512);
@@ -396,7 +396,7 @@ public class Fr_DatosCliente extends JFrame {
 		btnHistorialCred = new JButton("Historial");
 		btnHistorialCred.setBackground(new Color(0, 255, 255));
 		btnHistorialCred.setIcon(new ImageIcon(
-				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/creditoLogo2.png")));
+				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/creditoLogo2.png")));
 		panelInferiorBotones.add(btnHistorialCred);
 
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
@@ -410,7 +410,7 @@ public class Fr_DatosCliente extends JFrame {
 		});
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		btnCancelar.setIcon(
-				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/nwCancel.png")));
+				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelInferiorBotones.add(btnCancelar);
 
 		horizontalStrut = Box.createHorizontalStrut(20);
@@ -428,7 +428,7 @@ public class Fr_DatosCliente extends JFrame {
 		});
 		btnGuardar.setBackground(new Color(144, 238, 144));
 		btnGuardar.setIcon(new ImageIcon(
-				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/resources/agregar_ico.png")));
+				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
 		
 		this.llenarCmbTipoCliente();
