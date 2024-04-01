@@ -188,6 +188,8 @@ public class Fr_DatosTipoCliente extends JFrame {
 		this.tipoClienteController.insertarNuevoTipoCliente(data);
 
 		MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
+		
+		this.limpiarCampos();
 
 	}
 
@@ -198,6 +200,11 @@ public class Fr_DatosTipoCliente extends JFrame {
 		this.txfNombre.setText(data.getNombre());
 		this.txfDescripcion.setText(data.getDescripcion());
 
+	}
+	
+	private void limpiarCampos() {
+		this.txfNombre.setText("");
+		this.txfDescripcion.setText("");
 	}
 
 	private void actualizarTipoCliente() {

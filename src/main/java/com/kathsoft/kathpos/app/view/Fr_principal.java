@@ -1926,6 +1926,11 @@ public class Fr_principal extends JFrame {
 		panelTipoClienteCentralBotones.add(btnActualizarTipoCliente);
 
 		btnEliminarTipoCliente = new JButton("Eliminar");
+		btnEliminarTipoCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarTipoCliente();
+			}
+		});
 		btnEliminarTipoCliente.setBackground(new Color(255, 51, 0));
 		btnEliminarTipoCliente.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
@@ -1970,6 +1975,11 @@ public class Fr_principal extends JFrame {
 		panelInferiorBusqueda.add(horizontalStrut_6);
 
 		btnBuscarCategoriaCliente = new JButton("Buscar");
+		btnBuscarCategoriaCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaTipoCliente();
+			}
+		});
 		btnBuscarCategoriaCliente.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		btnBuscarCategoriaCliente.setBackground(new Color(184, 134, 11));
@@ -2407,6 +2417,24 @@ public class Fr_principal extends JFrame {
 		} catch (SQLException er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
+		}
+	}
+	
+	private void eliminarTipoCliente() {
+		int indiceTipoClienteSeleccionado = -1;
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
+
+		if (input > 0) {
+			return;
+		}
+		
+		try {
+			
+			indiceTipoClienteSeleccionado = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
+			this.tipoClienteController.eliminarTipoCliente(indiceTipoClienteSeleccionado);
+		}catch(SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 

@@ -336,7 +336,7 @@ public class Fr_DatosSucursal extends JFrame {
 			this.borrarCampos();
 
 
-			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrat Sucursal",
+			JOptionPane.showMessageDialog(this, "Registro almacenado con exito", "Registrar Sucursal",
 					JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (Exception er) {
