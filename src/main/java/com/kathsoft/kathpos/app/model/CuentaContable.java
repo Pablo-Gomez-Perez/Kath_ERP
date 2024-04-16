@@ -15,6 +15,7 @@ public class CuentaContable implements Serializable {
 
 	private int idCuenta;
 	private int idCuentaPadre;
+	private String nombreCuentaPadre;
 	private String clave;
 	private String nombre;
 	private String descripcion;
@@ -24,9 +25,12 @@ public class CuentaContable implements Serializable {
 	private double abono;
 	private double saldo;
 
+	
+
 	/**
 	 * @param idCuenta
 	 * @param idCuentaPadre
+	 * @param nombreCuentaPadre
 	 * @param clave
 	 * @param nombre
 	 * @param descripcion
@@ -36,11 +40,12 @@ public class CuentaContable implements Serializable {
 	 * @param abono
 	 * @param saldo
 	 */
-	public CuentaContable(int idCuenta, int idCuentaPadre, String clave, String nombre, String descripcion, short nivel,
-			boolean ultimoNivel, double cargo, double abono, double saldo) {
+	public CuentaContable(int idCuenta, int idCuentaPadre, String nombreCuentaPadre, String clave, String nombre,
+			String descripcion, short nivel, boolean ultimoNivel, double cargo, double abono, double saldo) {
 		super();
 		this.idCuenta = idCuenta;
 		this.idCuentaPadre = idCuentaPadre;
+		this.nombreCuentaPadre = nombreCuentaPadre;
 		this.clave = clave;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
@@ -130,6 +135,20 @@ public class CuentaContable implements Serializable {
 	 */
 	public short getNivel() {
 		return nivel;
+	}		
+	
+	/**
+	 * @return the nombreCuentaPadre
+	 */
+	public String getNombreCuentaPadre() {
+		return nombreCuentaPadre;
+	}
+
+	/**
+	 * @param nombreCuentaPadre the nombreCuentaPadre to set
+	 */
+	public void setNombreCuentaPadre(String nombreCuentaPadre) {
+		this.nombreCuentaPadre = nombreCuentaPadre;
 	}
 
 	/**

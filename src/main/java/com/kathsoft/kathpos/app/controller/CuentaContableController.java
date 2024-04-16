@@ -36,8 +36,7 @@ public class CuentaContableController {
 					rset.getShort(5), //nivel
 					rset.getDouble(6), //cargos
 					rset.getDouble(7), //abonos
-					rset.getDouble(8), //saldo de la cuenta
-					rset
+					rset.getDouble(8) //saldo de la cuenta					
 				});
 			}
 			

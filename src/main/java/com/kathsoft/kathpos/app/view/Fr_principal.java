@@ -420,6 +420,7 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_6;
 
 	private JButton btnBuscarCategoriaCliente;
+	private PanelCuentasContables panelConta;
 
 	/**
 	 * Create the frame.
@@ -716,7 +717,7 @@ public class Fr_principal extends JFrame {
 
 		panelArticulos = new JPanel();
 		panelPrincipalContenedor.add(panelArticulos, "panelArticulos");
-		panelArticulos.setLayout(new BorderLayout(0, 0));
+		panelArticulos.setLayout(new BorderLayout(0, 0));				
 
 		panelEtiquetaArticulos = new JPanel();
 		panelEtiquetaArticulos.setBackground(new Color(25, 25, 112));
@@ -1984,6 +1985,9 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		btnBuscarCategoriaCliente.setBackground(new Color(184, 134, 11));
 		panelInferiorBusqueda.add(btnBuscarCategoriaCliente);
+		
+		panelConta = new PanelCuentasContables();
+		panelPrincipalContenedor.add(panelConta, "panelConta");
 
 		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
