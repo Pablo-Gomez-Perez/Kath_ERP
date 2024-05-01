@@ -32,11 +32,13 @@ public class CuentaContableController {
 					rset.getInt(1), //id_cuenta
 					rset.getString(2), //Nombre de la cuenta contable superior
 					rset.getString(3), //clave de la cuenta contable
-					rset.getString(4), //descripcion
-					rset.getShort(5), //nivel
-					rset.getDouble(6), //cargos
-					rset.getDouble(7), //abonos
-					rset.getDouble(8) //saldo de la cuenta					
+					rset.getString(4), //Nombre cuenta
+					rset.getString(5), //descripcion
+					rset.getShort(6), // nivel
+					rset.getBoolean(7) ? "Si" : "No",
+					rset.getDouble(8), //cargos
+					rset.getDouble(9), //abonos
+					rset.getDouble(10) //saldo de la cuenta					
 				});
 			}
 			

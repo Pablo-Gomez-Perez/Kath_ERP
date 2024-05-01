@@ -421,6 +421,8 @@ public class Fr_principal extends JFrame {
 
 	private JButton btnBuscarCategoriaCliente;
 	private PanelCuentasContables panelConta;
+	private JMenu menuContable;
+	private JMenuItem opcionCatalogoCuentas;
 
 	/**
 	 * Create the frame.
@@ -433,7 +435,7 @@ public class Fr_principal extends JFrame {
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/1643231.png")));
 		setTitle("Kath POS");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1150, 601);
+		setBounds(100, 100, 1150, 601);				
 
 		BarraMenu = new JMenuBar();
 		BarraMenu.setBackground(new Color(255, 153, 0));
@@ -701,6 +703,24 @@ public class Fr_principal extends JFrame {
 		subMenuGraficas.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/grafico.png")));
 		menuReportes.add(subMenuGraficas);
+		
+		menuContable = new JMenu("Contabilidad");
+		BarraMenu.add(menuContable);
+		
+		this.opcionCatalogoCuentas = new JMenuItem();
+		opcionCatalogoCuentas.setText("Cuentas");
+		
+		opcionCatalogoCuentas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelConta");
+				panelPrincipalContenedor.updateUI();
+				
+				panelConta.llenarTablaCuentas();
+			}
+		});
+		menuContable.add(opcionCatalogoCuentas);		
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -711,7 +731,7 @@ public class Fr_principal extends JFrame {
 		panelPrincipalContenedor.setBackground(new Color(255, 255, 0));
 		contentPane.add(panelPrincipalContenedor, BorderLayout.CENTER);
 		panelPrincipalContenedor.setLayout(new CardLayout(0, 0));
-
+		
 		panelPrincipalContenedor.add(panelInicio, "panelInicio");
 		panelInicio.setLayout(new BorderLayout(0, 0));
 
@@ -1988,6 +2008,8 @@ public class Fr_principal extends JFrame {
 		
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
+		
+		opcionCatalogoCuentas = new JMenuItem("Cuentas");
 
 		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 

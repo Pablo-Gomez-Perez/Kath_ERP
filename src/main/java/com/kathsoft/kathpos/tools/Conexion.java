@@ -9,8 +9,6 @@ import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 
-import com.mysql.cj.protocol.Resultset;
-
 public class Conexion {
 	
 	public static final String DATA_BASE = "kath_erp";
