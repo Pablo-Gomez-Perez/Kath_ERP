@@ -36,7 +36,7 @@ public class ArticuloController implements java.io.Serializable {
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL ver_articulos(?,?);");
 			stm.setInt(1, idSucursal);
-			stm.setInt(2, idSucursal);
+			stm.setInt(2, idTipoCliente);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {

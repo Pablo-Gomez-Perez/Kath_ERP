@@ -42,7 +42,7 @@ public class Conexion {
 	public static Connection establecerConexionLocal(String nombreBBDD) throws SQLException {
 		final String url = "jdbc:mysql://localhost:3306/" + nombreBBDD;
 		final String user = "root";
-		return DriverManager.getConnection(url, user, "");
+		return DriverManager.getConnection(url, user, "1234");
 	}
 
 	/**
