@@ -46,6 +46,8 @@ import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.TipoCliente;
+import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
+import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -734,7 +736,16 @@ public class Fr_principal extends JFrame {
 		
 		panelPrincipalContenedor.add(panelInicio, "panelInicio");
 		panelInicio.setLayout(new BorderLayout(0, 0));
-
+		
+		
+		/**
+		 * ====================================================================================
+		 * ====================================================================================
+		 * 
+		 * 					Panel articulos
+		 * ====================================================================================
+		 * ====================================================================================
+		 */
 		panelArticulos = new JPanel();
 		panelPrincipalContenedor.add(panelArticulos, "panelArticulos");
 		panelArticulos.setLayout(new BorderLayout(0, 0));				
@@ -757,9 +768,6 @@ public class Fr_principal extends JFrame {
 		scrollPaneTablaArticulos = new JScrollPane();
 		panelArticulosCentral.add(scrollPaneTablaArticulos);
 
-		// ==========================================================================
-		// Configuracion de la tabla Articulos
-		// ==========================================================================
 		modelTablaArticulos = new DefaultTableModel();
 		tablaArticulos = new JTable();
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -779,10 +787,7 @@ public class Fr_principal extends JFrame {
 		modelTablaArticulos.addColumn("Despues de");
 		modelTablaArticulos.addColumn("Estatus");
 
-		// se remueve el editor de la tabla de articulos
-		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos);
-
-		// =================================================================================================================================================================================
+		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos); 
 
 		panelArticulosCentralBotones = new JPanel();
 		panelArticulosCentralBotones.setBackground(new Color(255, 215, 0));
@@ -923,17 +928,12 @@ public class Fr_principal extends JFrame {
 
 		lblNewLabel_19 = new JLabel("Buscar artículo");
 		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
-		// panelArticulosCentralBuscar.add(lblNewLabel_19);
 		horizontalBox_16.add(lblNewLabel_19);
-		// verticalBox.add(lblNewLabel_19);
-
 		horizontalStrut_13 = Box.createHorizontalStrut(5);
 		horizontalBox_16.add(horizontalStrut_13);
-		// panelArticulosCentralBuscar.add(horizontalStrut_13);
 
 		txfBuscarArticulo = new JTextField();
 		txfBuscarArticulo.setFont(new Font("Tahoma", Font.BOLD, 13));
-		// panelArticulosCentralBuscar.add(txfBuscarArticulo);
 		horizontalBox_16.add(txfBuscarArticulo);
 		txfBuscarArticulo.setColumns(70);
 		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
@@ -951,9 +951,17 @@ public class Fr_principal extends JFrame {
 		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
 		btnBuscarArticulo.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		// panelArticulosCentralBuscar.add(btnBuscarArticulo);
 
 		verticalBox_1.add(btnBuscarArticulo);
+		
+		
+		/**
+		 * 
+		 * ================================================================================================
+		 * ================================================================================================
+		 * ================================================================================================
+		 * ================================================================================================
+		 */
 
 		panelClientes = new JPanel();
 		panelClientes.setBackground(new Color(255, 215, 0));

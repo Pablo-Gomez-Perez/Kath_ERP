@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.contabilidad;
 
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
