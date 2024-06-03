@@ -49,6 +49,7 @@ import com.kathsoft.kathpos.app.model.TipoCliente;
 import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
 import com.kathsoft.kathpos.app.view.clientes.Fr_DatosCliente;
 import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
+import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -169,12 +170,7 @@ public class Fr_principal extends JFrame {
 			100, // nombre corto
 			200, // email
 			150 // activo o inactivo
-	};
-	private int[] tablaTipoClienteColumnsWidth = { 40, // id
-			150, // nombre de categoria
-			400, // descripcion
-			150 // estatus de la categoria
-	};
+	};	
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
@@ -375,7 +371,7 @@ public class Fr_principal extends JFrame {
 	private JComboBox<TipoCliente> cmb_tipoCliente;
 	private JMenu menuConsultaClientes;
 	private JMenuItem opcionTipoClientes;
-	private JPanel panelTipoCliente;
+	private PanelTipoCliente panelTipoCliente;
 	private JPanel panelEtiquetaTipoCliente;
 	private JPanel panelTipoClienteCentral;
 	private JPanel panelTipoClienteCentralBotones;
@@ -465,7 +461,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelTipoCliente");
 				panelPrincipalContenedor.updateUI();
 
-				llenarTablaTipoCliente();
+				panelTipoCliente.llenarTablaTipoCliente();
 			}
 		});
 
@@ -1748,123 +1744,39 @@ public class Fr_principal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				abrirFormVentas(sucursal.getIdSucursal());
-
+				
 			}
 		});
 		btn_irAVentas.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
-		panelTipoCliente = new JPanel();
-		panelTipoCliente.setBackground(new Color(255, 215, 0));
+		
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		
+		panelTipoCliente = new PanelTipoCliente();
 		panelPrincipalContenedor.add(panelTipoCliente, "panelTipoCliente");
-		panelTipoCliente.setLayout(new BorderLayout(0, 0));
 
-		panelEtiquetaTipoCliente = new JPanel();
-		panelEtiquetaTipoCliente.setBackground(new Color(0, 0, 128));
-		panelTipoCliente.add(panelEtiquetaTipoCliente, BorderLayout.NORTH);
+		
 
-		lblNewLabel_11 = new JLabel("Categorias de clientes");
-		lblNewLabel_11.setForeground(new Color(255, 255, 255));
-		lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 16));
-		panelEtiquetaTipoCliente.add(lblNewLabel_11);
+		
 
-		panelTipoClienteCentral = new JPanel();
-		panelTipoClienteCentral.setBackground(new Color(255, 215, 0));
-		panelTipoClienteCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelTipoCliente.add(panelTipoClienteCentral, BorderLayout.CENTER);
-		panelTipoClienteCentral.setLayout(new BorderLayout(0, 0));
+		
+		
 
-		panelTipoClienteCentralBotones = new JPanel();
-		FlowLayout flowLayout_14 = (FlowLayout) panelTipoClienteCentralBotones.getLayout();
-		flowLayout_14.setAlignment(FlowLayout.RIGHT);
-		panelTipoClienteCentralBotones.setBackground(new Color(255, 215, 0));
-		panelTipoClienteCentral.add(panelTipoClienteCentralBotones, BorderLayout.NORTH);
-
-		btnNuevoTipoCliente = new JButton("Agregar");
-		btnNuevoTipoCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormTipoClientes(1, 0);
-			}
-		});
-		btnNuevoTipoCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		btnNuevoTipoCliente.setBackground(new Color(152, 251, 152));
-		panelTipoClienteCentralBotones.add(btnNuevoTipoCliente);
-
-		btnActualizarTipoCliente = new JButton("Actualizar");
-		btnActualizarTipoCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				int index = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
-				abrirFormTipoClientes(2, index);
-
-			}
-		});
-		btnActualizarTipoCliente.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		btnActualizarTipoCliente.setBackground(new Color(152, 251, 152));
-		panelTipoClienteCentralBotones.add(btnActualizarTipoCliente);
-
-		btnEliminarTipoCliente = new JButton("Eliminar");
-		btnEliminarTipoCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarTipoCliente();
-			}
-		});
-		btnEliminarTipoCliente.setBackground(new Color(255, 51, 0));
-		btnEliminarTipoCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		panelTipoClienteCentralBotones.add(btnEliminarTipoCliente);
-
-		scrollPaneTablaTipoCliente = new JScrollPane();
-		panelTipoClienteCentral.add(scrollPaneTablaTipoCliente, BorderLayout.CENTER);
-
-		this.modelTablaTipoCliente = new DefaultTableModel();
-
-		modelTablaTipoCliente.addColumn("Id");
-		modelTablaTipoCliente.addColumn("Categoria de cliente");
-		modelTablaTipoCliente.addColumn("Descripción");
-		modelTablaTipoCliente.addColumn("Estatus");
-
-		tableTipoCliente = new JTable();
-		tableTipoCliente.setModel(modelTablaTipoCliente);
-		tableTipoCliente.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaTipoCliente.setViewportView(tableTipoCliente);
-
-		DataTools.removerEditorDeTabla(tableTipoCliente, modelTablaTipoCliente);
-
-		panelInferiorBusqueda = new JPanel();
-		FlowLayout flowLayout_15 = (FlowLayout) panelInferiorBusqueda.getLayout();
-		flowLayout_15.setAlignment(FlowLayout.RIGHT);
-		panelInferiorBusqueda.setBackground(new Color(255, 215, 0));
-		panelTipoClienteCentral.add(panelInferiorBusqueda, BorderLayout.SOUTH);
-
-		lblNewLabel_12 = new JLabel("Buscar Categoria");
-		lblNewLabel_12.setFont(new Font("Tahoma", Font.BOLD, 12));
-		panelInferiorBusqueda.add(lblNewLabel_12);
-
-		horizontalStrut_5 = Box.createHorizontalStrut(10);
-		panelInferiorBusqueda.add(horizontalStrut_5);
-
-		txtBuscarCategoriaCliente = new JTextField();
-		txtBuscarCategoriaCliente.setColumns(70);
-		this.txtBuscarCategoriaCliente.setMaximumSize(this.txtBuscarCategoriaCliente.getPreferredSize());
-		panelInferiorBusqueda.add(txtBuscarCategoriaCliente);
-
-		horizontalStrut_6 = Box.createHorizontalStrut(10);
-		panelInferiorBusqueda.add(horizontalStrut_6);
-
-		btnBuscarCategoriaCliente = new JButton("Buscar");
-		btnBuscarCategoriaCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaTipoCliente();
-			}
-		});
-		btnBuscarCategoriaCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		btnBuscarCategoriaCliente.setBackground(new Color(184, 134, 11));
-		panelInferiorBusqueda.add(btnBuscarCategoriaCliente);
+		
+		
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
+		//=====================================================================================================================
 		
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
@@ -1883,7 +1795,7 @@ public class Fr_principal extends JFrame {
 
 		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
 
-		DataTools.definirTamanioDeColumnas(tablaTipoClienteColumnsWidth, tableTipoCliente);
+		
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1949,27 +1861,7 @@ public class Fr_principal extends JFrame {
 				}
 			}
 		});
-	}
-
-	private void abrirFormTipoClientes(int opcion, int idTipoCliente) {
-
-		Component cmp = this;
-
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion, idTipoCliente);
-					frame.setLocationRelativeTo(cmp);
-					frame.setVisible(true);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-
-			}
-		});
-	}
+	}	
 
 	private void abrirFormularioEmpleados(int opcion, int idEmpleado) {
 		Component cm = this;
@@ -2258,24 +2150,7 @@ public class Fr_principal extends JFrame {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
 		}
 	}
-	
-	private void eliminarTipoCliente() {
-		int indiceTipoClienteSeleccionado = -1;
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
 		
-		try {
-			
-			indiceTipoClienteSeleccionado = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
-			this.tipoClienteController.eliminarTipoCliente(indiceTipoClienteSeleccionado);
-		}catch(SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-	}
 
 	/**
 	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
@@ -2406,14 +2281,7 @@ public class Fr_principal extends JFrame {
 		this.sucursalController.verSucursalesEnTabla(modelTablaSucursales);
 	}
 
-	private void llenarTablaTipoCliente() {
-		this.modelTablaTipoCliente.getDataVector().removeAllElements();
-		this.tableTipoCliente.updateUI();
-		this.tipoClienteController.listarTipoCliente(this.txtBuscarCategoriaCliente.getText()).forEach(Tc -> {
-			this.modelTablaTipoCliente.addRow(Tc);
-		});
-		;
-	}
+	
 
 	private void llenarTablaVentas(int opcion) {
 		this.borrarElementosDeLaTablaVentas();

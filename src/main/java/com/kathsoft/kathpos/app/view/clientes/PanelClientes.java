@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 import javax.swing.JTextField;
@@ -50,20 +51,7 @@ public class PanelClientes extends JPanel {
 	private JLabel lblNewLabel_21;
 	private Component horizontalStrut_22;
 	private JButton btnBuscarCliente;
-	private JTextField txfBuscarCliente;
-	private int[] tablaClientesColumnsWidth = { 30, // indice
-			150, // Rfc
-			100, // tipo de cliente
-			100, // cuenta contable
-			300, // nombre completo
-			100, // nombre corto
-			180, // correo electrónico
-			100, // estado
-			100, // ciudad
-			400, // direccion
-			100, // codigo postal
-			150 // activo o inactivo
-	};
+	private JTextField txfBuscarCliente;	
 	private JLabel lblNewLabel;
 	
 
@@ -204,7 +192,7 @@ public class PanelClientes extends JPanel {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		panelClientesCentralBuscar.add(btnBuscarCliente);
 		
-		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes);
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaClientesColumnsWidth, tablaClientes);
 		
 		
 	}
