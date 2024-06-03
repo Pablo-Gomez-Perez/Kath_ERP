@@ -47,6 +47,8 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.TipoCliente;
 import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
+import com.kathsoft.kathpos.app.view.clientes.Fr_DatosCliente;
+import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -85,7 +87,6 @@ public class Fr_principal extends JFrame {
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ProveedorController proveedorController = new ProveedorController();
 	private ArticuloController articuloController = new ArticuloController();
-	private ClientesController clientesController = new ClientesController();
 	private VentasController ventasController = new VentasController();
 	private SucursalController sucursalController = new SucursalController();
 	private FormasDePagoController formasDePagoController = new FormasDePagoController();
@@ -135,7 +136,7 @@ public class Fr_principal extends JFrame {
 	// ============================================================================================
 	// ============================================================================================
 	private JButton btn_irAInicio;
-	private JPanel panelClientes;
+	private PanelClientes panelClientes;
 	private JPanel panelEmpleados;
 	private JPanel panelProveedor;
 	private JPanel panelEtiquetaArticulos;
@@ -203,21 +204,7 @@ public class Fr_principal extends JFrame {
 			100, /* Precio E */
 			100, /* Despues de */
 			100 /* activo o inactivo */
-	};
-
-	private int[] tablaClientesColumnsWidth = { 30, // indice
-			150, // Rfc
-			100, // tipo de cliente
-			100, // cuenta contable
-			300, // nombre completo
-			100, // nombre corto
-			180, // correo electrónico
-			100, // estado
-			100, // ciudad
-			400, // direccion
-			100, // codigo postal
-			150 // activo o inactivo
-	};
+	};	
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
 			120, // fecha venta
@@ -279,20 +266,6 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_18;
 	private JRadioButton rdbtBuscarArtPorDescrip;
 	private Component horizontalStrut_19;
-	private JPanel panelEtiquetaClientes;
-	private JPanel panelClientesCentral;
-	private JPanel panelClientesCentralBotones;
-	private JButton btnAgregarCliente;
-	private JButton btnActualizarCliente;
-	private JScrollPane scrollPaneTablaClientes;
-	private JTable tablaClientes;
-	private JPanel panelClientesCentralBuscar;
-	private JLabel lblNewLabel_21;
-	private Component horizontalStrut_21;
-	private JTextField txfBuscarCliente;
-	private Component horizontalStrut_22;
-	private JButton btnBuscarCliente;
-	private DefaultTableModel modelTablaClientes;
 	private JPanel panelVentas;
 	private JPanel panelCompras;
 	private JPanel panelEtiquetaVentas;
@@ -338,8 +311,7 @@ public class Fr_principal extends JFrame {
 	private JTable tableEmpleados;
 	private JPanel panelEmpleadosCentralbotones;
 	private JButton btnAgregarEmpleado;
-	private JButton btnActualizarEmpleado;
-	private JLabel lblNewLabel_7;
+	private JButton btnActualizarEmpleado;	
 	private JPanel panelSucursales;
 	private JPanel panelEtiquetaSucursales;
 	private JLabel lblNewLabel_8;
@@ -361,8 +333,7 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarFormaDePago;
 	private JMenuItem opcionFormasDePago;
 	private JButton btnEliminarFormaPago;
-	private JButton btnEliminarEmpleado;
-	private JButton btnEliminarCliente;
+	private JButton btnEliminarEmpleado;	
 	private JButton btnEliminarProveedor;
 	private JButton btnEliminarSucursal;
 	private JButton btnEliminarArticulo;
@@ -387,8 +358,7 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_2;
 	private JTextField txfBuscarProveedor;
 	private Component horizontalStrut_3;
-	private JButton btnBuscarProveedor;
-	private JButton btnExportarClientesExcel;
+	private JButton btnBuscarProveedor;	
 	private JButton btnExportarEmpleadosExcel;
 	private JButton btnExportarProveedoresExcel;
 	private JMenu menuReportes;
@@ -480,8 +450,8 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelClientes");
 				panelPrincipalContenedor.updateUI();
-
-				llenarTablaClientes();
+				
+				panelClientes.llenarTablaClientes();
 			}
 		});
 		opcionClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
@@ -659,7 +629,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelClientes = new JMenuItem("Clientes");
 		opcionReporteExcelClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exportarClientesExcel();
+				panelClientes.exportarClientesExcel();
 			}
 		});
 		opcionReporteExcelClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(
@@ -963,132 +933,14 @@ public class Fr_principal extends JFrame {
 		 * ================================================================================================
 		 */
 
-		panelClientes = new JPanel();
-		panelClientes.setBackground(new Color(255, 215, 0));
+		panelClientes = new PanelClientes();		
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");
-		panelClientes.setLayout(new BorderLayout(0, 0));
 
-		panelEtiquetaClientes = new JPanel();
-		panelEtiquetaClientes.setBackground(new Color(25, 25, 112));
-		panelClientes.add(panelEtiquetaClientes, BorderLayout.NORTH);
 
-		lblNewLabel_7 = new JLabel("Modulo de Clientes");
-		lblNewLabel_7.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_7.setForeground(new Color(255, 255, 255));
-		panelEtiquetaClientes.add(lblNewLabel_7);
-
-		panelClientesCentral = new JPanel();
-		panelClientesCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelClientesCentral.setBackground(new Color(255, 215, 0));
-		panelClientes.add(panelClientesCentral, BorderLayout.CENTER);
-		panelClientesCentral.setLayout(new BorderLayout(0, 0));
-
-		panelClientesCentralBotones = new JPanel();
-		FlowLayout fl_panelClientesCentralBotones = (FlowLayout) panelClientesCentralBotones.getLayout();
-		fl_panelClientesCentralBotones.setAlignment(FlowLayout.RIGHT);
-		panelClientesCentralBotones.setBackground(new Color(255, 215, 0));
-		panelClientesCentral.add(panelClientesCentralBotones, BorderLayout.NORTH);
-
-		btnAgregarCliente = new JButton("Agregar");
-		btnAgregarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(0, 0);
-			}
-		});
-		btnAgregarCliente.setBackground(new Color(144, 238, 144));
-		btnAgregarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		panelClientesCentralBotones.add(btnAgregarCliente);
-
-		btnActualizarCliente = new JButton("Actualizar");
-		btnActualizarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(1, DataTools.getIndiceElementoSeleccionado(tablaClientes, modelTablaClientes, 0));
-			}
-		});
-		btnActualizarCliente.setBackground(new Color(144, 238, 144));
-		btnActualizarCliente.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		panelClientesCentralBotones.add(btnActualizarCliente);
-
-		btnEliminarCliente = new JButton("Eliminar");
-		btnEliminarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.btnEliminarCliente.setBackground(new Color(255, 51, 0));
-		btnEliminarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarCliente();
-			}
-		});
-		panelClientesCentralBotones.add(btnEliminarCliente);
-
-		btnExportarClientesExcel = new JButton("Exportar a Excel");
-		btnExportarClientesExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarClientesExcel();
-			}
-		});
-		btnExportarClientesExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		this.btnExportarClientesExcel.setBackground(new Color(102, 205, 170));
-		panelClientesCentralBotones.add(btnExportarClientesExcel);
-
-		scrollPaneTablaClientes = new JScrollPane();
-		panelClientesCentral.add(scrollPaneTablaClientes, BorderLayout.CENTER);
-
-		modelTablaClientes = new DefaultTableModel();
-		tablaClientes = new JTable();
-		tablaClientes.setModel(modelTablaClientes);
-		tablaClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaClientes.setViewportView(tablaClientes);
-
-		modelTablaClientes.addColumn("Id");
-		modelTablaClientes.addColumn("RFC");
-		modelTablaClientes.addColumn("Tipo");
-		modelTablaClientes.addColumn("Cta Contable");
-		modelTablaClientes.addColumn("Nombre completo");
-		modelTablaClientes.addColumn("Alias");
-		modelTablaClientes.addColumn("Email");
-		modelTablaClientes.addColumn("Estado");
-		modelTablaClientes.addColumn("Ciudad");
-		modelTablaClientes.addColumn("Direccion");
-		modelTablaClientes.addColumn("Codigo P.");
-		modelTablaClientes.addColumn("Activo");
-
-		// se remueve el editor de la tabla provedoores
-		DataTools.removerEditorDeTabla(tablaClientes, modelTablaClientes);
-
-		panelClientesCentralBuscar = new JPanel();
-		panelClientesCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_4 = (FlowLayout) panelClientesCentralBuscar.getLayout();
-		flowLayout_4.setAlignment(FlowLayout.RIGHT);
-		panelClientesCentral.add(panelClientesCentralBuscar, BorderLayout.SOUTH);
-
-		lblNewLabel_21 = new JLabel("Buscar cliente");
-		lblNewLabel_21.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelClientesCentralBuscar.add(lblNewLabel_21);
-
-		horizontalStrut_21 = Box.createHorizontalStrut(20);
-		panelClientesCentralBuscar.add(horizontalStrut_21);
-
-		txfBuscarCliente = new JTextField();
-		panelClientesCentralBuscar.add(txfBuscarCliente);
-		txfBuscarCliente.setColumns(70);
-		this.txfBuscarCliente.setMaximumSize(this.txfBuscarCliente.getPreferredSize());
-
-		horizontalStrut_22 = Box.createHorizontalStrut(20);
-		panelClientesCentralBuscar.add(horizontalStrut_22);
-
-		btnBuscarCliente = new JButton("Buscar");
-		btnBuscarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buscarClientePorNombre();
-			}
-		});
-		btnBuscarCliente.setBackground(new Color(184, 134, 11));
-		btnBuscarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		panelClientesCentralBuscar.add(btnBuscarCliente);
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
 
 		panelEmpleados = new JPanel();
 		panelPrincipalContenedor.add(panelEmpleados, "panelEmpleados");
@@ -2023,9 +1875,7 @@ public class Fr_principal extends JFrame {
 
 		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
 
-		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);
-
-		DataTools.definirTamanioDeColumnas(tablaClientesColumnsWidth, tablaClientes); 
+		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);		
 
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
@@ -2049,19 +1899,7 @@ public class Fr_principal extends JFrame {
 			er.printStackTrace();
 		}
 	}
-
-	private void abrirFormClientes(int tipoOperacion, int indiceCliente) {
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion, indiceCliente);
-				frame.setLocationRelativeTo(cm);
-				frame.setVisible(true);
-			}
-		});
-	}
+	
 
 	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
 
@@ -2270,12 +2108,7 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaCategorias() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
-	}
-
-	private void borrarElementosDeLaTablaClientes() {
-		this.modelTablaClientes.getDataVector().removeAllElements();
-		this.tablaClientes.updateUI();
-	}
+	}	
 
 	/**
 	 * borra todos los elementos contenidos en la tabla empleados
@@ -2293,13 +2126,7 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaVentas() {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
-	}
-
-	private void buscarClientePorNombre() {
-		this.modelTablaClientes.getDataVector().removeAllElements();
-		this.tablaClientes.updateUI();
-		this.clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), this.modelTablaClientes);
-	}
+	}	
 
 	private void buscarEmpleadoPorNombre() {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
@@ -2388,29 +2215,7 @@ public class Fr_principal extends JFrame {
 		}
 
 	}
-
-	private void eliminarCliente() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			this.clientesController.eliminarCliente(
-					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-
-	}
-
+	
 	private void eliminarEmpleado() {
 
 		int indiceEmpleadoSeleccionado = -1;
@@ -2508,17 +2313,7 @@ public class Fr_principal extends JFrame {
 			er.printStackTrace();
 		}
 	}
-
-	private void exportarClientesExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaClientes, this);
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
+	
 
 	private void exportarEmpleadosExcel() {
 		try {
@@ -2579,10 +2374,7 @@ public class Fr_principal extends JFrame {
 		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
 	}
 
-	private void llenarTablaClientes() {
-		this.borrarElementosDeLaTablaClientes();
-		clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), modelTablaClientes);
-	}
+	
 
 	/**
 	 * llena el jTable del panel de empleados con todos los registros encontrados en
