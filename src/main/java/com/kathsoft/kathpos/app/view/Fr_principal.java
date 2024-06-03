@@ -18,7 +18,6 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -35,19 +34,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
-import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
-import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Sucursal;
-import com.kathsoft.kathpos.app.model.TipoCliente;
-import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
-import com.kathsoft.kathpos.app.view.clientes.Fr_DatosCliente;
+import com.kathsoft.kathpos.app.view.articulo.PanelArticulos;
 import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
 import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
@@ -87,11 +81,9 @@ public class Fr_principal extends JFrame {
 	private CategoriaController categoriaController = new CategoriaController();
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ProveedorController proveedorController = new ProveedorController();
-	private ArticuloController articuloController = new ArticuloController();
 	private VentasController ventasController = new VentasController();
 	private SucursalController sucursalController = new SucursalController();
 	private FormasDePagoController formasDePagoController = new FormasDePagoController();
-	private TipoClienteController tipoClienteController = new TipoClienteController();
 	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -107,7 +99,7 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionConsultarVenta;
 	private JPanel panelSuperiorBotones;
 
-	private JPanel panelArticulos;
+	private PanelArticulos panelArticulos;
 	// ============================================================================================
 	// ============================================================================================
 	// panel que agrega una imagen al formulario
@@ -126,8 +118,7 @@ public class Fr_principal extends JFrame {
 		@Override
 		public void paint(Graphics g) {
 			this.imagen = new ImageIcon(
-					getClass().getResource("/com/kathsoft/kathpos/app/assets/control-inventario-erp-3.png"))
-					.getImage();
+					getClass().getResource("/com/kathsoft/kathpos/app/assets/control-inventario-erp-3.png")).getImage();
 			g.drawImage(imagen, 0, 0, getWidth(), getHeight(), this);
 			setOpaque(false);
 			super.paint(g);
@@ -140,9 +131,6 @@ public class Fr_principal extends JFrame {
 	private PanelClientes panelClientes;
 	private JPanel panelEmpleados;
 	private JPanel panelProveedor;
-	private JPanel panelEtiquetaArticulos;
-	private JLabel lblNewLabel;
-	private JPanel panelArticulosCentral;
 	private JMenuItem opcionMarcas;
 	private JPanel panelMarcas;
 	private JPanel panelMarcasEtiquetaSuperior;
@@ -150,10 +138,8 @@ public class Fr_principal extends JFrame {
 	private JPanel panelMarcasCentral;
 	private DefaultTableModel modelTablaCategoriaArticulo;
 	private DefaultTableModel modelTablaProveedores;
-	private DefaultTableModel modelTablaArticulos;
 	private DefaultTableModel modelTablaVentas;
 	private DefaultTableModel modelTablaFormasDePago;
-	private DefaultTableModel modelTablaTipoCliente;
 	private JPanel panelProveedorEtiqueta;
 	private JPanel panelEmpleadosEtiqueta;
 	private JLabel lblNewLabel_6;
@@ -170,7 +156,7 @@ public class Fr_principal extends JFrame {
 			100, // nombre corto
 			200, // email
 			150 // activo o inactivo
-	};	
+	};
 	// Array que define el ancho de cada columna de la tabla de categoría
 	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	// Array que define el ancho de cada columna de la tabla de Proveedores
@@ -186,21 +172,6 @@ public class Fr_principal extends JFrame {
 			90, // Codigo postal
 			150 // activo o inactivo
 	};
-
-	// Array que define el ancho de cada columna de la tabla de Articulos
-	private int[] tablaArticulosColumnsWidth = { 40, /* id */
-			150, /* codigo */
-			200, /* proveedor */
-			180, /* categoría */
-			100, /* codigo sat */
-			300, /* Nombre */
-			450, /* descripcion */
-			100, /* Existencia */
-			100, /* Precio G */
-			100, /* Precio E */
-			100, /* Despues de */
-			100 /* activo o inactivo */
-	};	
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
 			120, // fecha venta
@@ -231,37 +202,9 @@ public class Fr_principal extends JFrame {
 	private JPanel panelProveedorCentralBotones;
 	private JButton btnAgregarProveedor;
 	private JButton btnActualizarProveedor;
-	private JScrollPane scrollPaneTablaArticulos;
-	private JTable tablaArticulos;
-	private JPanel panelArticulosCentralBotones;
-	private JButton btnAgregarArticulo;
-	private JButton btnActualizarArticulo;
-	private JButton btnExportarArticuloExcel;
 	private JButton btnCalculadora;
-	private JPanel panelArticulosCentralBuscar;
-	private JLabel lblNewLabel_19;
-	private Component horizontalStrut_13;
-	private JTextField txfBuscarArticulo;
-	private JButton btnBuscarArticulo;
-	private Box verticalBox;
-	private Box verticalBox_1;
-	private Box horizontalBox_16;
-	private Box horizontalBox_17;
-	private JLabel lblNewLabel_20;
-	private Component horizontalStrut_14;
-	private ButtonGroup btnRadioGroupArticulos;
 	private ButtonGroup btnRadioGroupOrdernarVentas;
 	private ButtonGroup btnRadioGroupBuscarVentas;
-	private JRadioButton rdbBuscarArtPorNombre;
-	private Component horizontalStrut_15;
-	private JRadioButton rdbtBuscarArtPorProveedor;
-	private Component horizontalStrut_16;
-	private JRadioButton rdbtBuscarArtPorCategoria;
-	private Component horizontalStrut_17;
-	private JRadioButton rdbtBuscarArtPorCodigo;
-	private Component horizontalStrut_18;
-	private JRadioButton rdbtBuscarArtPorDescrip;
-	private Component horizontalStrut_19;
 	private JPanel panelVentas;
 	private JPanel panelCompras;
 	private JPanel panelEtiquetaVentas;
@@ -307,7 +250,7 @@ public class Fr_principal extends JFrame {
 	private JTable tableEmpleados;
 	private JPanel panelEmpleadosCentralbotones;
 	private JButton btnAgregarEmpleado;
-	private JButton btnActualizarEmpleado;	
+	private JButton btnActualizarEmpleado;
 	private JPanel panelSucursales;
 	private JPanel panelEtiquetaSucursales;
 	private JLabel lblNewLabel_8;
@@ -329,10 +272,9 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarFormaDePago;
 	private JMenuItem opcionFormasDePago;
 	private JButton btnEliminarFormaPago;
-	private JButton btnEliminarEmpleado;	
+	private JButton btnEliminarEmpleado;
 	private JButton btnEliminarProveedor;
 	private JButton btnEliminarSucursal;
-	private JButton btnEliminarArticulo;
 	private JScrollPane scrollPaneTablaCategorias;
 	private JTable tablaCategorias;
 	private JPanel panelCategoriasCentralBotones;
@@ -354,7 +296,7 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut_2;
 	private JTextField txfBuscarProveedor;
 	private Component horizontalStrut_3;
-	private JButton btnBuscarProveedor;	
+	private JButton btnBuscarProveedor;
 	private JButton btnExportarEmpleadosExcel;
 	private JButton btnExportarProveedoresExcel;
 	private JMenu menuReportes;
@@ -366,28 +308,9 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionReporteExcelEmpleados;
 	private JMenuItem opcionReporteExcelProveedores;
 	private JMenuItem opcionReporteExcelVentas;
-	private JLabel lblNewLabel_10;
-	private Component horizontalStrut_4;
-	private JComboBox<TipoCliente> cmb_tipoCliente;
 	private JMenu menuConsultaClientes;
 	private JMenuItem opcionTipoClientes;
 	private PanelTipoCliente panelTipoCliente;
-	private JPanel panelEtiquetaTipoCliente;
-	private JPanel panelTipoClienteCentral;
-	private JPanel panelTipoClienteCentralBotones;
-	private JScrollPane scrollPaneTablaTipoCliente;
-	private JLabel lblNewLabel_11;
-	private JButton btnNuevoTipoCliente;
-	private JButton btnActualizarTipoCliente;
-	private JButton btnEliminarTipoCliente;
-	private JTable tableTipoCliente;
-	private JPanel panelInferiorBusqueda;
-	private JLabel lblNewLabel_12;
-	private Component horizontalStrut_5;
-	private JTextField txtBuscarCategoriaCliente;
-	private Component horizontalStrut_6;
-
-	private JButton btnBuscarCategoriaCliente;
 	private PanelCuentasContables panelConta;
 	private JMenu menuContable;
 	private JMenuItem opcionCatalogoCuentas;
@@ -403,7 +326,7 @@ public class Fr_principal extends JFrame {
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/1643231.png")));
 		setTitle("Kath POS");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1150, 601);				
+		setBounds(100, 100, 1150, 601);
 
 		BarraMenu = new JMenuBar();
 		BarraMenu.setBackground(new Color(255, 153, 0));
@@ -425,12 +348,12 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelArticulos");
 				panelPrincipalContenedor.updateUI();
 
-				llenarCmbTipoCliente();
-				llenarTablaArticulos();
+				panelArticulos.llenarCmbTipoCliente();
+				panelArticulos.llenarTablaArticulos();
 			}
 		});
-		opcionConsultarArticulos.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
+		opcionConsultarArticulos.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		menuConsultar.add(opcionConsultarArticulos);
 
 		menuConsultaClientes = new JMenu("Clientes");
@@ -446,7 +369,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelClientes");
 				panelPrincipalContenedor.updateUI();
-				
+
 				panelClientes.llenarTablaClientes();
 			}
 		});
@@ -530,8 +453,8 @@ public class Fr_principal extends JFrame {
 		menuConsultar.add(opcionSucursales);
 
 		opcionFormasDePago = new JMenuItem("Formas De Pago");
-		opcionFormasDePago.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/formas_de_pago.png")));
+		opcionFormasDePago.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/formas_de_pago.png")));
 		opcionFormasDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -566,8 +489,8 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		opcionSalirDelSistema.setBackground(new Color(255, 0, 51));
-		opcionSalirDelSistema.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cerrar.png")));
+		opcionSalirDelSistema
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cerrar.png")));
 		menuConsultar.add(opcionSalirDelSistema);
 
 		menuOperaciones = new JMenu("Operaciones");
@@ -577,8 +500,8 @@ public class Fr_principal extends JFrame {
 		BarraMenu.add(menuOperaciones);
 
 		subMenuVentas = new JMenu("Ventas");
-		subMenuVentas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
+		subMenuVentas
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		menuOperaciones.add(subMenuVentas);
 
 		opcionRegistrarVenta = new JMenuItem("Registrar");
@@ -615,11 +538,11 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelArticulo = new JMenuItem("Articulos");
 		opcionReporteExcelArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exportarArticuloExcel();
+				panelArticulos.exportarArticuloExcel();
 			}
 		});
-		opcionReporteExcelArticulo.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
+		opcionReporteExcelArticulo.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		subMenuReportesExcel.add(opcionReporteExcelArticulo);
 
 		opcionReporteExcelClientes = new JMenuItem("Clientes");
@@ -658,37 +581,37 @@ public class Fr_principal extends JFrame {
 				exportarVentaExcel();
 			}
 		});
-		opcionReporteExcelVentas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
+		opcionReporteExcelVentas
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		subMenuReportesExcel.add(opcionReporteExcelVentas);
 
 		subMenuReportesPDF = new JMenu("PDF");
-		subMenuReportesPDF.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/pdfLogo.jpg")));
+		subMenuReportesPDF
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/pdfLogo.jpg")));
 		menuReportes.add(subMenuReportesPDF);
 
 		subMenuGraficas = new JMenu("Analisis Grafico");
-		subMenuGraficas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/grafico.png")));
+		subMenuGraficas
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/grafico.png")));
 		menuReportes.add(subMenuGraficas);
-		
+
 		menuContable = new JMenu("Contabilidad");
 		BarraMenu.add(menuContable);
-		
+
 		this.opcionCatalogoCuentas = new JMenuItem();
 		opcionCatalogoCuentas.setText("Cuentas");
-		
+
 		opcionCatalogoCuentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelConta");
 				panelPrincipalContenedor.updateUI();
-				
+
 				panelConta.llenarTablaCuentas();
 			}
 		});
-		menuContable.add(opcionCatalogoCuentas);		
-		
+		menuContable.add(opcionCatalogoCuentas);
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -699,228 +622,21 @@ public class Fr_principal extends JFrame {
 		panelPrincipalContenedor.setBackground(new Color(255, 255, 0));
 		contentPane.add(panelPrincipalContenedor, BorderLayout.CENTER);
 		panelPrincipalContenedor.setLayout(new CardLayout(0, 0));
-		
+
 		panelPrincipalContenedor.add(panelInicio, "panelInicio");
 		panelInicio.setLayout(new BorderLayout(0, 0));
-		
-		
+
 		/**
 		 * ====================================================================================
 		 * ====================================================================================
 		 * 
-		 * 					Panel articulos
+		 * Panel articulos
 		 * ====================================================================================
 		 * ====================================================================================
 		 */
-		panelArticulos = new JPanel();
+		panelArticulos = new PanelArticulos(sucursal);
 		panelPrincipalContenedor.add(panelArticulos, "panelArticulos");
-		panelArticulos.setLayout(new BorderLayout(0, 0));				
 
-		panelEtiquetaArticulos = new JPanel();
-		panelEtiquetaArticulos.setBackground(new Color(25, 25, 112));
-		panelArticulos.add(panelEtiquetaArticulos, BorderLayout.NORTH);
-
-		lblNewLabel = new JLabel("Modulo de Articulos");
-		lblNewLabel.setForeground(new Color(255, 255, 255));
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		panelEtiquetaArticulos.add(lblNewLabel);
-
-		panelArticulosCentral = new JPanel();
-		panelArticulosCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelArticulosCentral.setBackground(new Color(255, 215, 0));
-		panelArticulos.add(panelArticulosCentral, BorderLayout.CENTER);
-		panelArticulosCentral.setLayout(new BorderLayout(0, 0));
-
-		scrollPaneTablaArticulos = new JScrollPane();
-		panelArticulosCentral.add(scrollPaneTablaArticulos);
-
-		modelTablaArticulos = new DefaultTableModel();
-		tablaArticulos = new JTable();
-		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaArticulos.setViewportView(tablaArticulos);
-		tablaArticulos.setModel(modelTablaArticulos);
-
-		modelTablaArticulos.addColumn("Id");
-		modelTablaArticulos.addColumn("Codigo");
-		modelTablaArticulos.addColumn("Proveedor");
-		modelTablaArticulos.addColumn("Categoría");
-		modelTablaArticulos.addColumn("Codigo Sat");
-		modelTablaArticulos.addColumn("Nombre");
-		modelTablaArticulos.addColumn("Descripción");
-		modelTablaArticulos.addColumn("Existencia");
-		modelTablaArticulos.addColumn("Precios G");
-		modelTablaArticulos.addColumn("Precio E");
-		modelTablaArticulos.addColumn("Despues de");
-		modelTablaArticulos.addColumn("Estatus");
-
-		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos); 
-
-		panelArticulosCentralBotones = new JPanel();
-		panelArticulosCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_2 = (FlowLayout) panelArticulosCentralBotones.getLayout();
-		flowLayout_2.setAlignment(FlowLayout.RIGHT);
-		panelArticulosCentral.add(panelArticulosCentralBotones, BorderLayout.NORTH);
-
-		btnAgregarArticulo = new JButton("Agregar");
-		btnAgregarArticulo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				abrirVentanaFormularioArticulo(0, 0, sucursal.getIdSucursal());
-
-			}
-		});
-		btnAgregarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
-		panelArticulosCentralBotones.add(btnAgregarArticulo);
-
-		btnActualizarArticulo = new JButton("Actualizar");
-		btnActualizarArticulo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				abrirVentanaFormularioArticulo(1,
-						DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0),
-						sucursal.getIdSucursal());
-
-			}
-		});
-		btnActualizarArticulo.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
-		panelArticulosCentralBotones.add(btnActualizarArticulo);
-
-		btnEliminarArticulo = new JButton("Eliminar");
-		btnEliminarArticulo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarArticulo();
-			}
-		});
-		btnEliminarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.btnEliminarArticulo.setBackground(new Color(255, 51, 0));
-		panelArticulosCentralBotones.add(btnEliminarArticulo);
-
-		btnExportarArticuloExcel = new JButton("Exportar a Excel");
-		btnExportarArticuloExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarArticuloExcel();
-			}
-		});
-		btnExportarArticuloExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
-		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
-
-		panelArticulosCentralBuscar = new JPanel();
-		FlowLayout flowLayout_3 = (FlowLayout) panelArticulosCentralBuscar.getLayout();
-		flowLayout_3.setAlignment(FlowLayout.LEFT);
-		panelArticulosCentralBuscar.setBackground(new Color(255, 215, 0));
-		panelArticulosCentral.add(panelArticulosCentralBuscar, BorderLayout.SOUTH);
-
-		verticalBox = Box.createVerticalBox();
-		panelArticulosCentralBuscar.add(verticalBox);
-
-		horizontalBox_16 = Box.createHorizontalBox();
-		verticalBox.add(horizontalBox_16);
-
-		horizontalBox_17 = Box.createHorizontalBox();
-		horizontalBox_17.setBorder(new EmptyBorder(5, 0, 0, 0));
-		verticalBox.add(horizontalBox_17);
-
-		lblNewLabel_20 = new JLabel("Buscar por");
-		lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 12));
-		horizontalBox_17.add(lblNewLabel_20);
-
-		horizontalStrut_14 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_14);
-
-		btnRadioGroupArticulos = new ButtonGroup();
-
-		rdbBuscarArtPorNombre = new JRadioButton("Nombre");
-		rdbBuscarArtPorNombre.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbBuscarArtPorNombre.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbBuscarArtPorNombre);
-
-		horizontalStrut_15 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_15);
-
-		rdbtBuscarArtPorProveedor = new JRadioButton("Proveedor");
-		rdbtBuscarArtPorProveedor.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorProveedor.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorProveedor);
-
-		horizontalStrut_16 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_16);
-
-		rdbtBuscarArtPorCategoria = new JRadioButton("Categoria");
-		rdbtBuscarArtPorCategoria.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorCategoria.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorCategoria);
-
-		horizontalStrut_17 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_17);
-
-		rdbtBuscarArtPorCodigo = new JRadioButton("Código");
-		rdbtBuscarArtPorCodigo.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorCodigo.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorCodigo);
-
-		horizontalStrut_18 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_18);
-
-		rdbtBuscarArtPorDescrip = new JRadioButton("Descripción");
-		rdbtBuscarArtPorDescrip.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorDescrip.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorDescrip);
-
-		btnRadioGroupArticulos.add(this.rdbBuscarArtPorNombre);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCategoria);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCodigo);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorDescrip);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorProveedor);
-
-		horizontalStrut_19 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_19);
-
-		lblNewLabel_10 = new JLabel("Tipo de Cliente");
-		lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 12));
-		horizontalBox_17.add(lblNewLabel_10);
-
-		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_17.add(horizontalStrut_4);
-
-		cmb_tipoCliente = new JComboBox<TipoCliente>();
-		horizontalBox_17.add(cmb_tipoCliente);
-
-		lblNewLabel_19 = new JLabel("Buscar artículo");
-		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_16.add(lblNewLabel_19);
-		horizontalStrut_13 = Box.createHorizontalStrut(5);
-		horizontalBox_16.add(horizontalStrut_13);
-
-		txfBuscarArticulo = new JTextField();
-		txfBuscarArticulo.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_16.add(txfBuscarArticulo);
-		txfBuscarArticulo.setColumns(70);
-		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
-
-		verticalBox_1 = Box.createVerticalBox();
-		verticalBox_1.setBorder(new EmptyBorder(10, 30, 10, 10));
-		panelArticulosCentralBuscar.add(verticalBox_1);
-
-		btnBuscarArticulo = new JButton("Buscar");
-		btnBuscarArticulo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				consultarArticulosPorNombre();
-			}
-		});
-		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
-		btnBuscarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-
-		verticalBox_1.add(btnBuscarArticulo);
-		
-		
 		/**
 		 * 
 		 * ================================================================================================
@@ -929,9 +645,8 @@ public class Fr_principal extends JFrame {
 		 * ================================================================================================
 		 */
 
-		panelClientes = new PanelClientes();		
+		panelClientes = new PanelClientes();
 		panelPrincipalContenedor.add(panelClientes, "panelClientes");
-
 
 		// =======================================================================================================================================
 		// =======================================================================================================================================
@@ -999,8 +714,8 @@ public class Fr_principal extends JFrame {
 		panelEmpleadosCentralbotones.add(btnAgregarEmpleado);
 
 		btnActualizarEmpleado = new JButton("Actualizar");
-		btnActualizarEmpleado.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnActualizarEmpleado.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
 		btnActualizarEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1129,8 +844,8 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
-		btnActualizarProveedor.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnActualizarProveedor.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelProveedorCentralBotones.add(btnActualizarProveedor);
 
 		btnEliminarProveedor = new JButton("Eliminar");
@@ -1252,8 +967,8 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		btnActualizarCategoria.setBackground(new Color(144, 238, 144));
-		btnActualizarCategoria.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnActualizarCategoria.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelCategoriasCentralBotones.add(btnActualizarCategoria);
 
 		btnEliminarCategoria = new JButton("Eliminar");
@@ -1396,8 +1111,8 @@ public class Fr_principal extends JFrame {
 				abrirFormVentas(sucursal.getIdSucursal());
 			}
 		});
-		btNuevaVenta.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
+		btNuevaVenta
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		btNuevaVenta.setBackground(new Color(152, 251, 152));
 		panelVentasCentralBotones.add(btNuevaVenta);
 
@@ -1606,8 +1321,8 @@ public class Fr_principal extends JFrame {
 
 			}
 		});
-		btnActualizarSucursal.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnActualizarSucursal.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
 		panelSucursalCentralBotones.add(btnActualizarSucursal);
 
@@ -1683,8 +1398,8 @@ public class Fr_principal extends JFrame {
 		panelFormasDePagoCentralBotones.add(btnNuevaFormaDePago);
 
 		btnActualizarFormaDePago = new JButton("Actualizar");
-		btnActualizarFormaDePago.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnActualizarFormaDePago.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarFormaDePago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				abrirFormDatosFormasDePago(2,
@@ -1744,58 +1459,44 @@ public class Fr_principal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				abrirFormVentas(sucursal.getIdSucursal());
-				
+
 			}
 		});
-		btn_irAVentas.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
+		btn_irAVentas
+				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
 		panelSuperiorBotones.add(btn_irAVentas);
 
-		
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+
 		panelTipoCliente = new PanelTipoCliente();
 		panelPrincipalContenedor.add(panelTipoCliente, "panelTipoCliente");
 
-		
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
 
-		
-
-		
-		
-
-		
-		
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		//=====================================================================================================================
-		
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
-		
+
 		opcionCatalogoCuentas = new JMenuItem("Cuentas");
 
 		DataTools.definirTamanioDeColumnas(tableEmpleadosColumnsWidth, tableEmpleados);
 
 		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
 
-		DataTools.definirTamanioDeColumnas(tablaArticulosColumnsWidth, tablaArticulos);		
-
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
 		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
 
 		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
-
-		
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1811,7 +1512,6 @@ public class Fr_principal extends JFrame {
 			er.printStackTrace();
 		}
 	}
-	
 
 	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
 
@@ -1861,7 +1561,7 @@ public class Fr_principal extends JFrame {
 				}
 			}
 		});
-	}	
+	}
 
 	private void abrirFormularioEmpleados(int opcion, int idEmpleado) {
 		Component cm = this;
@@ -1897,31 +1597,6 @@ public class Fr_principal extends JFrame {
 				fr.setVisible(true);
 			}
 		});
-	}
-
-	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
-
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-
-					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion, idArticulo, sucursal);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-
-			}
-
-		});
-
 	}
 
 	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
@@ -1989,10 +1664,6 @@ public class Fr_principal extends JFrame {
 	/**
 	 * borra todos los datos de la tabla de articulos
 	 */
-	private void borrarElementosDeLaTablaArticulos() {
-		this.modelTablaArticulos.getDataVector().removeAllElements();
-		this.tablaArticulos.updateUI();
-	}
 
 	/**
 	 * borra todos los elementos contenidos en la tabla categorias
@@ -2000,7 +1671,7 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaCategorias() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
-	}	
+	}
 
 	/**
 	 * borra todos los elementos contenidos en la tabla empleados
@@ -2018,7 +1689,7 @@ public class Fr_principal extends JFrame {
 	private void borrarElementosDeLaTablaVentas() {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
-	}	
+	}
 
 	private void buscarEmpleadoPorNombre() {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
@@ -2047,42 +1718,11 @@ public class Fr_principal extends JFrame {
 		System.exit(0);
 	}
 
-	private void consultarArticulosPorNombre() {
-		this.borrarElementosDeLaTablaArticulos();
-		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
-				.getIdTipoCliente();
-		articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(), opcionDeBusquedaDeArticulo(),
-				this.sucursal.getIdSucursal(), idTipoCliente).forEach(Ar -> {
-					this.modelTablaArticulos.addRow(Ar);
-				});
-		;
-	}
-
 	private void consultarCategoriaPorNombre() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
 		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
 				modelTablaCategoriaArticulo);
-	}
-
-	private void eliminarArticulo() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-			this.articuloController
-					.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-
-		} catch (SQLException er) {
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-
 	}
 
 	private void eliminarCategoria() {
@@ -2107,7 +1747,7 @@ public class Fr_principal extends JFrame {
 		}
 
 	}
-	
+
 	private void eliminarEmpleado() {
 
 		int indiceEmpleadoSeleccionado = -1;
@@ -2150,7 +1790,6 @@ public class Fr_principal extends JFrame {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
 		}
 	}
-		
 
 	/**
 	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
@@ -2175,20 +1814,6 @@ public class Fr_principal extends JFrame {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
-
-	private void exportarArticuloExcel() {
-		try {
-
-			DataTools.exportarTablaExcel(modelTablaArticulos, this);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
-	
 
 	private void exportarEmpleadosExcel() {
 		try {
@@ -2223,23 +1848,6 @@ public class Fr_principal extends JFrame {
 		}
 	}
 
-	private void llenarCmbTipoCliente() {
-		this.cmb_tipoCliente.removeAllItems();
-		this.cmb_tipoCliente.updateUI();
-		this.tipoClienteController.cmbTipoCliente().forEach(Tc -> {
-			this.cmb_tipoCliente.addItem(Tc);
-		});
-	}
-
-	private void llenarTablaArticulos() {
-		this.borrarElementosDeLaTablaArticulos();
-		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmb_tipoCliente.getSelectedIndex())
-				.getIdTipoCliente();
-		articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal(), idTipoCliente).forEach(a -> {
-			this.modelTablaArticulos.addRow(a);
-		});
-	}
-
 	/**
 	 * llena el JTable del panel de categorias con todos los registros encontrados
 	 * en la bd
@@ -2248,8 +1856,6 @@ public class Fr_principal extends JFrame {
 		this.borrarElementosDeLaTablaCategorias();
 		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
 	}
-
-	
 
 	/**
 	 * llena el jTable del panel de empleados con todos los registros encontrados en
@@ -2281,8 +1887,6 @@ public class Fr_principal extends JFrame {
 		this.sucursalController.verSucursalesEnTabla(modelTablaSucursales);
 	}
 
-	
-
 	private void llenarTablaVentas(int opcion) {
 		this.borrarElementosDeLaTablaVentas();
 		ventasController.verVentasEnTabla(modelTablaVentas, opcion, this.sucursal.getIdSucursal());
@@ -2293,21 +1897,6 @@ public class Fr_principal extends JFrame {
 	 * 
 	 * @return
 	 */
-	private int opcionDeBusquedaDeArticulo() {
-
-		if (this.rdbBuscarArtPorNombre.isSelected()) {
-			return 1;
-		} else if (this.rdbtBuscarArtPorProveedor.isSelected()) {
-			return 2;
-		} else if (this.rdbtBuscarArtPorCategoria.isSelected()) {
-			return 3;
-		} else if (this.rdbtBuscarArtPorCodigo.isSelected()) {
-			return 4;
-		} else {
-			return 5;
-		}
-
-	}
 
 	/**
 	 * en función del RadioButton seleccionado retorna el criterio de busqueda de
