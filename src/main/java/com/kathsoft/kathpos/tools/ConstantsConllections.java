@@ -46,4 +46,15 @@ public class ConstantsConllections implements java.io.Serializable{
 			100, /* Despues de */
 			100 /* activo o inactivo */
 	};
+	
+	// Array que define el ancho de cada columna de la tabla de empleados
+	public static final int[] tableEmpleadosColumnsWidth = { 40, // id
+			150, // sucursal
+			180, // RFC
+			180, // Curp
+			180, // Nombre completo
+			100, // nombre corto
+			200, // email
+			150 // activo o inactivo
+	};
 }

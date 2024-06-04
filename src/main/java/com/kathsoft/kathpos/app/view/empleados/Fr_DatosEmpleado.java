@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.empleados;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
