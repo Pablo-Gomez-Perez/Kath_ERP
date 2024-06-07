@@ -30,59 +30,21 @@ public class ProveedorController implements java.io.Serializable {
 	 * 
 	 * @param tabla
 	 */
-	public void verProveedoresEnTabla(DefaultTableModel tabla) {
+	public Vector<Object[]> verProveedoresEnTabla(String nombre) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
-
+		var data = new Vector<Object[]>();
+		
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_proveedores();");
-			rset = stm.executeQuery();
-
-			while (rset.next()) {
-
-				tabla.addRow(new Object[] { rset.getInt(1), // Id
-						rset.getString(2), // RFC
-						rset.getString(3), // clave contable
-						rset.getString(4), // Nombre
-						rset.getString(5), // Descripcion
-						rset.getString(6), // Correo Electronico
-						rset.getString(7), // Estado
-						rset.getString(8), // Ciudad
-						rset.getString(9), // Direccion
-						rset.getString(10), // Codigo Postal;
-						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
-				});
-			}
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
-	}
-
-	public void buscarProveedorPorNombre(String nombre, DefaultTableModel tabla) {
-		ResultSet rset = null;
-		CallableStatement stm = null;
-
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_proveedor_por_nombre(?);");
+			stm = cn.prepareCall("CALL ver_proveedores(?);");
 			stm.setString(1, nombre);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
 
-				tabla.addRow(new Object[] { rset.getInt(1), // Id
+				data.add(new Object[] { rset.getInt(1), // Id
 						rset.getString(2), // RFC
 						rset.getString(3), // clave contable
 						rset.getString(4), // Nombre
@@ -95,11 +57,14 @@ public class ProveedorController implements java.io.Serializable {
 						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
 				});
 			}
-
+			
+			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);
@@ -107,7 +72,7 @@ public class ProveedorController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
-	}
+	}	
 
 	public void eliminarProveedor(int idProveedor) throws SQLException {
 

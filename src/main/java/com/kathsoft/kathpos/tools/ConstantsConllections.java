@@ -57,4 +57,18 @@ public class ConstantsConllections implements java.io.Serializable{
 			200, // email
 			150 // activo o inactivo
 	};
+	
+	// Array que define el ancho de cada columna de la tabla de Proveedores
+	public static int[] tablaProveedoresColumnsWidth = { 30, // Indice
+			150, // Rfc
+			150, // Clave contable
+			180, // Nombre
+			400, // Descripcion
+			200, // Correo
+			100, // Estado
+			100, // Ciudad
+			300, // Direccion
+			90, // Codigo postal
+			150 // activo o inactivo
+	};
 }

@@ -47,6 +47,8 @@ import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.app.view.empleados.Fr_DatosEmpleado;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
+import com.kathsoft.kathpos.app.view.proveedor.Fr_DatosProveedor;
+import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -131,7 +133,7 @@ public class Fr_principal extends JFrame {
 	private JButton btn_irAInicio;
 	private PanelClientes panelClientes;
 	private PanelEmpleados panelEmpleados;
-	private JPanel panelProveedor;
+	private PanelProveedor panelProveedor;
 	private JMenuItem opcionMarcas;
 	private JPanel panelMarcas;
 	private JPanel panelMarcasEtiquetaSuperior;
@@ -141,23 +143,9 @@ public class Fr_principal extends JFrame {
 	private DefaultTableModel modelTablaProveedores;
 	private DefaultTableModel modelTablaVentas;
 	private DefaultTableModel modelTablaFormasDePago;
-	private JPanel panelProveedorEtiqueta;
 	private DefaultTableModel modelTablaSucursales;	
 	// Array que define el ancho de cada columna de la tabla de categoría
-	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
-	// Array que define el ancho de cada columna de la tabla de Proveedores
-	private int[] tablaProveedoresColumnsWidth = { 30, // Indice
-			150, // Rfc
-			150, // Clave contable
-			180, // Nombre
-			400, // Descripcion
-			200, // Correo
-			100, // Estado
-			100, // Ciudad
-			300, // Direccion
-			90, // Codigo postal
-			150 // activo o inactivo
-	};
+	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };	
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
 			120, // fecha venta
@@ -181,13 +169,7 @@ public class Fr_principal extends JFrame {
 			150 // activo o inactivo
 
 	};
-	private JLabel lblNewLabel_2;
-	private JPanel panelProovedorCentral;
-	private JScrollPane scrollPaneTablaProveedores;
 	private JTable tablaProveedores;
-	private JPanel panelProveedorCentralBotones;
-	private JButton btnAgregarProveedor;
-	private JButton btnActualizarProveedor;
 	private JButton btnCalculadora;
 	private ButtonGroup btnRadioGroupOrdernarVentas;
 	private ButtonGroup btnRadioGroupBuscarVentas;
@@ -253,7 +235,6 @@ public class Fr_principal extends JFrame {
 	private JButton btnActualizarFormaDePago;
 	private JMenuItem opcionFormasDePago;
 	private JButton btnEliminarFormaPago;
-	private JButton btnEliminarProveedor;
 	private JButton btnEliminarSucursal;
 	private JScrollPane scrollPaneTablaCategorias;
 	private JTable tablaCategorias;
@@ -266,13 +247,6 @@ public class Fr_principal extends JFrame {
 	private Component horizontalStrut;
 	private JTextField txfBuscarCategoria;
 	private JButton btnBuscarCategoria;
-	private JPanel panelProveedorCentralBuscar;
-	private JLabel lblNewLabel_5;
-	private Component horizontalStrut_2;
-	private JTextField txfBuscarProveedor;
-	private Component horizontalStrut_3;
-	private JButton btnBuscarProveedor;
-	private JButton btnExportarProveedoresExcel;
 	private JMenu menuReportes;
 	private JMenu subMenuReportesExcel;
 	private JMenu subMenuReportesPDF;
@@ -389,7 +363,7 @@ public class Fr_principal extends JFrame {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelProveedor");
 
-				llenarTablaProveedor();
+				panelProveedor.llenarTablaProveedor("");
 			}
 		});
 		opcionProveedores.setIcon(
@@ -542,7 +516,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelProveedores = new JMenuItem("Proveedores");
 		opcionReporteExcelProveedores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exportarProveedoresExcel();
+				panelProveedor.exportarProveedoresExcel();
 			}
 		});
 		opcionReporteExcelProveedores.setIcon(
@@ -633,130 +607,8 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 
-		panelProveedor = new JPanel();
+		panelProveedor = new PanelProveedor();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
-		panelProveedor.setLayout(new BorderLayout(0, 0));
-
-		panelProveedorEtiqueta = new JPanel();
-		panelProveedorEtiqueta.setBackground(new Color(25, 25, 112));
-		panelProveedor.add(panelProveedorEtiqueta, BorderLayout.NORTH);
-
-		lblNewLabel_2 = new JLabel("Modulo de Proveedores");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2.setForeground(new Color(255, 255, 255));
-		panelProveedorEtiqueta.add(lblNewLabel_2);
-
-		panelProovedorCentral = new JPanel();
-		panelProovedorCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelProovedorCentral.setBackground(new Color(255, 215, 0));
-		panelProveedor.add(panelProovedorCentral, BorderLayout.CENTER);
-		panelProovedorCentral.setLayout(new BorderLayout(0, 0));
-
-		scrollPaneTablaProveedores = new JScrollPane();
-		panelProovedorCentral.add(scrollPaneTablaProveedores, BorderLayout.CENTER);
-
-		modelTablaProveedores = new DefaultTableModel();
-
-		modelTablaProveedores.addColumn("Id");
-		modelTablaProveedores.addColumn("RFC");
-		modelTablaProveedores.addColumn("Cta Contable");
-		modelTablaProveedores.addColumn("Nombre");
-		modelTablaProveedores.addColumn("Descripcion");
-		modelTablaProveedores.addColumn("Email");
-		modelTablaProveedores.addColumn("Estado");
-		modelTablaProveedores.addColumn("Ciudad");
-		modelTablaProveedores.addColumn("Direccion");
-		modelTablaProveedores.addColumn("Codigo P.");
-		modelTablaProveedores.addColumn("Activo");
-
-		tablaProveedores = new JTable();
-		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
-		tablaProveedores.setModel(modelTablaProveedores);
-
-		panelProveedorCentralBotones = new JPanel();
-		panelProveedorCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_1 = (FlowLayout) panelProveedorCentralBotones.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.RIGHT);
-		panelProovedorCentral.add(panelProveedorCentralBotones, BorderLayout.NORTH);
-
-		btnAgregarProveedor = new JButton("Agregar");
-		btnAgregarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(0, 0);
-			}
-		});
-		btnAgregarProveedor.setBackground(new Color(144, 238, 144));
-		btnAgregarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		panelProveedorCentralBotones.add(btnAgregarProveedor);
-
-		btnActualizarProveedor = new JButton("Actualizar");
-		btnActualizarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(1,
-						DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
-			}
-		});
-		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
-		btnActualizarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		panelProveedorCentralBotones.add(btnActualizarProveedor);
-
-		btnEliminarProveedor = new JButton("Eliminar");
-		btnEliminarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarProveedor();
-			}
-		});
-		btnEliminarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
-		panelProveedorCentralBotones.add(btnEliminarProveedor);
-
-		btnExportarProveedoresExcel = new JButton("Exportar a Excel");
-		btnExportarProveedoresExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarProveedoresExcel();
-			}
-		});
-		btnExportarProveedoresExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		this.btnExportarProveedoresExcel.setBackground(new Color(102, 205, 170));
-		panelProveedorCentralBotones.add(btnExportarProveedoresExcel);
-
-		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
-
-		panelProveedorCentralBuscar = new JPanel();
-		FlowLayout flowLayout_13 = (FlowLayout) panelProveedorCentralBuscar.getLayout();
-		flowLayout_13.setAlignment(FlowLayout.RIGHT);
-		panelProveedorCentralBuscar.setBackground(new Color(255, 215, 0));
-		panelProovedorCentral.add(panelProveedorCentralBuscar, BorderLayout.SOUTH);
-
-		lblNewLabel_5 = new JLabel("Buscar Proveedor");
-		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelProveedorCentralBuscar.add(lblNewLabel_5);
-
-		horizontalStrut_2 = Box.createHorizontalStrut(20);
-		panelProveedorCentralBuscar.add(horizontalStrut_2);
-
-		txfBuscarProveedor = new JTextField();
-		panelProveedorCentralBuscar.add(txfBuscarProveedor);
-		txfBuscarProveedor.setColumns(70);
-
-		horizontalStrut_3 = Box.createHorizontalStrut(20);
-		panelProveedorCentralBuscar.add(horizontalStrut_3);
-
-		btnBuscarProveedor = new JButton("Buscar");
-		btnBuscarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buscarProveedorPorNombre();
-			}
-		});
-		btnBuscarProveedor.setBackground(new Color(184, 134, 11));
-		btnBuscarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		panelProveedorCentralBuscar.add(btnBuscarProveedor);
 		
 		// =======================================================================================================================================
 		// =======================================================================================================================================
@@ -868,6 +720,12 @@ public class Fr_principal extends JFrame {
 		this.btnBuscarCategoria.setBackground(new Color(184, 134, 11));
 		panelMarcasCentralBuscar.add(btnBuscarCategoria);
 
+		
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// '=======================================================================================================================================
+		
 		panelVentas = new JPanel();
 		panelVentas.setBackground(new Color(255, 215, 0));
 		panelPrincipalContenedor.add(panelVentas, "panelVentas");
@@ -1344,9 +1202,7 @@ public class Fr_principal extends JFrame {
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
 
-		opcionCatalogoCuentas = new JMenuItem("Cuentas");		
-
-		DataTools.definirTamanioDeColumnas(tablaProveedoresColumnsWidth, tablaProveedores);
+		opcionCatalogoCuentas = new JMenuItem("Cuentas");				
 
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
@@ -1456,27 +1312,7 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void abrirVentanaFormularioProveedor(int opcion, int indiceProveedor) {
-
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion, indiceProveedor);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-
-			}
-
-		});
-	}
+	
 
 	private void aliminarSucursal() {
 
@@ -1513,24 +1349,14 @@ public class Fr_principal extends JFrame {
 	}
 	
 
-	private void borrarElementosDeLaTablaProveedor() {
-		this.modelTablaProveedores.getDataVector().removeAllElements();
-		this.tablaProveedores.updateUI();
-	}
+	
 
 	private void borrarElementosDeLaTablaVentas() {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
 	}
 
-	
-
-	private void buscarProveedorPorNombre() {
-		this.modelTablaProveedores.getDataVector().removeAllElements();
-		this.tablaProveedores.updateUI();
-		this.proveedorController.buscarProveedorPorNombre(this.txfBuscarProveedor.getText(),
-				this.modelTablaProveedores);
-	}
+		
 
 	/**
 	 * busca las ventas en la db de acuerdo al RadioButton seleccionado
@@ -1597,42 +1423,11 @@ public class Fr_principal extends JFrame {
 		}
 	}
 
-	/**
-	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
-	 */
-	private void eliminarProveedor() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			proveedorController.eliminarProveedor(
-					DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-	}
+	
 
 	
 
-	private void exportarProveedoresExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaProveedores, this);
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
+	
 
 	private void exportarVentaExcel() {
 		try {
@@ -1662,10 +1457,7 @@ public class Fr_principal extends JFrame {
 		this.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
 	}
 
-	private void llenarTablaProveedor() {
-		this.borrarElementosDeLaTablaProveedor();
-		proveedorController.verProveedoresEnTabla(modelTablaProveedores);
-	}
+	
 
 	/**
 	 * Llena el JTable correspondiente con los registro de las sucursales extraidos

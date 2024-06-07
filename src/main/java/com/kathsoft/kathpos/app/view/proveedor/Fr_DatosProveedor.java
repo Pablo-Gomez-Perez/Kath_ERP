@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.proveedor;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
