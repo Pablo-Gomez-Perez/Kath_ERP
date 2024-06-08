@@ -1,6 +1,4 @@
-package com.kathsoft.kathpos.app.view;
-
-import java.awt.EventQueue;
+package com.kathsoft.kathpos.app.view.marcas;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;

@@ -23,16 +23,16 @@ public class CategoriaController implements Serializable {
 	/**
 	 * 
 	 */
-	private Categoria categoria;
+	//private Categoria categoria;
 	private static Connection cn;
 
-	public void setCategoria(Categoria categoria) {
+	/*public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
 
 	public Categoria getCategoria() {
 		return this.categoria;
-	}
+	}*/
 
 	/**
 	 * conecta a la base de datos e imprime en un JTable de un formulario todos los
@@ -40,25 +40,29 @@ public class CategoriaController implements Serializable {
 	 * 
 	 * @param tabla
 	 */
-	public void verCategoriasEnTabla(DefaultTableModel tabla) {
+	public Vector<Object[]> verCategoriasEnTabla(String nombre) {
 
 		ResultSet rset = null;
 		CallableStatement stm = null;
+		var data = new Vector<Object[]>();
 
 		try {
 			cn = Conexion.establecerConexionLocal("Kath_erp");
-			stm = cn.prepareCall("CALL ver_marcas()");
+			stm = cn.prepareCall("CALL ver_marcas(?)");
+			stm.setString(1, nombre);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				tabla.addRow(new Object[] { rset.getInt(1), // indice
+				data.add(new Object[] { rset.getInt(1), // indice
 						rset.getString(2), // nombre
 						rset.getString(3), // descripcion
 						rset.getShort(4) == 1 ? "Activo" : "Inactivo" });
 			}
-
+			
+			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);

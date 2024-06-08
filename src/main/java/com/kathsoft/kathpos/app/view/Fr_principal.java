@@ -47,6 +47,8 @@ import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.app.view.empleados.Fr_DatosEmpleado;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
+import com.kathsoft.kathpos.app.view.marcas.Fr_DatosCategoria;
+import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.Fr_DatosProveedor;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.tools.DataTools;
@@ -81,9 +83,7 @@ public class Fr_principal extends JFrame {
 	 * 
 	 * 
 	 * 
-	 */
-	private CategoriaController categoriaController = new CategoriaController();
-	private ProveedorController proveedorController = new ProveedorController();
+	 */	
 	private VentasController ventasController = new VentasController();
 	private SucursalController sucursalController = new SucursalController();
 	private FormasDePagoController formasDePagoController = new FormasDePagoController();
@@ -135,17 +135,11 @@ public class Fr_principal extends JFrame {
 	private PanelEmpleados panelEmpleados;
 	private PanelProveedor panelProveedor;
 	private JMenuItem opcionMarcas;
-	private JPanel panelMarcas;
-	private JPanel panelMarcasEtiquetaSuperior;
-	private JLabel lblNewLabel_1;
-	private JPanel panelMarcasCentral;
-	private DefaultTableModel modelTablaCategoriaArticulo;
-	private DefaultTableModel modelTablaProveedores;
+	private PanelMarcas panelMarcas;
 	private DefaultTableModel modelTablaVentas;
 	private DefaultTableModel modelTablaFormasDePago;
 	private DefaultTableModel modelTablaSucursales;	
-	// Array que define el ancho de cada columna de la tabla de categoría
-	private int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };	
+	
 
 	private int[] tablaVentasColumnsWidth = { 50, // i venta
 			120, // fecha venta
@@ -169,7 +163,6 @@ public class Fr_principal extends JFrame {
 			150 // activo o inactivo
 
 	};
-	private JTable tablaProveedores;
 	private JButton btnCalculadora;
 	private ButtonGroup btnRadioGroupOrdernarVentas;
 	private ButtonGroup btnRadioGroupBuscarVentas;
@@ -236,17 +229,6 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionFormasDePago;
 	private JButton btnEliminarFormaPago;
 	private JButton btnEliminarSucursal;
-	private JScrollPane scrollPaneTablaCategorias;
-	private JTable tablaCategorias;
-	private JPanel panelCategoriasCentralBotones;
-	private JButton btnAgregarCategoria;
-	private JButton btnActualizarCategoria;
-	private JButton btnEliminarCategoria;
-	private JPanel panelMarcasCentralBuscar;
-	private JLabel lblNewLabel_3;
-	private Component horizontalStrut;
-	private JTextField txfBuscarCategoria;
-	private JButton btnBuscarCategoria;
 	private JMenu menuReportes;
 	private JMenu subMenuReportesExcel;
 	private JMenu subMenuReportesPDF;
@@ -380,7 +362,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelMarcas");
 				panelPrincipalContenedor.updateUI();
 
-				llenarTablaCategoria();
+				panelMarcas.llenarTablaCategoria("");
 			}
 		});
 		menuConsultar.add(opcionMarcas);
@@ -615,112 +597,9 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 
-		panelMarcas = new JPanel();
+		panelMarcas = new PanelMarcas();
 		panelPrincipalContenedor.add(panelMarcas, "panelMarcas");
-		panelMarcas.setLayout(new BorderLayout(0, 0));
 
-		panelMarcasEtiquetaSuperior = new JPanel();
-		panelMarcasEtiquetaSuperior.setBackground(new Color(0, 0, 128));
-		panelMarcasEtiquetaSuperior.setForeground(new Color(0, 0, 0));
-		panelMarcas.add(panelMarcasEtiquetaSuperior, BorderLayout.NORTH);
-
-		lblNewLabel_1 = new JLabel("Modulo de categoria");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_1.setForeground(new Color(255, 255, 255));
-		panelMarcasEtiquetaSuperior.add(lblNewLabel_1);
-
-		panelMarcasCentral = new JPanel();
-		panelMarcasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelMarcasCentral.setBackground(new Color(255, 215, 0));
-		panelMarcas.add(panelMarcasCentral, BorderLayout.CENTER);
-		panelMarcasCentral.setLayout(new BorderLayout(0, 0));
-
-		modelTablaCategoriaArticulo = new DefaultTableModel();
-
-		modelTablaCategoriaArticulo.addColumn("Id");
-		modelTablaCategoriaArticulo.addColumn("Nombre");
-		modelTablaCategoriaArticulo.addColumn("Descripcion");
-		modelTablaCategoriaArticulo.addColumn("Activo");
-
-		scrollPaneTablaCategorias = new JScrollPane();
-		panelMarcasCentral.add(scrollPaneTablaCategorias, BorderLayout.CENTER);
-
-		tablaCategorias = new JTable();
-		this.tablaCategorias.setModel(modelTablaCategoriaArticulo);
-		this.tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaCategorias.setViewportView(tablaCategorias);
-
-		DataTools.removerEditorDeTabla(this.tablaCategorias, modelTablaCategoriaArticulo);
-
-		panelCategoriasCentralBotones = new JPanel();
-		panelCategoriasCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_10 = (FlowLayout) panelCategoriasCentralBotones.getLayout();
-		flowLayout_10.setAlignment(FlowLayout.RIGHT);
-		panelMarcasCentral.add(panelCategoriasCentralBotones, BorderLayout.NORTH);
-
-		btnAgregarCategoria = new JButton("Agregar");
-		btnAgregarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(1, 0);
-			}
-		});
-		btnAgregarCategoria.setBackground(new Color(144, 238, 144));
-		btnAgregarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		panelCategoriasCentralBotones.add(btnAgregarCategoria);
-
-		btnActualizarCategoria = new JButton("Actualizar");
-		btnActualizarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(2,
-						DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
-			}
-		});
-		btnActualizarCategoria.setBackground(new Color(144, 238, 144));
-		btnActualizarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		panelCategoriasCentralBotones.add(btnActualizarCategoria);
-
-		btnEliminarCategoria = new JButton("Eliminar");
-		btnEliminarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarCategoria();
-			}
-		});
-		btnEliminarCategoria.setBackground(new Color(255, 51, 0));
-		btnEliminarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		panelCategoriasCentralBotones.add(btnEliminarCategoria);
-
-		panelMarcasCentralBuscar = new JPanel();
-		panelMarcasCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_11 = (FlowLayout) panelMarcasCentralBuscar.getLayout();
-		flowLayout_11.setAlignment(FlowLayout.RIGHT);
-		panelMarcasCentral.add(panelMarcasCentralBuscar, BorderLayout.SOUTH);
-
-		lblNewLabel_3 = new JLabel("Buscar categoría");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelMarcasCentralBuscar.add(lblNewLabel_3);
-
-		horizontalStrut = Box.createHorizontalStrut(20);
-		panelMarcasCentralBuscar.add(horizontalStrut);
-
-		txfBuscarCategoria = new JTextField();
-		panelMarcasCentralBuscar.add(txfBuscarCategoria);
-		txfBuscarCategoria.setColumns(70);
-
-		btnBuscarCategoria = new JButton("Buscar");
-		btnBuscarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				consultarCategoriaPorNombre();
-			}
-		});
-		btnBuscarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		this.btnBuscarCategoria.setBackground(new Color(184, 134, 11));
-		panelMarcasCentralBuscar.add(btnBuscarCategoria);
-
-		
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
@@ -1206,9 +1085,7 @@ public class Fr_principal extends JFrame {
 
 		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
 
-		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);
-
-		DataTools.definirTamanioDeColumnas(tablaCategoriaColumnsWidth, tablaCategorias);
+		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);		
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1294,23 +1171,7 @@ public class Fr_principal extends JFrame {
 		});
 	}
 
-	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Fr_DatosCategoria fr = new Fr_DatosCategoria(opcion, idCategoria);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-					fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
-	}
+	
 
 	
 
@@ -1340,13 +1201,7 @@ public class Fr_principal extends JFrame {
 	 * borra todos los datos de la tabla de articulos
 	 */
 
-	/**
-	 * borra todos los elementos contenidos en la tabla categorias
-	 */
-	private void borrarElementosDeLaTablaCategorias() {
-		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
-		this.tablaCategorias.updateUI();
-	}
+	
 	
 
 	
@@ -1372,35 +1227,14 @@ public class Fr_principal extends JFrame {
 		System.exit(0);
 	}
 
-	private void consultarCategoriaPorNombre() {
+	/*private void consultarCategoriaPorNombre() {
 		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
 		this.tablaCategorias.updateUI();
 		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
 				modelTablaCategoriaArticulo);
-	}
+	}*/
 
-	private void eliminarCategoria() {
-
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Categoría",
-				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			this.categoriaController.eliminarCategoria(
-					DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
-
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria",
-					JOptionPane.INFORMATION_MESSAGE);
-
-		} catch (SQLException er) {
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Categoria", JOptionPane.INFORMATION_MESSAGE);
-		}
-
-	}
+	
 
 	
 
@@ -1440,14 +1274,7 @@ public class Fr_principal extends JFrame {
 		}
 	}
 
-	/**
-	 * llena el JTable del panel de categorias con todos los registros encontrados
-	 * en la bd
-	 */
-	private void llenarTablaCategoria() {
-		this.borrarElementosDeLaTablaCategorias();
-		categoriaController.verCategoriasEnTabla(this.modelTablaCategoriaArticulo);
-	}
+	
 
 	
 

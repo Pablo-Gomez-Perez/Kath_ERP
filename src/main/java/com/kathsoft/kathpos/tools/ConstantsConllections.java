@@ -71,4 +71,7 @@ public class ConstantsConllections implements java.io.Serializable{
 			90, // Codigo postal
 			150 // activo o inactivo
 	};
+	
+	// Array que define el ancho de cada columna de la tabla de categoría
+	public static int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 }
