@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -25,17 +26,18 @@ public class VentasController implements java.io.Serializable {
 	private static Connection cn = null;
 
 	/**
-	 * Busca el todas las ventas registradas en la bd y las muestra en un Jtable
-	 * ordenadas de acuerdo a la opción que se le pase como parámetro. Esta opción
-	 * dependerá del JRadioButton que esté seleccionado
+	 * Consulta todos los registros de ventas en la base de datos y los ordena de acuerdo a la
+	 * opción seleccionada
 	 * 
-	 * @param tabla  -> tabla en la que será mostrada la información
-	 * @param opcion -> opción de ordenamiento
+	 * @param opcion
+	 * @param sucursal
+	 * @return 
 	 */
-	public void verVentasEnTabla(DefaultTableModel tabla, int opcion, int sucursal) {
+	public Vector<Object[]> verVentasEnTabla(int opcion, int sucursal) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
+		var data = new Vector<Object[]>();
 
 		try {
 
@@ -58,13 +60,17 @@ public class VentasController implements java.io.Serializable {
 						rset.getDouble(8), // Importe Total de la venta
 						(rset.getShort(9) == 1) ? "Vigente" : "Cancelada", };
 
-				tabla.addRow(fila);
+				data.add(fila);
 			}
+			
+			return data;
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 
@@ -79,20 +85,13 @@ public class VentasController implements java.io.Serializable {
 
 	}
 
-	/**
-	 * Buscar el conjunto de ventas en la base de datos en función de la opción
-	 * seleccionada, la opción de busqueda dependerá del JRadioButton que esté
-	 * seleccionado en el momento de llamar a la función
-	 * 
-	 * @param tabla       -> tabla en la que se mostrarán los datos
-	 * @param datoBuscado -> cadena de texto que se buscará en la bd
-	 * @param opcion      -> opción de busqueda de la base de datos
-	 */
-	public void buscarVentasPor(DefaultTableModel tabla, String datoBuscado, int opcion) {
+	
+	public Vector<Object[]> buscarVentasPor(String datoBuscado, int opcion) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
-
+		var data = new Vector<Object[]>();
+		
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
@@ -114,13 +113,17 @@ public class VentasController implements java.io.Serializable {
 						rset.getDouble(8), // Importe Total de la venta
 						(rset.getShort(9) == 1) ? "Vigente" : "Cancelada" };
 
-				tabla.addRow(fila);
+				data.add(fila);
 			}
+			
+			return data;
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);

@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
@@ -23,50 +24,7 @@ public class SucursalController implements java.io.Serializable {
 	 * 
 	 * 
 	 */
-	private static Connection cn = null;
-
-	public Sucursal consultarSucursalPorId(int id) {
-
-		Sucursal sc = new Sucursal();
-		CallableStatement stm = null;
-		ResultSet rset = null;
-
-		try {
-
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL ver_sucursal_por_id(?)");
-			stm.setInt(1, id);
-
-			rset = stm.executeQuery();
-
-			if (rset.next()) {
-				sc.setIdSucursal(rset.getInt(1));
-				sc.setNombre(rset.getString(2));
-				sc.setDescripcion(rset.getString(3));
-				sc.setTelefono(rset.getString(4));
-				sc.setEstado(rset.getString(5));
-				sc.setCiudad(rset.getString(6));
-				sc.setDireccion(rset.getString(7));
-				sc.setCodigoPostal(rset.getString(8));
-			}
-
-			return sc;
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			return null;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
-
-	}
+	private static Connection cn = null;	
 
 	/**
 	 * consulta únicamente los nombres de las sucursales registradas
@@ -108,11 +66,12 @@ public class SucursalController implements java.io.Serializable {
 	 * 
 	 * @param model
 	 */
-	public void verSucursalesEnTabla(DefaultTableModel model) {
+	public Vector<Object[]> verSucursalesEnTabla() {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
-
+		var data = new Vector<Object[]>();
+		
 		try {
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
@@ -120,7 +79,7 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				model.addRow(new Object[] { rset.getInt(1), // indice
+				data.add(new Object[] { rset.getInt(1), // indice
 						rset.getString(2), // nombre
 						rset.getString(3), // descripcion
 						rset.getString(4), // telefono
@@ -132,11 +91,14 @@ public class SucursalController implements java.io.Serializable {
 						rset.getShort(10) == 1 ? "Activo" : "Inactivo" // sucursar activa o inactiva
 				});
 			}
-
+			
+			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);

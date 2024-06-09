@@ -51,6 +51,9 @@ import com.kathsoft.kathpos.app.view.marcas.Fr_DatosCategoria;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.Fr_DatosProveedor;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
+import com.kathsoft.kathpos.app.view.sucursal.Fr_DatosSucursal;
+import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
+import com.kathsoft.kathpos.app.view.ventas.PanelVentas;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -136,78 +139,16 @@ public class Fr_principal extends JFrame {
 	private PanelProveedor panelProveedor;
 	private JMenuItem opcionMarcas;
 	private PanelMarcas panelMarcas;
-	private DefaultTableModel modelTablaVentas;
 	private DefaultTableModel modelTablaFormasDePago;
 	private DefaultTableModel modelTablaSucursales;	
-	
-
-	private int[] tablaVentasColumnsWidth = { 50, // i venta
-			120, // fecha venta
-			100, // tipo venta
-			210, // empleado
-			210, // Cliente
-			120, // sub total
-			120, // Iva
-			120, // Total
-			90, // Accion
-	};
-	private int[] tablaSucursalesColumnWidth = { 40, // indice
-			150, // nombre
-			300, // descripcion
-			200, // telefono
-			200, // email
-			150, // estado
-			200, // ciudad
-			300, // direccion
-			120, // codigo postal
-			150 // activo o inactivo
-
-	};
 	private JButton btnCalculadora;
-	private ButtonGroup btnRadioGroupOrdernarVentas;
-	private ButtonGroup btnRadioGroupBuscarVentas;
-	private JPanel panelVentas;
+	private PanelVentas panelVentas;
 	private JPanel panelCompras;
-	private JPanel panelEtiquetaVentas;
-	private JPanel panelVentasCentral;
-	private JLabel lblNewLabel_22;
 	private JButton btn_irAVentas;
-	private JPanel panelVentasCentralBotones;
-	private JScrollPane scrollPaneTablaVentas;
-	private JTable tablaVentas;
-	private JPanel panelVentasCentralBuscar;
-	private JLabel lblNewLabel_23;
-	private Component horizontalStrut_23;
-	private JRadioButton rdbOrdenarVtPorId;
-	private JRadioButton rdbOrdenarVtPorEmpleado;
-	private JRadioButton rdbOrdenarVtPorCliente;
-	private JRadioButton rdbOrdenarVtPorVigente;
-	private Component horizontalStrut_24;
-	private JButton btNuevaVenta;
-	private JButton btnExportarVentasExcel;
-	private JRadioButton rdbOrdenarVtPorTipo;
-	private Box verticalBox_2;
-	private Box verticalBox_3;
-	private Box horizontalBox_18;
-	private JLabel lblNewLabel_24;
-	private Component horizontalStrut_25;
-	private JTextField txfBuscarVenta;
-	private JButton btnBuscarVenta;
-	private Box horizontalBox_19;
-	private JLabel lblNewLabel_25;
-	private Component horizontalStrut_26;
-	private JRadioButton rdbBuscarVtPorId;
-	private Component horizontalStrut_27;
-	private JRadioButton rdbBuscarVtPorEmpleado;
-	private Component horizontalStrut_28;
-	private JRadioButton rdbBuscarVtPorCliente;
-	private Component horizontalStrut_29;
-	private JRadioButton rdbBuscarVtPorFecha;
-	private Component horizontalStrut_30;
 	private JSeparator separator;
 	private JMenuItem opcionCerrarSesion;
 	private JMenuItem opcionSalirDelSistema;
-	private JPanel panelSucursales;
+	private PanelSucursales panelSucursales;
 	private JPanel panelEtiquetaSucursales;
 	private JLabel lblNewLabel_8;
 	private JPanel panelSucursalCentral;
@@ -375,7 +316,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelSucursales");
 				panelPrincipalContenedor.updateUI();
 
-				llenarTablaSucursales();
+				panelSucursales.llenarTablaSucursales();
 			}
 		});
 		opcionSucursales.setIcon(
@@ -437,7 +378,7 @@ public class Fr_principal extends JFrame {
 		opcionRegistrarVenta = new JMenuItem("Registrar");
 		opcionRegistrarVenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				abrirFormVentas(sucursal.getIdSucursal());
+				panelVentas.abrirFormVentas(sucursal.getIdSucursal());
 			}
 		});
 		subMenuVentas.add(opcionRegistrarVenta);
@@ -450,7 +391,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelVentas");
 				panelPrincipalContenedor.updateUI();
 
-				llenarTablaVentas(1);
+				panelVentas.llenarTablaVentas(1);
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
@@ -508,7 +449,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelVentas = new JMenuItem("Ventas");
 		opcionReporteExcelVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exportarVentaExcel();
+				panelVentas.exportarVentaExcel();
 			}
 		});
 		opcionReporteExcelVentas
@@ -603,338 +544,33 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
-		// '=======================================================================================================================================
+		// =======================================================================================================================================
 		
-		panelVentas = new JPanel();
-		panelVentas.setBackground(new Color(255, 215, 0));
+		panelVentas = new PanelVentas(this.sucursal);		
 		panelPrincipalContenedor.add(panelVentas, "panelVentas");
-		panelVentas.setLayout(new BorderLayout(0, 0));
-
-		panelEtiquetaVentas = new JPanel();
-		panelEtiquetaVentas.setBackground(new Color(0, 0, 128));
-		panelVentas.add(panelEtiquetaVentas, BorderLayout.NORTH);
-
-		lblNewLabel_22 = new JLabel("Ventas");
-		lblNewLabel_22.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_22.setForeground(new Color(255, 255, 255));
-		panelEtiquetaVentas.add(lblNewLabel_22);
-
-		panelVentasCentral = new JPanel();
-		panelVentasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelVentasCentral.setBackground(new Color(255, 215, 0));
-		panelVentas.add(panelVentasCentral, BorderLayout.CENTER);
-		panelVentasCentral.setLayout(new BorderLayout(0, 0));
-
-		panelVentasCentralBotones = new JPanel();
-		panelVentasCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_5 = (FlowLayout) panelVentasCentralBotones.getLayout();
-		flowLayout_5.setAlignment(FlowLayout.RIGHT);
-		panelVentasCentral.add(panelVentasCentralBotones, BorderLayout.NORTH);
-
-		lblNewLabel_23 = new JLabel("Ordenar por");
-		lblNewLabel_23.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelVentasCentralBotones.add(lblNewLabel_23);
-
-		horizontalStrut_23 = Box.createHorizontalStrut(5);
-		panelVentasCentralBotones.add(horizontalStrut_23);
-
-		rdbOrdenarVtPorId = new JRadioButton("Folio");
-		rdbOrdenarVtPorId.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(1);
-			}
-		});
-		rdbOrdenarVtPorId.setFont(new Font("Tahoma", Font.BOLD, 11));
-		rdbOrdenarVtPorId.setSelected(true);
-		rdbOrdenarVtPorId.setBackground(new Color(255, 215, 0));
-		panelVentasCentralBotones.add(rdbOrdenarVtPorId);
-
-		rdbOrdenarVtPorEmpleado = new JRadioButton("Empleado");
-		rdbOrdenarVtPorEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(2);
-			}
-		});
-		rdbOrdenarVtPorEmpleado.setFont(new Font("Tahoma", Font.BOLD, 11));
-		rdbOrdenarVtPorEmpleado.setBackground(new Color(255, 215, 0));
-		panelVentasCentralBotones.add(rdbOrdenarVtPorEmpleado);
-
-		rdbOrdenarVtPorCliente = new JRadioButton("Cliente");
-		rdbOrdenarVtPorCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(3);
-			}
-		});
-		rdbOrdenarVtPorCliente.setFont(new Font("Tahoma", Font.BOLD, 11));
-		rdbOrdenarVtPorCliente.setBackground(new Color(255, 215, 0));
-		panelVentasCentralBotones.add(rdbOrdenarVtPorCliente);
-
-		rdbOrdenarVtPorVigente = new JRadioButton("Vigente");
-		rdbOrdenarVtPorVigente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(4);
-			}
-		});
-		rdbOrdenarVtPorVigente.setFont(new Font("Tahoma", Font.BOLD, 11));
-		rdbOrdenarVtPorVigente.setBackground(new Color(255, 215, 0));
-		panelVentasCentralBotones.add(rdbOrdenarVtPorVigente);
-
-		rdbOrdenarVtPorTipo = new JRadioButton("Tipo");
-		rdbOrdenarVtPorTipo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(5);
-			}
-		});
-		rdbOrdenarVtPorTipo.setFont(new Font("Tahoma", Font.BOLD, 11));
-		rdbOrdenarVtPorTipo.setBackground(new Color(255, 215, 0));
-		panelVentasCentralBotones.add(rdbOrdenarVtPorTipo);
-
-		btnRadioGroupOrdernarVentas = new ButtonGroup();
-
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorId);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorEmpleado);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorCliente);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorVigente);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorTipo);
-
-		horizontalStrut_24 = Box.createHorizontalStrut(320);
-		panelVentasCentralBotones.add(horizontalStrut_24);
-
-		btNuevaVenta = new JButton("Punto de venta");
-		btNuevaVenta.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormVentas(sucursal.getIdSucursal());
-			}
-		});
-		btNuevaVenta
-				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
-		btNuevaVenta.setBackground(new Color(152, 251, 152));
-		panelVentasCentralBotones.add(btNuevaVenta);
-
-		btnExportarVentasExcel = new JButton("Exportar a Excel");
-		btnExportarVentasExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarVentaExcel();
-			}
-		});
-		btnExportarVentasExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		btnExportarVentasExcel.setBackground(new Color(102, 205, 170));
-		panelVentasCentralBotones.add(btnExportarVentasExcel);
-
-		scrollPaneTablaVentas = new JScrollPane();
-		panelVentasCentral.add(scrollPaneTablaVentas, BorderLayout.CENTER);
-
-		modelTablaVentas = new DefaultTableModel();
-		tablaVentas = new JTable();
-
-		modelTablaVentas.addColumn("Folio");
-		modelTablaVentas.addColumn("Fecha");
-		modelTablaVentas.addColumn("Tipo");
-		modelTablaVentas.addColumn("Atendió");
-		modelTablaVentas.addColumn("Cliente");
-		modelTablaVentas.addColumn("Subtotal");
-		modelTablaVentas.addColumn("IVA");
-		modelTablaVentas.addColumn("Total");
-		modelTablaVentas.addColumn("Vigente");
-		// modelTablaVentas.addColumn("Edit");
-
-		tablaVentas.setModel(modelTablaVentas);
-		scrollPaneTablaVentas.setViewportView(tablaVentas);
-
-		// se remueve el editor del jtable de ventas
-		DataTools.removerEditorDeTabla(tablaVentas, modelTablaVentas);
-
-		/*
-		 * for (int i = 0; i < modelTablaVentas.getColumnCount(); i++) { Class<?>
-		 * colClass = tablaVentas.getColumnClass(i);
-		 * tablaVentas.setDefaultEditor(colClass, null); }
-		 */
-
-		tablaVentas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-		panelVentasCentralBuscar = new JPanel();
-		panelVentasCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_6 = (FlowLayout) panelVentasCentralBuscar.getLayout();
-		flowLayout_6.setAlignment(FlowLayout.LEFT);
-		panelVentasCentral.add(panelVentasCentralBuscar, BorderLayout.SOUTH);
-
-		verticalBox_2 = Box.createVerticalBox();
-		panelVentasCentralBuscar.add(verticalBox_2);
-
-		horizontalBox_18 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_18);
-
-		lblNewLabel_24 = new JLabel("Buscar Venta");
-		lblNewLabel_24.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_18.add(lblNewLabel_24);
-
-		horizontalStrut_25 = Box.createHorizontalStrut(20);
-		horizontalBox_18.add(horizontalStrut_25);
-
-		txfBuscarVenta = new JTextField();
-		txfBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_18.add(txfBuscarVenta);
-		txfBuscarVenta.setColumns(70);
-
-		horizontalBox_19 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_19);
-
-		lblNewLabel_25 = new JLabel("Buscar por:");
-		lblNewLabel_25.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(lblNewLabel_25);
-
-		horizontalStrut_26 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_26);
-
-		rdbBuscarVtPorId = new JRadioButton("Folio");
-		rdbBuscarVtPorId.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorId.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorId);
-
-		horizontalStrut_27 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_27);
-
-		rdbBuscarVtPorEmpleado = new JRadioButton("Empleado");
-		rdbBuscarVtPorEmpleado.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorEmpleado.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorEmpleado);
-
-		horizontalStrut_28 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_28);
-
-		rdbBuscarVtPorCliente = new JRadioButton("Cliente");
-		rdbBuscarVtPorCliente.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorCliente.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorCliente);
-
-		horizontalStrut_29 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_29);
-
-		rdbBuscarVtPorFecha = new JRadioButton("Fecha");
-		rdbBuscarVtPorFecha.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorFecha.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorFecha);
-
-		btnRadioGroupBuscarVentas = new ButtonGroup();
-
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorId);
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorEmpleado);
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorCliente);
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorFecha);
-
-		horizontalStrut_30 = Box.createHorizontalStrut(460);
-		horizontalBox_19.add(horizontalStrut_30);
-
-		verticalBox_3 = Box.createVerticalBox();
-		verticalBox_3.setBorder(new EmptyBorder(10, 30, 10, 10));
-		panelVentasCentralBuscar.add(verticalBox_3);
-
-		btnBuscarVenta = new JButton("Buscar");
-		btnBuscarVenta.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buscarVentasPor();
-			}
-		});
-		btnBuscarVenta.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		btnBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnBuscarVenta.setBackground(new Color(184, 134, 11));
-		verticalBox_3.add(btnBuscarVenta);
+				
+		
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
 
 		panelCompras = new JPanel();
 		panelPrincipalContenedor.add(panelCompras, "panelCompras");
 
-		panelSucursales = new JPanel();
-		panelSucursales.setBackground(new Color(255, 215, 0));
+		
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		
+		panelSucursales = new PanelSucursales();		
 		panelPrincipalContenedor.add(panelSucursales, "panelSucursales");
-		panelSucursales.setLayout(new BorderLayout(0, 0));
-
-		panelEtiquetaSucursales = new JPanel();
-		panelEtiquetaSucursales.setBackground(new Color(0, 0, 128));
-		panelSucursales.add(panelEtiquetaSucursales, BorderLayout.NORTH);
-
-		lblNewLabel_8 = new JLabel("Modulo de Sucursales");
-		lblNewLabel_8.setForeground(new Color(255, 255, 255));
-		lblNewLabel_8.setFont(new Font("Tahoma", Font.BOLD, 16));
-		panelEtiquetaSucursales.add(lblNewLabel_8);
-
-		panelSucursalCentral = new JPanel();
-		panelSucursalCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelSucursalCentral.setBackground(new Color(255, 215, 0));
-		panelSucursales.add(panelSucursalCentral, BorderLayout.CENTER);
-		panelSucursalCentral.setLayout(new BorderLayout(0, 0));
-
-		scrollPaneTablaSucursales = new JScrollPane();
-		panelSucursalCentral.add(scrollPaneTablaSucursales, BorderLayout.CENTER);
-
-		modelTablaSucursales = new DefaultTableModel();
-		tablaSucursales = new JTable();
-		tablaSucursales.setModel(modelTablaSucursales);
-		scrollPaneTablaSucursales.setViewportView(tablaSucursales);
-
-		modelTablaSucursales.addColumn("Id");
-		modelTablaSucursales.addColumn("Nombre");
-		modelTablaSucursales.addColumn("Descripcion");
-		modelTablaSucursales.addColumn("Telefono");
-		modelTablaSucursales.addColumn("Email");
-		modelTablaSucursales.addColumn("Estado");
-		modelTablaSucursales.addColumn("Ciudad");
-		modelTablaSucursales.addColumn("Dirección");
-		modelTablaSucursales.addColumn("Codigo Postal");
-		modelTablaSucursales.addColumn("Activo");
-
-		tablaSucursales.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-		// remueve el editor de la tabla de sucursales
-		DataTools.removerEditorDeTabla(tablaSucursales, modelTablaSucursales);
-
-		panelSucursalCentralBotones = new JPanel();
-		panelSucursalCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_8 = (FlowLayout) panelSucursalCentralBotones.getLayout();
-		flowLayout_8.setAlignment(FlowLayout.RIGHT);
-		panelSucursalCentral.add(panelSucursalCentralBotones, BorderLayout.NORTH);
-
-		btnNuevaSucursal = new JButton("Agregar");
-		btnNuevaSucursal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormSucursales(0, 0);
-			}
-		});
-		btnNuevaSucursal.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		btnNuevaSucursal.setBackground(new Color(152, 251, 152));
-		panelSucursalCentralBotones.add(btnNuevaSucursal);
-
-		btnActualizarSucursal = new JButton("Actualizar");
-		btnActualizarSucursal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int index = DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0);
-				// System.out.println(index);
-
-				abrirFormSucursales(1, index);
-
-			}
-		});
-		btnActualizarSucursal.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		btnActualizarSucursal.setBackground(new Color(0, 255, 127));
-		panelSucursalCentralBotones.add(btnActualizarSucursal);
-
-		btnEliminarSucursal = new JButton("Eliminar");
-
-		btnEliminarSucursal.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-
-		btnEliminarSucursal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				aliminarSucursal();
-			}
-		});
-
-		this.btnEliminarSucursal.setBackground(new Color(255, 51, 0));
-
-		panelSucursalCentralBotones.add(btnEliminarSucursal);
+				
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
 
 		panelFormasDePago = new JPanel();
 		panelFormasDePago.setForeground(new Color(255, 215, 0));
@@ -1014,7 +650,14 @@ public class Fr_principal extends JFrame {
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnEliminarFormaPago.setBackground(new Color(255, 51, 0));
 		panelFormasDePagoCentralBotones.add(btnEliminarFormaPago);
-
+		
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		// =====================================================================================================================
+		
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
 		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
@@ -1053,7 +696,7 @@ public class Fr_principal extends JFrame {
 		btn_irAVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				abrirFormVentas(sucursal.getIdSucursal());
+				panelVentas.abrirFormVentas(sucursal.getIdSucursal());
 
 			}
 		});
@@ -1081,11 +724,7 @@ public class Fr_principal extends JFrame {
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
 
-		opcionCatalogoCuentas = new JMenuItem("Cuentas");				
-
-		DataTools.definirTamanioDeColumnas(tablaVentasColumnsWidth, tablaVentas);
-
-		DataTools.definirTamanioDeColumnas(tablaSucursalesColumnWidth, tablaSucursales);		
+		opcionCatalogoCuentas = new JMenuItem("Cuentas");								
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1094,6 +733,7 @@ public class Fr_principal extends JFrame {
 	/**
 	 * abre la calculadora, valido unicamente en windows
 	 */
+	@SuppressWarnings("deprecation")
 	private void abrirCalculadora() {
 		try {
 			Runtime.getRuntime().exec("calc");
@@ -1135,108 +775,12 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-
-	private void abrirFormSucursales(int opcion, int idSucursal) {
-		Component cm = null;
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Fr_DatosSucursal frame = new Fr_DatosSucursal(opcion, idSucursal);
-					frame.setLocationRelativeTo(cm);
-					frame.setVisible(true);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
-	}
-
 	
-
-	/**
-	 * abre el formulario del punto de ventas
-	 */
-	private void abrirFormVentas(int idSucursal) {
-		Component cm = this;
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.Fr_PuntoDeVentas(
-						idSucursal);
-				fr.setLocationRelativeTo(cm);
-				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				fr.setVisible(true);
-			}
-		});
-	}
-
-	
-
-	
-
-	private void aliminarSucursal() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			this.sucursalController.eliminarSucursal(
-					DataTools.getIndiceElementoSeleccionado(tablaSucursales, modelTablaSucursales, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-
-	}
-
-	/**
-	 * borra todos los datos de la tabla de articulos
-	 */
-
-	
-	
-
-	
-
-	private void borrarElementosDeLaTablaVentas() {
-		this.modelTablaVentas.getDataVector().removeAllElements();
-		this.tablaVentas.updateUI();
-	}
-
-		
-
-	/**
-	 * busca las ventas en la db de acuerdo al RadioButton seleccionado
-	 */
-	private void buscarVentasPor() {
-		this.borrarElementosDeLaTablaVentas();
-		this.ventasController.buscarVentasPor(modelTablaVentas, this.txfBuscarVenta.getText(),
-				this.opcionDeBusquedaDeVenta());
-	}
 
 	private void cerrarFormPrincipal() {
 		this.dispose();
 		System.exit(0);
 	}
-
-	/*private void consultarCategoriaPorNombre() {
-		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
-		this.tablaCategorias.updateUI();
-		this.categoriaController.buscarCategoriaPorNombre(this.txfBuscarCategoria.getText(),
-				modelTablaCategoriaArticulo);
-	}*/
-
-	
-
-	
 
 	private void eliminarFormaDePago() {
 
@@ -1257,75 +801,11 @@ public class Fr_principal extends JFrame {
 		}
 	}
 
-	
-
-	
-
-	
-
-	private void exportarVentaExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaVentas, this);
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
-
-	
-
-	
-
 	private void llenarTablaFormasDePago() {
 		this.modelTablaFormasDePago.getDataVector().removeAllElements();
 		this.tablaFormasDePago.updateUI();
 		this.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
 	}
 
-	
 
-	/**
-	 * Llena el JTable correspondiente con los registro de las sucursales extraidos
-	 * de la base de datos
-	 */
-	private void llenarTablaSucursales() {
-		this.modelTablaSucursales.getDataVector().removeAllElements();
-		this.tablaSucursales.updateUI();
-		this.sucursalController.verSucursalesEnTabla(modelTablaSucursales);
-	}
-
-	private void llenarTablaVentas(int opcion) {
-		this.borrarElementosDeLaTablaVentas();
-		ventasController.verVentasEnTabla(modelTablaVentas, opcion, this.sucursal.getIdSucursal());
-	}
-
-	/**
-	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
-	 * 
-	 * @return
-	 */
-
-	/**
-	 * en función del RadioButton seleccionado retorna el criterio de busqueda de
-	 * las ventas registradas en la base de datos
-	 * 
-	 * @return el criterio de busqueda
-	 */
-	private int opcionDeBusquedaDeVenta() {
-
-		if (this.rdbBuscarVtPorId.isSelected()) {
-			return 1;
-		}
-		if (this.rdbBuscarVtPorEmpleado.isSelected()) {
-			return 2;
-		}
-		if (this.rdbBuscarVtPorCliente.isSelected()) {
-			return 3;
-		}
-
-		return 4;
-
-	}
 }

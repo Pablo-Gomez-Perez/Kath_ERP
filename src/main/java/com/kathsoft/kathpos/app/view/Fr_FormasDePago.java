@@ -13,6 +13,7 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.PagosPorVenta;
 import com.kathsoft.kathpos.app.model.Ventas;
+import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

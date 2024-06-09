@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.articulo;
 
 
 import java.awt.BorderLayout;
@@ -27,6 +27,7 @@ import javax.swing.table.TableColumnModel;
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.model.Articulo;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
+import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 
 public class Fr_ListaArticulos extends JFrame {
 

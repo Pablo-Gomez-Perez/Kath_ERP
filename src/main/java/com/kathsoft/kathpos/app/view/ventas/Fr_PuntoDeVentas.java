@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.ventas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,6 +50,7 @@ import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Clientes;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Ventas;
+import com.kathsoft.kathpos.app.view.articulo.Fr_ListaArticulos;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -951,7 +952,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 	}
 	
 	private void abrirFormFormaDePago(Ventas venta){		
-		Component cmp = this;
+		/*Component cmp = this;
 		Fr_PuntoDeVentas fr = this;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -964,6 +965,6 @@ public class Fr_PuntoDeVentas extends JFrame {
 					er.printStackTrace();
 				}
 			}
-		});
+		});*/
 	}
 }

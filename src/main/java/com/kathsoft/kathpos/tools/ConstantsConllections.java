@@ -59,7 +59,7 @@ public class ConstantsConllections implements java.io.Serializable{
 	};
 	
 	// Array que define el ancho de cada columna de la tabla de Proveedores
-	public static int[] tablaProveedoresColumnsWidth = { 30, // Indice
+	public static final int[] tablaProveedoresColumnsWidth = { 30, // Indice
 			150, // Rfc
 			150, // Clave contable
 			180, // Nombre
@@ -73,5 +73,29 @@ public class ConstantsConllections implements java.io.Serializable{
 	};
 	
 	// Array que define el ancho de cada columna de la tabla de categoría
-	public static int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
+	public static final int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
+	
+	public static final int[] tablaVentasColumnsWidth = { 50, // i venta
+			120, // fecha venta
+			100, // tipo venta
+			210, // empleado
+			210, // Cliente
+			120, // sub total
+			120, // Iva
+			120, // Total
+			90, // Accion
+	};
+	
+	public static final int[] tablaSucursalesColumnWidth = { 40, // indice
+			150, // nombre
+			300, // descripcion
+			200, // telefono
+			200, // email
+			150, // estado
+			200, // ciudad
+			300, // direccion
+			120, // codigo postal
+			150 // activo o inactivo
+
+	};
 }

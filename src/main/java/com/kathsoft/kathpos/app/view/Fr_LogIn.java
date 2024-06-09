@@ -30,6 +30,7 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.tools.AppContext;
 
 public class Fr_LogIn extends JFrame {
 
@@ -46,9 +47,7 @@ public class Fr_LogIn extends JFrame {
 	private JComboBox<String> jcmbUsuarios = new JComboBox<String>();
 	private JLabel lblNewLabel = new JLabel("Usuario");
 	private JButton btn_cancelar = new JButton("Cancelar");
-	private JButton btn_ingresar = new JButton("Ingresar");
-	private EmpleadoController emplController = new EmpleadoController();
-	private SucursalController sucursalController = new SucursalController();
+	private JButton btn_ingresar = new JButton("Ingresar");	
 	private Empleado empl = new Empleado();
 	private Sucursal sucursal;
 	//============================================================================================	
@@ -165,7 +164,7 @@ public class Fr_LogIn extends JFrame {
 		this.llenarCmbSucursales();
 		cmbSucursal.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				sucursal = sucursalController.consultarSucursalPorId(cmbSucursal.getSelectedIndex() + 1);
+				sucursal = AppContext.sucursalController.consultarSucursal(cmbSucursal.getSelectedIndex() + 1);
 				//System.out.println(sucursal.toString());
 				llenarCmbEmpleados();
 			}
@@ -242,7 +241,7 @@ public class Fr_LogIn extends JFrame {
 	
 	private void llenarCmbSucursales() {
 		this.borrarElementosJcmb(cmbSucursal);
-		sucursalController.consultarNombreSucursales(cmbSucursal);
+		AppContext.sucursalController.consultarNombreSucursales(cmbSucursal);
 		this.cmbSucursal.setSelectedIndex(0);
 	}
 	
@@ -253,7 +252,7 @@ public class Fr_LogIn extends JFrame {
 	
 	private void llenarCmbEmpleados() {
 		borrarElementosJcmb(this.jcmbUsuarios);
-		this.emplController.consultaNombresCortosEmpleados(this.jcmbUsuarios,this.cmbSucursal.getSelectedIndex() + 1);
+		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,this.cmbSucursal.getSelectedIndex() + 1);
 	}
 	
 	/**
@@ -271,7 +270,7 @@ public class Fr_LogIn extends JFrame {
 		empl.setNombreCorto(this.jcmbUsuarios.getSelectedItem().toString());
 		empl.setPassword(contra);			
 		
-		if (emplController.validarIngreso(empl) == false || contra.isEmpty()) {
+		if (AppContext.empleadoController.validarIngreso(empl) == false || contra.isEmpty()) {
 			
 			JOptionPane.showMessageDialog(this, "Error de acceso", "Error", JOptionPane.ERROR_MESSAGE);
 			
