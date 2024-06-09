@@ -63,7 +63,7 @@ public class Fr_principal extends JFrame {
 	 * 
 	 * 
 	 * 
-	 */	
+	 */
 	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -523,14 +523,14 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 
-		panelFormasDePago = new PanelFormasDePago();		
+		panelFormasDePago = new PanelFormasDePago();
 		panelPrincipalContenedor.add(panelFormasDePago, "panelFormasDePago");
 
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
-		
+
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
 		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
@@ -615,8 +615,6 @@ public class Fr_principal extends JFrame {
 		}
 	}
 
-	
-
 	private void abrirFormLogin() {
 		Component cm = this;
 		this.dispose();
@@ -634,6 +632,5 @@ public class Fr_principal extends JFrame {
 		this.dispose();
 		System.exit(0);
 	}
-	
 
 }
