@@ -12,50 +12,27 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
-
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-
-import com.kathsoft.kathpos.app.controller.CategoriaController;
-import com.kathsoft.kathpos.app.controller.EmpleadoController;
-import com.kathsoft.kathpos.app.controller.FormasDePagoController;
-import com.kathsoft.kathpos.app.controller.ProveedorController;
-import com.kathsoft.kathpos.app.controller.SucursalController;
-import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.view.articulo.PanelArticulos;
 import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
 import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
-import com.kathsoft.kathpos.app.view.empleados.Fr_DatosEmpleado;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
-import com.kathsoft.kathpos.app.view.marcas.Fr_DatosCategoria;
+import com.kathsoft.kathpos.app.view.formas_pago.PanelFormasDePago;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
-import com.kathsoft.kathpos.app.view.proveedor.Fr_DatosProveedor;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
-import com.kathsoft.kathpos.app.view.sucursal.Fr_DatosSucursal;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
 import com.kathsoft.kathpos.app.view.ventas.PanelVentas;
-import com.kathsoft.kathpos.tools.DataTools;
-import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_principal extends JFrame {
 
@@ -87,9 +64,6 @@ public class Fr_principal extends JFrame {
 	 * 
 	 * 
 	 */	
-	private VentasController ventasController = new VentasController();
-	private SucursalController sucursalController = new SucursalController();
-	private FormasDePagoController formasDePagoController = new FormasDePagoController();
 	private Sucursal sucursal;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
@@ -139,8 +113,6 @@ public class Fr_principal extends JFrame {
 	private PanelProveedor panelProveedor;
 	private JMenuItem opcionMarcas;
 	private PanelMarcas panelMarcas;
-	private DefaultTableModel modelTablaFormasDePago;
-	private DefaultTableModel modelTablaSucursales;	
 	private JButton btnCalculadora;
 	private PanelVentas panelVentas;
 	private JPanel panelCompras;
@@ -149,27 +121,9 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionCerrarSesion;
 	private JMenuItem opcionSalirDelSistema;
 	private PanelSucursales panelSucursales;
-	private JPanel panelEtiquetaSucursales;
-	private JLabel lblNewLabel_8;
-	private JPanel panelSucursalCentral;
-	private JScrollPane scrollPaneTablaSucursales;
-	private JTable tablaSucursales;
 	private JMenuItem opcionSucursales;
-	private JPanel panelSucursalCentralBotones;
-	private JButton btnNuevaSucursal;
-	private JButton btnActualizarSucursal;
-	private JPanel panelFormasDePago;
-	private JPanel panelEtiquetaFormasDePago;
-	private JPanel panelFormasDePagoCentral;
-	private JLabel lblNewLabel_9;
-	private JScrollPane scrollPaneTablaFormasDePago;
-	private JTable tablaFormasDePago;
-	private JPanel panelFormasDePagoCentralBotones;
-	private JButton btnNuevaFormaDePago;
-	private JButton btnActualizarFormaDePago;
+	private PanelFormasDePago panelFormasDePago;
 	private JMenuItem opcionFormasDePago;
-	private JButton btnEliminarFormaPago;
-	private JButton btnEliminarSucursal;
 	private JMenu menuReportes;
 	private JMenu subMenuReportesExcel;
 	private JMenu subMenuReportesPDF;
@@ -333,7 +287,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelFormasDePago");
 				panelPrincipalContenedor.updateUI();
 
-				llenarTablaFormasDePago();
+				panelFormasDePago.llenarTablaFormasDePago();
 
 			}
 		});
@@ -523,8 +477,7 @@ public class Fr_principal extends JFrame {
 
 		panelEmpleados = new PanelEmpleados();
 		panelPrincipalContenedor.add(panelEmpleados, "panelEmpleados");
-		
-		
+
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
@@ -532,7 +485,7 @@ public class Fr_principal extends JFrame {
 
 		panelProveedor = new PanelProveedor();
 		panelPrincipalContenedor.add(panelProveedor, "panelProveedor");
-		
+
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
@@ -545,11 +498,10 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
-		
-		panelVentas = new PanelVentas(this.sucursal);		
+
+		panelVentas = new PanelVentas(this.sucursal);
 		panelPrincipalContenedor.add(panelVentas, "panelVentas");
-				
-		
+
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
@@ -558,105 +510,26 @@ public class Fr_principal extends JFrame {
 		panelCompras = new JPanel();
 		panelPrincipalContenedor.add(panelCompras, "panelCompras");
 
-		
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
-		
-		panelSucursales = new PanelSucursales();		
+
+		panelSucursales = new PanelSucursales();
 		panelPrincipalContenedor.add(panelSucursales, "panelSucursales");
-				
+
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 
-		panelFormasDePago = new JPanel();
-		panelFormasDePago.setForeground(new Color(255, 215, 0));
+		panelFormasDePago = new PanelFormasDePago();		
 		panelPrincipalContenedor.add(panelFormasDePago, "panelFormasDePago");
-		panelFormasDePago.setLayout(new BorderLayout(0, 0));
 
-		panelEtiquetaFormasDePago = new JPanel();
-		panelEtiquetaFormasDePago.setBackground(new Color(0, 0, 128));
-		panelFormasDePago.add(panelEtiquetaFormasDePago, BorderLayout.NORTH);
-
-		lblNewLabel_9 = new JLabel("Formas De Pago");
-		lblNewLabel_9.setForeground(new Color(255, 255, 255));
-		lblNewLabel_9.setFont(new Font("Tahoma", Font.BOLD, 16));
-		panelEtiquetaFormasDePago.add(lblNewLabel_9);
-
-		panelFormasDePagoCentral = new JPanel();
-		panelFormasDePagoCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelFormasDePagoCentral.setBackground(new Color(255, 215, 0));
-		panelFormasDePago.add(panelFormasDePagoCentral, BorderLayout.CENTER);
-		panelFormasDePagoCentral.setLayout(new BorderLayout(0, 0));
-
-		scrollPaneTablaFormasDePago = new JScrollPane();
-		panelFormasDePagoCentral.add(scrollPaneTablaFormasDePago, BorderLayout.CENTER);
-
-		modelTablaFormasDePago = new DefaultTableModel();
-
-		modelTablaFormasDePago.addColumn("Id");
-		modelTablaFormasDePago.addColumn("Forma de pago");
-		modelTablaFormasDePago.addColumn("Activo");
-
-		tablaFormasDePago = new JTable();
-		tablaFormasDePago.setModel(modelTablaFormasDePago);
-		scrollPaneTablaFormasDePago.setViewportView(tablaFormasDePago);
-
-		// remueve el editor de la tabla de formas de pago
-		for (int i = 0; i < modelTablaFormasDePago.getColumnCount(); i++) {
-			Class<?> colClass = modelTablaFormasDePago.getColumnClass(i);
-			tablaFormasDePago.setDefaultEditor(colClass, null);
-		}
-
-		panelFormasDePagoCentralBotones = new JPanel();
-		FlowLayout flowLayout_9 = (FlowLayout) panelFormasDePagoCentralBotones.getLayout();
-		flowLayout_9.setAlignment(FlowLayout.RIGHT);
-		panelFormasDePagoCentralBotones.setBackground(new Color(255, 215, 0));
-		panelFormasDePagoCentral.add(panelFormasDePagoCentralBotones, BorderLayout.NORTH);
-
-		btnNuevaFormaDePago = new JButton("Agregar");
-		btnNuevaFormaDePago.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		btnNuevaFormaDePago.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(1, 0);
-			}
-		});
-		this.btnNuevaFormaDePago.setBackground(new Color(152, 251, 152));
-		panelFormasDePagoCentralBotones.add(btnNuevaFormaDePago);
-
-		btnActualizarFormaDePago = new JButton("Actualizar");
-		btnActualizarFormaDePago.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		btnActualizarFormaDePago.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormDatosFormasDePago(2,
-						DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
-			}
-		});
-		this.btnActualizarFormaDePago.setBackground(new Color(152, 251, 152));
-		panelFormasDePagoCentralBotones.add(btnActualizarFormaDePago);
-
-		btnEliminarFormaPago = new JButton("Eliminar");
-		btnEliminarFormaPago.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarFormaDePago();
-			}
-		});
-		btnEliminarFormaPago.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		btnEliminarFormaPago.setBackground(new Color(255, 51, 0));
-		panelFormasDePagoCentralBotones.add(btnEliminarFormaPago);
-		
-		// =====================================================================================================================
-		// =====================================================================================================================
-		// =====================================================================================================================
-		// =====================================================================================================================
-		// =====================================================================================================================
-		// =====================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
 		
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
@@ -724,7 +597,7 @@ public class Fr_principal extends JFrame {
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
 
-		opcionCatalogoCuentas = new JMenuItem("Cuentas");								
+		opcionCatalogoCuentas = new JMenuItem("Cuentas");
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -742,26 +615,7 @@ public class Fr_principal extends JFrame {
 		}
 	}
 
-	private void abrirFormDatosFormasDePago(int opcion, int idFormaDePago) {
-
-		Component cm = null;
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion, idFormaDePago);
-					frame.setLocationRelativeTo(cm);
-					frame.setVisible(true);
-					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-
-			}
-		});
-
-	}
+	
 
 	private void abrirFormLogin() {
 		Component cm = this;
@@ -775,37 +629,11 @@ public class Fr_principal extends JFrame {
 			}
 		});
 	}
-	
 
 	private void cerrarFormPrincipal() {
 		this.dispose();
 		System.exit(0);
 	}
-
-	private void eliminarFormaDePago() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-			this.formasDePagoController.eliminarFormaDepAgo(
-					DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
-		}
-	}
-
-	private void llenarTablaFormasDePago() {
-		this.modelTablaFormasDePago.getDataVector().removeAllElements();
-		this.tablaFormasDePago.updateUI();
-		this.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
-	}
-
+	
 
 }

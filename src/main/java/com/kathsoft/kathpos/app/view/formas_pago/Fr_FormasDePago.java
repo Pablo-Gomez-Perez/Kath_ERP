@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.formas_pago;
 
 import java.awt.EventQueue;
 
@@ -149,7 +149,9 @@ public class Fr_FormasDePago extends JFrame {
 	private void llenarTablaFormasDePago() {
 		this.modelTablaFormasDePago.getDataVector().removeAllElements();
 		this.tablaFormasDePago.updateUI();
-		this.formasDePagoController.verFormasDePagoEnTablaVentas(modelTablaFormasDePago);
+		this.formasDePagoController.verFormasDePagoEnTablaVentas().forEach(data -> {
+			this.modelTablaFormasDePago.addRow(data);
+		});;
 	}
 	
 	private List<PagosPorVenta> formasDePago(){

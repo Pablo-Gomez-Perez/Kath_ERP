@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -63,9 +64,10 @@ public class FormasDePagoController implements java.io.Serializable {
 
 	}
 
-	public void verFormasDePagoEnTablaVentas(DefaultTableModel tabla) {
+	public Vector<Object[]> verFormasDePagoEnTablaVentas() {
 		ResultSet rset = null;
 		CallableStatement stm = null;
+		var data = new Vector<Object[]>();
 
 		try {
 
@@ -75,13 +77,16 @@ public class FormasDePagoController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				tabla.addRow(new Object[] { rset.getInt(1), rset.getString(2) });
+				data.add(new Object[] { rset.getInt(1), rset.getString(2) });
 			}
-
+			
+			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return null;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return null;
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);

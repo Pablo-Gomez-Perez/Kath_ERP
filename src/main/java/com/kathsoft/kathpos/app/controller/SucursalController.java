@@ -5,13 +5,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-
 import javax.swing.JComboBox;
-import javax.swing.table.DefaultTableModel;
-
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.tools.Conexion;
-import com.kathsoft.kathpos.tools.DataTools;
 
 public class SucursalController implements java.io.Serializable {
 

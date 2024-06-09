@@ -22,7 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.kathsoft.kathpos.app.view.Fr_DatosTipoCliente;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
