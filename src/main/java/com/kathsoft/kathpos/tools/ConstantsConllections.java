@@ -98,4 +98,17 @@ public class ConstantsConllections implements java.io.Serializable{
 			150 // activo o inactivo
 
 	};
+	
+	public static final int[] tablaCuentasContablesColumnsWidth = {
+			40, //id
+			200, // nombre cuenta superior
+			150, // clave
+			200, // Nombre de la cuenta
+			270, //Descripcion
+			40, //nivel
+			100, // Es de nivel de detalle
+			150, // Cargos
+			150, //Abonos
+			150 // Saldo de la cuenta
+	};
 }

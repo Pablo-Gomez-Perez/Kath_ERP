@@ -89,7 +89,7 @@ public class PanelArticulos extends JPanel {
 		this.lblNewLabel = new JLabel("Modulo de Articulos");
 		this.lblNewLabel.setForeground(new Color(255, 255, 255));
 		this.lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		this.add(lblNewLabel);
+		this.panelEtiquetaArticulos.add(lblNewLabel);
 
 		this.panelArticulosCentral = new JPanel();
 		this.panelArticulosCentral.setBorder(new EmptyBorder(30, 30, 30, 30));

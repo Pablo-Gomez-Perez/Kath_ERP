@@ -38,7 +38,7 @@ public class CuentaContableController {
 					rset.getBoolean(7) ? "Si" : "No",
 					rset.getDouble(8), //cargos
 					rset.getDouble(9), //abonos
-					rset.getDouble(10) //saldo de la cuenta					
+					rset.getDouble(10) //saldo de la cuenta
 				});
 			}
 			
