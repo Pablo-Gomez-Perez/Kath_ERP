@@ -1,7 +1,6 @@
 package com.kathsoft.kathpos.app.view.contabilidad;
 
 import javax.swing.JPanel;
-import javax.swing.BoxLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -11,7 +10,6 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.kathsoft.kathpos.app.controller.CuentaContableController;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;

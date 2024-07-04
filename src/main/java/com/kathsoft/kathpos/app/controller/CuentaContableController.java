@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
+
+import com.kathsoft.kathpos.app.model.CuentaContable;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class CuentaContableController {
@@ -59,5 +61,35 @@ public class CuentaContableController {
 		}
 		
 	}
+	
+	public CuentaContable buscarCuentaPorClave(String clave) {
+		var data = new CuentaContable();
+		
+		try(var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)){
+			
+			var stm = cn.prepareCall("CALL buscar_cuenta_x_clave(?);");
+			stm.setString(1, clave);
+			var rset = stm.executeQuery();
+			
+			if(rset.next())
+				data.setIdCuenta(rset.getInt(1));
+				data.setIdCuentaPadre(rset.getInt(1));
+				data.setClave(rset.getString(3));
+				data.setNombre(rset.getString(4));
+				data.setDescripcion(rset.getString(5));
+				data.setNivel(rset.getShort(6));
+				data.setUltimoNivel(rset.getShort(7) == 1 ? true : false );
+				data.setNaturaleza(rset.getShort(8) == 1 ? true : false);
+				
+			return data;
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return null;
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}
+		
+	}	
 	
 }
