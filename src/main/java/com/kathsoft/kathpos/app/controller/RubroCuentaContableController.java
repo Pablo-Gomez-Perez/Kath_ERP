@@ -24,7 +24,7 @@ public class RubroCuentaContableController {
 				item.setNombre(rset.getString(2));
 				item.setDescripcion(rset.getString(3));
 				item.setNaturaleza(rset.getShort(4) == 1 ? true : false);
-				
+
 				data.add(item);
 			}
 

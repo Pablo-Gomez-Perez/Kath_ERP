@@ -37,7 +37,7 @@ public class PanelArticulos extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JPanel panelEtiquetaArticulos;
 	private JLabel lblNewLabel;
-	private JPanel panelArticulosCentral;	
+	private JPanel panelArticulosCentral;
 	private JScrollPane scrollPaneTablaArticulos;
 	private DefaultTableModel modelTablaArticulos;
 	private JTable tablaArticulos;

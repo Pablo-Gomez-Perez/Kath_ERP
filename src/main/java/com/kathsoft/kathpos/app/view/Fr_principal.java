@@ -421,11 +421,13 @@ public class Fr_principal extends JFrame {
 		menuReportes.add(subMenuGraficas);
 
 		menuContable = new JMenu("Contabilidad");
-		menuContable.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/contabilidad.png")));
+		menuContable.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/contabilidad.png")));
 		BarraMenu.add(menuContable);
 
 		this.opcionCatalogoCuentas = new JMenuItem();
-		opcionCatalogoCuentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
+		opcionCatalogoCuentas.setIcon(new ImageIcon(
+				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		opcionCatalogoCuentas.setText("Cuentas");
 
 		opcionCatalogoCuentas.addActionListener(new ActionListener() {
