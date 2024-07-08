@@ -26,6 +26,8 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
+import javax.swing.JComboBox;
+import java.awt.Dimension;
 
 public class Fr_DatosCuentasContables extends JFrame {
 
@@ -60,7 +62,28 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private Component verticalStrut_2;
 	private JRadioButton rdbtnCtaDetalle;
 	private ButtonGroup btnRadioGroup;
+	private Component verticalStrut_3;
+	private Box horizontalBox_3;
+	private JLabel lblNewLabel_4;
+	private Component horizontalStrut_4;
+	private JComboBox cmbRubroCuentaContable;
+	private Box verticalBox_3;
 	private Box horizontalBox_2;
+	private Box verticalBox_4;
+	private Box verticalBox_5;
+	private Box horizontalBox_4;
+	private JLabel lblNewLabel_5;
+	private Component horizontalStrut_5;
+	private JTextField textField;
+	private Box horizontalBox_5;
+	private JLabel lblNewLabel_6;
+	private Component horizontalStrut_6;
+	private JTextField textField_1;
+	private JRadioButton rdbtnNaturalezaDeudora;
+	private JRadioButton rdbtnNaturalezaAcreedora;
+	private Component verticalStrut_4;
+	private ButtonGroup buttonGroup2;
+	private Component horizontalStrut_7;
 
 	/**
 	 * Launch the application.
@@ -82,8 +105,9 @@ public class Fr_DatosCuentasContables extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_DatosCuentasContables(int opcion) {
+		setTitle("Cuenta contable");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setBounds(100, 100, 780, 632);
+		this.setBounds(100, 100, 650, 410);
 		panelPrincipal = new JPanel();
 		panelPrincipal.setBackground(new Color(255, 215, 0));
 		panelPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -146,11 +170,14 @@ public class Fr_DatosCuentasContables extends JFrame {
 		panel = new JPanel();
 		panel.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setVgap(0);
+		flowLayout.setHgap(0);
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		verticalBox.add(panel);
 		
 		lblNewLabel_3 = new JLabel("Descripción");		
 		panel.add(lblNewLabel_3);
+	
 		
 		scrollPane = new JScrollPane();
 		verticalBox.add(scrollPane);
@@ -166,6 +193,23 @@ public class Fr_DatosCuentasContables extends JFrame {
 		
 		this.horizontalBox_1.add(verticalBox_1);
 		
+		verticalStrut_3 = Box.createVerticalStrut(20);
+		verticalBox_1.add(verticalStrut_3);
+		
+		horizontalBox_3 = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox_3);
+		
+		lblNewLabel_4 = new JLabel("Rubro");
+		horizontalBox_3.add(lblNewLabel_4);
+		
+		horizontalStrut_4 = Box.createHorizontalStrut(5);
+		horizontalBox_3.add(horizontalStrut_4);
+		
+		cmbRubroCuentaContable = new JComboBox();
+		cmbRubroCuentaContable.setPreferredSize(new Dimension(600, 22));
+		cmbRubroCuentaContable.setMaximumSize(new Dimension(600, 22));
+		horizontalBox_3.add(cmbRubroCuentaContable);
+		
 		horizontalStrut_3 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_3);
 		
@@ -179,7 +223,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		rdbtnCtaAgrupadora.setBackground(new Color(255, 215, 0));
 		verticalBox_2.add(rdbtnCtaAgrupadora);
 		
-		verticalStrut_2 = Box.createVerticalStrut(5);
+		verticalStrut_2 = Box.createVerticalStrut(20);
 		verticalBox_2.add(verticalStrut_2);
 		
 		rdbtnCtaDetalle = new JRadioButton("Cuenta de detalle");
@@ -189,8 +233,66 @@ public class Fr_DatosCuentasContables extends JFrame {
 		btnRadioGroup.add(this.rdbtnCtaAgrupadora);
 		this.btnRadioGroup.add(this.rdbtnCtaDetalle);
 		
+		verticalBox_3 = Box.createVerticalBox();
+		verticalBox_3.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Datos de la cuenta superior", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelCentralFormulario.add(verticalBox_3);
+		
 		horizontalBox_2 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_2);
+		verticalBox_3.add(horizontalBox_2);
+		
+		verticalBox_4 = Box.createVerticalBox();
+		horizontalBox_2.add(verticalBox_4);
+		
+		horizontalBox_4 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_4);
+		
+		lblNewLabel_5 = new JLabel("Cuenta Superior");
+		horizontalBox_4.add(lblNewLabel_5);
+		
+		horizontalStrut_5 = Box.createHorizontalStrut(5);
+		horizontalBox_4.add(horizontalStrut_5);
+		
+		textField = new JTextField();
+		textField.setMaximumSize(new Dimension(406, 20));
+		textField.setColumns(90);
+		horizontalBox_4.add(textField);
+		
+		horizontalBox_5 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_5);
+		
+		lblNewLabel_6 = new JLabel("Clave");
+		horizontalBox_5.add(lblNewLabel_6);
+		
+		horizontalStrut_6 = Box.createHorizontalStrut(5);
+		horizontalBox_5.add(horizontalStrut_6);
+		
+		textField_1 = new JTextField();
+		textField_1.setMaximumSize(new Dimension(406, 20));
+		textField_1.setColumns(100);
+		horizontalBox_5.add(textField_1);
+		
+		horizontalStrut_7 = Box.createHorizontalStrut(70);
+		horizontalBox_2.add(horizontalStrut_7);
+		
+		verticalBox_5 = Box.createVerticalBox();
+		verticalBox_5.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Naturaleza", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		horizontalBox_2.add(verticalBox_5);
+		
+		rdbtnNaturalezaDeudora = new JRadioButton("Deudora");
+		rdbtnNaturalezaDeudora.setBackground(new Color(255, 215, 0));
+		verticalBox_5.add(rdbtnNaturalezaDeudora);
+		
+		verticalStrut_4 = Box.createVerticalStrut(20);
+		verticalBox_5.add(verticalStrut_4);
+		
+		rdbtnNaturalezaAcreedora = new JRadioButton("Acreedora");
+		rdbtnNaturalezaAcreedora.setBackground(new Color(255, 215, 0));
+		verticalBox_5.add(rdbtnNaturalezaAcreedora);
+		
+		buttonGroup2 = new ButtonGroup();
+		
+		this.buttonGroup2.add(rdbtnNaturalezaDeudora);
+		this.buttonGroup2.add(this.rdbtnNaturalezaAcreedora);
 		
 		//this.horizontalBox_1.add(horizontalBox);
 		//this.horizontalBox_1.add(verticalBox);
