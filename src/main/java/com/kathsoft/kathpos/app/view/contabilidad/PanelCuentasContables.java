@@ -18,6 +18,8 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.Component;
+import java.awt.EventQueue;
+
 import javax.swing.Box;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
@@ -94,6 +96,11 @@ public class PanelCuentasContables extends JPanel {
 		panelCentral.add(panelCentralSuperiorBotones, BorderLayout.NORTH);
 		
 		btn_Agregar = new JButton("Agregar");
+		btn_Agregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormDatosCuentas(1,0);
+			}			
+		});
 		btn_Agregar.setIcon(new ImageIcon(PanelCuentasContables.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelCentralSuperiorBotones.add(btn_Agregar);
 		this.btn_Agregar.setBackground(new Color(144,238,144));
@@ -161,4 +168,31 @@ public class PanelCuentasContables extends JPanel {
 		
 	}
 	
+	/**
+	 * 
+	 * @param opcion -> indica el tipo de operación a relaizar {@code Update()} {@code Insert()}
+	 * @param idCuenta -> El id de la cuenta seleccionada a modificar, en su defecto es 0.
+	 */
+	private void abrirFormDatosCuentas(int opcion, int idCuenta) {
+		
+		Component component = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					Fr_DatosCuentasContables fr = new Fr_DatosCuentasContables(opcion, idCuenta);
+					fr.setLocationRelativeTo(component);
+					fr.setVisible(true);
+					
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
+								
+			}
+		});
+	}
 }

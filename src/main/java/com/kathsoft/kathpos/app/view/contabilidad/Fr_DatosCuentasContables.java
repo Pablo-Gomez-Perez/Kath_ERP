@@ -11,6 +11,10 @@ import java.awt.Color;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
+
+import com.kathsoft.kathpos.app.model.RubroCuentaContable;
+import com.kathsoft.kathpos.tools.AppContext;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.BoxLayout;
@@ -66,7 +70,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private Box horizontalBox_3;
 	private JLabel lblNewLabel_4;
 	private Component horizontalStrut_4;
-	private JComboBox cmbRubroCuentaContable;
+	private JComboBox<RubroCuentaContable> cmbRubroCuentaContable;
 	private Box verticalBox_3;
 	private Box horizontalBox_2;
 	private Box verticalBox_4;
@@ -92,7 +96,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Fr_DatosCuentasContables frame = new Fr_DatosCuentasContables(1);
+					Fr_DatosCuentasContables frame = new Fr_DatosCuentasContables(1,0);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -101,12 +105,15 @@ public class Fr_DatosCuentasContables extends JFrame {
 		});
 	}
 
+
 	/**
-	 * Create the frame.
+	 * 
+	 * @param opcion
+	 * @param idCuenta
 	 */
-	public Fr_DatosCuentasContables(int opcion) {
+	public Fr_DatosCuentasContables(int opcion, int idCuenta) {
 		setTitle("Cuenta contable");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setBounds(100, 100, 650, 410);
 		panelPrincipal = new JPanel();
 		panelPrincipal.setBackground(new Color(255, 215, 0));
@@ -205,7 +212,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		horizontalStrut_4 = Box.createHorizontalStrut(5);
 		horizontalBox_3.add(horizontalStrut_4);
 		
-		cmbRubroCuentaContable = new JComboBox();
+		cmbRubroCuentaContable = new JComboBox<RubroCuentaContable>();
 		cmbRubroCuentaContable.setPreferredSize(new Dimension(600, 22));
 		cmbRubroCuentaContable.setMaximumSize(new Dimension(600, 22));
 		horizontalBox_3.add(cmbRubroCuentaContable);
@@ -320,8 +327,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 		
 		if(opcion == 1) {
 			this.lblNewLabel.setText("Registrar cuenta");
+			this.llenarCmbRubroCuentas();
 		}else {
 			this.lblNewLabel.setText("Modificar cuenta");
+			this.llenarCmbRubroCuentas();
+			this.consultarCuentaContable(idCuenta);
 		}
 	}
 	
@@ -336,6 +346,18 @@ public class Fr_DatosCuentasContables extends JFrame {
 			e.printStackTrace();
 			return null;
 		}
+		
+	}
+	
+	private void llenarCmbRubroCuentas() {
+		
+		AppContext.rubroCuentaContableController.cmbRubroCuentasContables().forEach(i -> {
+			cmbRubroCuentaContable.addItem(i);
+		});;
+		
+	}
+	
+	private void consultarCuentaContable(int idCuenta) {
 		
 	}
 }

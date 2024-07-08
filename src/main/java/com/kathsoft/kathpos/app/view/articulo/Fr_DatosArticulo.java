@@ -147,8 +147,8 @@ public class Fr_DatosArticulo extends JFrame {
 			this.setTitle("Editar Articulo");
 		}
 
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 780, 632);
 		contentPane = new JPanel();
@@ -163,12 +163,6 @@ public class Fr_DatosArticulo extends JFrame {
 		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
 
 		lblNewLabel_1 = new JLabel();
-
-		if (tipoOperacion == 0) {
-			this.lblNewLabel_1.setText("Nuevo Articulo");
-		} else if (tipoOperacion == 1) {
-			this.lblNewLabel_1.setText("Editar atículo");
-		}
 
 		lblNewLabel_1.setForeground(new Color(255, 255, 255));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -291,46 +285,46 @@ public class Fr_DatosArticulo extends JFrame {
 
 		verticalStrut_3 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_3);
-		
-				panel = new JPanel();
-				//panelCentralFormulario.add(panel);
-				FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-				flowLayout.setAlignment(FlowLayout.LEFT);
-				panel.setBackground(new Color(255, 215, 0));
-				
-						lblNewLabel_6 = new JLabel("Descripción");
-						panel.add(lblNewLabel_6);
+
+		panel = new JPanel();
+		// panelCentralFormulario.add(panel);
+		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		panel.setBackground(new Color(255, 215, 0));
+
+		lblNewLabel_6 = new JLabel("Descripción");
+		panel.add(lblNewLabel_6);
 
 		verticalBox = Box.createVerticalBox();
 		verticalBox.add(panel);
 		panelCentralFormulario.add(verticalBox);
-		
+
 		scrollPaneTxaDescripcion = new JScrollPane();
 		verticalBox.add(scrollPaneTxaDescripcion);
-		
-				txaDescripcionArticulo = new JTextArea();
-				scrollPaneTxaDescripcion.setViewportView(txaDescripcionArticulo);
-				scrollPaneTxaDescripcion.setPreferredSize(new Dimension(750,150));
-				txaDescripcionArticulo.setLineWrap(true);
-		
+
+		txaDescripcionArticulo = new JTextArea();
+		scrollPaneTxaDescripcion.setViewportView(txaDescripcionArticulo);
+		scrollPaneTxaDescripcion.setPreferredSize(new Dimension(750, 150));
+		txaDescripcionArticulo.setLineWrap(true);
+
 		verticalBox_1 = Box.createVerticalBox();
 		panelCentralFormulario.add(verticalBox_1);
-		
+
 		panel_1 = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel_1.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		panel_1.setBackground(new Color(255, 215, 0));
 		verticalBox_1.add(panel_1);
-		
+
 		lblNewLabel_9 = new JLabel("Precios por categoría de cliente");
 		panel_1.add(lblNewLabel_9);
-		
+
 		scrollPaneTablaPreciosTipoCliente = new JScrollPane();
 		verticalBox_1.add(scrollPaneTablaPreciosTipoCliente);
-		
+
 		table = new JTable();
 		scrollPaneTablaPreciosTipoCliente.setViewportView(table);
-		scrollPaneTablaPreciosTipoCliente.setPreferredSize(new Dimension(750,150));
+		scrollPaneTablaPreciosTipoCliente.setPreferredSize(new Dimension(750, 150));
 
 		verticalStrut_4 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_4);
@@ -461,8 +455,8 @@ public class Fr_DatosArticulo extends JFrame {
 			}
 		});
 		btnGuardar.setBackground(new Color(144, 238, 144));
-		btnGuardar.setIcon(new ImageIcon(
-				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnGuardar.setIcon(
+				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
 
 		if (tipoOperacion == 1) {
@@ -476,7 +470,7 @@ public class Fr_DatosArticulo extends JFrame {
 		this.limpiarCmbMarca();
 		this.listCategoria.stream().forEach(c -> {
 			this.cmbMarcaArticulo.addItem(c);
-		});		
+		});
 	}
 
 	private void limpiarCmbMarca() {
