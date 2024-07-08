@@ -62,6 +62,11 @@ public class CuentaContableController {
 		
 	}
 	
+	/**
+	 * 
+	 * @param clave -> Clave de la cuenta contable
+	 * @return {@code new CuentaContable()}
+	 */
 	public CuentaContable buscarCuentaPorClave(String clave) {
 		var data = new CuentaContable();
 		
@@ -90,6 +95,45 @@ public class CuentaContableController {
 			return null;
 		}
 		
-	}	
+	}
+	
+	/**
+	 * 
+	 * @param idCuenta -> Indice de la cuenta contable
+	 * @return {@code new CuentaContable()}
+	 */
+	public CuentaContable buscarCuentaPorId(int idCuenta) {
+		var data = new CuentaContable();
+		
+		try(var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)){
+			
+			var stm = cn.prepareCall("CALL buscar_cuenta_x_id(?)");
+			stm.setInt(1, idCuenta);
+			var rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				data.setIdCuenta(rset.getInt(1));
+				data.setNombreCuentaPadre(rset.getString(2));
+				data.setRubroCuenta(rset.getString(3));
+				data.setNombre(rset.getString(4));
+				data.setDescripcion(rset.getString(5));
+				data.setNivel(rset.getShort(6));
+				data.setUltimoNivel(rset.getShort(7) == 1 ? true : false);
+				data.setCargo(rset.getDouble(8));
+				data.setAbono(rset.getDouble(9));
+				data.setSaldo(rset.getDouble(10));
+				data.setNaturaleza(rset.getShort(11) == 1 ? true : false);
+			}
+				
+			return data;
+		}catch(SQLException er) {
+			er.printStackTrace();
+			return null;			
+		}catch(Exception er) {
+			er.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 }

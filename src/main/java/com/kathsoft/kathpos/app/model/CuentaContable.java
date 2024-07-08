@@ -16,6 +16,7 @@ public class CuentaContable implements Serializable {
 	private int idCuenta;
 	private int idCuentaPadre;
 	private String nombreCuentaPadre;
+	private String rubroCuenta;
 	private String clave;
 	private String nombre;
 	private String descripcion;
@@ -26,7 +27,40 @@ public class CuentaContable implements Serializable {
 	private double saldo;
 	private boolean naturaleza;
 
-	
+	/**
+	 * 
+	 * @param idCuenta
+	 * @param idCuentaPadre
+	 * @param nombreCuentaPadre
+	 * @param rubroCuenta
+	 * @param clave
+	 * @param nombre
+	 * @param descripcion
+	 * @param nivel
+	 * @param ultimoNivel
+	 * @param cargo
+	 * @param abono
+	 * @param saldo
+	 * @param naturaleza
+	 */
+	public CuentaContable(int idCuenta, int idCuentaPadre, String nombreCuentaPadre, String rubroCuenta, String clave,
+			String nombre, String descripcion, short nivel, boolean ultimoNivel, double cargo, double abono,
+			double saldo, boolean naturaleza) {
+		super();
+		this.idCuenta = idCuenta;
+		this.idCuentaPadre = idCuentaPadre;
+		this.nombreCuentaPadre = nombreCuentaPadre;
+		this.rubroCuenta = rubroCuenta;
+		this.clave = clave;
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.nivel = nivel;
+		this.ultimoNivel = ultimoNivel;
+		this.cargo = cargo;
+		this.abono = abono;
+		this.saldo = saldo;
+		this.naturaleza = naturaleza;
+	}
 
 	/**
 	 * @param idCuenta
@@ -42,7 +76,8 @@ public class CuentaContable implements Serializable {
 	 * @param saldo
 	 */
 	public CuentaContable(int idCuenta, int idCuentaPadre, String nombreCuentaPadre, String clave, String nombre,
-			String descripcion, short nivel, boolean ultimoNivel, double cargo, double abono, double saldo, boolean naturaleza) {
+			String descripcion, short nivel, boolean ultimoNivel, double cargo, double abono, double saldo,
+			boolean naturaleza) {
 		super();
 		this.idCuenta = idCuenta;
 		this.idCuentaPadre = idCuentaPadre;
@@ -137,8 +172,8 @@ public class CuentaContable implements Serializable {
 	 */
 	public short getNivel() {
 		return nivel;
-	}		
-	
+	}
+
 	/**
 	 * @return the nombreCuentaPadre
 	 */
@@ -215,32 +250,40 @@ public class CuentaContable implements Serializable {
 	public void setSaldo(double saldo) {
 		this.saldo = saldo;
 	}
-	
+
 	public void setNaturaleza(boolean naturaleza) {
 		this.naturaleza = naturaleza;
 	}
-	
+
+	public String getRubroCuenta() {
+		return rubroCuenta;
+	}
+
+	public void setRubroCuenta(String rubroCuenta) {
+		this.rubroCuenta = rubroCuenta;
+	}
+
 	/**
-	 * la naturaleza de una cuenta contable define su comportamiento.
-	 * Una cuenta contable puede ser Acreedora o de naturaleza Deudora.
-	 * Este atributo define su ubicación en balance general.
+	 * la naturaleza de una cuenta contable define su comportamiento. Una cuenta
+	 * contable puede ser Acreedora o de naturaleza Deudora. Este atributo define su
+	 * ubicación en balance general.
+	 * 
 	 * @return the naturaleza
 	 */
 	public boolean isNaturaleza() {
 		return this.naturaleza;
 	}
-	
+
 	@Override
 	public String toString() {
-		return  this.nombre;
+		return this.nombre;
 	}
 
 	public String printData() {
 		return "CuentaContable [idCuenta=" + idCuenta + ", idCuentaPadre=" + idCuentaPadre + ", clave=" + clave
 				+ ", nombre=" + nombre + ", descripcion=" + descripcion + ", nivel=" + nivel + ", ultimoNivel="
-				+ ultimoNivel + ", cargo=" + cargo + ", abono=" + abono + ", saldo=" + saldo + ", naturaleza=" + this.naturaleza + "]";
+				+ ultimoNivel + ", cargo=" + cargo + ", abono=" + abono + ", saldo=" + saldo + ", naturaleza="
+				+ this.naturaleza + "]";
 	}
-	
-	
 
 }
