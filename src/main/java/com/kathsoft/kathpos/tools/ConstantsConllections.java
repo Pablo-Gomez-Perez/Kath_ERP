@@ -102,6 +102,8 @@ public class ConstantsConllections implements java.io.Serializable{
 	public static final int[] tablaCuentasContablesColumnsWidth = {
 			40, //id
 			200, // nombre cuenta superior
+			250, //Rubro de la cuenta
+			200, //Naturaleza
 			150, // clave
 			200, // Nombre de la cuenta
 			270, //Descripcion
@@ -109,6 +111,8 @@ public class ConstantsConllections implements java.io.Serializable{
 			100, // Es de nivel de detalle
 			150, // Cargos
 			150, //Abonos
-			150 // Saldo de la cuenta
+			150, // Saldo de la cuenta
+			150, //Estatus
+			200, //Ultima Modificacion
 	};
 }

@@ -32,6 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 import javax.swing.JComboBox;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 
 public class Fr_DatosCuentasContables extends JFrame {
 
@@ -73,7 +74,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JComboBox<RubroCuentaContable> cmbRubroCuentaContable;
 	private Box verticalBox_3;
 	private Box horizontalBox_2;
-	private Box verticalBox_4;
+	private JPanel verticalBox_4;
 	private Box verticalBox_5;
 	private Box horizontalBox_4;
 	private JLabel lblNewLabel_5;
@@ -87,7 +88,6 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JRadioButton rdbtnNaturalezaAcreedora;
 	private Component verticalStrut_4;
 	private ButtonGroup buttonGroup2;
-	private Component horizontalStrut_7;
 
 	/**
 	 * Launch the application.
@@ -112,8 +112,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 	 */
 	public Fr_DatosCuentasContables(int opcion, int idCuenta) {
 		setTitle("Cuenta contable");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setBounds(100, 100, 650, 410);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		
 		panelPrincipal = new JPanel();
 		panelPrincipal.setBackground(new Color(255, 215, 0));
 		panelPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -249,8 +248,10 @@ public class Fr_DatosCuentasContables extends JFrame {
 		horizontalBox_2 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_2);
 
-		verticalBox_4 = Box.createVerticalBox();
+		verticalBox_4 = new JPanel();
+		verticalBox_4.setBackground(new Color(255, 215, 0));
 		horizontalBox_2.add(verticalBox_4);
+		verticalBox_4.setLayout(new GridLayout(0, 1, 0, 0));
 
 		horizontalBox_4 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_4);
@@ -279,9 +280,6 @@ public class Fr_DatosCuentasContables extends JFrame {
 		textField_1.setMaximumSize(new Dimension(406, 20));
 		textField_1.setColumns(100);
 		horizontalBox_5.add(textField_1);
-
-		horizontalStrut_7 = Box.createHorizontalStrut(70);
-		horizontalBox_2.add(horizontalStrut_7);
 
 		verticalBox_5 = Box.createVerticalBox();
 		verticalBox_5.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Naturaleza", TitledBorder.LEADING,
@@ -338,6 +336,8 @@ public class Fr_DatosCuentasContables extends JFrame {
 			this.llenarCmbRubroCuentas();
 			this.consultarCuentaContable(idCuenta);
 		}
+				
+		this.setBounds(100, 100, 760, 460);
 	}
 
 	private MaskFormatter formatoClave() {
@@ -345,7 +345,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		var formato = new MaskFormatter();
 
 		try {
-			formato.setMask("####-####-####");
+			formato.setMask("####-####-####-####");
 			return formato;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -359,11 +359,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 		AppContext.rubroCuentaContableController.cmbRubroCuentasContables().forEach(i -> {
 			cmbRubroCuentaContable.addItem(i);
 		});
-		;
+		
 
 	}
 
 	private void consultarCuentaContable(int idCuenta) {
-
+		
 	}
 }

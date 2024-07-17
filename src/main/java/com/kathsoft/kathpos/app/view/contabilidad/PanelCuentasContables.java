@@ -75,6 +75,8 @@ public class PanelCuentasContables extends JPanel {
 
 		this.tablaCuentasContablesModel.addColumn("id");
 		this.tablaCuentasContablesModel.addColumn("Cta Superior");
+		this.tablaCuentasContablesModel.addColumn("Rubro");
+		this.tablaCuentasContablesModel.addColumn("Naturaleza");
 		this.tablaCuentasContablesModel.addColumn("Clave");
 		this.tablaCuentasContablesModel.addColumn("Cuenta");
 		this.tablaCuentasContablesModel.addColumn("Descripcion");
@@ -83,6 +85,9 @@ public class PanelCuentasContables extends JPanel {
 		this.tablaCuentasContablesModel.addColumn("Cargos");
 		this.tablaCuentasContablesModel.addColumn("Abonos");
 		this.tablaCuentasContablesModel.addColumn("Saldo");
+		this.tablaCuentasContablesModel.addColumn("Estatus");
+		this.tablaCuentasContablesModel.addColumn("Ultima Mod.");
+		
 
 		tableCuentasContables = new JTable();
 		tableCuentasContables.setModel(tablaCuentasContablesModel);
