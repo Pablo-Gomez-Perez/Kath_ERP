@@ -259,7 +259,7 @@ public class EmpleadoController implements Serializable {
 		CallableStatement stm = null;
 
 		try {
-			cn = Conexion.establecerConexionLocal("Kath_erp");
+			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL spGetListadoEmpleados");
 			rset = stm.executeQuery();
 

@@ -103,14 +103,16 @@ public class Fr_DatosCuentasContables extends JFrame {
 				}
 			}
 		});
-	}
-
+	}	
+	
 	/**
 	 * 
 	 * @param opcion
 	 * @param idCuenta
 	 */
-	public Fr_DatosCuentasContables(int opcion, int idCuenta) {
+	public Fr_DatosCuentasContables(int opcion, int idCuenta) {		
+		/*TODO Agregar JCombobox para filtrado de Rubro contable en base a grupo contable */ 
+		
 		setTitle("Cuenta contable");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		
 		panelPrincipal = new JPanel();
