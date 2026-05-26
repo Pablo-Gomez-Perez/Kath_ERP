@@ -48,34 +48,46 @@ public class EmpleadoController implements Serializable {
 	 *                 empleado; }
 	 */
 	/**
-	 * metodo para validar el ingreso al sistema, hace uso de un procedimiento
-	 * almacenado para validar si el usuario existe y sis sus credenciales de acceso
-	 * son correctas
-	 * 
-	 * @return {@code false} si el server arroja un error
-	 * @return {@code true} si el server no arroja nada
+	 * Metodo para validar el ingreso al sistema.
+	 * <p>
+	 * El acceso solo es valido cuando el procedimiento almacenado retorna una fila
+	 * con un resultado significativo. Si no hay fila, si el resultado viene vacio,
+	 * o si el resultado representa un valor falso, el acceso se rechaza.
+	 *
+	 * @param empl empleado con nombre corto y contrasenia capturados desde la vista
+	 * @return {@code true} si las credenciales son validas; {@code false} en caso contrario
 	 */
 	public boolean validarIngreso(Empleado empl) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
 
-		String pswd = "";		
+		if (empl == null || empl.getNombreCorto() == null || empl.getNombreCorto().isBlank()
+				|| empl.getPassword() == null || empl.getPassword().isBlank()) {
+			return false;
+		}
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL validar_entrada(?,?)");
 			stm.setString(1, empl.getNombreCorto());
 			stm.setString(2, empl.getPassword());
 			rset = stm.executeQuery();
 
-			if (rset.next()) {
-				pswd = rset.getString(1);
-				System.out.println(pswd);
+			if (!rset.next()) {
+				return false;
 			}
-			
-			return true;
+
+			String resultado = rset.getString(1);
+
+			if (resultado == null) {
+				return false;
+			}
+
+			resultado = resultado.trim();
+
+			return !resultado.isEmpty() && !"0".equals(resultado) && !"false".equalsIgnoreCase(resultado);
 
 		} catch (SQLException er) {
 			er.printStackTrace();
