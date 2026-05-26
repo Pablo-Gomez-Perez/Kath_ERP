@@ -26,8 +26,6 @@ import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import com.kathsoft.kathpos.app.controller.EmpleadoController;
-import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.tools.AppContext;
@@ -256,38 +254,44 @@ public class Fr_LogIn extends JFrame {
 	}
 	
 	/**
-	 * validación de credeciales de acceso y entrada al sistema
+	 * Validacion de credenciales de acceso y entrada al sistema.
 	 */
 	private void logIngFrPrincipal() {
-		
-		String contra = "";
-		char[] pswdCaracteres = this.pswfContrasenia.getPassword();
-		
-		for(char c: pswdCaracteres) {
-			contra = contra + c;
+
+		Object usuarioSeleccionado = this.jcmbUsuarios.getSelectedItem();
+
+		if (usuarioSeleccionado == null) {
+			JOptionPane.showMessageDialog(this, "Debe seleccionar un usuario", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
-		
-		empl.setNombreCorto(this.jcmbUsuarios.getSelectedItem().toString());
-		empl.setPassword(contra);			
-		
-		if (AppContext.empleadoController.validarIngreso(empl) == false || contra.isEmpty()) {
-			
-			JOptionPane.showMessageDialog(this, "Error de acceso", "Error", JOptionPane.ERROR_MESSAGE);
-			
-		} else {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						Fr_principal frame = new Fr_principal(sucursal);
-						frame.setVisible(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+
+		String contra = String.valueOf(this.pswfContrasenia.getPassword());
+
+		if (contra.isBlank()) {
+			JOptionPane.showMessageDialog(this, "Debe capturar la contraseña", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		empl.setNombreCorto(usuarioSeleccionado.toString());
+		empl.setPassword(contra);
+
+		if (!AppContext.empleadoController.validarIngreso(empl)) {
+			JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Fr_principal frame = new Fr_principal(sucursal);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			});
-			
-			this.dispose();
-		}
+			}
+		});
+
+		this.dispose();
 	}
 	
 	/**
