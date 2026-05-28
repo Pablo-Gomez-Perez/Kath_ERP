@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 import java.sql.CallableStatement;
@@ -113,7 +114,7 @@ public class EmpleadoController implements Serializable {
 	 * 
 	 * @param jcmb
 	 */
-	public void consultaNombresCortosEmpleados(JComboBox<String> jcmb, int id_sucursal) {
+	public void consultaNombresCortosEmpleados(JComboBox<JComboboxDataViewModel> jcmb, int id_sucursal) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -126,8 +127,9 @@ public class EmpleadoController implements Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				jcmb.addItem(rset.getString(1));
+				jcmb.addItem(new JComboboxDataViewModel(rset.getInt(1), rset.getString(2)));
 			}
+						
 
 		} catch (SQLException er) {
 			er.printStackTrace();

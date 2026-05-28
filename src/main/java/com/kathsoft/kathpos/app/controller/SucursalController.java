@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 import javax.swing.JComboBox;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class SucursalController implements java.io.Serializable {
@@ -20,14 +21,14 @@ public class SucursalController implements java.io.Serializable {
 	 * 
 	 * 
 	 */
-	private static Connection cn = null;	
+	private static Connection cn = null;
 
 	/**
 	 * consulta únicamente los nombres de las sucursales registradas
 	 * 
 	 * @param cmb
 	 */
-	public void consultarNombreSucursales(JComboBox<String> cmb) {
+	public void consultarNombreSucursales(JComboBox<JComboboxDataViewModel> cmb) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -40,7 +41,8 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				cmb.addItem(rset.getString(2));
+
+				cmb.addItem(new JComboboxDataViewModel(rset.getInt(1), rset.getString(2)));
 			}
 
 		} catch (SQLException er) {
@@ -67,7 +69,7 @@ public class SucursalController implements java.io.Serializable {
 		CallableStatement stm = null;
 		ResultSet rset = null;
 		var data = new Vector<Object[]>();
-		
+
 		try {
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
@@ -87,7 +89,7 @@ public class SucursalController implements java.io.Serializable {
 						rset.getShort(10) == 1 ? "Activo" : "Inactivo" // sucursar activa o inactiva
 				});
 			}
-			
+
 			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();

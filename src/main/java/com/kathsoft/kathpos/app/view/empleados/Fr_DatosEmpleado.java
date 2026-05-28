@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 
 public class Fr_DatosEmpleado extends JFrame {
 	/**
@@ -99,7 +100,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JTextField txfRfcEmpleado;
 	private Component horizontalStrut_8;
 	private JLabel lblNewLabel_12;
-	private JComboBox<String> cmbSucursalEmpleado;
+	private JComboBox<JComboboxDataViewModel> cmbSucursalEmpleado;
 	private SucursalController sucursalController = new SucursalController();
 
 	/**
@@ -199,7 +200,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		lblNewLabel_12 = new JLabel("Sucursal");
 		horizontalBox_1.add(lblNewLabel_12);
 
-		cmbSucursalEmpleado = new JComboBox<String>();
+		cmbSucursalEmpleado = new JComboBox<JComboboxDataViewModel>();
 		horizontalBox_1.add(cmbSucursalEmpleado);
 
 		verticalStrut_2 = Box.createVerticalStrut(20);
