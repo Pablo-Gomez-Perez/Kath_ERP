@@ -254,6 +254,12 @@ public class Fr_LogIn extends JFrame {
 		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,((JComboboxDataViewModel)this.cmbSucursal.getSelectedItem()).id());
 	}
 	
+	private void consultarSucursal() {
+		
+		this.sucursal = AppContext.sucursalController.consultarSucursal(((JComboboxDataViewModel)cmbSucursal.getSelectedItem()).id());
+		
+	}
+	
 	/**
 	 * Validacion de credenciales de acceso y entrada al sistema.
 	 */
@@ -280,7 +286,9 @@ public class Fr_LogIn extends JFrame {
 			JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-
+		
+		this.consultarSucursal();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

@@ -52,6 +52,7 @@ import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Ventas;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.articulo.Fr_ListaArticulos;
+import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
 
 public class Fr_PuntoDeVentas extends JFrame {
 
@@ -953,8 +954,22 @@ public class Fr_PuntoDeVentas extends JFrame {
 	}
 	
 	private void abrirFormFormaDePago(Ventas venta){		
-		/*Component cmp = this;
+		
+		if (venta == null) {
+			JOptionPane.showMessageDialog(this, "No existe una venta válida para cobrar", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (this.articulosVendidos == null || this.articulosVendidos.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "No existen artículos agregados a la venta", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		Component cmp = this;
 		Fr_PuntoDeVentas fr = this;
+				
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -966,6 +981,6 @@ public class Fr_PuntoDeVentas extends JFrame {
 					er.printStackTrace();
 				}
 			}
-		});*/
+		});
 	}
 }
