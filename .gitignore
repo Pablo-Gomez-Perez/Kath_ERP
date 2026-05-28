@@ -1,13 +1,18 @@
-#archivos a los que no se les dará seguimiento
-#
-#archivos txt y de seguimiento
+# archivos a los que no se les dará seguimiento
 
-*.txt
-
-#ficheros generados por vim
-#
-.gitignore~
+# ficheros de texto y respaldo
 *.txt
 *.txt~
+.gitignore~
 *.gitignore.un~
+
+# artefactos generados por Maven
 /target/
+
+# configuracion local y secretos
+config/database.properties
+.env
+*.env
+
+# logs
+*.log
