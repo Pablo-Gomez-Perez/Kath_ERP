@@ -50,6 +50,7 @@ import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Clientes;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Ventas;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.articulo.Fr_ListaArticulos;
 
 public class Fr_PuntoDeVentas extends JFrame {
@@ -101,7 +102,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 	private Component verticalStrut_1;
 	private Box horizontalBox_4;
 	private JLabel lblNewLabel_4;
-	private JComboBox<String> cmbAliasEmpleado;
+	private JComboBox<JComboboxDataViewModel> cmbAliasEmpleado;
 	private Component horizontalStrut_9;
 	private JComboBox<String> cmbRfcCliente;
 	private Component horizontalStrut_10;
@@ -279,7 +280,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		horizontalStrut_5 = Box.createHorizontalStrut(5);
 		horizontalBox_1.add(horizontalStrut_5);
 
-		cmbAliasEmpleado = new JComboBox<String>();
+		cmbAliasEmpleado = new JComboBox<JComboboxDataViewModel>();
 		this.llenarCmbEmpleados();
 		cmbAliasEmpleado.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {

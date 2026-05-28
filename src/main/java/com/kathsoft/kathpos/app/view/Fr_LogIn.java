@@ -28,6 +28,7 @@ import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
 
 public class Fr_LogIn extends JFrame {
@@ -42,7 +43,7 @@ public class Fr_LogIn extends JFrame {
 	 */
 	private JPanel contentPane;
 	private JPasswordField pswfContrasenia = new JPasswordField();
-	private JComboBox<String> jcmbUsuarios = new JComboBox<String>();
+	private JComboBox<JComboboxDataViewModel> jcmbUsuarios = new JComboBox<JComboboxDataViewModel>();
 	private JLabel lblNewLabel = new JLabel("Usuario");
 	private JButton btn_cancelar = new JButton("Cancelar");
 	private JButton btn_ingresar = new JButton("Ingresar");	
@@ -73,7 +74,7 @@ public class Fr_LogIn extends JFrame {
 	};
 	//============================================================================================
 	//============================================================================================
-	private JComboBox<String> cmbSucursal;
+	private JComboBox<JComboboxDataViewModel> cmbSucursal;
 	private Component verticalStrut_3;
 	private JPanel panelCentral;
 	private Box verticalBox_1;
@@ -158,16 +159,16 @@ public class Fr_LogIn extends JFrame {
 		horizontalStrut_5 = Box.createHorizontalStrut(20);
 		horizontalBox_2.add(horizontalStrut_5);
 		
-		cmbSucursal = new JComboBox<String>();
+		cmbSucursal = new JComboBox<JComboboxDataViewModel>();
 		this.llenarCmbSucursales();
 		cmbSucursal.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				sucursal = AppContext.sucursalController.consultarSucursal(cmbSucursal.getSelectedIndex() + 1);
+				sucursal = AppContext.sucursalController.consultarSucursal(((JComboboxDataViewModel)cmbSucursal.getSelectedItem()).id());
 				//System.out.println(sucursal.toString());
 				llenarCmbEmpleados();
 			}
 		});
-		
+		this.llenarCmbEmpleados();
 		
 		horizontalBox_2.add(cmbSucursal);
 		
@@ -243,14 +244,14 @@ public class Fr_LogIn extends JFrame {
 		this.cmbSucursal.setSelectedIndex(0);
 	}
 	
-	private void borrarElementosJcmb(JComboBox<String> cmb) {
+	private void borrarElementosJcmb(JComboBox<JComboboxDataViewModel> cmb) {
 		cmb.removeAllItems();
 		cmb.updateUI();
 	}
 	
 	private void llenarCmbEmpleados() {
 		borrarElementosJcmb(this.jcmbUsuarios);
-		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,this.cmbSucursal.getSelectedIndex() + 1);
+		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,((JComboboxDataViewModel)this.cmbSucursal.getSelectedItem()).id());
 	}
 	
 	/**
