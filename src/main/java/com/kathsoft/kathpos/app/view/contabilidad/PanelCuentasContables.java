@@ -167,6 +167,10 @@ public class PanelCuentasContables extends JPanel {
 	public void llenarTablaCuentas() {
 
 		var cuentas = AppContext.cuentaContableController.verCuentasContables(this.txfBuscarCuentaContable.getText());
+		
+		if(cuentas == null || cuentas.isEmpty()) {
+			return;
+		}
 
 		this.tablaCuentasContablesModel.getDataVector().removeAllElements();
 		this.tableCuentasContables.updateUI();
