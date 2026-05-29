@@ -87,7 +87,6 @@ public class PanelCuentasContables extends JPanel {
 		this.tablaCuentasContablesModel.addColumn("Saldo");
 		this.tablaCuentasContablesModel.addColumn("Estatus");
 		this.tablaCuentasContablesModel.addColumn("Ultima Mod.");
-		
 
 		tableCuentasContables = new JTable();
 		tableCuentasContables.setModel(tablaCuentasContablesModel);
@@ -167,8 +166,8 @@ public class PanelCuentasContables extends JPanel {
 	public void llenarTablaCuentas() {
 
 		var cuentas = AppContext.cuentaContableController.verCuentasContables(this.txfBuscarCuentaContable.getText());
-		
-		if(cuentas == null || cuentas.isEmpty()) {
+
+		if (cuentas == null || cuentas.isEmpty()) {
 			return;
 		}
 

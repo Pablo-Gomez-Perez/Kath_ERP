@@ -46,11 +46,11 @@ public class Fr_LogIn extends JFrame {
 	private JComboBox<JComboboxDataViewModel> jcmbUsuarios = new JComboBox<JComboboxDataViewModel>();
 	private JLabel lblNewLabel = new JLabel("Usuario");
 	private JButton btn_cancelar = new JButton("Cancelar");
-	private JButton btn_ingresar = new JButton("Ingresar");	
+	private JButton btn_ingresar = new JButton("Ingresar");
 	private Empleado empl = new Empleado();
 	private Sucursal sucursal;
-	//============================================================================================	
-	//============================================================================================
+	// ============================================================================================
+	// ============================================================================================
 	// panel que agrega una imagen al formulario
 	private JPanel panelImagen = new JPanel() {
 		/**
@@ -72,8 +72,8 @@ public class Fr_LogIn extends JFrame {
 		}
 
 	};
-	//============================================================================================
-	//============================================================================================
+	// ============================================================================================
+	// ============================================================================================
 	private JComboBox<JComboboxDataViewModel> cmbSucursal;
 	private Component verticalStrut_3;
 	private JPanel panelCentral;
@@ -94,7 +94,7 @@ public class Fr_LogIn extends JFrame {
 	private Component horizontalStrut_4;
 	private JPanel panelInferior;
 	private FlowLayout flowLayout;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -146,32 +146,33 @@ public class Fr_LogIn extends JFrame {
 		verticalBox = Box.createVerticalBox();
 		verticalBox.setBorder(new EmptyBorder(0, 10, 0, 10));
 		panelCentral.add(verticalBox);
-		
+
 		verticalStrut_2 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_2);
-		
+
 		horizontalBox_2 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_2);
-		
+
 		lblNewLabel_2 = new JLabel("Sucursal");
 		horizontalBox_2.add(lblNewLabel_2);
-		
+
 		horizontalStrut_5 = Box.createHorizontalStrut(20);
 		horizontalBox_2.add(horizontalStrut_5);
-		
+
 		cmbSucursal = new JComboBox<JComboboxDataViewModel>();
 		this.llenarCmbSucursales();
 		cmbSucursal.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				sucursal = AppContext.sucursalController.consultarSucursal(((JComboboxDataViewModel)cmbSucursal.getSelectedItem()).id());
-				//System.out.println(sucursal.toString());
+				sucursal = AppContext.sucursalController
+						.consultarSucursal(((JComboboxDataViewModel) cmbSucursal.getSelectedItem()).id());
+				// System.out.println(sucursal.toString());
 				llenarCmbEmpleados();
 			}
 		});
 		this.llenarCmbEmpleados();
-		
+
 		horizontalBox_2.add(cmbSucursal);
-		
+
 		verticalStrut_3 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_3);
 
@@ -217,7 +218,6 @@ public class Fr_LogIn extends JFrame {
 			}
 		});
 		btn_cancelar.setBackground(new Color(205, 92, 92));
-		
 
 		panelInferior.add(btn_cancelar);
 
@@ -225,41 +225,40 @@ public class Fr_LogIn extends JFrame {
 		panelInferior.add(horizontalStrut_2);
 		btn_ingresar.setBackground(new Color(0, 204, 51));
 		btn_ingresar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {				
+			public void actionPerformed(ActionEvent e) {
 				logIngFrPrincipal();
 			}
 		});
 
 		panelInferior.add(btn_ingresar);
 
-		
-
 		this.pack();
 	}
-	
-	
+
 	private void llenarCmbSucursales() {
 		this.borrarElementosJcmb(cmbSucursal);
 		AppContext.sucursalController.consultarNombreSucursales(cmbSucursal);
 		this.cmbSucursal.setSelectedIndex(0);
 	}
-	
+
 	private void borrarElementosJcmb(JComboBox<JComboboxDataViewModel> cmb) {
 		cmb.removeAllItems();
 		cmb.updateUI();
 	}
-	
+
 	private void llenarCmbEmpleados() {
 		borrarElementosJcmb(this.jcmbUsuarios);
-		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,((JComboboxDataViewModel)this.cmbSucursal.getSelectedItem()).id());
+		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,
+				((JComboboxDataViewModel) this.cmbSucursal.getSelectedItem()).id());
 	}
-	
+
 	private void consultarSucursal() {
-		
-		this.sucursal = AppContext.sucursalController.consultarSucursal(((JComboboxDataViewModel)cmbSucursal.getSelectedItem()).id());
-		
+
+		this.sucursal = AppContext.sucursalController
+				.consultarSucursal(((JComboboxDataViewModel) cmbSucursal.getSelectedItem()).id());
+
 	}
-	
+
 	/**
 	 * Validacion de credenciales de acceso y entrada al sistema.
 	 */
@@ -286,9 +285,9 @@ public class Fr_LogIn extends JFrame {
 			JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		this.consultarSucursal();
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -302,12 +301,12 @@ public class Fr_LogIn extends JFrame {
 
 		this.dispose();
 	}
-	
+
 	/**
 	 * cierra el formulario y sale del sistema por completo
 	 */
 	private void cerrarForm() {
 		System.exit(0);
 	}
-	
+
 }

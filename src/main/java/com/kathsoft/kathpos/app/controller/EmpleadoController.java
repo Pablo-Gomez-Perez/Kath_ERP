@@ -56,7 +56,8 @@ public class EmpleadoController implements Serializable {
 	 * o si el resultado representa un valor falso, el acceso se rechaza.
 	 *
 	 * @param empl empleado con nombre corto y contrasenia capturados desde la vista
-	 * @return {@code true} si las credenciales son validas; {@code false} en caso contrario
+	 * @return {@code true} si las credenciales son validas; {@code false} en caso
+	 *         contrario
 	 */
 	public boolean validarIngreso(Empleado empl) {
 
@@ -129,7 +130,6 @@ public class EmpleadoController implements Serializable {
 			while (rset.next()) {
 				jcmb.addItem(new JComboboxDataViewModel(rset.getInt(1), rset.getString(2)));
 			}
-						
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -414,7 +414,7 @@ public class EmpleadoController implements Serializable {
 
 	}
 
-	public void eliminarEmpleado(int idEmpleado) throws SQLException{
+	public void eliminarEmpleado(int idEmpleado) throws SQLException {
 
 		CallableStatement stm = null;
 
@@ -501,7 +501,7 @@ public class EmpleadoController implements Serializable {
 		}
 
 	}
-	
+
 	public void buscarEmpleadoPorNombre(String nombre, DefaultTableModel tabla) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -514,7 +514,7 @@ public class EmpleadoController implements Serializable {
 
 			while (rset.next()) {
 				Object[] fila = { rset.getInt(1), // id
-						rset.getString(2), //nombre 
+						rset.getString(2), // nombre
 						rset.getString(3), // rfc
 						rset.getString(4), // curp
 						rset.getString(5), // nombre completo
