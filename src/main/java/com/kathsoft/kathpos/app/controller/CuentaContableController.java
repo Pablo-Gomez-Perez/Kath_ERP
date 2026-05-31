@@ -30,20 +30,18 @@ public class CuentaContableController {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				data.add(new Object[] { rset.getInt(1), // id_cuenta
-						rset.getString(2), // Nombre de la cuenta contable superior
-						rset.getString(3), // Rubro de la cuenta
-						rset.getShort(4) == 1 ? "Deudora" : "Acreedora", // Naturaleza de la cuenta contable
-						rset.getString(5), // clave de la cuenta contable
-						rset.getString(6), // Nombre cuenta
-						rset.getString(7), // descripcion
-						rset.getShort(8), // nivel
-						rset.getBoolean(9) ? "Si" : "No", // Cuenta agrupadora o de detalle
-						rset.getDouble(10), // cargos
-						rset.getDouble(11), // abonos
-						rset.getDouble(12), // saldo de la cuenta
-						rset.getShort(13) == 1 ? "Activa" : "Inactiva", // Cuenta Activa o inactiva
-						rset.getDate(14) // Fecha de modificacion
+				data.add(new Object[] {
+						rset.getString("id_cuenta"),
+						rset.getString("clave"),
+						rset.getString("nombre"),
+						rset.getString("cuenta_padre"),
+						rset.getString("rubro"),
+						rset.getShort("nivel"),
+						rset.getBoolean("ultimo_nivel") == true ? "Si":"No",
+						rset.getDouble("Cargo"),
+						rset.getDouble("Abono"),
+						rset.getDouble("saldo"),
+						rset.getBoolean("activa") == true ? "Si" : "No"
 				});
 			}
 

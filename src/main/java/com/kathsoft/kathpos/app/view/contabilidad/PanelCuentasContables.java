@@ -74,19 +74,16 @@ public class PanelCuentasContables extends JPanel {
 		this.tablaCuentasContablesModel = new DefaultTableModel();
 
 		this.tablaCuentasContablesModel.addColumn("id");
-		this.tablaCuentasContablesModel.addColumn("Cta Superior");
-		this.tablaCuentasContablesModel.addColumn("Rubro");
-		this.tablaCuentasContablesModel.addColumn("Naturaleza");
 		this.tablaCuentasContablesModel.addColumn("Clave");
-		this.tablaCuentasContablesModel.addColumn("Cuenta");
-		this.tablaCuentasContablesModel.addColumn("Descripcion");
+		this.tablaCuentasContablesModel.addColumn("Nombre");
+		this.tablaCuentasContablesModel.addColumn("Super cta");
+		this.tablaCuentasContablesModel.addColumn("Rubro");
 		this.tablaCuentasContablesModel.addColumn("nivel");
-		this.tablaCuentasContablesModel.addColumn("Detalle ?");
-		this.tablaCuentasContablesModel.addColumn("Cargos");
-		this.tablaCuentasContablesModel.addColumn("Abonos");
+		this.tablaCuentasContablesModel.addColumn("Ultimo nivel?");
+		this.tablaCuentasContablesModel.addColumn("Cargo");
+		this.tablaCuentasContablesModel.addColumn("Abono");
 		this.tablaCuentasContablesModel.addColumn("Saldo");
-		this.tablaCuentasContablesModel.addColumn("Estatus");
-		this.tablaCuentasContablesModel.addColumn("Ultima Mod.");
+		this.tablaCuentasContablesModel.addColumn("Activa");		
 
 		tableCuentasContables = new JTable();
 		tableCuentasContables.setModel(tablaCuentasContablesModel);
