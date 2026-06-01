@@ -12,7 +12,12 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.MaskFormatter;
 
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.tools.AppContext;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.ButtonGroup;
 
@@ -26,12 +31,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JSpinner;
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Fr_DatosCuentasContables extends JFrame {
 
@@ -50,7 +57,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JLabel lblClave;
 	private JLabel lblNombre;
 	private JTextField txfNombreCuentaContable;
-	private JFormattedTextField frmtdJtxfClaveCuentaContable;
+	private JFormattedTextField frmTxfClaveCuentaContable;
 	private JTextField txfNivelCuentaContable;
 	private JRadioButton jrdbtnCuentaDeDetalle;
 	private JRadioButton jrdbtnCuentaAgrupadora;
@@ -60,6 +67,23 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JTextArea txaDescripcionCuentaContable;
 	private FlowLayout flowLayout_1;
 	private JLabel lblGrupo;
+	private JLabel lblClave_1;
+	private JTextField textField;
+	private JFormattedTextField frmTxfClaveCuentaContableSuperior;
+	private JLabel lblNombre_1;
+	private JPanel panelDescripcionCuentaContableSuperior;
+	private GroupLayout gl_panelDatosCuentaSuperior;
+	private JLabel lblNewLabel_1;
+	private JScrollPane scrollPane_1;
+	private JTextArea txaDescripcionCuentaContableSuperior;
+	private JPanel panelDescripcionCuentaContable;
+	private JLabel lblNivel;
+	private JPanel panelDetalleOperativoCuentaContable;
+	private JComboBox<JComboboxDataViewModel> cmbGrupoCuentaContable;
+	private JComboBox<JComboboxDataViewModel> cmbRubroCuentaContable;
+	private GroupLayout gl_panelCentralFormulario;
+	private JLabel lblRubro;
+	private GroupLayout gl_panelDatosDeCuenta;
 
 	/**
 	 * Launch the application.
@@ -119,21 +143,75 @@ public class Fr_DatosCuentasContables extends JFrame {
 		panelDatosCuentaSuperior = new JPanel();
 		panelDatosCuentaSuperior.setBackground(new Color(255, 215, 0));
 		panelDatosCuentaSuperior.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Cuenta Superior", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
-		gl_panelCentralFormulario.setHorizontalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup().addContainerGap()
-						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
-								.addComponent(panelDatosCuentaSuperior, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
-										724, Short.MAX_VALUE)
-								.addComponent(panelDatosDeCuenta, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 724,
-										Short.MAX_VALUE))
-						.addContainerGap()));
-		gl_panelCentralFormulario.setVerticalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addContainerGap()
-						.addComponent(panelDatosDeCuenta, GroupLayout.PREFERRED_SIZE, 197, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(panelDatosCuentaSuperior, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-						.addContainerGap()));
+		gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
+		gl_panelCentralFormulario.setHorizontalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panelDatosCuentaSuperior, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
+						.addComponent(panelDatosDeCuenta, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		gl_panelCentralFormulario.setVerticalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelDatosDeCuenta, GroupLayout.PREFERRED_SIZE, 197, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelDatosCuentaSuperior, GroupLayout.PREFERRED_SIZE, 140, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		
+		lblClave_1 = new JLabel("Clave");
+		
+		frmTxfClaveCuentaContableSuperior = new JFormattedTextField();
+		
+		lblNombre_1 = new JLabel("Nombre");
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		
+		panelDescripcionCuentaContableSuperior = new JPanel();
+		gl_panelDatosCuentaSuperior = new GroupLayout(panelDatosCuentaSuperior);
+		gl_panelDatosCuentaSuperior.setHorizontalGroup(
+			gl_panelDatosCuentaSuperior.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelDatosCuentaSuperior.createSequentialGroup()
+					.addGroup(gl_panelDatosCuentaSuperior.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panelDescripcionCuentaContableSuperior, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+						.addGroup(gl_panelDatosCuentaSuperior.createSequentialGroup()
+							.addComponent(lblClave_1)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(frmTxfClaveCuentaContableSuperior, GroupLayout.PREFERRED_SIZE, 116, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblNombre_1)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)))
+					.addContainerGap())
+		);
+		gl_panelDatosCuentaSuperior.setVerticalGroup(
+			gl_panelDatosCuentaSuperior.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelDatosCuentaSuperior.createSequentialGroup()
+					.addGroup(gl_panelDatosCuentaSuperior.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblClave_1)
+						.addComponent(frmTxfClaveCuentaContableSuperior, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNombre_1)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelDescripcionCuentaContableSuperior, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(24, Short.MAX_VALUE))
+		);
+		panelDescripcionCuentaContableSuperior.setLayout(new BorderLayout(0, 0));
+		
+		lblNewLabel_1 = new JLabel("Descripción");
+		panelDescripcionCuentaContableSuperior.add(lblNewLabel_1, BorderLayout.NORTH);
+		
+		scrollPane_1 = new JScrollPane();
+		panelDescripcionCuentaContableSuperior.add(scrollPane_1, BorderLayout.CENTER);
+		
+		txaDescripcionCuentaContableSuperior = new JTextArea();
+		scrollPane_1.setViewportView(txaDescripcionCuentaContableSuperior);
+		panelDatosCuentaSuperior.setLayout(gl_panelDatosCuentaSuperior);
 
 		lblClave = new JLabel("Clave");
 		
@@ -143,29 +221,34 @@ public class Fr_DatosCuentasContables extends JFrame {
 		txfNombreCuentaContable = new JTextField();
 		txfNombreCuentaContable.setColumns(10);
 		
-		frmtdJtxfClaveCuentaContable = new JFormattedTextField(this.formatoClave());
+		frmTxfClaveCuentaContable = new JFormattedTextField(this.formatoClave());
 		
-		JPanel panelDescripcionCuentaContable = new JPanel();
+		panelDescripcionCuentaContable = new JPanel();
 		
-		JLabel lblNivel = new JLabel("Nivel");
+		lblNivel = new JLabel("Nivel");
 		
 		txfNivelCuentaContable = new JTextField();
 		txfNivelCuentaContable.setColumns(10);
 		
-		JPanel panelDetalleOperativoCuentaContable = new JPanel();
+		panelDetalleOperativoCuentaContable = new JPanel();
 		panelDetalleOperativoCuentaContable.setBackground(new Color(255, 215, 0));
 		panelDetalleOperativoCuentaContable.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Tipo Operativo", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
 		lblGrupo = new JLabel("Grupo");
 		
-		JComboBox comboBox = new JComboBox();
+		cmbGrupoCuentaContable = new JComboBox<JComboboxDataViewModel>();
+		cmbGrupoCuentaContable.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				llenarCmbRubroCuentaContable(((JComboboxDataViewModel)cmbGrupoCuentaContable.getSelectedItem()).id());
+			}
+		});
 		
-		JLabel lblRubro = new JLabel("Rubro");
+		lblRubro = new JLabel("Rubro");
 		
-		JComboBox comboBox_1 = new JComboBox();
+		cmbRubroCuentaContable = new JComboBox();
 		
 		
-		GroupLayout gl_panelDatosDeCuenta = new GroupLayout(panelDatosDeCuenta);
+		gl_panelDatosDeCuenta = new GroupLayout(panelDatosDeCuenta);
 		gl_panelDatosDeCuenta.setHorizontalGroup(
 			gl_panelDatosDeCuenta.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
@@ -175,11 +258,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblGrupo)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 118, GroupLayout.PREFERRED_SIZE)
+					.addComponent(cmbGrupoCuentaContable, GroupLayout.PREFERRED_SIZE, 118, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblRubro)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(comboBox_1, 0, 209, Short.MAX_VALUE)
+					.addComponent(cmbRubroCuentaContable, 0, 209, Short.MAX_VALUE)
 					.addContainerGap())
 				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
 					.addComponent(panelDescripcionCuentaContable, GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
@@ -188,7 +271,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
 					.addComponent(lblClave, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(frmtdJtxfClaveCuentaContable, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+					.addComponent(frmTxfClaveCuentaContable, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblNombre)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -203,7 +286,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 						.addComponent(lblClave)
 						.addComponent(lblNombre)
 						.addComponent(txfNombreCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(frmtdJtxfClaveCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(frmTxfClaveCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panelDatosDeCuenta.createParallelGroup(Alignment.TRAILING)
 						.addComponent(panelDetalleOperativoCuentaContable, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
@@ -213,9 +296,9 @@ public class Fr_DatosCuentasContables extends JFrame {
 						.addComponent(lblNivel)
 						.addComponent(txfNivelCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblGrupo)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(cmbGrupoCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblRubro)
-						.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(cmbRubroCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 		);
 		
 		jrdbtnCuentaDeDetalle = new JRadioButton("Cuenta de detalle");
@@ -269,6 +352,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 		panelPrincipal.add(panelInferiorbotones, BorderLayout.SOUTH);
 
 		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cerrarForm();
+			}
+		});
 		btnCancelar.setIcon(new ImageIcon(
 				Fr_DatosCuentasContables.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnCancelar.setBackground(new Color(205, 92, 92));
@@ -284,18 +372,26 @@ public class Fr_DatosCuentasContables extends JFrame {
 
 		panelInferiorbotones.add(btnGuardar);
 
+		this.llenarCmbGrupoContable();
+		
 		if (opcion == 1) {
 			this.lblNewLabel.setText("Registrar cuenta");
-			this.llenarCmbRubroCuentas();
+			this.cmbGrupoCuentaContable.setSelectedIndex(0);
+			this.llenarCmbRubroCuentaContable(((JComboboxDataViewModel)this.cmbGrupoCuentaContable.getSelectedItem()).id());
 		} else {
 			this.lblNewLabel.setText("Modificar cuenta");
-			this.llenarCmbRubroCuentas();
-			this.consultarCuentaContable(idCuenta);
+			
+			
 		}
 
-		this.setBounds(100, 100, 600, 490);
+		this.setBounds(100, 100, 600, 530);
 	}
 
+	
+	/**
+	 * Asigna un formato específico para las claves de las cuentas contables
+	 * @return
+	 */
 	private MaskFormatter formatoClave() {
 
 		var formato = new MaskFormatter();
@@ -309,17 +405,71 @@ public class Fr_DatosCuentasContables extends JFrame {
 		}
 
 	}
-
-	private void llenarCmbRubroCuentas() {
-
-		/*
-		 * AppContext.rubroCuentaContableController.cmbRubroCuentasContables().forEach(i
-		 * -> { cmbRubroCuentaContable.addItem(i); });
-		 */
-
+	
+	private void llenarCmbGrupoContable() {
+		
+		this.cmbGrupoCuentaContable.removeAllItems();
+		this.cmbGrupoCuentaContable.updateUI();
+		
+		AppContext.cuentaContableController.listCmbGrupoCuentasContables().forEach(i -> {
+			cmbGrupoCuentaContable.addItem(i);
+		});
+		
 	}
-
-	private void consultarCuentaContable(int idCuenta) {
-
+	
+	private void llenarCmbRubroCuentaContable(int idGrupo) {
+		
+		this.cmbRubroCuentaContable.removeAllItems();
+		this.cmbRubroCuentaContable.updateUI();
+		
+		AppContext.cuentaContableController.listCmbRubroCuentasContables(idGrupo).forEach(i -> {
+			cmbRubroCuentaContable.addItem(i);
+		});
+		
 	}
+	
+	private void cerrarForm() {
+		
+		int option = JOptionPane.showConfirmDialog(this, "¿Estas seguro de terminar el registro?", "Cerrar?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(option != 0) {
+			return;
+		}
+		
+		this.dispose();
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
