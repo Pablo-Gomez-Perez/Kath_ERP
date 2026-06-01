@@ -26,6 +26,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.BoxLayout;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JSpinner;
+import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 
 public class Fr_DatosCuentasContables extends JFrame {
 
@@ -38,14 +44,22 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JButton btnCancelar;
 	private Component horizontalStrut_2;
 	private JButton btnGuardar;
-	private ButtonGroup btnRadioGroup;
-	private ButtonGroup buttonGroup2;
+	private ButtonGroup btngTipoDeCuentaOperativo;	
 	private JPanel panelDatosDeCuenta;
 	private JPanel panelDatosCuentaSuperior;
 	private JLabel lblClave;
 	private JLabel lblNombre;
 	private JTextField txfNombreCuentaContable;
 	private JFormattedTextField frmtdJtxfClaveCuentaContable;
+	private JTextField txfNivelCuentaContable;
+	private JRadioButton jrdbtnCuentaDeDetalle;
+	private JRadioButton jrdbtnCuentaAgrupadora;
+	private GroupLayout gl_panelDetalleOperativoCuentaContable;
+	private JLabel lblDescripcin;
+	private JScrollPane scrollPane;
+	private JTextArea txaDescripcionCuentaContable;
+	private FlowLayout flowLayout_1;
+	private JLabel lblGrupo;
 
 	/**
 	 * Launch the application.
@@ -131,10 +145,46 @@ public class Fr_DatosCuentasContables extends JFrame {
 		
 		frmtdJtxfClaveCuentaContable = new JFormattedTextField(this.formatoClave());
 		
+		JPanel panelDescripcionCuentaContable = new JPanel();
+		
+		JLabel lblNivel = new JLabel("Nivel");
+		
+		txfNivelCuentaContable = new JTextField();
+		txfNivelCuentaContable.setColumns(10);
+		
+		JPanel panelDetalleOperativoCuentaContable = new JPanel();
+		panelDetalleOperativoCuentaContable.setBackground(new Color(255, 215, 0));
+		panelDetalleOperativoCuentaContable.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Tipo Operativo", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		lblGrupo = new JLabel("Grupo");
+		
+		JComboBox comboBox = new JComboBox();
+		
+		JLabel lblRubro = new JLabel("Rubro");
+		
+		JComboBox comboBox_1 = new JComboBox();
+		
 		
 		GroupLayout gl_panelDatosDeCuenta = new GroupLayout(panelDatosDeCuenta);
 		gl_panelDatosDeCuenta.setHorizontalGroup(
 			gl_panelDatosDeCuenta.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
+					.addComponent(lblNivel)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfNivelCuentaContable, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblGrupo)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 118, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblRubro)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBox_1, 0, 209, Short.MAX_VALUE)
+					.addContainerGap())
+				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
+					.addComponent(panelDescripcionCuentaContable, GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelDetalleOperativoCuentaContable, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
 				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
 					.addComponent(lblClave, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -142,11 +192,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblNombre)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfNombreCuentaContable, GroupLayout.PREFERRED_SIZE, 157, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(156, Short.MAX_VALUE))
+					.addComponent(txfNombreCuentaContable, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+					.addContainerGap())
 		);
 		gl_panelDatosDeCuenta.setVerticalGroup(
-			gl_panelDatosDeCuenta.createParallelGroup(Alignment.LEADING)
+			gl_panelDatosDeCuenta.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelDatosDeCuenta.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelDatosDeCuenta.createParallelGroup(Alignment.BASELINE)
@@ -154,20 +204,65 @@ public class Fr_DatosCuentasContables extends JFrame {
 						.addComponent(lblNombre)
 						.addComponent(txfNombreCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(frmtdJtxfClaveCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(140, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelDatosDeCuenta.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panelDetalleOperativoCuentaContable, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+						.addComponent(panelDescripcionCuentaContable, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelDatosDeCuenta.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNivel)
+						.addComponent(txfNivelCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblGrupo)
+						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblRubro)
+						.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 		);
+		
+		jrdbtnCuentaDeDetalle = new JRadioButton("Cuenta de detalle");
+		jrdbtnCuentaDeDetalle.setBackground(new Color(255, 215, 0));
+		
+		jrdbtnCuentaAgrupadora = new JRadioButton("Cuenta Agrupadora");
+		jrdbtnCuentaAgrupadora.setBackground(new Color(255, 215, 0));
+		gl_panelDetalleOperativoCuentaContable = new GroupLayout(panelDetalleOperativoCuentaContable);
+		gl_panelDetalleOperativoCuentaContable.setHorizontalGroup(
+			gl_panelDetalleOperativoCuentaContable.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelDetalleOperativoCuentaContable.createSequentialGroup()
+					.addGroup(gl_panelDetalleOperativoCuentaContable.createParallelGroup(Alignment.LEADING)
+						.addComponent(jrdbtnCuentaDeDetalle)
+						.addComponent(jrdbtnCuentaAgrupadora))
+					.addContainerGap(9, Short.MAX_VALUE))
+		);
+		gl_panelDetalleOperativoCuentaContable.setVerticalGroup(
+			gl_panelDetalleOperativoCuentaContable.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelDetalleOperativoCuentaContable.createSequentialGroup()
+					.addComponent(jrdbtnCuentaDeDetalle)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(jrdbtnCuentaAgrupadora)
+					.addContainerGap(29, Short.MAX_VALUE))
+		);
+		panelDetalleOperativoCuentaContable.setLayout(gl_panelDetalleOperativoCuentaContable);
+		panelDescripcionCuentaContable.setLayout(new BorderLayout(0, 0));
+		
+		this.btngTipoDeCuentaOperativo = new ButtonGroup();
+		this.btngTipoDeCuentaOperativo.add(this.jrdbtnCuentaDeDetalle);
+		this.btngTipoDeCuentaOperativo.add(this.jrdbtnCuentaAgrupadora);
+		
+		lblDescripcin = new JLabel("Descripción");
+		panelDescripcionCuentaContable.add(lblDescripcin, BorderLayout.NORTH);
+		
+		scrollPane = new JScrollPane();
+		panelDescripcionCuentaContable.add(scrollPane, BorderLayout.CENTER);
+		
+		txaDescripcionCuentaContable = new JTextArea();
+		scrollPane.setViewportView(txaDescripcionCuentaContable);
 		panelDatosDeCuenta.setLayout(gl_panelDatosDeCuenta);
 		panelCentralFormulario.setLayout(gl_panelCentralFormulario);
-
-		btnRadioGroup = new ButtonGroup();
-
-		buttonGroup2 = new ButtonGroup();
 
 		// this.horizontalBox_1.add(horizontalBox);
 		// this.horizontalBox_1.add(verticalBox);
 
 		panelInferiorbotones = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) panelInferiorbotones.getLayout();
+		flowLayout_1 = (FlowLayout) panelInferiorbotones.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.RIGHT);
 		panelInferiorbotones.setBorder(new LineBorder(new Color(0, 0, 0)));
 		this.panelInferiorbotones.setBackground(new Color(30, 144, 255));
