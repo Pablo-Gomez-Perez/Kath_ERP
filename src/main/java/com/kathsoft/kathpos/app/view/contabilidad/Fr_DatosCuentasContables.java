@@ -89,6 +89,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private GroupLayout gl_panelCentralFormulario;
 	private JLabel lblRubro;
 	private GroupLayout gl_panelDatosDeCuenta;
+	private CuentaContableFormDetails ultimaCuentaContable;
 
 	/**
 	 * Launch the application.
@@ -454,19 +455,22 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private void consultarCuentaSuperiorPorClave() {
 		
 		String claveBuscada = this.prepararClaveContableParaBusqueda();
-		System.out.println(claveBuscada);
-		if(claveBuscada.length() >= 4) {
-			
-			var data = this.mapCuentaContable(claveBuscada);
-						
-			this.cmbGrupoCuentaContable.setSelectedItem(data.fkIdGrupoContable());
-			this.cmbRubroCuentaContable.setSelectedItem(data.fkIdRubro());
-			this.frmTxfClaveCuentaContableSuperior.setText(data.clave());
-			this.txfNombreCuentaContableSuperior.setText(data.nombre());
-			this.txaDescripcionCuentaContableSuperior.setText(data.descripcion());
-			
-			
+		
+		if(!(claveBuscada.length() >= 4)) {
+			return;
 		}
+		
+		var data = this.mapCuentaContable(claveBuscada);
+		
+		if(data == null) return;
+		
+		this.ultimaCuentaContable = data;
+		
+		this.cmbGrupoCuentaContable.setSelectedItem(data.fkIdGrupoContable());
+		this.cmbRubroCuentaContable.setSelectedItem(data.fkIdRubro());
+		this.frmTxfClaveCuentaContableSuperior.setText(data.clave());
+		this.txfNombreCuentaContableSuperior.setText(data.nombre());
+		this.txaDescripcionCuentaContableSuperior.setText(data.descripcion());
 		
 	}
 	
