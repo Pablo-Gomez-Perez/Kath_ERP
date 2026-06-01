@@ -447,15 +447,17 @@ public class Fr_DatosCuentasContables extends JFrame {
 
 	private CuentaContableFormDetails mapCuentaContable(String clave) {
 
-		return AppContext.cuentaContableController.buscarCuentaPorClave(clave);		
+		return AppContext.cuentaContableController.buscarCuentaPorClave(clave);
 
 	}
 	
 	private void consultarCuentaSuperiorPorClave() {
 		
-		if(this.frmTxfClaveCuentaContable.getText().length() >= 4) {
+		String claveBuscada = this.prepararClaveContableParaBusqueda();
+		System.out.println(claveBuscada);
+		if(claveBuscada.length() >= 4) {
 			
-			var data = this.mapCuentaContable(this.frmTxfClaveCuentaContable.getText());
+			var data = this.mapCuentaContable(claveBuscada);
 						
 			this.cmbGrupoCuentaContable.setSelectedItem(data.fkIdGrupoContable());
 			this.cmbRubroCuentaContable.setSelectedItem(data.fkIdRubro());
@@ -465,6 +467,39 @@ public class Fr_DatosCuentasContables extends JFrame {
 			
 			
 		}
+		
+	}
+	
+	/**
+	 * Prepara el String que representa la clave de la cuenta contable a ser buscada. esto debido a que 
+	 * {@code JFormattedTextField} cuetna con {@code MaskFormatter} <pre>####-####-####-####</pre> retornando siempre
+	 * el String con los guiones.
+	 * 
+	 * @return el {@code String} acotado de la clave de la cuenta contable
+	 */
+	private String prepararClaveContableParaBusqueda() {
+		 // 0	
+		// ####-####-####-####
+		
+		StringBuilder sb = new StringBuilder();
+		String[] partes = this.frmTxfClaveCuentaContable.getText().split("-");
+		
+		for(int i = 0; i < partes.length; i++) {
+			
+			if(!partes[i].isBlank()) {
+				String sub = partes[i].strip();
+				sb.append(sub);
+				
+				if(i + 1 < partes.length && sub.length() >= 4) {
+					
+					if(!partes[i + 1].isBlank()) sb.append("-");
+					
+				}
+			}
+			
+		}
+		
+		return sb.toString();
 		
 	}
 
