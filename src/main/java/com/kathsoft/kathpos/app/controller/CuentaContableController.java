@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.kathsoft.kathpos.app.model.CuentaContable;
+import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableFormDetails;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
@@ -62,8 +63,8 @@ public class CuentaContableController {
 	 * @param clave -> Clave de la cuenta contable
 	 * @return {@code new CuentaContable()}
 	 */
-	public CuentaContable buscarCuentaPorClave(String clave) {
-		var data = new CuentaContable();
+	public CuentaContableFormDetails buscarCuentaPorClave(String clave) {
+				
 
 		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
 
@@ -71,17 +72,22 @@ public class CuentaContableController {
 			stm.setString(1, clave);
 			var rset = stm.executeQuery();
 
-			if (rset.next())
-				data.setIdCuenta(rset.getInt(1));
-			data.setIdCuentaPadre(rset.getInt(1));
-			data.setClave(rset.getString(3));
-			data.setNombre(rset.getString(4));
-			data.setDescripcion(rset.getString(5));
-			data.setNivel(rset.getShort(6));
-			data.setUltimoNivel(rset.getShort(7) == 1 ? true : false);
-			data.setNaturaleza(rset.getShort(8) == 1 ? true : false);
+			if (rset.next()) {
+				
+				return new CuentaContableFormDetails(
+						rset.getInt("id_cuenta"),
+						rset.getInt("id_cuenta_padre"),
+						rset.getInt("fk_id_rubro"),
+						rset.getInt("fk_id_grupo_contable"),
+						rset.getString("clave"),
+						rset.getString("nombre"),
+						rset.getString("descripcion"),
+						rset.getShort("nivel"),
+						rset.getBoolean("ultimo_nivel")
+						);						
+			}
 
-			return data;
+			return null;
 		} catch (SQLException er) {
 			er.printStackTrace();
 			return null;
@@ -108,16 +114,16 @@ public class CuentaContableController {
 
 			if (rset.next()) {
 				data.setIdCuenta(rset.getInt(1));
-				data.setNombreCuentaPadre(rset.getString(2));
-				data.setRubroCuenta(rset.getString(3));
+				//data.setNombreCuentaPadre(rset.getString(2));
+				//data.setRubroCuenta(rset.getString(3));
 				data.setNombre(rset.getString(4));
 				data.setDescripcion(rset.getString(5));
 				data.setNivel(rset.getShort(6));
 				data.setUltimoNivel(rset.getShort(7) == 1 ? true : false);
 				data.setCargo(rset.getDouble(8));
 				data.setAbono(rset.getDouble(9));
-				data.setSaldo(rset.getDouble(10));
-				data.setNaturaleza(rset.getShort(11) == 1 ? true : false);
+				//data.setSaldo(rset.getDouble(10));
+				//data.setNaturaleza(rset.getShort(11) == 1 ? true : false);
 			}
 
 			return data;
@@ -132,6 +138,7 @@ public class CuentaContableController {
 
 	/**
 	 * Obtener un listado completo de todos los rubros contables registrados
+	 * 
 	 * @param idGrupoContable
 	 * @return
 	 */
@@ -162,9 +169,10 @@ public class CuentaContableController {
 		}
 
 	}
-	
+
 	/**
 	 * Lista los grupos contables para cargar en un JCombobox
+	 * 
 	 * @return Lista de grupos contables
 	 */
 	public List<JComboboxDataViewModel> listCmbGrupoCuentasContables() {
@@ -173,7 +181,7 @@ public class CuentaContableController {
 
 		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
 
-			var stm = cn.prepareCall("CALL list_cmbGrupoContable()");		
+			var stm = cn.prepareCall("CALL list_cmbGrupoContable()");
 			var rset = stm.executeQuery();
 
 			while (rset.next()) {
