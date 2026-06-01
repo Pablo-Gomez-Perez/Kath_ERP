@@ -4,9 +4,11 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 import com.kathsoft.kathpos.app.model.CuentaContable;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class CuentaContableController {
@@ -30,19 +32,11 @@ public class CuentaContableController {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				data.add(new Object[] {
-						rset.getString("id_cuenta"),
-						rset.getString("clave"),
-						rset.getString("nombre"),
-						rset.getString("cuenta_padre"),
-						rset.getString("rubro"),
-						rset.getShort("nivel"),
-						rset.getBoolean("ultimo_nivel") == true ? "Si":"No",
-						rset.getDouble("Cargo"),
-						rset.getDouble("Abono"),
-						rset.getDouble("saldo"),
-						rset.getBoolean("activa") == true ? "Si" : "No"
-				});
+				data.add(new Object[] { rset.getString("id_cuenta"), rset.getString("clave"), rset.getString("nombre"),
+						rset.getString("cuenta_padre"), rset.getString("rubro"), rset.getShort("nivel"),
+						rset.getBoolean("ultimo_nivel") == true ? "Si" : "No", rset.getDouble("Cargo"),
+						rset.getDouble("Abono"), rset.getDouble("saldo"),
+						rset.getBoolean("activa") == true ? "Si" : "No" });
 			}
 
 			return data;
@@ -134,6 +128,70 @@ public class CuentaContableController {
 			er.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Obtener un listado completo de todos los rubros contables registrados
+	 * @param idGrupoContable
+	 * @return
+	 */
+	public List<JComboboxDataViewModel> listCmbRubroCuentasContables(int idGrupoContable) {
+
+		List<JComboboxDataViewModel> data = new Vector<JComboboxDataViewModel>();
+
+		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+
+			var stm = cn.prepareCall("CALL list_cmbRubroCuentasContables(?)");
+			stm.setInt("id_grupo_contable", idGrupoContable);
+			var rset = stm.executeQuery();
+
+			while (rset.next()) {
+				data.add(new JComboboxDataViewModel(rset.getInt("id_rubro"), rset.getString("nombre")));
+			}
+
+			return data;
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return data;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return data;
+		}
+
+	}
+	
+	/**
+	 * Lista los grupos contables para cargar en un JCombobox
+	 * @return Lista de grupos contables
+	 */
+	public List<JComboboxDataViewModel> listCmbGrupoCuentasContables() {
+
+		List<JComboboxDataViewModel> data = new Vector<JComboboxDataViewModel>();
+
+		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+
+			var stm = cn.prepareCall("CALL list_cmbGrupoContable()");		
+			var rset = stm.executeQuery();
+
+			while (rset.next()) {
+				data.add(new JComboboxDataViewModel(rset.getInt("id_grupo"), rset.getString("nombre_grupo")));
+			}
+
+			return data;
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return data;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return data;
+		}
+
 	}
 
 }
