@@ -190,7 +190,8 @@ public class Fr_DatosCuentasContables extends JFrame {
 										GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblNombre_1)
 								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(txfNombreCuentaContableSuperior, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)))
+								.addComponent(txfNombreCuentaContableSuperior, GroupLayout.DEFAULT_SIZE, 308,
+										Short.MAX_VALUE)))
 						.addContainerGap()));
 		gl_panelDatosCuentaSuperior.setVerticalGroup(gl_panelDatosCuentaSuperior.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelDatosCuentaSuperior.createSequentialGroup()
@@ -198,8 +199,9 @@ public class Fr_DatosCuentasContables extends JFrame {
 								.addComponent(lblClave_1)
 								.addComponent(frmTxfClaveCuentaContableSuperior, GroupLayout.PREFERRED_SIZE,
 										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblNombre_1).addComponent(txfNombreCuentaContableSuperior, GroupLayout.PREFERRED_SIZE,
-										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblNombre_1).addComponent(txfNombreCuentaContableSuperior,
+										GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(panelDescripcionCuentaContableSuperior, GroupLayout.PREFERRED_SIZE, 104,
 								GroupLayout.PREFERRED_SIZE)
@@ -227,11 +229,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 		frmTxfClaveCuentaContable.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				
-				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					consultarCuentaSuperiorPorClave();
 				}
-				
+
 			}
 		});
 
@@ -451,60 +453,81 @@ public class Fr_DatosCuentasContables extends JFrame {
 		return AppContext.cuentaContableController.buscarCuentaPorClave(clave);
 
 	}
-	
+
 	private void consultarCuentaSuperiorPorClave() {
-		
+
 		String claveBuscada = this.prepararClaveContableParaBusqueda();
-		
-		if(!(claveBuscada.length() >= 4)) {
+
+		if (!(claveBuscada.length() >= 4)) {
 			return;
 		}
-		
+
 		var data = this.mapCuentaContable(claveBuscada);
-		
-		if(data == null) return;
-		
+
+		if (data == null)
+			return;
+
 		this.ultimaCuentaContable = data;
-		
-		this.cmbGrupoCuentaContable.setSelectedItem(data.fkIdGrupoContable());
-		this.cmbRubroCuentaContable.setSelectedItem(data.fkIdRubro());
+
+		this.setSelectedItemById(this.cmbGrupoCuentaContable, data.fkIdGrupoContable());
+		this.setSelectedItemById(this.cmbRubroCuentaContable, data.fkIdRubro());
 		this.frmTxfClaveCuentaContableSuperior.setText(data.clave());
 		this.txfNombreCuentaContableSuperior.setText(data.nombre());
 		this.txaDescripcionCuentaContableSuperior.setText(data.descripcion());
-		
+
 	}
-	
+
 	/**
-	 * Prepara el String que representa la clave de la cuenta contable a ser buscada. esto debido a que 
-	 * {@code JFormattedTextField} cuetna con {@code MaskFormatter} <pre>####-####-####-####</pre> retornando siempre
-	 * el String con los guiones.
+	 * Prepara el String que representa la clave de la cuenta contable a ser
+	 * buscada. esto debido a que {@code JFormattedTextField} cuetna con
+	 * {@code MaskFormatter}
+	 * 
+	 * <pre>
+	 * ####-####-####-####
+	 * </pre>
+	 * 
+	 * retornando siempre el String con los guiones.
 	 * 
 	 * @return el {@code String} acotado de la clave de la cuenta contable
 	 */
 	private String prepararClaveContableParaBusqueda() {
-		 // 0	
+		// 0
 		// ####-####-####-####
-		
+
 		StringBuilder sb = new StringBuilder();
 		String[] partes = this.frmTxfClaveCuentaContable.getText().split("-");
-		
-		for(int i = 0; i < partes.length; i++) {
-			
-			if(!partes[i].isBlank()) {
+
+		for (int i = 0; i < partes.length; i++) {
+
+			if (!partes[i].isBlank()) {
 				String sub = partes[i].strip();
 				sb.append(sub);
-				
-				if(i + 1 < partes.length && sub.length() >= 4) {
-					
-					if(!partes[i + 1].isBlank()) sb.append("-");
-					
+
+				if (i + 1 < partes.length && sub.length() >= 4) {
+
+					if (!partes[i + 1].isBlank())
+						sb.append("-");
+
 				}
 			}
-			
+
 		}
-		
+
 		return sb.toString();
-		
+
+	}
+
+	private void setSelectedItemById(JComboBox<JComboboxDataViewModel> comboBox, int idBuscado) {
+
+		for (int i = 0; i < comboBox.getItemCount(); i++) {
+
+			JComboboxDataViewModel item = comboBox.getItemAt(i);
+
+			if (item.id() == idBuscado) {
+				comboBox.setSelectedIndex(i);
+				return;
+			}
+		}
 	}
 
 }
