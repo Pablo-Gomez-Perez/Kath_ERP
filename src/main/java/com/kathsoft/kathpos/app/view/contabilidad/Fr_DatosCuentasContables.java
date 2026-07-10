@@ -10,6 +10,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableFormDetails;
@@ -30,6 +34,7 @@ import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import javax.swing.InputVerifier;
 import javax.swing.border.TitledBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -38,6 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
@@ -225,15 +232,12 @@ public class Fr_DatosCuentasContables extends JFrame {
 		txfNombreCuentaContable = new JTextField();
 		txfNombreCuentaContable.setColumns(10);
 
-		frmTxfClaveCuentaContable = new JFormattedTextField(this.formatoClave());
-		frmTxfClaveCuentaContable.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					consultarCuentaSuperiorPorClave();
-				}
-
+		frmTxfClaveCuentaContable = this.crearCampoClave();
+		this.frmTxfClaveCuentaContable.setColumns(19);
+		this.configurarFormatoClave(this.frmTxfClaveCuentaContable);
+		this.frmTxfClaveCuentaContable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				consultarCuentaSuperiorPorClave();
 			}
 		});
 
@@ -260,7 +264,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 
 		lblRubro = new JLabel("Rubro");
 
-		cmbRubroCuentaContable = new JComboBox();
+		cmbRubroCuentaContable = new JComboBox<>();
 
 		gl_panelDatosDeCuenta = new GroupLayout(panelDatosDeCuenta);
 		gl_panelDatosDeCuenta.setHorizontalGroup(gl_panelDatosDeCuenta.createParallelGroup(Alignment.LEADING)
@@ -393,24 +397,92 @@ public class Fr_DatosCuentasContables extends JFrame {
 
 		this.setBounds(100, 100, 600, 530);
 	}
-
+	
 	/**
-	 * Asigna un formato específico para las claves de las cuentas contables
-	 * 
-	 * @return
+	 * Crea el campo para capturar claves contables.
+	 *
+	 * @return campo configurado para claves contables
 	 */
-	private MaskFormatter formatoClave() {
+	private JFormattedTextField crearCampoClave() {
 
-		var formato = new MaskFormatter();
+		JFormattedTextField campo = new JFormattedTextField();		
 
-		try {
-			formato.setMask("####-####-####-####");
-			return formato;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		campo.setColumns(19);
+		campo.setFocusLostBehavior(JFormattedTextField.PERSIST);
 
+		campo.setInputVerifier(new InputVerifier() {
+
+			@Override
+			public boolean verify(JComponent input) {
+
+				String clave = ((JFormattedTextField) input).getText().trim();
+
+				return clave.isEmpty()
+						|| clave.matches("\\d{4}(-\\d{4}){0,3}");
+			}
+		});
+
+		return campo;
+	}
+	
+	/**
+	 * Configura el formato automático de una clave contable.
+	 *
+	 * @param campo campo donde se captura la clave
+	 */
+	private void configurarFormatoClave(JFormattedTextField campo) {
+
+		((AbstractDocument) campo.getDocument()).setDocumentFilter(new DocumentFilter() {
+
+			@Override
+			public void insertString(
+					FilterBypass fb,
+					int offset,
+					String text,
+					AttributeSet attr) throws BadLocationException {
+
+				replace(fb, offset, 0, text, attr);
+			}
+
+			@Override
+			public void replace(
+					FilterBypass fb,
+					int offset,
+					int length,
+					String text,
+					AttributeSet attrs) throws BadLocationException {
+
+				String actual = fb.getDocument()
+						.getText(0, fb.getDocument().getLength());
+
+				StringBuilder nuevo = new StringBuilder(actual);
+				nuevo.replace(offset, offset + length, text == null ? "" : text);
+
+				String soloDigitos = nuevo.toString().replaceAll("\\D", "");
+
+				if (soloDigitos.length() > 16) {
+					soloDigitos = soloDigitos.substring(0, 16);
+				}
+
+				StringBuilder formateado = new StringBuilder();
+
+				for (int i = 0; i < soloDigitos.length(); i++) {
+
+					if (i > 0 && i % 4 == 0) {
+						formateado.append("-");
+					}
+
+					formateado.append(soloDigitos.charAt(i));
+				}
+
+				fb.replace(
+						0,
+						fb.getDocument().getLength(),
+						formateado.toString(),
+						attrs
+				);
+			}
+		});
 	}
 
 	private void llenarCmbGrupoContable() {
@@ -453,10 +525,13 @@ public class Fr_DatosCuentasContables extends JFrame {
 		return AppContext.cuentaContableController.buscarCuentaPorClave(clave);
 
 	}
-
+	
+	/**
+	 * Consulta y carga la cuenta superior usando la clave capturada.
+	 */
 	private void consultarCuentaSuperiorPorClave() {
 
-		String claveBuscada = this.prepararClaveContableParaBusqueda();
+		String claveBuscada = this.frmTxfClaveCuentaContable.getText().trim();
 
 		if (!(claveBuscada.length() >= 4)) {
 			return;
@@ -478,45 +553,11 @@ public class Fr_DatosCuentasContables extends JFrame {
 	}
 
 	/**
-	 * Prepara el String que representa la clave de la cuenta contable a ser
-	 * buscada. esto debido a que {@code JFormattedTextField} cuetna con
-	 * {@code MaskFormatter}
-	 * 
-	 * <pre>
-	 * ####-####-####-####
-	 * </pre>
-	 * 
-	 * retornando siempre el String con los guiones.
-	 * 
-	 * @return el {@code String} acotado de la clave de la cuenta contable
+	 * Selecciona un elemento del JComboBox por su identificador.
+	 *
+	 * @param comboBox combo donde se realizará la selección
+	 * @param idBuscado identificador del elemento
 	 */
-	private String prepararClaveContableParaBusqueda() {
-		// 0
-		// ####-####-####-####
-
-		StringBuilder sb = new StringBuilder();
-		String[] partes = this.frmTxfClaveCuentaContable.getText().split("-");
-
-		for (int i = 0; i < partes.length; i++) {
-
-			if (!partes[i].isBlank()) {
-				String sub = partes[i].strip();
-				sb.append(sub);
-
-				if (i + 1 < partes.length && sub.length() >= 4) {
-
-					if (!partes[i + 1].isBlank())
-						sb.append("-");
-
-				}
-			}
-
-		}
-
-		return sb.toString();
-
-	}
-
 	private void setSelectedItemById(JComboBox<JComboboxDataViewModel> comboBox, int idBuscado) {
 
 		for (int i = 0; i < comboBox.getItemCount(); i++) {
