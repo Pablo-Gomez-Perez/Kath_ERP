@@ -108,12 +108,52 @@ public class PanelCuentasContables extends JPanel {
 		this.btn_Agregar.setBackground(new Color(144, 238, 144));
 
 		btn_Modificar = new JButton("Modificar");
+		btn_Modificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int fila = tableCuentasContables.getSelectedRow();
+				if (fila < 0) {
+					return;
+				}
+
+				int idCuenta = Integer.parseInt(tablaCuentasContablesModel.getValueAt(fila, 0).toString());
+				String clave = tablaCuentasContablesModel.getValueAt(fila, 1).toString();
+				abrirFormDatosCuentas(2, idCuenta, clave);
+			}
+		});
 		btn_Modificar.setIcon(new ImageIcon(
 				PanelCuentasContables.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelCentralSuperiorBotones.add(btn_Modificar);
 		this.btn_Modificar.setBackground(new Color(144, 238, 144));
 
 		btn_Eliminar = new JButton("Eliminar");
+		btn_Eliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int fila = tableCuentasContables.getSelectedRow();
+				if (fila < 0) {
+					return;
+				}
+
+				int idCuenta = Integer.parseInt(tablaCuentasContablesModel.getValueAt(fila, 0).toString());
+				String clave = tablaCuentasContablesModel.getValueAt(fila, 1).toString();
+				int option = javax.swing.JOptionPane.showConfirmDialog(PanelCuentasContables.this,
+						"¿Eliminar cuenta " + clave + "?", "Eliminar", javax.swing.JOptionPane.YES_NO_OPTION,
+						javax.swing.JOptionPane.WARNING_MESSAGE);
+
+				if (option != javax.swing.JOptionPane.YES_OPTION) {
+					return;
+				}
+
+				String resultado = AppContext.cuentaContableController.eliminarCuentaContable(idCuenta);
+				if (resultado != null && !resultado.isBlank()
+						&& !"Registro eliminado".equalsIgnoreCase(resultado)) {
+					javax.swing.JOptionPane.showMessageDialog(PanelCuentasContables.this, resultado, "Error",
+							javax.swing.JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				llenarTablaCuentas();
+			}
+		});
 		btn_Eliminar.setIcon(new ImageIcon(
 				PanelCuentasContables.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelCentralSuperiorBotones.add(btn_Eliminar);
@@ -186,6 +226,19 @@ public class PanelCuentasContables extends JPanel {
 	 */
 	private void abrirFormDatosCuentas(int opcion, int idCuenta) {
 
+		abrirFormDatosCuentas(opcion, idCuenta, null);
+	}
+
+	/**
+	 * 
+	 * @param opcion   -> indica el tipo de operación a relaizar {@code Update()}
+	 *                 {@code Insert()}
+	 * @param idCuenta -> El id de la cuenta seleccionada a modificar, en su defecto
+	 *                 es 0.
+	 * @param clave    -> Clave actual de la cuenta.
+	 */
+	private void abrirFormDatosCuentas(int opcion, int idCuenta, String clave) {
+
 		Component component = this;
 
 		EventQueue.invokeLater(new Runnable() {
@@ -195,7 +248,12 @@ public class PanelCuentasContables extends JPanel {
 
 				try {
 
-					Fr_DatosCuentasContables fr = new Fr_DatosCuentasContables(opcion, idCuenta);
+					Fr_DatosCuentasContables fr = new Fr_DatosCuentasContables(opcion, idCuenta, clave, new Runnable() {
+						@Override
+						public void run() {
+							llenarTablaCuentas();
+						}
+					});
 					fr.setLocationRelativeTo(component);
 					fr.setVisible(true);
 

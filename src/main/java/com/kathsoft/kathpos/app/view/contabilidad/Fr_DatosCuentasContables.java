@@ -63,6 +63,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JButton btnCancelar;
 	private Component horizontalStrut_2;
 	private JButton btnGuardar;
+	private JButton btnEliminar;
 	private ButtonGroup btngTipoDeCuentaOperativo;
 	private JPanel panelDatosDeCuenta;
 	private JPanel panelDatosCuentaSuperior;
@@ -97,6 +98,9 @@ public class Fr_DatosCuentasContables extends JFrame {
 	private JLabel lblRubro;
 	private GroupLayout gl_panelDatosDeCuenta;
 	private CuentaContableFormDetails ultimaCuentaContable;
+	private final int opcionOperacion;
+	private final int idCuentaEnEdicion;
+	private final Runnable onCambios;
 
 	/**
 	 * Launch the application.
@@ -105,7 +109,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Fr_DatosCuentasContables frame = new Fr_DatosCuentasContables(1, 0);
+					Fr_DatosCuentasContables frame = new Fr_DatosCuentasContables(1, 0, null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -120,10 +124,22 @@ public class Fr_DatosCuentasContables extends JFrame {
 	 * @param idCuenta
 	 */
 	public Fr_DatosCuentasContables(int opcion, int idCuenta) {
+		this(opcion, idCuenta, null, null);
+	}
+
+	public Fr_DatosCuentasContables(int opcion, int idCuenta, String claveCuenta) {
+		this(opcion, idCuenta, claveCuenta, null);
+	}
+
+	public Fr_DatosCuentasContables(int opcion, int idCuenta, String claveCuenta, Runnable onCambios) {
 		/*
 		 * TODO Agregar JCombobox para filtrado de Rubro contable en base a grupo
 		 * contable
 		 */
+
+		this.opcionOperacion = opcion;
+		this.idCuentaEnEdicion = idCuenta;
+		this.onCambios = onCambios;
 
 		setTitle("Cuenta contable");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -380,8 +396,25 @@ public class Fr_DatosCuentasContables extends JFrame {
 		btnGuardar.setIcon(new ImageIcon(
 				Fr_DatosCuentasContables.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		this.btnGuardar.setBackground(new Color(144, 238, 144));
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				guardarCuentaContable();
+			}
+		});
 
 		panelInferiorbotones.add(btnGuardar);
+
+		if (opcion == 2) {
+			btnEliminar = new JButton("Eliminar");
+			btnEliminar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					eliminarCuentaContable();
+				}
+			});
+			btnEliminar.setBackground(new Color(255, 51, 0));
+			btnEliminar.setIcon(new ImageIcon(Fr_DatosCuentasContables.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+			panelInferiorbotones.add(btnEliminar);
+		}
 
 		this.llenarCmbGrupoContable();
 
@@ -390,8 +423,14 @@ public class Fr_DatosCuentasContables extends JFrame {
 			this.cmbGrupoCuentaContable.setSelectedIndex(0);
 			this.llenarCmbRubroCuentaContable(
 					((JComboboxDataViewModel) this.cmbGrupoCuentaContable.getSelectedItem()).id());
+			this.txfNivelCuentaContable.setEditable(false);
+			this.txfNivelCuentaContable.setText("0");
+			this.jrdbtnCuentaAgrupadora.setSelected(true);
+			this.btnGuardar.setText("Guardar");
 		} else {
 			this.lblNewLabel.setText("Modificar cuenta");
+			this.btnGuardar.setText("Actualizar");
+			this.cargarCuentaParaEdicion(claveCuenta);
 
 		}
 
@@ -507,6 +546,133 @@ public class Fr_DatosCuentasContables extends JFrame {
 
 	}
 
+	/**
+	 * Carga datos de cuenta para edición.
+	 *
+	 * @param claveCuenta clave actual del registro
+	 */
+	private void cargarCuentaParaEdicion(String claveCuenta) {
+
+		CuentaContableFormDetails data = null;
+
+		if (claveCuenta != null && !claveCuenta.isBlank()) {
+			data = this.mapCuentaContable(claveCuenta);
+		}
+
+		if (data == null && this.idCuentaEnEdicion > 0) {
+			var cuenta = AppContext.cuentaContableController.buscarCuentaPorId(this.idCuentaEnEdicion);
+			if (cuenta != null) {
+				this.txfNombreCuentaContable.setText(cuenta.getNombre());
+				this.txaDescripcionCuentaContable.setText(cuenta.getDescripcion());
+			}
+			return;
+		}
+
+		if (data == null) {
+			return;
+		}
+
+		this.ultimaCuentaContable = data;
+		this.setSelectedItemById(this.cmbGrupoCuentaContable, data.fkIdGrupoContable());
+		this.setSelectedItemById(this.cmbRubroCuentaContable, data.fkIdRubro());
+		this.frmTxfClaveCuentaContableSuperior.setText(data.clave());
+		this.txfNombreCuentaContableSuperior.setText(data.nombre());
+		this.txaDescripcionCuentaContableSuperior.setText(data.descripcion());
+		this.txfNivelCuentaContable.setText(String.valueOf(data.nivel() + 1));
+		this.frmTxfClaveCuentaContable.setText(data.clave());
+		this.txfNombreCuentaContable.setText(data.nombre());
+		this.txaDescripcionCuentaContable.setText(data.descripcion());
+	}
+
+
+	/**
+	 * Guarda o actualiza cuenta contable.
+	 */
+	private void guardarCuentaContable() {
+
+		String clave = this.frmTxfClaveCuentaContable.getText().trim();
+		String nombre = this.txfNombreCuentaContable.getText().trim();
+		String descripcion = this.txaDescripcionCuentaContable.getText().trim();
+		JComboboxDataViewModel rubro = (JComboboxDataViewModel) this.cmbRubroCuentaContable.getSelectedItem();
+
+		if (clave.isEmpty() || nombre.isEmpty() || rubro == null) {
+			JOptionPane.showMessageDialog(this, "No deje campos vacíos", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		boolean esDetalle = this.jrdbtnCuentaDeDetalle.isSelected();
+		String resultado;
+
+		if (this.opcionOperacion == 1) {
+			if (this.ultimaCuentaContable == null) {
+				JOptionPane.showMessageDialog(this, "Debe capturar una cuenta superior válida", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			resultado = AppContext.cuentaContableController.insertarCuentaContable(
+					this.ultimaCuentaContable.idCuenta(),
+					rubro.id(),
+					clave,
+					nombre,
+					descripcion,
+					esDetalle);
+		} else {
+			resultado = AppContext.cuentaContableController.actualizarCuentaContable(
+					this.idCuentaEnEdicion,
+					clave,
+					nombre,
+					descripcion,
+					esDetalle,
+					true);
+		}
+
+		if (resultado != null && !resultado.isBlank()
+				&& !"Cuenta contable registrada correctamente".equalsIgnoreCase(resultado)
+				&& !"Cuenta contable actualizada correctamente".equalsIgnoreCase(resultado)) {
+			JOptionPane.showMessageDialog(this, resultado, "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		JOptionPane.showMessageDialog(this, this.opcionOperacion == 1 ? "Registro almacenado con éxito" : "Registro actualizado con éxito",
+				this.opcionOperacion == 1 ? "Registrar cuenta" : "Actualizar cuenta", JOptionPane.INFORMATION_MESSAGE);
+		if (this.onCambios != null) {
+			this.onCambios.run();
+		}
+		this.dispose();
+	}
+
+	/**
+	 * Elimina cuenta contable actual.
+	 */
+	private void eliminarCuentaContable() {
+
+		if (this.opcionOperacion != 2 || this.idCuentaEnEdicion <= 0) {
+			return;
+		}
+
+		int option = JOptionPane.showConfirmDialog(this, "¿Eliminar cuenta contable?", "Eliminar",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		if (option != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		String resultado = AppContext.cuentaContableController.eliminarCuentaContable(this.idCuentaEnEdicion);
+
+		if (resultado != null && !resultado.isBlank()
+				&& !"Registro eliminado".equalsIgnoreCase(resultado)) {
+			JOptionPane.showMessageDialog(this, resultado, "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		JOptionPane.showMessageDialog(this, "Registro eliminado con éxito", "Eliminar cuenta", JOptionPane.INFORMATION_MESSAGE);
+		if (this.onCambios != null) {
+			this.onCambios.run();
+		}
+		this.dispose();
+	}
+
 	private void cerrarForm() {
 
 		int option = JOptionPane.showConfirmDialog(this, "¿Estas seguro de terminar el registro?", "Cerrar?",
@@ -549,6 +715,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		this.frmTxfClaveCuentaContableSuperior.setText(data.clave());
 		this.txfNombreCuentaContableSuperior.setText(data.nombre());
 		this.txaDescripcionCuentaContableSuperior.setText(data.descripcion());
+		this.txfNivelCuentaContable.setText(String.valueOf(data.nivel() + 1));
 
 	}
 

@@ -98,6 +98,121 @@ public class CuentaContableController {
 
 	}
 
+
+	/**
+	 * Inserta una nueva cuenta contable.
+	 *
+	 * @param idCuentaPadre identificador de la cuenta padre
+	 * @param idRubro identificador del rubro contable
+	 * @param clave clave contable
+	 * @param nombre nombre de la cuenta
+	 * @param descripcion descripción de la cuenta
+	 * @param ultimoNivel indica si la cuenta es de detalle
+	 * @return mensaje de resultado o error del proceso
+	 */
+	public String insertarCuentaContable(int idCuentaPadre, int idRubro, String clave, String nombre,
+			String descripcion, boolean ultimoNivel) {
+
+		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+
+			var stm = cn.prepareCall("CALL insert_cuenta_contable(?,?,?,?,?,?)");
+			stm.setInt(1, idCuentaPadre);
+			stm.setInt(2, idRubro);
+			stm.setString(3, clave);
+			stm.setString(4, nombre);
+			stm.setString(5, descripcion);
+			stm.setInt(6, ultimoNivel ? 1 : 0);
+
+			if (stm.execute()) {
+				try (var rset = stm.getResultSet()) {
+					if (rset != null && rset.next()) {
+						String mensaje = rset.getString("message");
+						return mensaje == null || mensaje.isBlank() ? "Registro guardado" : mensaje;
+					}
+				}
+			}
+
+			return "Registro guardado";
+		} catch (SQLException er) {
+			return er.getMessage();
+		} catch (Exception er) {
+			return er.getMessage();
+		}
+	}
+
+
+	/**
+	 * Elimina una cuenta contable.
+	 *
+	 * @param idCuenta id de la cuenta
+	 * @return mensaje de resultado o error
+	 */
+	public String eliminarCuentaContable(int idCuenta) {
+
+		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+
+			var stm = cn.prepareCall("CALL delete_cuenta_contable(?)");
+			stm.setInt(1, idCuenta);
+
+			if (stm.execute()) {
+				try (var rset = stm.getResultSet()) {
+					if (rset != null && rset.next()) {
+						String mensaje = rset.getString("message");
+						return mensaje == null || mensaje.isBlank() ? "Registro eliminado" : mensaje;
+					}
+				}
+			}
+
+			return "Registro eliminado";
+		} catch (SQLException er) {
+			return er.getMessage();
+		} catch (Exception er) {
+			return er.getMessage();
+		}
+	}
+
+	/**
+	 * Actualiza una cuenta contable existente.
+	 *
+	 * @param idCuenta id de la cuenta a editar
+	 * @param idCuentaPadre id de la cuenta padre
+	 * @param idRubro id del rubro contable
+	 * @param clave clave contable
+	 * @param nombre nombre de la cuenta
+	 * @param descripcion descripción de la cuenta
+	 * @param ultimoNivel indica si la cuenta es de detalle
+	 * @return mensaje de resultado o error del proceso
+	 */
+	public String actualizarCuentaContable(int idCuenta, String clave, String nombre, String descripcion,
+			boolean ultimoNivel, boolean activa) {
+
+		try (var cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+
+			var stm = cn.prepareCall("CALL update_cuenta_contable(?,?,?,?,?,?)");
+			stm.setInt(1, idCuenta);
+			stm.setString(2, clave);
+			stm.setString(3, nombre);
+			stm.setString(4, descripcion);
+			stm.setInt(5, ultimoNivel ? 1 : 0);
+			stm.setInt(6, activa ? 1 : 0);
+
+			if (stm.execute()) {
+				try (var rset = stm.getResultSet()) {
+					if (rset != null && rset.next()) {
+						String mensaje = rset.getString("message");
+						return mensaje == null || mensaje.isBlank() ? "Registro actualizado con exito" : mensaje;
+					}
+				}
+			}
+
+			return "Registro actualizado con exito";
+		} catch (SQLException er) {
+			return er.getMessage();
+		} catch (Exception er) {
+			return er.getMessage();
+		}
+	}
+
 	/**
 	 * 
 	 * @param idCuenta -> Indice de la cuenta contable
