@@ -131,11 +131,7 @@ public class Fr_DatosCuentasContables extends JFrame {
 		this(opcion, idCuenta, claveCuenta, null);
 	}
 
-	public Fr_DatosCuentasContables(int opcion, int idCuenta, String claveCuenta, Runnable onCambios) {
-		/*
-		 * TODO Agregar JCombobox para filtrado de Rubro contable en base a grupo
-		 * contable
-		 */
+	public Fr_DatosCuentasContables(int opcion, int idCuenta, String claveCuenta, Runnable onCambios) {		
 
 		this.opcionOperacion = opcion;
 		this.idCuentaEnEdicion = idCuenta;
