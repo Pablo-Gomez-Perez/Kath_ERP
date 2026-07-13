@@ -711,7 +711,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		this.cmbAliasEmpleado.removeAllItems();
 		this.cmbAliasEmpleado.updateUI();
 
-		this.empleadoController.consultaNombresCortosEmpleados(cmbAliasEmpleado, this.idSucursal);
+		this.empleadoController.consultaNombresCortosEmpleados(this.idSucursal).forEach(cmbAliasEmpleado::addItem);
 	}
 
 	private void llenarCmbRfcCliente() {

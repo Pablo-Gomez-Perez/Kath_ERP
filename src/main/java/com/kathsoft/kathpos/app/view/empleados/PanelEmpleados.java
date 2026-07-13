@@ -1,16 +1,16 @@
 package com.kathsoft.kathpos.app.view.empleados;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.view.Fr_principal;
@@ -26,6 +25,7 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -54,12 +54,10 @@ public class PanelEmpleados extends JPanel {
 	 */
 	public PanelEmpleados() {
 		setBackground(new Color(255, 204, 0));
-
-		// CODEX.TODO: El las columnas de la tabla en base a la respuesta retornada
-		// desde el controlador.
+		
 		modelTablaEmpleados = new DefaultTableModel();
 		modelTablaEmpleados.addColumn("id");
-		modelTablaEmpleados.addColumn("Sucursal");
+		modelTablaEmpleados.addColumn("clave");
 		modelTablaEmpleados.addColumn("RFC");
 		modelTablaEmpleados.addColumn("CURP");
 		modelTablaEmpleados.addColumn("Nombre");
@@ -97,21 +95,51 @@ public class PanelEmpleados extends JPanel {
 								GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 
 		tableEmpleados = new JTable();
+		tableEmpleados.setModel(modelTablaEmpleados);
 		scrollPane.setViewportView(tableEmpleados);
+		
+		tableEmpleados.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2 && tableEmpleados.getSelectedRow() >= 0) {
+					abrirFormularioEmpleado(1, DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados, 0));
+				}
+			}
+		});
 
 		btnAgregar = new JButton("Agregar");
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormularioEmpleado(0, -1);
+			}
+		});
 		btnAgregar.setIcon(
 				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
 
 		btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int idEmpleado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados, 0);
+				if (idEmpleado < 0) {
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, PanelEmpleados.this, "Selecciona un empleado");
+					return;
+				}
+				abrirFormularioEmpleado(1, idEmpleado);
+			}
+		});
 		btnModificar.setIcon(
 				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnModificar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnModificar);
 
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarEmpleadoSeleccionado();
+			}
+		});
 		btnEliminar.setIcon(
 				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnEliminar.setBackground(new Color(255, 51, 0));
@@ -129,6 +157,11 @@ public class PanelEmpleados extends JPanel {
 		txfNombreEmpleado.setColumns(10);
 
 		btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				llenarTablaEmpleados(txfNombreEmpleado.getText().trim());
+			}
+		});
 		this.btnBuscar.setBackground(new Color(184, 134, 11));
 		btnBuscar.setIcon(
 				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
@@ -154,6 +187,9 @@ public class PanelEmpleados extends JPanel {
 		lblEmpleados.setForeground(new Color(255, 255, 255));
 		lblEmpleados.setFont(new Font("Dialog", Font.BOLD, 20));
 		panelSuperiorTitulo.add(lblEmpleados);
+		
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tableEmpleadosColumnsWidth, tableEmpleados);
+		
 		setLayout(groupLayout);
 	}
 
@@ -165,14 +201,43 @@ public class PanelEmpleados extends JPanel {
 		this.tableEmpleados.updateUI();
 	}
 
-	// CODEX.TODO: llenar la tabla previallamada al método en el controlador, el
-	// controlador no debe tocar nada relacionado ala vista.
 	/**
 	 * llena el jTable del panel de empleados con todos los registros encontrados en
 	 * la bd
 	 */
-	public void llenarTablaEmpleados() {
+	public void llenarTablaEmpleados(String nombreEmpleado) {
 		this.borrarElementosDeLaTablaEmpleados();
-		AppContext.empleadoController.verEmpleadosEnTabla(modelTablaEmpleados);
+		AppContext.empleadoController.verEmpleadosEnTabla(nombreEmpleado).forEach(modelTablaEmpleados::addRow);
+	}
+
+	private void abrirFormularioEmpleado(int opcion, int idEmpleado) {
+		Component cm = this;
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion, idEmpleado);
+					fr.setLocationRelativeTo(cm);
+					fr.setVisible(true);
+				} catch (Exception er) {
+					er.printStackTrace();
+				}
+			}
+		});
+	}
+
+	private void eliminarEmpleadoSeleccionado() {
+		int idEmpleado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados, 0);
+		if (idEmpleado < 0) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Selecciona un empleado");
+			return;
+		}
+		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
+		if (input > 0) {
+			return;
+		}
+		var respuesta = AppContext.empleadoController.eliminarEmpleado(idEmpleado);
+		MessageHandler.displayMessage(respuesta.id() == 500 ? MessageHandler.ERROR_MESSAGE : MessageHandler.DELETE_SUCCESS_MESSAGE,
+				this, respuesta.message());
 	}
 }

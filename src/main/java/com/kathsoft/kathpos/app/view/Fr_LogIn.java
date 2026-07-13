@@ -250,8 +250,8 @@ public class Fr_LogIn extends JFrame {
 
 	private void llenarCmbEmpleados() {
 		borrarElementosJcmb(this.jcmbUsuarios);
-		AppContext.empleadoController.consultaNombresCortosEmpleados(this.jcmbUsuarios,
-				((JComboboxDataViewModel) this.cmbSucursal.getSelectedItem()).id());
+		AppContext.empleadoController.consultaNombresCortosEmpleados(((JComboboxDataViewModel) this.cmbSucursal.getSelectedItem()).id())
+				.forEach(jcmbUsuarios::addItem);
 	}
 
 	private void consultarSucursal() {

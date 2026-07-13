@@ -5,8 +5,6 @@ package com.kathsoft.kathpos.app.model;
 
 import java.sql.Date;
 
-// CODEX.TODO: AJUSTAR ESTA CLASE ESTRICTAMENTE PARA SATIRSFACER COMO MODELO DE ACUERDO A LA TABLA empleados que se encuentra en la bd. Guiarse del fichero mybase.sql
-// CODEX.TODO: crear los el DTO para mapear la respuesta de getEmpleadoById(IN INT id_empleado). el sp se encuentra en mybase.sql
 
 /**
  * @author PABLO

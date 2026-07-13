@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
 
@@ -408,7 +409,6 @@ public class Fr_DatosEmpleado extends JFrame {
 		this.dispose();
 	}
 	
-	//CODEX.TODO: Mapear la respuesta del controlador y guardar el objeto en una variable global temporal, para usarse al momento del insert o update.
 	/**
 	 * busca los datos del empleado en la bd de acuerdo al id que se le pase como
 	 * parametro y asigna los valores correspondientes a sus respectivos campos en
@@ -439,8 +439,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfClaveCuentaContable.setText(String.valueOf(empleado.getIdCuentaContable()));
 		passwordFieldContraseniaEmpleado.setText(empleado.getPassword());
 		passwordFieldVerificarContraseniaEmpleado.setText(empleado.getPassword());
-		
-		//CODEX.TODO: Este tipo de funcionalidades donde tenemos que buscar o settear un valor de un combobox, lo mejor sería tener el método en el package tools, de esa forma invocarlo donde se necesitme mas adelante.
+
 		for (int i = 0; i < cmbSucursalEmpleado.getItemCount(); i++) {
 			JComboboxDataViewModel item = cmbSucursalEmpleado.getItemAt(i);
 			if (item != null && item.id() == empleado.getIdSucursal()) {
@@ -478,9 +477,12 @@ public class Fr_DatosEmpleado extends JFrame {
 			return;
 		}
 
-		AppContext.empleadoController.insertarNuevoEmpleado(empleado);
-		JOptionPane.showMessageDialog(this, "Empleado registrado correctamente");
-		this.dispose();
+		SpResponseModel respuesta = AppContext.empleadoController.insertarNuevoEmpleado(empleado);
+		JOptionPane.showMessageDialog(this, respuesta.message(), respuesta.id() == 500 ? "Error" : "Aviso",
+				respuesta.id() == 500 ? JOptionPane.ERROR_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
+		if (respuesta.id() != 500) {
+			this.dispose();
+		}
 	}
 
 	/**
@@ -512,9 +514,12 @@ public class Fr_DatosEmpleado extends JFrame {
 			return;
 		}
 
-		AppContext.empleadoController.actualizarEmpleado(empleado);
-		JOptionPane.showMessageDialog(this, "Empleado actualizado correctamente");
-		this.dispose();
+		SpResponseModel respuesta = AppContext.empleadoController.actualizarEmpleado(empleado);
+		JOptionPane.showMessageDialog(this, respuesta.message(), respuesta.id() == 500 ? "Error" : "Aviso",
+				respuesta.id() == 500 ? JOptionPane.ERROR_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
+		if (respuesta.id() != 500) {
+			this.dispose();
+		}
 	}
 
 	private boolean validarCamposVacios() {
@@ -533,9 +538,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		this.cmbSucursalEmpleado.removeAllItems();
 		this.cmbSucursalEmpleado.updateUI();
 
-		AppContext.sucursalController.consultarNombreSucursales().forEach(e -> {
-			cmbSucursalEmpleado.addItem(e);
-		});
+		AppContext.sucursalController.consultarNombreSucursales().forEach(cmbSucursalEmpleado::addItem);
 
 	}
 }

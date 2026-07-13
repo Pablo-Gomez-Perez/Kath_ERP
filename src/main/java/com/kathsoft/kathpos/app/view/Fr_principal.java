@@ -226,7 +226,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelEmpleados");
 				panelPrincipalContenedor.updateUI();
 
-				panelEmpleados.llenarTablaEmpleados();
+				panelEmpleados.llenarTablaEmpleados("");
 			}
 		});
 		opcionEmpleados.setIcon(
