@@ -37,6 +37,17 @@ public class PanelEmpleados extends JPanel {
 	private JPanel panelSuperiorTitulo;
 	private JLabel lblEmpleados;
 	private JTextField txfNombreEmpleado;
+	private JPanel panelinferiorbusquedas;
+	private JPanel panelSuperiorBotones;
+	private FlowLayout flowLayout;
+	private JScrollPane scrollPane;
+	private JButton btnAgregar;
+	private JButton btnModificar;
+	private JButton btnEliminar;
+	private JButton btnExcel;
+	private JButton btnBuscar;
+	private JTable tableEmpleados;
+	private JLabel lblNombre;
 
 	/**
 	 * Create the panel.
@@ -58,15 +69,15 @@ public class PanelEmpleados extends JPanel {
 		panelSuperiorTitulo = new JPanel();
 		panelSuperiorTitulo.setBackground(new Color(0, 0, 102));
 		
-		JPanel panelinferiorbusquedas = new JPanel();
+		panelinferiorbusquedas = new JPanel();
 		panelinferiorbusquedas.setBackground(new Color(0, 153, 255));
 		
-		JPanel panelSuperiorBotones = new JPanel();
+		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
-		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
+		flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -90,24 +101,35 @@ public class PanelEmpleados extends JPanel {
 					.addComponent(panelinferiorbusquedas, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 		);
 		
-		JButton btnAgregar = new JButton("Agregar");
+		tableEmpleados = new JTable();
+		scrollPane.setViewportView(tableEmpleados);
+		
+		btnAgregar = new JButton("Agregar");
+		btnAgregar.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
 		
-		JButton btnModificar = new JButton("Modificar");
+		btnModificar = new JButton("Modificar");
+		btnModificar.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnModificar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnModificar);
 		
-		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar = new JButton("Eliminar");
+		btnEliminar.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		btnEliminar.setBackground(new Color(255,51,0));
 		panelSuperiorBotones.add(btnEliminar);
 		
-		JButton btnExcel = new JButton("Excel");
+		btnExcel = new JButton("Exportar Excel");
+		btnExcel.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		btnExcel.setBackground(new Color(102,205,170));
 		panelSuperiorBotones.add(btnExcel);
 		
-		JLabel lblNombre = new JLabel("Nombre");
+		lblNombre = new JLabel("Nombre");
 		
 		txfNombreEmpleado = new JTextField();
 		txfNombreEmpleado.setColumns(10);
 		
-		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar = new JButton("Buscar");
 		GroupLayout gl_panelinferiorbusquedas = new GroupLayout(panelinferiorbusquedas);
 		gl_panelinferiorbusquedas.setHorizontalGroup(
 			gl_panelinferiorbusquedas.createParallelGroup(Alignment.LEADING)
@@ -146,10 +168,11 @@ public class PanelEmpleados extends JPanel {
 	 */
 	private void borrarElementosDeLaTablaEmpleados() {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
-		//this.tableEmpleados.updateUI();
+		this.tableEmpleados.updateUI();
 	}
 	
 	
+	//CODEX.TODO: llenar la tabla previallamada al método en el controlador, el controlador no debe tocar nada relacionado  ala vista.
 	/**
 	 * llena el jTable del panel de empleados con todos los registros encontrados en
 	 * la bd
