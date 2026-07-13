@@ -30,6 +30,8 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.tools.AppContext;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -46,12 +48,12 @@ public class Fr_DatosEmpleado extends JFrame {
 	/**
 	 * 
 	 * 
-	 */	
+	 */
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelCentralFormulario;
 	private JPanel panelInferiorBotones;
-	private JLabel lblNewLabel;	
+	private JLabel lblNewLabel;
 	private Box horizontalBox_7;
 	private JButton btnCancelar;
 	private Component horizontalStrut_7;
@@ -66,7 +68,30 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JTextField txfCodigoPostal;
 	private JTextField txfClaveCuentaContable;
 	private JTable tableNumerosTelefonicos;
-	
+	private JLabel lblSucursal;
+	private JLabel lblForRfc;
+	private JLabel lblForCurp;
+	private JLabel lblForNombreCompleto;
+	private JLabel lblForAlias;
+	private JFormattedTextField frmtdtxtfldFechanacimientoempleado;
+	private JLabel lblEmail;
+	private JFormattedTextField frmtxfCorreoElectronico;
+	private JLabel lblEstado;
+	private JLabel lblCiudad;
+	private JLabel lblDireccion;
+	private JScrollPane scrollPaneTxaDireccionEmpleado;
+	private JLabel lblCodigoPostal;
+	private JLabel lblClaveContable;
+	private JLabel lblNmerosDeContacto;
+	private JScrollPane scrollPaneNumerosTelefonicos;
+	private JButton btnAgregarTelefono;
+	private JButton btnEliminarTelefono;
+	private JComboBox<JComboboxDataViewModel> cmbSucursalEmpleado;
+	private JTextArea textAreaDireccionEmpleado;
+	private JLabel lblContrasea;
+	private JPasswordField passwordFieldContraseniaEmpleado;
+	private JPasswordField passwordFieldVerificarContraseniaEmpleado;
+	private JLabel lblNewLabel_1;
 
 	/**
 	 * Launch the application.
@@ -82,7 +107,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	 */
 	public Fr_DatosEmpleado(int opcion, int idEmpleado) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 570, 420);
+		setBounds(100, 100, 570, 550);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -111,183 +136,220 @@ public class Fr_DatosEmpleado extends JFrame {
 		panelCentralFormulario = new JPanel();
 		panelCentralFormulario.setBackground(new Color(255, 215, 0));
 		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
-		
-		JLabel lblForRfc = new JLabel("RFC");
-		
+
+		lblForRfc = new JLabel("RFC");
+
 		txfRfcEmpleado = new JTextField();
 		txfRfcEmpleado.setColumns(10);
-		
-		JLabel lblForCurp = new JLabel("CURP");
-		
+
+		lblForCurp = new JLabel("CURP");
+
 		txfCurpEmpleado = new JTextField();
 		txfCurpEmpleado.setColumns(10);
-		
-		JLabel lblForNombreCompleto = new JLabel("Nombre Completo");
-		
+
+		lblForNombreCompleto = new JLabel("Nombre Completo");
+
 		txfNombreCompletoEmpleado = new JTextField();
 		txfNombreCompletoEmpleado.setColumns(10);
-		
-		JLabel lblForAlias = new JLabel("Alias");
-		
+
+		lblForAlias = new JLabel("Alias");
+
 		txfNombreCortoEmpleado = new JTextField();
 		txfNombreCortoEmpleado.setColumns(10);
-		
+
 		lblFNacimiento = new JLabel("F. Nacimiento");
-		
-		JFormattedTextField frmtdtxtfldFechanacimientoempleado = new JFormattedTextField();
-		
-		JLabel lblEmail = new JLabel("Email");
-		
-		JFormattedTextField frmtxfCorreoElectronico = new JFormattedTextField();
-		
-		JLabel lblEstado = new JLabel("Estado");
-		
+
+		frmtdtxtfldFechanacimientoempleado = new JFormattedTextField();
+
+		lblEmail = new JLabel("Email");
+
+		frmtxfCorreoElectronico = new JFormattedTextField();
+
+		lblEstado = new JLabel("Estado");
+
 		txfEstadoEmpleado = new JTextField();
 		txfEstadoEmpleado.setColumns(10);
-		
-		JLabel lblCiudad = new JLabel("Ciudad");
-		
+
+		lblCiudad = new JLabel("Ciudad");
+
 		txfCiudadEmpleado = new JTextField();
 		txfCiudadEmpleado.setColumns(10);
-		
-		JLabel lblDireccion = new JLabel("Dirección");
-		
-		JScrollPane scrollPaneTxaDireccionEmpleado = new JScrollPane();
-		
-		JLabel lblCodigoPostal = new JLabel("Codigo Postal");
-		
+
+		lblDireccion = new JLabel("Dirección");
+
+		scrollPaneTxaDireccionEmpleado = new JScrollPane();
+
+		lblCodigoPostal = new JLabel("Codigo Postal");
+
 		txfCodigoPostal = new JTextField();
 		txfCodigoPostal.setColumns(10);
-		
-		JLabel lblClaveContable = new JLabel("Clave Contable");
-		
+
+		lblClaveContable = new JLabel("Clave Contable");
+
 		txfClaveCuentaContable = new JTextField();
 		txfClaveCuentaContable.setColumns(10);
-		
-		JLabel lblNmerosDeContacto = new JLabel("Números de contacto");
-		
-		JScrollPane scrollPaneNumerosTelefonicos = new JScrollPane();
-		
-		JButton btnAgregarTelefono = new JButton("Nuevo");
+
+		lblNmerosDeContacto = new JLabel("Números de contacto");
+
+		scrollPaneNumerosTelefonicos = new JScrollPane();
+
+		btnAgregarTelefono = new JButton("Nuevo");
 		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
 		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
-		
-		JButton btnEliminarTelefono = new JButton("Nuevo");
+
+		btnEliminarTelefono = new JButton("Borrar");
 		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
+
+		lblSucursal = new JLabel("Sucursal");
+
+		cmbSucursalEmpleado = new JComboBox<JComboboxDataViewModel>();
+
+		lblContrasea = new JLabel("Contraseña");
+
+		passwordFieldContraseniaEmpleado = new JPasswordField();
+
+		lblNewLabel_1 = new JLabel("Verificar contraseña");
+
+		passwordFieldVerificarContraseniaEmpleado = new JPasswordField();
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
-		gl_panelCentralFormulario.setHorizontalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPaneNumerosTelefonicos, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
-						.addComponent(scrollPaneTxaDireccionEmpleado, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(lblForRfc)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfRfcEmpleado, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblForCurp)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfCurpEmpleado, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(lblForNombreCompleto)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfNombreCompletoEmpleado, GroupLayout.PREFERRED_SIZE, 210, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblForAlias)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfNombreCortoEmpleado, GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
-							.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-									.addComponent(lblFNacimiento)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(frmtdtxtfldFechanacimientoempleado, GroupLayout.PREFERRED_SIZE, 133, GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-									.addComponent(lblEstado)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(txfEstadoEmpleado, GroupLayout.PREFERRED_SIZE, 176, GroupLayout.PREFERRED_SIZE)))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblEmail)
-								.addComponent(lblCiudad))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-								.addComponent(txfCiudadEmpleado, GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-								.addComponent(frmtxfCorreoElectronico)))
-						.addComponent(lblDireccion, Alignment.LEADING)
-						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(lblCodigoPostal)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblClaveContable)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfClaveCuentaContable, GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(lblNmerosDeContacto)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnAgregarTelefono)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-		);
-		gl_panelCentralFormulario.setVerticalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblForRfc)
-						.addComponent(txfRfcEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblForCurp)
-						.addComponent(txfCurpEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblForNombreCompleto)
-						.addComponent(txfNombreCompletoEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblForAlias)
-						.addComponent(txfNombreCortoEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblFNacimiento)
-						.addComponent(frmtdtxtfldFechanacimientoempleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(frmtxfCorreoElectronico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblEmail))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblEstado)
-						.addComponent(txfEstadoEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblCiudad)
-						.addComponent(txfCiudadEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblDireccion)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPaneTxaDireccionEmpleado, GroupLayout.PREFERRED_SIZE, 74, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblCodigoPostal)
-						.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblClaveContable)
-						.addComponent(txfClaveCuentaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+		gl_panelCentralFormulario.setHorizontalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addContainerGap()
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+								.addComponent(scrollPaneNumerosTelefonicos, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+										536, Short.MAX_VALUE)
+								.addComponent(scrollPaneTxaDireccionEmpleado, Alignment.LEADING,
+										GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+								.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(lblForRfc).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txfRfcEmpleado, GroupLayout.PREFERRED_SIZE, 142,
+												GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblForCurp)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txfCurpEmpleado, GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE))
+								.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(lblForNombreCompleto).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txfNombreCompletoEmpleado, GroupLayout.PREFERRED_SIZE, 210,
+												GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblForAlias)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(
+												txfNombreCortoEmpleado, GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+								.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+										.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+												.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+														.addComponent(lblFNacimiento)
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(frmtdtxtfldFechanacimientoempleado,
+																GroupLayout.PREFERRED_SIZE, 133,
+																GroupLayout.PREFERRED_SIZE))
+												.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+														.addComponent(lblEstado)
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(txfEstadoEmpleado, GroupLayout.PREFERRED_SIZE,
+																176, GroupLayout.PREFERRED_SIZE)))
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+												.addComponent(lblEmail).addComponent(lblCiudad))
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+												.addComponent(txfCiudadEmpleado, GroupLayout.DEFAULT_SIZE, 241,
+														Short.MAX_VALUE)
+												.addComponent(frmtxfCorreoElectronico, 241, 241, 241)))
+								.addComponent(lblDireccion, Alignment.LEADING)
+								.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(lblCodigoPostal).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblClaveContable)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(
+												txfClaveCuentaContable, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
+								.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(lblNmerosDeContacto).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(btnAgregarTelefono).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 63,
+												GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblSucursal)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(cmbSucursalEmpleado, 0, 190, Short.MAX_VALUE))
+								.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(lblContrasea).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(passwordFieldContraseniaEmpleado, GroupLayout.PREFERRED_SIZE, 134,
+												GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblNewLabel_1)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(passwordFieldVerificarContraseniaEmpleado, GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)))
+						.addContainerGap()));
+		gl_panelCentralFormulario.setVerticalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addContainerGap()
 						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblNmerosDeContacto)
-							.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-						.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		
+								.addComponent(lblForRfc)
+								.addComponent(txfRfcEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblForCurp).addComponent(txfCurpEmpleado, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblForNombreCompleto)
+								.addComponent(txfNombreCompletoEmpleado, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblForAlias)
+								.addComponent(txfNombreCortoEmpleado, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblFNacimiento)
+								.addComponent(frmtdtxtfldFechanacimientoempleado, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(frmtxfCorreoElectronico, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblEmail))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblEstado)
+								.addComponent(txfEstadoEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblCiudad).addComponent(txfCiudadEmpleado, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblDireccion)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPaneTxaDireccionEmpleado, GroupLayout.PREFERRED_SIZE, 74,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblCodigoPostal)
+								.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblClaveContable)
+								.addComponent(txfClaveCuentaContable, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblNmerosDeContacto)
+								.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 21,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 21,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblSucursal).addComponent(cmbSucursalEmpleado, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(11)
+						.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.PREFERRED_SIZE, 113,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblContrasea)
+								.addComponent(passwordFieldContraseniaEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(passwordFieldVerificarContraseniaEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblNewLabel_1))
+						.addContainerGap(17, Short.MAX_VALUE)));
+
 		tableNumerosTelefonicos = new JTable();
 		scrollPaneNumerosTelefonicos.setViewportView(tableNumerosTelefonicos);
-		
-		JTextArea textAreaDireccionEmpleado = new JTextArea();
+
+		textAreaDireccionEmpleado = new JTextArea();
 		scrollPaneTxaDireccionEmpleado.setViewportView(textAreaDireccionEmpleado);
-		panelCentralFormulario.setLayout(gl_panelCentralFormulario);		
+		panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 
 		panelInferiorBotones = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panelInferiorBotones.getLayout();
@@ -322,8 +384,8 @@ public class Fr_DatosEmpleado extends JFrame {
 				}
 			}
 		});
-		btnAgregarEmpleado.setIcon(new ImageIcon(
-				Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnAgregarEmpleado.setIcon(
+				new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
 		horizontalBox_7.add(btnAgregarEmpleado);
 
@@ -332,64 +394,148 @@ public class Fr_DatosEmpleado extends JFrame {
 		}
 
 		this.llenarCmbSucursales();
+
 		if (opcion == 1) {
+
 			this.consultarEmpleadoPorId(idEmpleado);
+
 		}
+
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	private void cerrarForm() {
 		this.dispose();
 	}
-
+	
+	//CODEX.TODO: Mapear la respuesta del controlador y guardar el objeto en una variable global temporal, para usarse al momento del insert o update.
 	/**
-	 * llena el JCombobox del panel de rfc de empleados con todos los elemtnos
-	 * retornados por la vista almacenada
-	 *
-	 * private void llenarCmbRfcEmpleados() { this.cmbRFCEmpleado.removeAllItems();
-	 * this.cmbRFCEmpleado.updateUI();
-	 * empleadoController.consultarRfcEmpleado(this.cmbRFCEmpleado);
-	 * cmbRFCEmpleado.setSelectedIndex(1); }
-	 */
-
-	/**
-	 * busca los datos del empleado en la bd de acuerdo al rfc que se le pase como
+	 * busca los datos del empleado en la bd de acuerdo al id que se le pase como
 	 * parametro y asigna los valores correspondientes a sus respectivos campos en
 	 * el formulario
 	 * 
 	 * @param idEmpleado
 	 */
 	private void consultarEmpleadoPorId(int idEmpleado) {
+		Empleado empleado = AppContext.empleadoController.consultarEmpleadoPorId(idEmpleado);
+
+		if (empleado == null) {
+			JOptionPane.showMessageDialog(this, "No fue posible cargar el empleado", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		txfRfcEmpleado.setText(empleado.getRfc());
+		txfCurpEmpleado.setText(empleado.getCurp());
+		txfNombreCompletoEmpleado.setText(empleado.getNombre());
+		txfNombreCortoEmpleado.setText(empleado.getNombreCorto());
+		frmtdtxtfldFechanacimientoempleado.setText(empleado.getFechaNacimiento() == null ? ""
+				: empleado.getFechaNacimiento().toString());
+		frmtxfCorreoElectronico.setText(empleado.getEmail());
+		txfEstadoEmpleado.setText(empleado.getEstado());
+		txfCiudadEmpleado.setText(empleado.getCiudad());
+		textAreaDireccionEmpleado.setText(empleado.getDireccion());
+		txfCodigoPostal.setText(empleado.getCodigoPostal());
+		txfClaveCuentaContable.setText(String.valueOf(empleado.getIdCuentaContable()));
+		passwordFieldContraseniaEmpleado.setText(empleado.getPassword());
+		passwordFieldVerificarContraseniaEmpleado.setText(empleado.getPassword());
 		
-		
-		
+		//CODEX.TODO: Este tipo de funcionalidades donde tenemos que buscar o settear un valor de un combobox, lo mejor sería tener el método en el package tools, de esa forma invocarlo donde se necesitme mas adelante.
+		for (int i = 0; i < cmbSucursalEmpleado.getItemCount(); i++) {
+			JComboboxDataViewModel item = cmbSucursalEmpleado.getItemAt(i);
+			if (item != null && item.id() == empleado.getIdSucursal()) {
+				cmbSucursalEmpleado.setSelectedIndex(i);
+				break;
+			}
+		}
 	}
 
 	/**
 	 * inserta un registro de un nuevo empleado en la base de datos
 	 */
 	private void insertarEmpleado() {
+		if (!validarCamposVacios()) {
+			return;
+		}
 
-		
+		Empleado empleado = new Empleado();
+		empleado.setIdCuentaContable(Integer.parseInt(txfClaveCuentaContable.getText().trim()));
+		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
+		empleado.setRfc(txfRfcEmpleado.getText().trim());
+		empleado.setCurp(txfCurpEmpleado.getText().trim());
+		empleado.setNombre(txfNombreCompletoEmpleado.getText().trim());
+		empleado.setNombreCorto(txfNombreCortoEmpleado.getText().trim());
+		empleado.setFechaNacimiento(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
+		empleado.setEmail(frmtxfCorreoElectronico.getText().trim());
+		empleado.setEstado(txfEstadoEmpleado.getText().trim());
+		empleado.setCiudad(txfCiudadEmpleado.getText().trim());
+		empleado.setDireccion(textAreaDireccionEmpleado.getText().trim());
+		empleado.setCodigoPostal(txfCodigoPostal.getText().trim());
+		empleado.setPassword(new String(passwordFieldContraseniaEmpleado.getPassword()));
 
+		if (!empleado.getPassword().equals(new String(passwordFieldVerificarContraseniaEmpleado.getPassword()))) {
+			JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
+		AppContext.empleadoController.insertarNuevoEmpleado(empleado);
+		JOptionPane.showMessageDialog(this, "Empleado registrado correctamente");
+		this.dispose();
 	}
 
 	/**
 	 * actualiza un registro existente de un empleado en la base de datos
 	 */
 	private void actualizarEmpleado(int idEmpleado) {
+		if (!validarCamposVacios()) {
+			return;
+		}
 
-		
+		Empleado empleado = new Empleado();
+		empleado.setId(idEmpleado);
+		empleado.setIdCuentaContable(Integer.parseInt(txfClaveCuentaContable.getText().trim()));
+		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
+		empleado.setRfc(txfRfcEmpleado.getText().trim());
+		empleado.setCurp(txfCurpEmpleado.getText().trim());
+		empleado.setNombre(txfNombreCompletoEmpleado.getText().trim());
+		empleado.setNombreCorto(txfNombreCortoEmpleado.getText().trim());
+		empleado.setFechaNacimiento(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
+		empleado.setEmail(frmtxfCorreoElectronico.getText().trim());
+		empleado.setEstado(txfEstadoEmpleado.getText().trim());
+		empleado.setCiudad(txfCiudadEmpleado.getText().trim());
+		empleado.setDireccion(textAreaDireccionEmpleado.getText().trim());
+		empleado.setCodigoPostal(txfCodigoPostal.getText().trim());
+		empleado.setPassword(new String(passwordFieldContraseniaEmpleado.getPassword()));
 
+		if (!empleado.getPassword().equals(new String(passwordFieldVerificarContraseniaEmpleado.getPassword()))) {
+			JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		AppContext.empleadoController.actualizarEmpleado(empleado);
+		JOptionPane.showMessageDialog(this, "Empleado actualizado correctamente");
+		this.dispose();
 	}
 
 	private boolean validarCamposVacios() {
-
-		return true;
+		return !txfRfcEmpleado.getText().trim().isEmpty() && !txfCurpEmpleado.getText().trim().isEmpty()
+				&& !txfNombreCompletoEmpleado.getText().trim().isEmpty() && !txfNombreCortoEmpleado.getText().trim().isEmpty()
+				&& !frmtdtxtfldFechanacimientoempleado.getText().trim().isEmpty()
+				&& !frmtxfCorreoElectronico.getText().trim().isEmpty() && !txfEstadoEmpleado.getText().trim().isEmpty()
+				&& !txfCiudadEmpleado.getText().trim().isEmpty() && !textAreaDireccionEmpleado.getText().trim().isEmpty()
+				&& !txfCodigoPostal.getText().trim().isEmpty() && !txfClaveCuentaContable.getText().trim().isEmpty()
+				&& cmbSucursalEmpleado.getSelectedItem() != null && passwordFieldContraseniaEmpleado.getPassword().length > 0
+				&& passwordFieldVerificarContraseniaEmpleado.getPassword().length > 0;
 	}
 
 	private void llenarCmbSucursales() {
-		
+
+		this.cmbSucursalEmpleado.removeAllItems();
+		this.cmbSucursalEmpleado.updateUI();
+
+		AppContext.sucursalController.consultarNombreSucursales().forEach(e -> {
+			cmbSucursalEmpleado.addItem(e);
+		});
+
 	}
 }

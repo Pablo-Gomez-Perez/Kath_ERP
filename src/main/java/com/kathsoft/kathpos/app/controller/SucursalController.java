@@ -4,6 +4,8 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JComboBox;
 import com.kathsoft.kathpos.app.model.Sucursal;
@@ -28,8 +30,9 @@ public class SucursalController implements java.io.Serializable {
 	 * 
 	 * @param cmb
 	 */
-	public void consultarNombreSucursales(JComboBox<JComboboxDataViewModel> cmb) {
-
+	public List<JComboboxDataViewModel> consultarNombreSucursales() {
+		
+		var sucursales = new ArrayList<JComboboxDataViewModel>();
 		CallableStatement stm = null;
 		ResultSet rset = null;
 
@@ -42,13 +45,22 @@ public class SucursalController implements java.io.Serializable {
 
 			while (rset.next()) {
 
-				cmb.addItem(new JComboboxDataViewModel(rset.getInt(1), rset.getString(2)));
+				sucursales.add(new JComboboxDataViewModel(rset.getInt("id"), rset.getString("nombre")));
 			}
-
+			
+			
+			return sucursales;
+			
 		} catch (SQLException er) {
+						
 			er.printStackTrace();
+			return sucursales;
+			
 		} catch (Exception er) {
+			
 			er.printStackTrace();
+			return sucursales;
+			
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, rset, stm);

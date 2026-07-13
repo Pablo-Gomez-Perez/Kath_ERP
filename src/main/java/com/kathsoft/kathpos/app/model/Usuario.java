@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.Objects;
 
+// CODEX.TODO: Eliminar esta clase.
 public class Usuario implements Serializable {
 
 	/**

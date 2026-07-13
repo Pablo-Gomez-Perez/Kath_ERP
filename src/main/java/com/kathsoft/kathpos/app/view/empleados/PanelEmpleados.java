@@ -26,53 +26,25 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class PanelEmpleados extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel panelEmpleadosEtiqueta;
-	private JLabel lblNewLabel_6;
-	private JPanel panelEmpleadosCentral;	
-	private JScrollPane scrollPaneTablaEmpleados;
 	private DefaultTableModel modelTablaEmpleados;
-	private JTable tableEmpleados;
-	private JPanel panelEmpleadosCentralbotones;
-	private JButton btnAgregarEmpleado;
-	private JButton btnActualizarEmpleado;
-	private JButton btnEliminarEmpleado;
-	private JButton btnExportarEmpleadosExcel;
-	private JPanel panelEmpleadosCentralBuscar;
-	private JLabel lblNewLabel_4;
-	private Component horizontalStrut_1;
-	private JTextField txfBuscarEmpleado;
-	private JButton btnBuscarEmpleado;
+	private JPanel panelSuperiorTitulo;
+	private JLabel lblEmpleados;
+	private JTextField txfNombreEmpleado;
 
 	/**
 	 * Create the panel.
 	 */
 	public PanelEmpleados() {
+		setBackground(new Color(255, 204, 0));
 		
-		this.setLayout(new BorderLayout(0, 0));
-		
-		panelEmpleadosEtiqueta = new JPanel();
-		panelEmpleadosEtiqueta.setBackground(new Color(0, 0, 128));
-		this.add(panelEmpleadosEtiqueta, BorderLayout.NORTH);
-		
-		
-		lblNewLabel_6 = new JLabel("Modulo de Empleados");
-		lblNewLabel_6.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_6.setForeground(new Color(255, 255, 255));
-		panelEmpleadosEtiqueta.add(lblNewLabel_6);
-		
-		panelEmpleadosCentral = new JPanel();
-		panelEmpleadosCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelEmpleadosCentral.setBackground(new Color(255, 215, 0));
-		this.add(panelEmpleadosCentral, BorderLayout.CENTER);
-		panelEmpleadosCentral.setLayout(new BorderLayout(0, 0));
-
-		scrollPaneTablaEmpleados = new JScrollPane();
-		panelEmpleadosCentral.add(scrollPaneTablaEmpleados, BorderLayout.CENTER);
-		
+		//CODEX.TODO: El las columnas de la tabla en base a la respuesta retornada desde el controlador.
 		modelTablaEmpleados = new DefaultTableModel();
 		modelTablaEmpleados.addColumn("id");
 		modelTablaEmpleados.addColumn("Sucursal");
@@ -82,158 +54,91 @@ public class PanelEmpleados extends JPanel {
 		modelTablaEmpleados.addColumn("Nick");
 		modelTablaEmpleados.addColumn("Email");
 		modelTablaEmpleados.addColumn("Activo");
-		tableEmpleados = new JTable();
-		tableEmpleados.setModel(this.modelTablaEmpleados);
-		tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
-		DataTools.removerEditorDeTabla(tableEmpleados, modelTablaEmpleados);
+		panelSuperiorTitulo = new JPanel();
+		panelSuperiorTitulo.setBackground(new Color(0, 0, 102));
 		
+		JPanel panelinferiorbusquedas = new JPanel();
+		panelinferiorbusquedas.setBackground(new Color(0, 153, 255));
 		
-		scrollPaneTablaEmpleados.setViewportView(tableEmpleados);
-
-		panelEmpleadosCentralbotones = new JPanel();
-		FlowLayout flowLayout_7 = (FlowLayout) panelEmpleadosCentralbotones.getLayout();
-		flowLayout_7.setAlignment(FlowLayout.RIGHT);
-		panelEmpleadosCentralbotones.setBackground(new Color(255, 215, 0));
-		panelEmpleadosCentral.add(panelEmpleadosCentralbotones, BorderLayout.NORTH);
+		JPanel panelSuperiorBotones = new JPanel();
+		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
+		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
 		
-		btnAgregarEmpleado = new JButton("Agregar");
-		btnAgregarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		btnAgregarEmpleado.setBackground(new Color(144, 238, 144));
-		btnAgregarEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormularioEmpleados(0, 0);
-			}
-		});
-		panelEmpleadosCentralbotones.add(btnAgregarEmpleado);
-
-		btnActualizarEmpleado = new JButton("Actualizar");
-		btnActualizarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		btnActualizarEmpleado.setBackground(new Color(144, 238, 144));
-		btnActualizarEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormularioEmpleados(1,
-						DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados, 0));
-			}
-		});
+		JScrollPane scrollPane = new JScrollPane();
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addComponent(panelSuperiorTitulo, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+				.addComponent(panelinferiorbusquedas, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 752, Short.MAX_VALUE)
+					.addContainerGap())
+				.addComponent(panelSuperiorBotones, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addComponent(panelSuperiorTitulo, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelSuperiorBotones, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelinferiorbusquedas, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+		);
 		
-		panelEmpleadosCentralbotones.add(btnActualizarEmpleado);
-
-		btnEliminarEmpleado = new JButton("Eliminar");
-		btnEliminarEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarEmpleado();
-			}
-		});
+		JButton btnAgregar = new JButton("Agregar");
+		panelSuperiorBotones.add(btnAgregar);
 		
+		JButton btnModificar = new JButton("Modificar");
+		panelSuperiorBotones.add(btnModificar);
 		
-		btnEliminarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.btnEliminarEmpleado.setBackground(new Color(255, 51, 0));
-		panelEmpleadosCentralbotones.add(btnEliminarEmpleado);
-
-		btnExportarEmpleadosExcel = new JButton("Exportar a Excel");
-		btnExportarEmpleadosExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarEmpleadosExcel();
-			}
-		});
-		btnExportarEmpleadosExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		this.btnExportarEmpleadosExcel.setBackground(new Color(105, 205, 170));
-		panelEmpleadosCentralbotones.add(btnExportarEmpleadosExcel);
+		JButton btnEliminar = new JButton("Eliminar");
+		panelSuperiorBotones.add(btnEliminar);
 		
-		panelEmpleadosCentralBuscar = new JPanel();
-		panelEmpleadosCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_12 = (FlowLayout) panelEmpleadosCentralBuscar.getLayout();
-		flowLayout_12.setAlignment(FlowLayout.RIGHT);
-		panelEmpleadosCentral.add(panelEmpleadosCentralBuscar, BorderLayout.SOUTH);
-
-		lblNewLabel_4 = new JLabel("Buscar Empleado");
-		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelEmpleadosCentralBuscar.add(lblNewLabel_4);
-
-		horizontalStrut_1 = Box.createHorizontalStrut(20);
-		panelEmpleadosCentralBuscar.add(horizontalStrut_1);
-
-		txfBuscarEmpleado = new JTextField();
-		panelEmpleadosCentralBuscar.add(txfBuscarEmpleado);
-		txfBuscarEmpleado.setColumns(70);
+		JButton btnExcel = new JButton("Excel");
+		panelSuperiorBotones.add(btnExcel);
 		
-		btnBuscarEmpleado = new JButton("Buscar");
-		btnBuscarEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buscarEmpleadoPorNombre();
-			}
-		});
-		btnBuscarEmpleado.setBackground(new Color(184, 134, 11));
-		btnBuscarEmpleado.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		panelEmpleadosCentralBuscar.add(btnBuscarEmpleado);
+		JLabel lblNombre = new JLabel("Nombre");
 		
-		DataTools.definirTamanioDeColumnas(ConstantsConllections.tableEmpleadosColumnsWidth, tableEmpleados);
-	}
-	
-	private void abrirFormularioEmpleados(int opcion, int idEmpleado) {
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-
-					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion, idEmpleado);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	private void eliminarEmpleado() {
-
-		int indiceEmpleadoSeleccionado = -1;
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			indiceEmpleadoSeleccionado = DataTools.getIndiceElementoSeleccionado(tableEmpleados, modelTablaEmpleados,
-					0);
-			AppContext.empleadoController.eliminarEmpleado(indiceEmpleadoSeleccionado);
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this);
-		}
-
-	}
-	
-	public void exportarEmpleadosExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaEmpleados, this);
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
-	
-	private void buscarEmpleadoPorNombre() {
-		this.modelTablaEmpleados.getDataVector().removeAllElements();
-		this.tableEmpleados.updateUI();
-		AppContext.empleadoController.buscarEmpleadoPorNombre(this.txfBuscarEmpleado.getText(), this.modelTablaEmpleados);
+		txfNombreEmpleado = new JTextField();
+		txfNombreEmpleado.setColumns(10);
+		
+		JButton btnBuscar = new JButton("Buscar");
+		GroupLayout gl_panelinferiorbusquedas = new GroupLayout(panelinferiorbusquedas);
+		gl_panelinferiorbusquedas.setHorizontalGroup(
+			gl_panelinferiorbusquedas.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelinferiorbusquedas.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNombre, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfNombreEmpleado, GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuscar)
+					.addContainerGap())
+		);
+		gl_panelinferiorbusquedas.setVerticalGroup(
+			gl_panelinferiorbusquedas.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelinferiorbusquedas.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelinferiorbusquedas.createParallelGroup(Alignment.BASELINE, false)
+						.addComponent(lblNombre)
+						.addGroup(gl_panelinferiorbusquedas.createSequentialGroup()
+							.addGap(6)
+							.addComponent(txfNombreEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnBuscar))
+					.addContainerGap())
+		);
+		panelinferiorbusquedas.setLayout(gl_panelinferiorbusquedas);
+		
+		lblEmpleados = new JLabel("Empleados");
+		lblEmpleados.setForeground(new Color(255, 255, 255));
+		lblEmpleados.setFont(new Font("Dialog", Font.BOLD, 20));
+		panelSuperiorTitulo.add(lblEmpleados);
+		setLayout(groupLayout);
 	}
 	
 	/**
@@ -241,7 +146,7 @@ public class PanelEmpleados extends JPanel {
 	 */
 	private void borrarElementosDeLaTablaEmpleados() {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
-		this.tableEmpleados.updateUI();
+		//this.tableEmpleados.updateUI();
 	}
 	
 	

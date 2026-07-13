@@ -15,7 +15,6 @@ import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 import java.sql.CallableStatement;
-
 public class EmpleadoController implements Serializable {
 
 	/**
@@ -108,6 +107,7 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	// CODEX.TODO: El método debe retornar un List<JComboboxDataViewModel> y ser invocado desde la vista. ajustar esta misma mecánica en las demas clases donde este método sea invocado.
 	/**
 	 * Consulta una vista almacenada en la base de datos que retorna unicamente el
 	 * campo nombre_corto de la tabla empleados, y estos datos son cargados al
@@ -178,7 +178,8 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
-
+	
+	//CODEX.TODO: Ajustar este método para mapear la respuesta del procedimiento almacenado getEmpleadoById, este método debe retornar un objeto EmpleadoDTO o equivalente. para información en formularios.
 	public Empleado consultarEmpleadoPorId(int id) {
 		Empleado empl = new Empleado();
 		CallableStatement stm = null;
@@ -192,19 +193,20 @@ public class EmpleadoController implements Serializable {
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				empl.setId(rset.getInt(1));
-				empl.setIdSucursal(rset.getInt(2));
-				empl.setRfc(rset.getString(3));
-				empl.setCurp(rset.getString(4));
-				empl.setNombre(rset.getString(5));
-				empl.setNombreCorto(rset.getString(6));
-				empl.setFechaNacimiento(rset.getDate(7));
-				empl.setEmail(rset.getString(8));
-				empl.setEstado(rset.getString(9));
-				empl.setCiudad(rset.getString(10));
-				empl.setDireccion(rset.getString(11));
-				empl.setCodigoPostal(rset.getString(12));
-				empl.setPassword(rset.getString(13));
+				empl.setId(rset.getInt("id_empleado"));
+				empl.setIdCuentaContable(rset.getInt("id_cuenta_contable"));
+				empl.setIdSucursal(rset.getInt("id_sucursal"));
+				empl.setRfc(rset.getString("rfc"));
+				empl.setCurp(rset.getString("curp"));
+				empl.setNombre(rset.getString("nombre_completo"));
+				empl.setNombreCorto(rset.getString("nombre_corto"));
+				empl.setFechaNacimiento(rset.getDate("fecha_nac"));
+				empl.setEmail(rset.getString("correo_electronico"));
+				empl.setEstado(rset.getString("estado"));
+				empl.setCiudad(rset.getString("ciudad"));
+				empl.setDireccion(rset.getString("direccion"));
+				empl.setCodigoPostal(rset.getString("codigo_postal"));
+				empl.setPassword(rset.getString("contrasenia"));
 			}
 
 			return empl;
@@ -226,6 +228,7 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	//CODEX.TODO: Mapear la respuesta del procedimiento almacenado getEmpleadoByRFC() y retornar un objeto DTO.
 	public Empleado consultarEmpleadoPorRfc(String rfc) {
 		Empleado empl = new Empleado();
 		CallableStatement stm = null;
@@ -267,7 +270,8 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
-
+	
+	//CODEX.TODO: Este método debe retornar un Vector<Object[]> y ser invocado desde la vista para llenar la tabla. debe de mapear la respuesta del sp getListadoEmpleados(VARCHAR nombre)
 	public void verEmpleadosEnTabla(DefaultTableModel tabla) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -302,7 +306,8 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
-
+	
+	// CODEX.TODO: Este tipo de métodos retornan un objeto de tipo SpResponseModel, y es mostrado en la vista una vez ejecutada la acción. (JOptionPane.showMessageDialog)
 	/**
 	 * inserta un nuevo empleado en la bd recibe como paramatetro un objeto de tipo
 	 * {@code Empleado} e inserta las datos en la bd como nuevo registro
@@ -312,31 +317,25 @@ public class EmpleadoController implements Serializable {
 	public void insertarNuevoEmpleado(Empleado empl) {
 		CallableStatement stm = null;
 
-		if (empl.getRfc().isEmpty() || empl.getCurp().isEmpty() || empl.getNombre().isEmpty()
-				|| empl.getNombreCorto().isEmpty() || empl.getFechaNacimiento().equals(null)
-				|| empl.getEmail().isEmpty() || empl.getEstado().isEmpty() || empl.getCiudad().isEmpty()
-				|| empl.getDireccion().isEmpty() || empl.getCodigoPostal().isEmpty()) {
-
-			return;
-
-		}
-
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_nuevo_empleado(?,?,?,?,?,?,?,?,?,?,?);");
-			stm.setInt(1, empl.getIdSucursal());
-			stm.setString(2, empl.getRfc());
-			stm.setString(3, empl.getCurp());
-			stm.setString(4, empl.getNombre());
-			stm.setString(5, empl.getNombreCorto());
-			stm.setDate(6, empl.getFechaNacimiento());
-			stm.setString(7, empl.getEmail());
-			stm.setString(8, empl.getEstado());
-			stm.setString(9, empl.getCiudad());
-			stm.setString(10, empl.getDireccion());
-			stm.setString(11, empl.getCodigoPostal());
+			stm = cn.prepareCall("CALL insert_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			stm.setInt(1, empl.getIdCuentaContable());
+			stm.setInt(2, empl.getIdSucursal());
+			stm.setString(3, empl.getRfc());
+			stm.setString(4, empl.getCurp());
+			stm.setString(5, empl.getNombre());
+			stm.setString(6, empl.getNombreCorto());
+			stm.setDate(7, empl.getFechaNacimiento());
+			stm.setString(8, empl.getEmail());
+			stm.setString(9, empl.getEstado());
+			stm.setString(10, empl.getCiudad());
+			stm.setString(11, empl.getDireccion());
+			stm.setString(12, empl.getCodigoPostal());
+			stm.setString(13, empl.getPassword());
 			stm.execute();
+						
 
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -358,7 +357,8 @@ public class EmpleadoController implements Serializable {
 
 		}
 	}
-
+	
+	// CODEX.TODO: Este tipo de métodos retornan un objeto de tipo SpResponseModel, y es mostrado en la vista una vez ejecutada la acción. (JOptionPane.showMessageDialog)
 	/**
 	 * actualiza los datos de un empleado específico en la bd recibe como parametro
 	 * un objeto de tipo {@code Empleado} y actualiza los respectivos valores
@@ -370,28 +370,25 @@ public class EmpleadoController implements Serializable {
 
 		CallableStatement stm = null;
 
-		if (empl.getRfc().isEmpty() || empl.getNombre().isEmpty() || empl.getNombreCorto().isEmpty()
-				|| empl.getFechaNacimiento().equals(null) || empl.getEmail().isEmpty() || empl.getEstado().isEmpty()
-				|| empl.getCiudad().isEmpty() || empl.getDireccion().isEmpty() || empl.getCodigoPostal().isEmpty()) {
-
-			return;
-
-		}
-
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?,?);");
-			stm.setInt(1, empl.getIdSucursal());
-			stm.setString(2, empl.getRfc());
-			stm.setString(3, empl.getNombre());
-			stm.setString(4, empl.getNombreCorto());
-			stm.setDate(5, empl.getFechaNacimiento());
-			stm.setString(6, empl.getEmail());
-			stm.setString(7, empl.getEstado());
-			stm.setString(8, empl.getCiudad());
-			stm.setString(9, empl.getDireccion());
-			stm.setString(10, empl.getCodigoPostal());
+			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			stm.setInt(1, empl.getId());
+			stm.setInt(2, empl.getIdCuentaContable());
+			stm.setInt(3, empl.getIdSucursal());
+			stm.setString(4, empl.getRfc());
+			stm.setString(5, empl.getCurp());
+			stm.setString(6, empl.getNombre());
+			stm.setString(7, empl.getNombreCorto());
+			stm.setDate(8, empl.getFechaNacimiento());
+			stm.setString(9, empl.getEmail());
+			stm.setString(10, empl.getEstado());
+			stm.setString(11, empl.getCiudad());
+			stm.setString(12, empl.getDireccion());
+			stm.setString(13, empl.getCodigoPostal());
+			stm.setString(14, empl.getPassword());
+			stm.setBoolean(15, true);
 			stm.execute();
 
 		} catch (SQLException er) {
@@ -413,13 +410,14 @@ public class EmpleadoController implements Serializable {
 		}
 
 	}
-
+	
+	// CODEX.TODO: Este tipo de métodos retornan un objeto de tipo SpResponseModel, y es mostrado en la vista una vez ejecutada la acción. (JOptionPane.showMessageDialog)
 	public void eliminarEmpleado(int idEmpleado) throws SQLException {
 
 		CallableStatement stm = null;
 
 		cn = Conexion.establecerConexionLocal("kath_erp");
-		stm = cn.prepareCall("CALL eliminar_empleado(?)");
+		stm = cn.prepareCall("CALL delete_empleado(?)");
 		stm.setInt(1, idEmpleado);
 
 		stm.execute();
@@ -427,7 +425,8 @@ public class EmpleadoController implements Serializable {
 		Conexion.cerrarConexion(cn, stm);
 
 	}
-
+	
+	// CODEX.TODO: Este método deja de er necesario dado de que la contraseña se actualiza desde el método actualizar empleado.
 	public void actualizarContrasenia(Empleado empl) {
 		CallableStatement stm = null;
 
@@ -459,7 +458,8 @@ public class EmpleadoController implements Serializable {
 			}
 		}
 	}
-
+	
+	
 	public Empleado consultarEmpleadoPorNombre(String nombre) {
 
 		// System.out.println("En el controlador: " + nombre);
@@ -501,7 +501,8 @@ public class EmpleadoController implements Serializable {
 		}
 
 	}
-
+	
+	// CODEX.TODO: Este método deja de ser necesario. 
 	public void buscarEmpleadoPorNombre(String nombre, DefaultTableModel tabla) {
 		ResultSet rset = null;
 		CallableStatement stm = null;

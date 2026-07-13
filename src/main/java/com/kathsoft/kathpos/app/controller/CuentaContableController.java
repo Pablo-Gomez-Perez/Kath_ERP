@@ -274,11 +274,11 @@ public class CuentaContableController {
 			return data;
 
 		} catch (SQLException e) {
-			// TODO: handle exception
+
 			e.printStackTrace();
 			return data;
 		} catch (Exception e) {
-			// TODO: handle exception
+			// 
 			e.printStackTrace();
 			return data;
 		}
@@ -306,11 +306,11 @@ public class CuentaContableController {
 			return data;
 
 		} catch (SQLException e) {
-			// TODO: handle exception
+			// 
 			e.printStackTrace();
 			return data;
 		} catch (Exception e) {
-			// TODO: handle exception
+			// 
 			e.printStackTrace();
 			return data;
 		}

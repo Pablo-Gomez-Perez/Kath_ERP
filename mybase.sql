@@ -263,7 +263,7 @@ CREATE TABLE `cuentas_contables` (
   KEY `fk_id_cuenta_superior` (`id_cuenta_padre`),
   KEY `fk_id_rubro_cuenta` (`fk_id_rubro`),
   CONSTRAINT `fk_id_rubro_cuenta` FOREIGN KEY (`fk_id_rubro`) REFERENCES `rubro_cuenta_contable` (`id_rubro`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,7 +272,7 @@ CREATE TABLE `cuentas_contables` (
 
 LOCK TABLES `cuentas_contables` WRITE;
 /*!40000 ALTER TABLE `cuentas_contables` DISABLE KEYS */;
-INSERT INTO `cuentas_contables` VALUES (1,NULL,1,'1000','Caja','Caja',0,0,0,0,1,'2024-07-09'),(2,NULL,2,'1001','Bancos nacionales','Bancos nacionales',0,0,0,0,1,'2024-07-09'),(3,NULL,2,'1002','Bancos extranjeros','Bancos extranjeros',0,0,0,0,1,'2024-07-09'),(4,NULL,4,'1003','Clientes nacionales','Clientes nacionales',0,0,0,0,1,'2024-07-09'),(5,NULL,15,'1005','Iva acreditable pagado','Iva acreditable pagado',0,0,0,0,1,'2024-07-09'),(6,NULL,16,'1006','iva acreditable por pagar','iva acreditable por pagar',0,0,0,0,1,'2024-07-09'),(7,NULL,5,'1007','Inventario Neto','Inventario disponible para ventas en el corto plazo',0,0,0,0,1,'2024-07-09'),(8,NULL,33,'2000','Proveedores nacionales','',0,0,0,0,1,'2024-07-09'),(9,NULL,39,'2001','Iva trasladado cobrado','',0,0,0,0,1,'2024-07-09'),(10,NULL,40,'2002','iva trasladado pend de cobro','',0,0,0,0,1,'2024-07-09'),(11,NULL,73,'4000','ingresos por ventas','',0,0,0,0,1,'2024-07-09'),(12,NULL,73,'4001','otros ingresos','',0,0,0,0,1,'2024-07-09'),(13,NULL,68,'5000','Compras nacionales','Cuenta corriente de compras nacionales',0,0,0,0,1,'2024-07-09'),(14,NULL,68,'5001','Compras moneda extranjera','Compras a proveedores extranjeros',0,0,0,0,1,'2024-07-09'),(15,NULL,70,'6000','Gastos generales','',0,0,0,0,1,'2024-07-09'),(16,NULL,71,'6001','Gastos administrativos','',0,0,0,0,1,'2024-07-09'),(17,NULL,70,'6002','Gastos de ventas','',0,0,0,0,1,'2024-07-09'),(18,NULL,70,'6003','Gastos de compras','',0,0,0,0,1,'2024-07-09'),(22,NULL,4,'1004','Funcionarios y empleados','Cuenta agrupadora para empleados',0,0,0,0,1,'2026-05-27'),(23,22,4,'1004-0001','ADMIN','EMPLEADO ADMINISTRADOR',1,1,0,0,1,'2026-05-27');
+INSERT INTO `cuentas_contables` VALUES (1,NULL,1,'1000','Caja','Caja',0,0,0,0,1,'2024-07-09'),(2,NULL,2,'1001','Bancos nacionales','Bancos nacionales',0,0,0,0,1,'2024-07-09'),(3,NULL,2,'1002','Bancos extranjeros','Bancos extranjeros',0,0,0,0,1,'2024-07-09'),(4,NULL,4,'1003','Clientes nacionales','Clientes nacionales',0,0,0,0,1,'2024-07-09'),(5,NULL,15,'1005','Iva acreditable pagado','Iva acreditable pagado',0,0,0,0,1,'2024-07-09'),(6,NULL,16,'1006','iva acreditable por pagar','iva acreditable por pagar',0,0,0,0,1,'2024-07-09'),(7,NULL,5,'1007','Inventario Neto','Inventario disponible para ventas en el corto plazo',0,0,0,0,1,'2024-07-09'),(8,NULL,33,'2000','Proveedores nacionales','',0,0,0,0,1,'2024-07-09'),(9,NULL,39,'2001','Iva trasladado cobrado','',0,0,0,0,1,'2024-07-09'),(10,NULL,40,'2002','iva trasladado pend de cobro','',0,0,0,0,1,'2024-07-09'),(11,NULL,73,'4000','ingresos por ventas','',0,0,0,0,1,'2024-07-09'),(12,NULL,73,'4001','otros ingresos','',0,0,0,0,1,'2024-07-09'),(13,NULL,68,'5000','Compras nacionales','Cuenta corriente de compras nacionales',0,0,0,0,1,'2024-07-09'),(14,NULL,68,'5001','Compras moneda extranjera','Compras a proveedores extranjeros',0,0,0,0,1,'2024-07-09'),(15,NULL,70,'6000','Gastos generales','',0,0,0,0,1,'2024-07-09'),(16,NULL,71,'6001','Gastos administrativos','',0,0,0,0,1,'2024-07-09'),(17,NULL,70,'6002','Gastos de ventas','',0,0,0,0,1,'2024-07-09'),(18,NULL,70,'6003','Gastos de compras','',0,0,0,0,1,'2024-07-09'),(22,NULL,4,'1004','Funcionarios y empleados','Cuenta agrupadora para empleados',0,0,0,0,1,'2026-05-27'),(23,22,4,'1004-0001','ADMIN','EMPLEADO ADMINISTRADOR',1,1,0,0,1,'2026-05-27'),(24,2,2,'1001-0001','bbva','cuenta corriente de bancos',1,1,0,0,1,'2026-07-11'),(25,1,1,'1000-0001','Fondo revolvente','Cuenta dedicada al flujo de efectivo de caja en operaciones de ventas',1,1,0,0,1,'2026-07-11');
 /*!40000 ALTER TABLE `cuentas_contables` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1429,31 +1429,6 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
-/*!50003 DROP PROCEDURE IF EXISTS `buscar_empleado_por_id` */;
-ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `buscar_empleado_por_id`(
-	IN idEmpleado INT
-)
-BEGIN
-
-	SELECT * FROM empleados WHERE empleados.id_empleado = idEmpleado;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `buscar_empleado_por_nombre` */;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -1770,6 +1745,230 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_cuenta_contable` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_cuenta_contable`(
+	IN p_id_cuenta INT
+)
+    MODIFIES SQL DATA
+    COMMENT 'Desactiva una cuenta contable con validaciones operativas'
+BEGIN
+	DECLARE v_cuenta_existe INT DEFAULT 0;
+	DECLARE v_activa BOOLEAN DEFAULT FALSE;
+	DECLARE v_cargo DOUBLE DEFAULT 0;
+	DECLARE v_abono DOUBLE DEFAULT 0;
+	DECLARE v_hijas_activas INT DEFAULT 0;
+
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4
+		COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT(
+				'Error ',
+				v_errno,
+				' (',
+				v_sqlstate,
+				'): ',
+				v_text
+			) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_id_cuenta IS NULL OR p_id_cuenta <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador de la cuenta es inválido';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_cuenta_existe
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta;
+
+	IF v_cuenta_existe = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable no existe';
+	END IF;
+
+	SELECT
+		activa,
+		cargo,
+		abono
+	INTO
+		v_activa,
+		v_cargo,
+		v_abono
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta
+	FOR UPDATE;
+
+	IF v_activa = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable ya se encuentra inactiva';
+	END IF;
+
+	/*
+	 * Bloquea cuentas que ya registraron movimientos,
+	 * aunque su saldo actual sea cero.
+	 */
+	IF v_cargo <> 0 OR v_abono <> 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede eliminar una cuenta con movimientos contables';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_hijas_activas
+	FROM cuentas_contables
+	WHERE id_cuenta_padre = p_id_cuenta
+	  AND activa = TRUE;
+
+	IF v_hijas_activas > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede eliminar una cuenta con subcuentas activas';
+	END IF;
+
+	UPDATE cuentas_contables
+	SET
+		activa = FALSE,
+		fecha_modificacion = CURDATE()
+	WHERE id_cuenta = p_id_cuenta;
+
+	COMMIT;
+
+	SELECT
+		p_id_cuenta AS id,
+		'Cuenta contable desactivada correctamente' AS message;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_empleado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_empleado`(
+	IN p_id_empleado INT UNSIGNED
+)
+    MODIFIES SQL DATA
+    COMMENT 'Desactiva un empleado y su cuenta contable'
+BEGIN
+	DECLARE v_existe_empleado INT DEFAULT 0;
+	DECLARE v_empleado_activo BOOLEAN DEFAULT FALSE;
+	DECLARE v_id_cuenta_contable INT DEFAULT 0;
+	DECLARE v_cargo DOUBLE DEFAULT 0;
+	DECLARE v_abono DOUBLE DEFAULT 0;
+	DECLARE v_saldo DOUBLE DEFAULT 0;
+
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_id_empleado IS NULL OR p_id_empleado <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del empleado no es válido';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_empleado
+	FROM empleados
+	WHERE id_empleado = p_id_empleado;
+
+	IF v_existe_empleado = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El empleado no existe';
+	END IF;
+
+	SELECT activo, id_cuenta_contable
+	INTO v_empleado_activo, v_id_cuenta_contable
+	FROM empleados
+	WHERE id_empleado = p_id_empleado
+	FOR UPDATE;
+
+	IF v_empleado_activo = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El empleado ya se encuentra inactivo';
+	END IF;
+
+	SELECT cargo, abono
+	INTO v_cargo, v_abono
+	FROM cuentas_contables
+	WHERE id_cuenta = v_id_cuenta_contable
+	FOR UPDATE;
+
+	SET v_saldo = ROUND(v_cargo - v_abono, 2);
+
+	IF v_saldo <> 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede eliminar al empleado porque su cuenta contable tiene saldo pendiente';
+	END IF;
+
+	UPDATE empleados
+	SET activo = FALSE
+	WHERE id_empleado = p_id_empleado;
+
+	UPDATE cuentas_contables
+	SET
+		activa = FALSE,
+		fecha_modificacion = CURDATE()
+	WHERE id_cuenta = v_id_cuenta_contable;
+
+	COMMIT;
+
+	SELECT
+		p_id_empleado AS id,
+		'Empleado desactivado correctamente' AS message;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `eliminar_articulo` */;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -2054,6 +2253,134 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
+/*!50003 DROP PROCEDURE IF EXISTS `getEmpleadoById` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEmpleadoById`(
+	IN id_empleado INT
+)
+    READS SQL DATA
+    COMMENT 'Consulta un empleado por su id'
+BEGIN
+	
+	SELECT 
+		
+		em.id_empleado,
+		em.id_cuenta_contable,
+		cc.clave,
+		em.id_sucursal,
+		em.rfc,
+		em.curp,
+		em.nombre_completo,
+		em.nombre_corto,
+		em.fecha_nac,
+		em.correo_electronico,
+		em.estado,
+		em.ciudad,
+		em.direccion,
+		em.codigo_postal,
+		em.activo		
+	
+	FROM kath_erp.empleados AS em
+	INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
+	WHERE em.id_empleado = id_empleado;
+	
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getEmpleadoByRFC` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEmpleadoByRFC`(
+	IN rfc_empleado VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+)
+    READS SQL DATA
+    COMMENT 'Consulta los datos de un empleado por su rfc'
+BEGIN
+	
+	SELECT 
+		
+		em.id_empleado,
+		em.id_cuenta_contable,
+		cc.clave,
+		em.id_sucursal,
+		em.rfc,
+		em.curp,
+		em.nombre_completo,
+		em.nombre_corto,
+		em.fecha_nac,
+		em.correo_electronico,
+		em.estado,
+		em.ciudad,
+		em.direccion,
+		em.codigo_postal,
+		em.activo		
+	
+	FROM kath_erp.empleados AS em
+	INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
+	WHERE em.rfc = rfc_empleado;
+	
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getListadoEmpleados` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getListadoEmpleados`(
+	IN nombre_empleado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+)
+    READS SQL DATA
+    COMMENT 'Obtiene un listado completo de todos los empleados registrados en la bd y filtra por nombres'
+BEGIN
+	
+	SELECT 
+		
+		em.id_empleado,		
+		cc.clave,		
+		em.rfc,
+		em.curp,
+		em.nombre_completo,
+		em.nombre_corto,	
+		em.correo_electronico,		
+		em.activo
+	
+	FROM kath_erp.empleados AS em
+	INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
+	WHERE em.nombre_completo LIKE CONCAT('%',nombre_empleado,'%');
+	
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `insert_cuenta_contable` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -2067,9 +2394,12 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_cuenta_contable`(
 	IN p_id_cuenta_padre INT,
 	IN p_id_rubro INT,
-	IN p_clave VARCHAR(25),
-	IN p_nombre VARCHAR(255),
-	IN p_descripcion VARCHAR(555),
+	IN p_clave VARCHAR(25)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre VARCHAR(255)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(555)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_ultimo_nivel BOOLEAN
 )
     MODIFIES SQL DATA
@@ -2196,6 +2526,230 @@ DECLARE v_cuenta_existente INT DEFAULT 0;
 		v_id_cuenta AS id,
 		'Cuenta contable registrada correctamente' AS message;
 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `insert_empleado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_empleado`(
+	IN p_id_cuenta_contable INT,
+	IN p_id_sucursal BIGINT UNSIGNED,
+	IN p_rfc VARCHAR(13)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_curp VARCHAR(18)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_completo VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_corto VARCHAR(10)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_fecha_nac DATE,
+	IN p_correo_electronico VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_estado VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ciudad VARCHAR(40)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_direccion TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_codigo_postal VARCHAR(6)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_contrasenia VARCHAR(255)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+)
+    MODIFIES SQL DATA
+    COMMENT 'Registra un empleado con cuenta contable existente'
+BEGIN
+	DECLARE v_id_empleado INT DEFAULT 0;
+	DECLARE v_existe_cuenta INT DEFAULT 0;
+	DECLARE v_cuenta_asignada INT DEFAULT 0;
+	DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
+	DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
+	DECLARE v_existe_sucursal INT DEFAULT 0;
+	DECLARE v_rfc_duplicado INT DEFAULT 0;
+	DECLARE v_curp_duplicada INT DEFAULT 0;
+
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable es obligatoria';
+	END IF;
+
+	IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+	END IF;
+
+	IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC es obligatorio';
+	END IF;
+
+	IF p_curp IS NULL OR TRIM(p_curp) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La CURP es obligatoria';
+	END IF;
+
+	IF p_nombre_completo IS NULL OR TRIM(p_nombre_completo) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre completo es obligatorio';
+	END IF;
+
+	IF p_nombre_corto IS NULL OR TRIM(p_nombre_corto) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre corto es obligatorio';
+	END IF;
+
+	IF p_fecha_nac IS NULL OR p_fecha_nac > CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La fecha de nacimiento no es válida';
+	END IF;
+
+	IF p_correo_electronico IS NULL OR TRIM(p_correo_electronico) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
+	END IF;
+
+	IF p_contrasenia IS NULL OR p_contrasenia = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La contraseña es obligatoria';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_sucursal
+	FROM sucursal
+	WHERE id_sucursar = p_id_sucursal;
+
+	IF v_existe_sucursal = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La sucursal indicada no existe';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_cuenta
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta_contable;
+
+	IF v_existe_cuenta = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable indicada no existe';
+	END IF;
+
+	SELECT activa, ultimo_nivel
+	INTO v_cuenta_activa, v_ultimo_nivel
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta_contable
+	FOR UPDATE;
+
+	IF v_cuenta_activa = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable se encuentra inactiva';
+	END IF;
+
+	IF v_ultimo_nivel = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta del empleado debe ser una cuenta de detalle';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_cuenta_asignada
+	FROM empleados
+	WHERE id_cuenta_contable = p_id_cuenta_contable;
+
+	IF v_cuenta_asignada > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable ya está asignada a otro empleado';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_rfc_duplicado
+	FROM empleados
+	WHERE rfc = UPPER(TRIM(p_rfc));
+
+	IF v_rfc_duplicado > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC ya está registrado';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_curp_duplicada
+	FROM empleados
+	WHERE curp = UPPER(TRIM(p_curp));
+
+	IF v_curp_duplicada > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La CURP ya está registrada';
+	END IF;
+
+	INSERT INTO empleados (
+		id_cuenta_contable,
+		id_sucursal,
+		rfc,
+		curp,
+		nombre_completo,
+		nombre_corto,
+		fecha_nac,
+		correo_electronico,
+		estado,
+		ciudad,
+		direccion,
+		codigo_postal,
+		contrasenia,
+		activo
+	) VALUES (
+		p_id_cuenta_contable,
+		p_id_sucursal,
+		UPPER(TRIM(p_rfc)),
+		UPPER(TRIM(p_curp)),
+		TRIM(p_nombre_completo),
+		TRIM(p_nombre_corto),
+		p_fecha_nac,
+		LOWER(TRIM(p_correo_electronico)),
+		NULLIF(TRIM(p_estado), ''),
+		NULLIF(TRIM(p_ciudad), ''),
+		NULLIF(TRIM(p_direccion), ''),
+		NULLIF(TRIM(p_codigo_postal), ''),
+		p_contrasenia,
+		TRUE
+	);
+
+	SET v_id_empleado = LAST_INSERT_ID();
+
+	COMMIT;
+
+	SELECT
+		v_id_empleado AS id,
+		'Empleado registrado correctamente' AS message;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3136,9 +3690,12 @@ ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_cuenta_contable`(
 	IN p_id_cuenta INT,
-	IN p_clave VARCHAR(25),
-	IN p_nombre VARCHAR(255),
-	IN p_descripcion VARCHAR(555),
+	IN p_clave VARCHAR(25)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre VARCHAR(255)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(555)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_ultimo_nivel BOOLEAN,
 	IN p_activa BOOLEAN
 )
@@ -3154,9 +3711,9 @@ BEGIN
 	DECLARE v_hijas_activas INT DEFAULT 0;
 	DECLARE v_clave_duplicada INT DEFAULT 0;
 
-	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_sqlstate CHAR(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 	DECLARE v_errno INT;
-	DECLARE v_text TEXT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION
 	BEGIN
@@ -3309,7 +3866,6 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_empleado` */;
-ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -3317,41 +3873,215 @@ ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_empleado`(
-	IN idSucursal INT,
-	IN rfc_e VARCHAR(13),
-	IN nombre_completo_e VARCHAR(30),
-	IN nombre_corto_e VARCHAR(10),
-	IN fecha_nac_e DATE,
-	IN correo_electronico_e VARCHAR(30),
-	IN estado_e VARCHAR(30),
-	IN ciudad_e VARCHAR(40),
-	IN direccion_e TEXT,
-	IN codigo_postal_e VARCHAR(6)
+	IN p_id_empleado INT UNSIGNED,
+	IN p_id_cuenta_contable INT,
+	IN p_id_sucursal BIGINT UNSIGNED,
+	IN p_rfc VARCHAR(13)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_curp VARCHAR(18)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_completo VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_corto VARCHAR(10)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_fecha_nac DATE,
+	IN p_correo_electronico VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_estado VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ciudad VARCHAR(40)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_direccion TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_codigo_postal VARCHAR(6)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_contrasenia VARCHAR(255)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_activo BOOLEAN
 )
+    MODIFIES SQL DATA
+    COMMENT 'Actualiza los datos permitidos de un empleado'
 BEGIN
+	DECLARE v_existe_empleado INT DEFAULT 0;
+	DECLARE v_cuenta_actual INT DEFAULT 0;
+	DECLARE v_cargo DOUBLE DEFAULT 0;
+	DECLARE v_abono DOUBLE DEFAULT 0;
+	DECLARE v_existe_cuenta INT DEFAULT 0;
+	DECLARE v_cuenta_asignada INT DEFAULT 0;
+	DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
+	DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
+	DECLARE v_existe_sucursal INT DEFAULT 0;
+	DECLARE v_rfc_duplicado INT DEFAULT 0;
+	DECLARE v_curp_duplicada INT DEFAULT 0;
+
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+
+	START TRANSACTION;
+
+	SELECT COUNT(*)
+	INTO v_existe_empleado
+	FROM empleados
+	WHERE id_empleado = p_id_empleado;
+
+	IF v_existe_empleado = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El empleado no existe';
+	END IF;
+
+	SELECT id_cuenta_contable
+	INTO v_cuenta_actual
+	FROM empleados
+	WHERE id_empleado = p_id_empleado
+	FOR UPDATE;
+
+	IF p_rfc IS NULL OR TRIM(p_rfc) = ''
+	   OR p_curp IS NULL OR TRIM(p_curp) = ''
+	   OR p_nombre_completo IS NULL OR TRIM(p_nombre_completo) = ''
+	   OR p_nombre_corto IS NULL OR TRIM(p_nombre_corto) = ''
+	   OR p_fecha_nac IS NULL
+	   OR p_correo_electronico IS NULL OR TRIM(p_correo_electronico) = ''
+	   OR p_contrasenia IS NULL OR p_contrasenia = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Faltan datos obligatorios del empleado';
+	END IF;
+
+	IF p_fecha_nac > CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La fecha de nacimiento no es válida';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_sucursal
+	FROM sucursal
+	WHERE id_sucursar = p_id_sucursal;
+
+	IF v_existe_sucursal = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La sucursal indicada no existe';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_rfc_duplicado
+	FROM empleados
+	WHERE rfc = UPPER(TRIM(p_rfc))
+	  AND id_empleado <> p_id_empleado;
+
+	IF v_rfc_duplicado > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC ya pertenece a otro empleado';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_curp_duplicada
+	FROM empleados
+	WHERE curp = UPPER(TRIM(p_curp))
+	  AND id_empleado <> p_id_empleado;
+
+	IF v_curp_duplicada > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La CURP ya pertenece a otro empleado';
+	END IF;
+
+	IF p_id_cuenta_contable <> v_cuenta_actual THEN
+
+		SELECT cargo, abono
+		INTO v_cargo, v_abono
+		FROM cuentas_contables
+		WHERE id_cuenta = v_cuenta_actual
+		FOR UPDATE;
+
+		IF v_cargo <> 0 OR v_abono <> 0 THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'No se puede cambiar la cuenta de un empleado con movimientos contables';
+		END IF;
+
+		SELECT COUNT(*)
+		INTO v_existe_cuenta
+		FROM cuentas_contables
+		WHERE id_cuenta = p_id_cuenta_contable;
+
+		IF v_existe_cuenta = 0 THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'La nueva cuenta contable no existe';
+		END IF;
+
+		SELECT activa, ultimo_nivel
+		INTO v_cuenta_activa, v_ultimo_nivel
+		FROM cuentas_contables
+		WHERE id_cuenta = p_id_cuenta_contable
+		FOR UPDATE;
+
+		IF v_cuenta_activa = FALSE THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'La nueva cuenta contable se encuentra inactiva';
+		END IF;
+
+		IF v_ultimo_nivel = FALSE THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'La nueva cuenta debe ser una cuenta de detalle';
+		END IF;
+
+		SELECT COUNT(*)
+		INTO v_cuenta_asignada
+		FROM empleados
+		WHERE id_cuenta_contable = p_id_cuenta_contable
+		  AND id_empleado <> p_id_empleado;
+
+		IF v_cuenta_asignada > 0 THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'La nueva cuenta ya está asignada a otro empleado';
+		END IF;
+	END IF;
+
 	UPDATE empleados
-    SET
-		id_sucursal = idSucursal,
-		nombre_completo = nombre_completo_e,
-        nombre_corto = nombre_corto_e,
-        fecha_nac = fecha_nac_e,
-        correo_electronico = correo_electronico_e,
-        estado = estado_e,
-        ciudad = ciudad_e,
-        direccion = direccion_e,
-        codigo_postal = codigo_postal_e,
-        activo = 1
-	WHERE rfc = rfc_e;
+	SET
+		id_cuenta_contable = p_id_cuenta_contable,
+		id_sucursal = p_id_sucursal,
+		rfc = UPPER(TRIM(p_rfc)),
+		curp = UPPER(TRIM(p_curp)),
+		nombre_completo = TRIM(p_nombre_completo),
+		nombre_corto = TRIM(p_nombre_corto),
+		fecha_nac = p_fecha_nac,
+		correo_electronico = LOWER(TRIM(p_correo_electronico)),
+		estado = NULLIF(TRIM(p_estado), ''),
+		ciudad = NULLIF(TRIM(p_ciudad), ''),
+		direccion = NULLIF(TRIM(p_direccion), ''),
+		codigo_postal = NULLIF(TRIM(p_codigo_postal), ''),
+		contrasenia = p_contrasenia,
+		activo = p_activo
+	WHERE id_empleado = p_id_empleado;
+
+	COMMIT;
+
+	SELECT
+		p_id_empleado AS id,
+		'Empleado actualizado correctamente' AS message;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_forma_de_pago` */;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -4146,7 +4876,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `ver_sucursales_nombres` */;
-ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -4154,12 +4883,13 @@ ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ver_sucursales_nombres`()
+    COMMENT 'Procedimeinto para el listado de las sucursales en un combobox'
 BEGIN
 	SELECT 
-		sucursal.id_sucursar,
+		sucursal.id_sucursar AS id,
         sucursal.nombre
 	FROM sucursal ORDER BY id_sucursar;
 END ;;
@@ -4168,7 +4898,6 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!50003 DROP PROCEDURE IF EXISTS `ver_tipo_clientes` */;
 ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -4327,4 +5056,4 @@ ALTER DATABASE `kath_erp` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-10 13:20:12
+-- Dump completed on 2026-07-13  1:40:08
