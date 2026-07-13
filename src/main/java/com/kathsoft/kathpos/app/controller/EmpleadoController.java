@@ -132,7 +132,7 @@ public class EmpleadoController implements Serializable {
 		ResultSet rset = null;
 		try {
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL buscar_empleado_por_id(?)");
+			stm = cn.prepareCall("CALL getEmpleadoById(?)");
 			stm.setInt(1, id);
 			rset = stm.executeQuery();
 			if (rset.next()) {
@@ -224,7 +224,7 @@ public class EmpleadoController implements Serializable {
 			while (rset.next()) {
 				data.add(new Object[] { rset.getInt("id_empleado"), rset.getString("clave"), rset.getString("rfc"), rset.getString("curp"),
 					rset.getString("nombre_completo"), rset.getString("nombre_corto"), rset.getString("correo_electronico"),
-					rset.getBoolean("activo") ? "Activo" : "Inactivo" });
+					rset.getInt("activo") == 1 ? "Activo" : "Inactivo" });
 			}
 			return data;
 		} catch (SQLException er) {
