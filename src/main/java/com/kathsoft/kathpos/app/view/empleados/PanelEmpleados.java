@@ -54,8 +54,9 @@ public class PanelEmpleados extends JPanel {
 	 */
 	public PanelEmpleados() {
 		setBackground(new Color(255, 204, 0));
-		
-		//CODEX.TODO: El las columnas de la tabla en base a la respuesta retornada desde el controlador.
+
+		// CODEX.TODO: El las columnas de la tabla en base a la respuesta retornada
+		// desde el controlador.
 		modelTablaEmpleados = new DefaultTableModel();
 		modelTablaEmpleados.addColumn("id");
 		modelTablaEmpleados.addColumn("Sucursal");
@@ -65,104 +66,97 @@ public class PanelEmpleados extends JPanel {
 		modelTablaEmpleados.addColumn("Nick");
 		modelTablaEmpleados.addColumn("Email");
 		modelTablaEmpleados.addColumn("Activo");
-		
+
 		panelSuperiorTitulo = new JPanel();
 		panelSuperiorTitulo.setBackground(new Color(0, 0, 102));
-		
+
 		panelinferiorbusquedas = new JPanel();
 		panelinferiorbusquedas.setBackground(new Color(0, 153, 255));
-		
+
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
 		flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
-		
+
 		scrollPane = new JScrollPane();
 		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 				.addComponent(panelSuperiorTitulo, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
 				.addComponent(panelinferiorbusquedas, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+				.addGroup(groupLayout.createSequentialGroup().addContainerGap()
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 752, Short.MAX_VALUE).addContainerGap())
+				.addComponent(panelSuperiorBotones, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 752, Short.MAX_VALUE)
-					.addContainerGap())
-				.addComponent(panelSuperiorBotones, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addComponent(panelSuperiorTitulo, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panelSuperiorBotones, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panelinferiorbusquedas, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-		);
-		
+						.addComponent(panelSuperiorTitulo, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(panelSuperiorBotones, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(panelinferiorbusquedas,
+								GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+
 		tableEmpleados = new JTable();
 		scrollPane.setViewportView(tableEmpleados);
-		
+
 		btnAgregar = new JButton("Agregar");
-		btnAgregar.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnAgregar.setIcon(
+				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
-		
+
 		btnModificar = new JButton("Modificar");
-		btnModificar.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnModificar.setIcon(
+				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnModificar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnModificar);
-		
+
 		btnEliminar = new JButton("Eliminar");
-		btnEliminar.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		btnEliminar.setBackground(new Color(255,51,0));
+		btnEliminar.setIcon(
+				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		btnEliminar.setBackground(new Color(255, 51, 0));
 		panelSuperiorBotones.add(btnEliminar);
-		
+
 		btnExcel = new JButton("Exportar Excel");
-		btnExcel.setIcon(new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		btnExcel.setBackground(new Color(102,205,170));
+		btnExcel.setIcon(
+				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		btnExcel.setBackground(new Color(102, 205, 170));
 		panelSuperiorBotones.add(btnExcel);
-		
+
 		lblNombre = new JLabel("Nombre");
-		
+
 		txfNombreEmpleado = new JTextField();
 		txfNombreEmpleado.setColumns(10);
-		
+
 		btnBuscar = new JButton("Buscar");
+		this.btnBuscar.setBackground(new Color(184, 134, 11));
+		btnBuscar.setIcon(
+				new ImageIcon(PanelEmpleados.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		GroupLayout gl_panelinferiorbusquedas = new GroupLayout(panelinferiorbusquedas);
-		gl_panelinferiorbusquedas.setHorizontalGroup(
-			gl_panelinferiorbusquedas.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelinferiorbusquedas.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNombre, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfNombreEmpleado, GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnBuscar)
-					.addContainerGap())
-		);
-		gl_panelinferiorbusquedas.setVerticalGroup(
-			gl_panelinferiorbusquedas.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelinferiorbusquedas.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelinferiorbusquedas.createParallelGroup(Alignment.BASELINE, false)
-						.addComponent(lblNombre)
-						.addGroup(gl_panelinferiorbusquedas.createSequentialGroup()
-							.addGap(6)
-							.addComponent(txfNombreEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(btnBuscar))
-					.addContainerGap())
-		);
+		gl_panelinferiorbusquedas.setHorizontalGroup(gl_panelinferiorbusquedas.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelinferiorbusquedas.createSequentialGroup().addContainerGap()
+						.addComponent(lblNombre, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txfNombreEmpleado, GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnBuscar).addContainerGap()));
+		gl_panelinferiorbusquedas.setVerticalGroup(gl_panelinferiorbusquedas.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelinferiorbusquedas.createSequentialGroup().addContainerGap()
+						.addGroup(gl_panelinferiorbusquedas.createParallelGroup(Alignment.BASELINE, false)
+								.addComponent(lblNombre)
+								.addGroup(gl_panelinferiorbusquedas.createSequentialGroup().addGap(6).addComponent(
+										txfNombreEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnBuscar))
+						.addContainerGap()));
 		panelinferiorbusquedas.setLayout(gl_panelinferiorbusquedas);
-		
+
 		lblEmpleados = new JLabel("Empleados");
 		lblEmpleados.setForeground(new Color(255, 255, 255));
 		lblEmpleados.setFont(new Font("Dialog", Font.BOLD, 20));
 		panelSuperiorTitulo.add(lblEmpleados);
 		setLayout(groupLayout);
 	}
-	
+
 	/**
 	 * borra todos los elementos contenidos en la tabla empleados
 	 */
@@ -170,9 +164,9 @@ public class PanelEmpleados extends JPanel {
 		this.modelTablaEmpleados.getDataVector().removeAllElements();
 		this.tableEmpleados.updateUI();
 	}
-	
-	
-	//CODEX.TODO: llenar la tabla previallamada al método en el controlador, el controlador no debe tocar nada relacionado  ala vista.
+
+	// CODEX.TODO: llenar la tabla previallamada al método en el controlador, el
+	// controlador no debe tocar nada relacionado ala vista.
 	/**
 	 * llena el jTable del panel de empleados con todos los registros encontrados en
 	 * la bd
