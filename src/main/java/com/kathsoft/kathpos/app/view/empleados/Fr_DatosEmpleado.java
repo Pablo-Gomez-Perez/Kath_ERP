@@ -28,10 +28,12 @@ import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
-import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
+import com.kathsoft.kathpos.app.model.empleado.Empleado;
+import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.UiTools;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -417,7 +419,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * @param idEmpleado
 	 */
 	private void consultarEmpleadoPorId(int idEmpleado) {
-		Empleado empleado = AppContext.empleadoController.consultarEmpleadoPorId(idEmpleado);
+		EmpleadoById empleado = AppContext.empleadoController.consultarEmpleadoPorId(idEmpleado);
 
 		if (empleado == null) {
 			JOptionPane.showMessageDialog(this, "No fue posible cargar el empleado", "Error",
@@ -427,26 +429,20 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		txfRfcEmpleado.setText(empleado.getRfc());
 		txfCurpEmpleado.setText(empleado.getCurp());
-		txfNombreCompletoEmpleado.setText(empleado.getNombre());
+		txfNombreCompletoEmpleado.setText(empleado.getNombreCompleto());
 		txfNombreCortoEmpleado.setText(empleado.getNombreCorto());
-		frmtdtxtfldFechanacimientoempleado.setText(empleado.getFechaNacimiento() == null ? ""
-				: empleado.getFechaNacimiento().toString());
-		frmtxfCorreoElectronico.setText(empleado.getEmail());
+		frmtdtxtfldFechanacimientoempleado.setText(empleado.getFechaNac() == null ? ""
+				: empleado.getFechaNac().toString());
+		frmtxfCorreoElectronico.setText(empleado.getCorreoElectronico());
 		txfEstadoEmpleado.setText(empleado.getEstado());
 		txfCiudadEmpleado.setText(empleado.getCiudad());
 		textAreaDireccionEmpleado.setText(empleado.getDireccion());
 		txfCodigoPostal.setText(empleado.getCodigoPostal());
 		txfClaveCuentaContable.setText(String.valueOf(empleado.getIdCuentaContable()));
-		passwordFieldContraseniaEmpleado.setText(empleado.getPassword());
-		passwordFieldVerificarContraseniaEmpleado.setText(empleado.getPassword());
-
-		for (int i = 0; i < cmbSucursalEmpleado.getItemCount(); i++) {
-			JComboboxDataViewModel item = cmbSucursalEmpleado.getItemAt(i);
-			if (item != null && item.id() == empleado.getIdSucursal()) {
-				cmbSucursalEmpleado.setSelectedIndex(i);
-				break;
-			}
-		}
+		passwordFieldContraseniaEmpleado.setText("");
+		passwordFieldVerificarContraseniaEmpleado.setText("");
+		UiTools.jComboboxSetSelectedIndex(this.cmbSucursalEmpleado, empleado.getIdSucursal());
+		
 	}
 
 	/**
@@ -462,17 +458,17 @@ public class Fr_DatosEmpleado extends JFrame {
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
-		empleado.setNombre(txfNombreCompletoEmpleado.getText().trim());
+		empleado.setNombreCompleto(txfNombreCompletoEmpleado.getText().trim());
 		empleado.setNombreCorto(txfNombreCortoEmpleado.getText().trim());
-		empleado.setFechaNacimiento(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
-		empleado.setEmail(frmtxfCorreoElectronico.getText().trim());
+		empleado.setFechaNac(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
+		empleado.setCorreoElectronico(frmtxfCorreoElectronico.getText().trim());
 		empleado.setEstado(txfEstadoEmpleado.getText().trim());
 		empleado.setCiudad(txfCiudadEmpleado.getText().trim());
 		empleado.setDireccion(textAreaDireccionEmpleado.getText().trim());
 		empleado.setCodigoPostal(txfCodigoPostal.getText().trim());
-		empleado.setPassword(new String(passwordFieldContraseniaEmpleado.getPassword()));
+		empleado.setContrasenia(new String(passwordFieldContraseniaEmpleado.getPassword()));
 
-		if (!empleado.getPassword().equals(new String(passwordFieldVerificarContraseniaEmpleado.getPassword()))) {
+		if (!empleado.getContrasenia().equals(new String(passwordFieldVerificarContraseniaEmpleado.getPassword()))) {
 			JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -494,22 +490,22 @@ public class Fr_DatosEmpleado extends JFrame {
 		}
 
 		Empleado empleado = new Empleado();
-		empleado.setId(idEmpleado);
+		empleado.setIdEmpleado(idEmpleado);
 		empleado.setIdCuentaContable(Integer.parseInt(txfClaveCuentaContable.getText().trim()));
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
-		empleado.setNombre(txfNombreCompletoEmpleado.getText().trim());
+		empleado.setNombreCompleto(txfNombreCompletoEmpleado.getText().trim());
 		empleado.setNombreCorto(txfNombreCortoEmpleado.getText().trim());
-		empleado.setFechaNacimiento(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
-		empleado.setEmail(frmtxfCorreoElectronico.getText().trim());
+		empleado.setFechaNac(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
+		empleado.setCorreoElectronico(frmtxfCorreoElectronico.getText().trim());
 		empleado.setEstado(txfEstadoEmpleado.getText().trim());
 		empleado.setCiudad(txfCiudadEmpleado.getText().trim());
 		empleado.setDireccion(textAreaDireccionEmpleado.getText().trim());
 		empleado.setCodigoPostal(txfCodigoPostal.getText().trim());
-		empleado.setPassword(new String(passwordFieldContraseniaEmpleado.getPassword()));
+		empleado.setContrasenia(new String(passwordFieldContraseniaEmpleado.getPassword()));
 
-		if (!empleado.getPassword().equals(new String(passwordFieldVerificarContraseniaEmpleado.getPassword()))) {
+		if (!empleado.getContrasenia().equals(new String(passwordFieldVerificarContraseniaEmpleado.getPassword()))) {
 			JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}

@@ -22,8 +22,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import com.kathsoft.kathpos.app.model.Empleado;
+
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
+import com.kathsoft.kathpos.app.model.empleado.Empleado;
 
 public class Fr_NewPasswordEmpleado extends JFrame {
 
@@ -256,7 +257,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		
 		empl.setRfc(this.rfcEmpleado);
 		empl.setNombreCorto(this.nombreCorto);
-		empl.setPassword(actualPsw);
+		empl.setContrasenia(actualPsw);
 		
 		if(empleadoController.validarIngreso(empl) == false || psw1.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "La contraseña actual es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
@@ -265,7 +266,7 @@ public class Fr_NewPasswordEmpleado extends JFrame {
 		
 		try {
 			
-			empl.setPassword(psw1);
+			empl.setContrasenia(psw1);
 			empleadoController.actualizarContrasenia(empl);
 			
 			JOptionPane.showMessageDialog(this, "Contraseña actualizada", 

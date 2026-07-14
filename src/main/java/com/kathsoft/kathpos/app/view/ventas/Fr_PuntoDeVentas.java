@@ -48,8 +48,8 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.Articulo;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Clientes;
-import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Ventas;
+import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.articulo.Fr_ListaArticulos;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
@@ -733,7 +733,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 		try {
 			String nombreEmpleado = (String) this.cmbAliasEmpleado.getSelectedItem();
 			empleado = this.empleadoController.consultarEmpleadoPorNombre(nombreEmpleado);
-			this.txfNombreEmpleado.setText(empleado.getNombre());	
+			this.txfNombreEmpleado.setText(empleado.getNombreCorto());	
 		}catch(Exception er) {
 			er.printStackTrace();
 		}

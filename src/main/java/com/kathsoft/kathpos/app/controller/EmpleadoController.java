@@ -13,7 +13,8 @@ import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
-import com.kathsoft.kathpos.app.model.Empleado;
+import com.kathsoft.kathpos.app.model.empleado.Empleado;
+import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
@@ -32,7 +33,7 @@ public class EmpleadoController implements Serializable {
 		ResultSet rset = null;
 
 		if (empl == null || empl.getNombreCorto() == null || empl.getNombreCorto().isBlank()
-				|| empl.getPassword() == null || empl.getPassword().isBlank()) {
+				|| empl.getContrasenia() == null || empl.getContrasenia().isBlank()) {
 			return false;
 		}
 
@@ -41,7 +42,7 @@ public class EmpleadoController implements Serializable {
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL validar_entrada(?,?)");
 			stm.setString(1, empl.getNombreCorto());
-			stm.setString(2, empl.getPassword());
+			stm.setString(2, empl.getContrasenia());
 			rset = stm.executeQuery();
 
 			if (!rset.next()) {
@@ -126,8 +127,8 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
-	public Empleado consultarEmpleadoPorId(int id) {
-		Empleado empl = new Empleado();
+	public EmpleadoById consultarEmpleadoPorId(int id) {
+				
 		CallableStatement stm = null;
 		ResultSet rset = null;
 		try {
@@ -136,22 +137,25 @@ public class EmpleadoController implements Serializable {
 			stm.setInt(1, id);
 			rset = stm.executeQuery();
 			if (rset.next()) {
-				empl.setId(rset.getInt("id_empleado"));
-				empl.setIdCuentaContable(rset.getInt("id_cuenta_contable"));
-				empl.setIdSucursal(rset.getInt("id_sucursal"));
-				empl.setRfc(rset.getString("rfc"));
-				empl.setCurp(rset.getString("curp"));
-				empl.setNombre(rset.getString("nombre_completo"));
-				empl.setNombreCorto(rset.getString("nombre_corto"));
-				empl.setFechaNacimiento(rset.getDate("fecha_nac"));
-				empl.setEmail(rset.getString("correo_electronico"));
-				empl.setEstado(rset.getString("estado"));
-				empl.setCiudad(rset.getString("ciudad"));
-				empl.setDireccion(rset.getString("direccion"));
-				empl.setCodigoPostal(rset.getString("codigo_postal"));
-				empl.setPassword(rset.getString("contrasenia"));
+				return new EmpleadoById.EmpleadoBuilder()
+						.idEmpleado(rset.getInt("id_empleado"))
+						.idCuentaContable(rset.getInt("id_cuenta_contable"))
+						.claveCuentaContable(rset.getString("clave"))
+						.idSucursal(rset.getInt("id_sucursal"))
+						.rfc(rset.getString("rfc"))
+						.curp(rset.getString("curp"))
+						.nombreCompleto(rset.getString("nombre_completo"))
+						.nombreCorto(rset.getString("nombre_corto"))
+						.fechaNac(rset.getDate("fecha_nac"))
+						.correoElectronico(rset.getString("correo_electronico"))
+						.estado(rset.getString("estado"))
+						.ciudad(rset.getString("ciudad"))
+						.direccion(rset.getString("direccion"))
+						.codigoPostal(rset.getString("codigo_postal"))
+						.activo(rset.getBoolean("activo"))
+						.build();
 			}
-			return empl;
+			return new EmpleadoById();
 		} catch (SQLException er) {
 			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -169,8 +173,7 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
-	public Empleado consultarEmpleadoPorRfc(String rfc) {
-		Empleado empl = new Empleado();
+	public EmpleadoById consultarEmpleadoPorRfc(String rfc) {		
 		CallableStatement stm = null;
 		ResultSet rset = null;
 		try {
@@ -179,27 +182,30 @@ public class EmpleadoController implements Serializable {
 			stm.setString(1, rfc);
 			rset = stm.executeQuery();
 			if (rset.next()) {
-				empl.setId(rset.getInt("id_empleado"));
-				empl.setIdCuentaContable(rset.getInt("id_cuenta_contable"));
-				empl.setIdSucursal(rset.getInt("id_sucursal"));
-				empl.setRfc(rset.getString("rfc"));
-				empl.setCurp(rset.getString("curp"));
-				empl.setNombre(rset.getString("nombre_completo"));
-				empl.setNombreCorto(rset.getString("nombre_corto"));
-				empl.setFechaNacimiento(rset.getDate("fecha_nac"));
-				empl.setEmail(rset.getString("correo_electronico"));
-				empl.setEstado(rset.getString("estado"));
-				empl.setCiudad(rset.getString("ciudad"));
-				empl.setDireccion(rset.getString("direccion"));
-				empl.setCodigoPostal(rset.getString("codigo_postal"));
-				empl.setPassword(rset.getString("contrasenia"));
+				return new EmpleadoById.EmpleadoBuilder()
+						.idEmpleado(rset.getInt("id_empleado"))
+						.idCuentaContable(rset.getInt("id_cuenta_contable"))
+						.claveCuentaContable(rset.getString("clave"))
+						.idSucursal(rset.getInt("id_sucursal"))
+						.rfc(rset.getString("rfc"))
+						.curp(rset.getString("curp"))
+						.nombreCompleto(rset.getString("nombre_completo"))
+						.nombreCorto(rset.getString("nombre_corto"))
+						.fechaNac(rset.getDate("fecha_nac"))
+						.correoElectronico(rset.getString("correo_electronico"))
+						.estado(rset.getString("estado"))
+						.ciudad(rset.getString("ciudad"))
+						.direccion(rset.getString("direccion"))
+						.codigoPostal(rset.getString("codigo_postal"))
+						.activo(rset.getBoolean("activo"))
+						.build();
 			}
-			return empl;
+			return new EmpleadoById();
 		} catch (SQLException er) {
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
 			return null;
 		} catch (Exception er) {
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace();
 			return null;
 		} finally {
 			try {
@@ -254,15 +260,15 @@ public class EmpleadoController implements Serializable {
 			stm.setInt(2, empl.getIdSucursal());
 			stm.setString(3, empl.getRfc());
 			stm.setString(4, empl.getCurp());
-			stm.setString(5, empl.getNombre());
+			stm.setString(5, empl.getNombreCompleto());
 			stm.setString(6, empl.getNombreCorto());
-			stm.setDate(7, empl.getFechaNacimiento());
-			stm.setString(8, empl.getEmail());
+			stm.setDate(7, empl.getFechaNac());
+			stm.setString(8, empl.getCorreoElectronico());
 			stm.setString(9, empl.getEstado());
 			stm.setString(10, empl.getCiudad());
 			stm.setString(11, empl.getDireccion());
 			stm.setString(12, empl.getCodigoPostal());
-			stm.setString(13, empl.getPassword());
+			stm.setString(13, empl.getContrasenia());
 			rset = stm.executeQuery();
 			return leerRespuestaSp(rset);
 		} catch (SQLException er) {
@@ -288,20 +294,20 @@ public class EmpleadoController implements Serializable {
 		try {
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-			stm.setInt(1, empl.getId());
+			stm.setInt(1, empl.getIdEmpleado());
 			stm.setInt(2, empl.getIdCuentaContable());
 			stm.setInt(3, empl.getIdSucursal());
 			stm.setString(4, empl.getRfc());
 			stm.setString(5, empl.getCurp());
-			stm.setString(6, empl.getNombre());
+			stm.setString(6, empl.getNombreCompleto());
 			stm.setString(7, empl.getNombreCorto());
-			stm.setDate(8, empl.getFechaNacimiento());
-			stm.setString(9, empl.getEmail());
+			stm.setDate(8, empl.getFechaNac());
+			stm.setString(9, empl.getCorreoElectronico());
 			stm.setString(10, empl.getEstado());
 			stm.setString(11, empl.getCiudad());
 			stm.setString(12, empl.getDireccion());
 			stm.setString(13, empl.getCodigoPostal());
-			stm.setString(14, empl.getPassword());
+			stm.setString(14, empl.getContrasenia());
 			stm.setBoolean(15, true);
 			rset = stm.executeQuery();
 			return leerRespuestaSp(rset);
@@ -350,14 +356,14 @@ public class EmpleadoController implements Serializable {
 
 	public void actualizarContrasenia(Empleado empl) {
 		CallableStatement stm = null;
-		if (empl == null || empl.getPassword() == null || empl.getPassword().isEmpty()) {
+		if (empl == null || empl.getContrasenia() == null || empl.getContrasenia().isEmpty()) {
 			return;
 		}
 		try {
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL actualizarPassWordEmpleado(?,?);");
 			stm.setString(1, empl.getRfc());
-			stm.setString(2, empl.getPassword());
+			stm.setString(2, empl.getContrasenia());
 			stm.execute();
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -391,8 +397,8 @@ public class EmpleadoController implements Serializable {
 			stm.setString(1, nombre);
 			rset = stm.executeQuery();
 			if (rset.next()) {
-				empleado.setId(rset.getInt(1));
-				empleado.setNombre(rset.getString(2));
+				empleado.setIdEmpleado(rset.getInt(1));
+				empleado.setNombreCompleto(rset.getString(2));
 			}
 			return empleado;
 		} catch (SQLException er) {

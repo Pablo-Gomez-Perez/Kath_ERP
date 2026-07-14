@@ -177,7 +177,7 @@ public class VentasController implements java.io.Serializable {
 			stm.setInt(1, venta.getIdSucursal());
 			stm.setDate(2, venta.getFechaVenta());
 			stm.setBoolean(3, venta.isVentaContado());
-			stm.setInt(4, venta.getEmpleado().getId());
+			stm.setInt(4, venta.getEmpleado().getIdEmpleado());
 			stm.setInt(5, venta.getCliente().getId());
 			stm.setDouble(6, venta.getSubTotal());
 			stm.setDouble(7, venta.getIva());

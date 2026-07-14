@@ -26,8 +26,8 @@ import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import com.kathsoft.kathpos.app.model.Empleado;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
 
@@ -281,7 +281,7 @@ public class Fr_LogIn extends JFrame {
 		}
 
 		empl.setNombreCorto(usuarioSeleccionado.toString());
-		empl.setPassword(contra);
+		empl.setContrasenia(contra);
 
 		if (!AppContext.empleadoController.validarIngreso(empl)) {
 			JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);

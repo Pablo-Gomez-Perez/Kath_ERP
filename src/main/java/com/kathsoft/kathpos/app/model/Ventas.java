@@ -3,6 +3,8 @@ package com.kathsoft.kathpos.app.model;
 import java.io.Serializable;
 import java.sql.Date;
 
+import com.kathsoft.kathpos.app.model.empleado.Empleado;
+
 public class Ventas implements Serializable {
 
 	/**
