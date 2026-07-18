@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
+import com.mysql.cj.protocol.Resultset;
 
 public class TipoClienteController {
 
@@ -85,9 +87,10 @@ public class TipoClienteController {
 
 	}
 
-	public void insertarNuevoTipoCliente(TipoCliente data) {
+	public SpResponseModel insertarNuevoTipoCliente(TipoCliente data) {
 
 		CallableStatement stm = null;
+		ResultSet rset = null;
 
 		try {
 
@@ -95,13 +98,20 @@ public class TipoClienteController {
 			stm = cn.prepareCall("CALL insert_nuevo_tipoCliente(?,?)");
 			stm.setString(1, data.getNombre());
 			stm.setString(2, data.getDescripcion());
-
-			stm.execute();
-
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
+			}
+			
+			return new SpResponseModel(500,"Ocurrio un error desconocido");
+			
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return new SpResponseModel(500,er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
+			return new SpResponseModel(500,er.getMessage());
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
@@ -112,9 +122,10 @@ public class TipoClienteController {
 
 	}
 
-	public void actualizarTipoCliente(TipoCliente data) {
+	public SpResponseModel actualizarTipoCliente(TipoCliente data) {
 
 		CallableStatement stm = null;
+		ResultSet rset = null;
 
 		System.out.println(data.printData());
 
@@ -125,12 +136,20 @@ public class TipoClienteController {
 			stm.setInt(1, data.getIdTipoCliente());
 			stm.setString(2, data.getNombre());
 			stm.setString(3, data.getDescripcion());
-			stm.execute();
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
+			}
+			
+			return new SpResponseModel(500,"Ocurrio un error desconocido");
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return new SpResponseModel(500,er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
+			return new SpResponseModel(500,er.getMessage());
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
@@ -177,14 +196,38 @@ public class TipoClienteController {
 		}
 	}
 	
-	public void eliminarTipoCliente(int idTipoCliente) throws SQLException{
-						
-		cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-		var stm = cn.prepareCall("CALL eliminar_tipoCliente(?)");
-		stm.setInt(1, idTipoCliente);
-		stm.execute();
+	public SpResponseModel eliminarTipoCliente(int idTipoCliente) {
+			
+		ResultSet rset = null;
+		CallableStatement stm = null;
 		
-		Conexion.cerrarConexion(cn, stm);
+		try {
+			
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL eliminar_tipoCliente(?)");
+			stm.setInt(1, idTipoCliente);
+			rset = stm.executeQuery();
+			
+			if(rset.next()) {
+				return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
+			}
+			
+			return new SpResponseModel(500,"Ocurrio un error desconocido");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new SpResponseModel(500,e.getMessage());
+		}finally {
+			try {
+				
+				Conexion.cerrarConexion(cn, rset, stm);
+				
+			} catch (Exception er) {
+				
+				er.printStackTrace();
+				
+			}
+		}		
 		
 	}
 	

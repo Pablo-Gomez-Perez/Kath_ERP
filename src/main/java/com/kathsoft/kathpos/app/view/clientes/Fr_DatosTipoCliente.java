@@ -6,6 +6,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
+import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
 import java.awt.BorderLayout;
@@ -152,7 +154,7 @@ public class Fr_DatosTipoCliente extends JFrame {
 				Fr_DatosTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelInferiorBotones.add(btnCancelar);
 
-		btnAgregar = new JButton("Agregar");
+		btnAgregar = new JButton("Guardar");
 		btnAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (tipoOperacion == 1) {
@@ -185,9 +187,11 @@ public class Fr_DatosTipoCliente extends JFrame {
 		data.setNombre(this.txfNombre.getText());
 		data.setDescripcion(this.txfDescripcion.getText());
 
-		this.tipoClienteController.insertarNuevoTipoCliente(data);
+		var result = AppContext.tipoClienteController.insertarNuevoTipoCliente(data);
 
-		MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
+		MessageHandler.displayMessage(
+				result.id() == 200 ?
+				MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 		
 		this.limpiarCampos();
 
@@ -220,11 +224,14 @@ public class Fr_DatosTipoCliente extends JFrame {
 		data.setNombre(this.txfNombre.getText());
 		data.setDescripcion(this.txfDescripcion.getText());
 
-		this.tipoClienteController.actualizarTipoCliente(data);
+		var result = AppContext.tipoClienteController.actualizarTipoCliente(data);
 
-		MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
+		MessageHandler.displayMessage(
+				result.id() == 200 ?
+				MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 
 	}
+		
 
 	private boolean validarCamposVacios() {
 		return this.txfNombre.getText().isBlank() || this.txfDescripcion.getText().isBlank() ? true : false;
