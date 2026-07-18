@@ -46,6 +46,14 @@ public class PanelTipoCliente extends JPanel {
 	private JButton btnEliminar;
 	private JButton btnExcel;
 	private JTable tableTipoCliente;
+	private JPanel panelCentralContenedor;
+	private FlowLayout flowLayout;
+	private JScrollPane scrollPaneTableTipoCliente;
+	private GroupLayout gl_panelCentralContenedor;
+	private JLabel lblBuscar;
+	private JButton btnBuscar;
+	private GroupLayout gl_panelInferiorBusqueda;
+	private GroupLayout groupLayout;	
 
 	/**
 	 * Create the panel.
@@ -64,16 +72,12 @@ public class PanelTipoCliente extends JPanel {
 		this.lblNewLabel_11.setFont(new Font("Tahoma", Font.BOLD, 16));
 		this.panelEtiquetaTipoCliente.add(lblNewLabel_11);
 		
-		this.modelTablaTipoCliente = new DefaultTableModel();
-
-		this.modelTablaTipoCliente.addColumn("Id");
-		this.modelTablaTipoCliente.addColumn("Categoria de cliente");
-		this.modelTablaTipoCliente.addColumn("Descripción");
-		this.modelTablaTipoCliente.addColumn("Estatus");
+		this.modelTablaTipoCliente = this.getModelTablaCliente();
 		
-		JPanel panelCentralContenedor = new JPanel();
+		
+		panelCentralContenedor = new JPanel();
 		panelCentralContenedor.setBackground(new Color(255, 204, 0));
-		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
@@ -97,11 +101,11 @@ public class PanelTipoCliente extends JPanel {
 		
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
-		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
+		flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		
-		JScrollPane scrollPaneTableTipoCliente = new JScrollPane();
-		GroupLayout gl_panelCentralContenedor = new GroupLayout(panelCentralContenedor);
+		scrollPaneTableTipoCliente = new JScrollPane();
+		gl_panelCentralContenedor = new GroupLayout(panelCentralContenedor);
 		gl_panelCentralContenedor.setHorizontalGroup(
 			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
 				.addComponent(panelInferiorBusqueda, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
@@ -122,6 +126,7 @@ public class PanelTipoCliente extends JPanel {
 		);
 		
 		tableTipoCliente = new JTable();
+		this.tableTipoCliente.setModel(this.modelTablaTipoCliente);
 		scrollPaneTableTipoCliente.setViewportView(tableTipoCliente);
 		
 		btnAgregar = new JButton("Agregar");
@@ -144,15 +149,20 @@ public class PanelTipoCliente extends JPanel {
 		btnExcel.setBackground(new Color(102, 205, 170));
 		panelSuperiorBotones.add(btnExcel);
 		
-		JLabel lblBuscar = new JLabel("Buscar");
+		lblBuscar = new JLabel("Buscar");
 		
 		txfNombreTipoCliente = new JTextField();
 		txfNombreTipoCliente.setColumns(10);
 		
-		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				listarTipoClientes(txfNombreTipoCliente.getText());
+			}
+		});
 		btnBuscar.setBackground(new Color(153, 102, 0));
 		btnBuscar.setIcon(new ImageIcon(PanelTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		GroupLayout gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
+		gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
 		gl_panelInferiorBusqueda.setHorizontalGroup(
 			gl_panelInferiorBusqueda.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
@@ -178,6 +188,28 @@ public class PanelTipoCliente extends JPanel {
 		panelCentralContenedor.setLayout(gl_panelCentralContenedor);
 		setLayout(groupLayout);
 
+	}
+	
+	private DefaultTableModel getModelTablaCliente() {
+		
+		DefaultTableModel model = new DefaultTableModel();
+		
+		model.addColumn("Id");
+		model.addColumn("Categoria de cliente");
+		model.addColumn("Descripción");
+		model.addColumn("Estatus");
+		
+		return model;
+		
+	}
+	
+	public void listarTipoClientes(String nombre) {
+		
+		this.modelTablaTipoCliente.getDataVector().removeAllElements();
+		this.tableTipoCliente.updateUI();
+		
+		AppContext.tipoClienteController.listarTipoCliente(nombre).forEach(modelTablaTipoCliente::addRow);
+		
 	}
 	
 	private void abrirFormTipoClientes(int opcion, int idTipoCliente) {
