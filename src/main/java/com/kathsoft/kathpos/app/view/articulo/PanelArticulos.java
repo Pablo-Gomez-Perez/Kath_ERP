@@ -25,7 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
-import com.kathsoft.kathpos.app.model.TipoCliente;
+import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;

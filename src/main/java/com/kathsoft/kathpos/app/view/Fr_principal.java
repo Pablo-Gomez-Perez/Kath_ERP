@@ -209,7 +209,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelTipoCliente");
 				panelPrincipalContenedor.updateUI();
 
-				panelTipoCliente.llenarTablaTipoCliente();
+				//panelTipoCliente.llenarTablaTipoCliente();
 			}
 		});
 
