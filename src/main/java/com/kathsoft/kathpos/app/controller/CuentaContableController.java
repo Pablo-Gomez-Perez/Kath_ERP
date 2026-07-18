@@ -57,6 +57,35 @@ public class CuentaContableController {
 		}
 
 	}
+	
+	public Vector<Object[]> listCuentasContablesDialog(String nombre) {
+		
+		var data = new Vector<Object[]>();		
+		
+		try(Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listCuentasContablesEnDialog(?);");){
+			
+			stm.setString("nombre_cuenta", nombre);
+			ResultSet rset = stm.executeQuery();
+			
+			while(rset.next()) {
+				
+				data.add(new Object[] {
+					rset.getInt("id_cuenta"),
+					rset.getString("clave"),
+					rset.getString("nombre")
+				});
+				
+			}
+			
+			return data;
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			return data;
+		}
+		
+	}
 
 	/**
 	 * 
