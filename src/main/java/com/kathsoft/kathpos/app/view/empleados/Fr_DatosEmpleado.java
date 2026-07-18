@@ -18,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,8 +30,10 @@ import javax.swing.border.EmptyBorder;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
+import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
+import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.UiTools;
@@ -95,6 +98,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JPasswordField passwordFieldContraseniaEmpleado;
 	private JPasswordField passwordFieldVerificarContraseniaEmpleado;
 	private JLabel lblNewLabel_1;
+	private CuentaContableResponseViewModel cuentaContable;
 
 	/**
 	 * Launch the application.
@@ -217,6 +221,11 @@ public class Fr_DatosEmpleado extends JFrame {
 		passwordFieldVerificarContraseniaEmpleado = new JPasswordField();
 		
 		JButton btnFormConsultaCuentaContable = new JButton("");
+		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirFormConsultaCuentaContableEmpleado();
+			}
+		});
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
 		gl_panelCentralFormulario.setHorizontalGroup(
@@ -454,7 +463,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		}
 
 		Empleado empleado = new Empleado();
-		empleado.setIdCuentaContable(Integer.parseInt(txfClaveCuentaContable.getText().trim()));
+		empleado.setIdCuentaContable(this.cuentaContable.idCuentaContable());
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
@@ -536,5 +545,19 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		AppContext.sucursalController.consultarNombreSucursales().forEach(cmbSucursalEmpleado::addItem);
 
+	}
+	
+	private void abrirFormConsultaCuentaContableEmpleado() {
+		
+		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
+		dialog.setVisible(true);
+		
+		this.cuentaContable = dialog.getCuentaContable();
+		
+		if(cuentaContable.idCuentaContable() < 0) return;
+		
+		this.txfClaveCuentaContable.setText(this.cuentaContable.claveCuentaContable());
+		
 	}
 }

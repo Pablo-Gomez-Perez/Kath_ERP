@@ -112,4 +112,10 @@ public class ConstantsConllections implements java.io.Serializable{
 			150, //Saldo
 			100, //Activa
 	};
+	
+	public static final int[] tablaCuentasContablesDialogColumnsWidth = {
+			40, //Id
+			150, // clave			
+			200 // Nombre de la cuenta
+	};
 }
