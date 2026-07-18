@@ -1,9 +1,11 @@
 /**
  * 
  */
-package com.kathsoft.kathpos.app.model;
+package com.kathsoft.kathpos.app.model.cliente;
 
 import java.sql.Date;
+
+import com.kathsoft.kathpos.app.model.Usuario;
 
 /**
  * @author PABLO

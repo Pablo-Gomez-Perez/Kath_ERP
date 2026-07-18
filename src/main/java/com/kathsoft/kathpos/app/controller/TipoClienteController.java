@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import com.kathsoft.kathpos.app.model.TipoCliente;
+import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class TipoClienteController {
