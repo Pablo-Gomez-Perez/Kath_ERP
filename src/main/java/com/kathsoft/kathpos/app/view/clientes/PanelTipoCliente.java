@@ -1,6 +1,5 @@
 package com.kathsoft.kathpos.app.view.clientes;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -11,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,14 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
-import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -35,7 +31,7 @@ public class PanelTipoCliente extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panelEtiquetaTipoCliente;
-	private Container panelTipoCliente;
+	//private Container panelTipoCliente;
 	private JLabel lblNewLabel_11;
 	private DefaultTableModel modelTablaTipoCliente;
 	private JPanel panelInferiorBusqueda;
@@ -130,16 +126,37 @@ public class PanelTipoCliente extends JPanel {
 		scrollPaneTableTipoCliente.setViewportView(tableTipoCliente);
 		
 		btnAgregar = new JButton("Agregar");
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormTipoClientes(1, 0);
+			}
+		});
 		btnAgregar.setIcon(new ImageIcon(PanelTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
 		
 		btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int index = DataTools.getIndiceElementoSeleccionado(tableTipoCliente, modelTablaTipoCliente, 0);
+					abrirFormTipoClientes(2, index);
+				}catch (Exception er) {
+					// TODO: handle exception
+					er.printStackTrace();
+				}
+			}
+		});
 		btnModificar.setIcon(new ImageIcon(PanelTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnModificar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnModificar);
 		
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarTipoCliente();
+			}
+		});
 		btnEliminar.setIcon(new ImageIcon(PanelTipoCliente.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnEliminar.setBackground(new Color(255, 51, 0));
 		panelSuperiorBotones.add(btnEliminar);
@@ -209,6 +226,22 @@ public class PanelTipoCliente extends JPanel {
 		this.tableTipoCliente.updateUI();
 		
 		AppContext.tipoClienteController.listarTipoCliente(nombre).forEach(modelTablaTipoCliente::addRow);
+		
+	}
+	
+	private void eliminarTipoCliente() {
+		
+		int index = DataTools.getIndiceElementoSeleccionado(this.tableTipoCliente, modelTablaTipoCliente, 0);
+		if(index < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un registro");
+			return;
+		}
+		
+		var result = AppContext.tipoClienteController.eliminarTipoCliente(index);
+		
+		MessageHandler.displayMessage(
+				result.id() == 200 ?
+				MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 		
 	}
 	
