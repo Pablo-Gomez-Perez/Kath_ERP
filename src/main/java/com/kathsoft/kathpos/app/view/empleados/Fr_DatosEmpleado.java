@@ -428,6 +428,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * @param idEmpleado
 	 */
 	private void consultarEmpleadoPorId(int idEmpleado) {
+		
 		EmpleadoById empleado = AppContext.empleadoController.consultarEmpleadoPorId(idEmpleado);
 
 		if (empleado == null) {
@@ -447,9 +448,10 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfCiudadEmpleado.setText(empleado.getCiudad());
 		textAreaDireccionEmpleado.setText(empleado.getDireccion());
 		txfCodigoPostal.setText(empleado.getCodigoPostal());
-		txfClaveCuentaContable.setText(String.valueOf(empleado.getIdCuentaContable()));
+		txfClaveCuentaContable.setText(empleado.getClaveCuentaContable());		
 		passwordFieldContraseniaEmpleado.setText("");
 		passwordFieldVerificarContraseniaEmpleado.setText("");
+		this.cuentaContable = new CuentaContableResponseViewModel(empleado.getIdCuentaContable(), empleado.getClaveCuentaContable());
 		UiTools.jComboboxSetSelectedIndex(this.cmbSucursalEmpleado, empleado.getIdSucursal());
 		
 	}
@@ -494,13 +496,14 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * actualiza un registro existente de un empleado en la base de datos
 	 */
 	private void actualizarEmpleado(int idEmpleado) {
+		
 		if (!validarCamposVacios()) {
 			return;
 		}
 
 		Empleado empleado = new Empleado();
 		empleado.setIdEmpleado(idEmpleado);
-		empleado.setIdCuentaContable(Integer.parseInt(txfClaveCuentaContable.getText().trim()));
+		empleado.setIdCuentaContable(this.cuentaContable.idCuentaContable());
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
@@ -534,8 +537,8 @@ public class Fr_DatosEmpleado extends JFrame {
 				&& !frmtxfCorreoElectronico.getText().trim().isEmpty() && !txfEstadoEmpleado.getText().trim().isEmpty()
 				&& !txfCiudadEmpleado.getText().trim().isEmpty() && !textAreaDireccionEmpleado.getText().trim().isEmpty()
 				&& !txfCodigoPostal.getText().trim().isEmpty() && !txfClaveCuentaContable.getText().trim().isEmpty()
-				&& cmbSucursalEmpleado.getSelectedItem() != null && passwordFieldContraseniaEmpleado.getPassword().length > 0
-				&& passwordFieldVerificarContraseniaEmpleado.getPassword().length > 0;
+				&& cmbSucursalEmpleado.getSelectedItem() != null;
+				
 	}
 
 	private void llenarCmbSucursales() {

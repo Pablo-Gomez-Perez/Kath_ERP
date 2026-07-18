@@ -298,7 +298,7 @@ public class EmpleadoController implements Serializable {
 		ResultSet rset = null;
 		try {
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL insert_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			stm = cn.prepareCall("CALL insert_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			stm.setInt(1, empl.getIdCuentaContable());
 			stm.setInt(2, empl.getIdSucursal());
 			stm.setString(3, empl.getRfc());

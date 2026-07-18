@@ -29,6 +29,7 @@ import com.kathsoft.kathpos.tools.MessageHandler;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ScrollPaneConstants;
 
 public class PanelEmpleados extends JPanel {
 
