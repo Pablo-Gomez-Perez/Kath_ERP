@@ -99,23 +99,23 @@ public class TipoClienteController {
 			stm.setString(1, data.getNombre());
 			stm.setString(2, data.getDescripcion());
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
 			}
-			
-			return new SpResponseModel(500,"Ocurrio un error desconocido");
-			
+
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
+
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500,er.getMessage());
+			return new SpResponseModel(500, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500,er.getMessage());
+			return new SpResponseModel(500, er.getMessage());
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
-			} catch (Exception er) { 
+			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
@@ -137,19 +137,19 @@ public class TipoClienteController {
 			stm.setString(2, data.getNombre());
 			stm.setString(3, data.getDescripcion());
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
 			}
-			
-			return new SpResponseModel(500,"Ocurrio un error desconocido");
+
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
 
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500,er.getMessage());
+			return new SpResponseModel(500, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500,er.getMessage());
+			return new SpResponseModel(500, er.getMessage());
 		} finally {
 			try {
 				Conexion.cerrarConexion(cn, stm);
@@ -195,40 +195,40 @@ public class TipoClienteController {
 			}
 		}
 	}
-	
+
 	public SpResponseModel eliminarTipoCliente(int idTipoCliente) {
-			
+
 		ResultSet rset = null;
 		CallableStatement stm = null;
-		
+
 		try {
-			
+
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL eliminar_tipoCliente(?)");
 			stm.setInt(1, idTipoCliente);
 			rset = stm.executeQuery();
-			
-			if(rset.next()) {
+
+			if (rset.next()) {
 				return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
 			}
-			
-			return new SpResponseModel(500,"Ocurrio un error desconocido");
-			
+
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return new SpResponseModel(500,e.getMessage());
-		}finally {
+			return new SpResponseModel(500, e.getMessage());
+		} finally {
 			try {
-				
+
 				Conexion.cerrarConexion(cn, rset, stm);
-				
+
 			} catch (Exception er) {
-				
+
 				er.printStackTrace();
-				
+
 			}
-		}		
-		
+		}
+
 	}
-	
+
 }

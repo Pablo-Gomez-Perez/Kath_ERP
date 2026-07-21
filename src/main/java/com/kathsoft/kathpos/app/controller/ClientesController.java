@@ -23,7 +23,7 @@ public class ClientesController implements Serializable {
 	 */
 	private Connection cn = null;
 
-	public void verClientesEnTabla(String nombre ,DefaultTableModel tabla) {
+	public void verClientesEnTabla(String nombre, DefaultTableModel tabla) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -34,12 +34,12 @@ public class ClientesController implements Serializable {
 			stm = cn.prepareCall("CALL ver_clientes(?);");
 			stm.setString(1, nombre);
 			rset = stm.executeQuery();
-			
+
 			while (rset.next()) {
 
 				tabla.addRow(new Object[] { rset.getInt(1), // indice
 						rset.getString(2), // rfc
-						rset.getString(3), //tipo de cliente
+						rset.getString(3), // tipo de cliente
 						rset.getString(4), // cuenta contable
 						rset.getString(5), // nombre completo
 						rset.getString(6), // nombre corto
@@ -70,55 +70,40 @@ public class ClientesController implements Serializable {
 		}
 
 	}
-	
-	/*public void buscarClintePorNombre(String nombre,DefaultTableModel tabla) {
 
-		CallableStatement stm = null;
-		ResultSet rset = null;
-
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_cliente_por_nombre(?);");
-			stm.setString(1, nombre);
-			rset = stm.executeQuery();
-
-			while (rset.next()) {
-
-				tabla.addRow(new Object[] { rset.getInt(1), // indice
-						rset.getString(2), // rfc
-						rset.getString(3), //Tipo de cliente
-						rset.getString(4), // cuenta contable
-						rset.getString(5), // nombre completo
-						rset.getString(6), // nombre corto
-						rset.getString(7), // correo electronico
-						rset.getString(8), // estado
-						rset.getString(9), // ciudad
-						rset.getString(10), // direccion
-						rset.getString(11), // codigo postal
-						rset.getShort(12) == 1 ? "Activo" : "Inactivo" // status
-				});
-
-			}
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, rset, stm);
-
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
-		}
-
-	}*/
-	
+	/*
+	 * public void buscarClintePorNombre(String nombre,DefaultTableModel tabla) {
+	 * 
+	 * CallableStatement stm = null; ResultSet rset = null;
+	 * 
+	 * try {
+	 * 
+	 * cn = Conexion.establecerConexionLocal("kath_erp"); stm =
+	 * cn.prepareCall("CALL buscar_cliente_por_nombre(?);"); stm.setString(1,
+	 * nombre); rset = stm.executeQuery();
+	 * 
+	 * while (rset.next()) {
+	 * 
+	 * tabla.addRow(new Object[] { rset.getInt(1), // indice rset.getString(2), //
+	 * rfc rset.getString(3), //Tipo de cliente rset.getString(4), // cuenta
+	 * contable rset.getString(5), // nombre completo rset.getString(6), // nombre
+	 * corto rset.getString(7), // correo electronico rset.getString(8), // estado
+	 * rset.getString(9), // ciudad rset.getString(10), // direccion
+	 * rset.getString(11), // codigo postal rset.getShort(12) == 1 ? "Activo" :
+	 * "Inactivo" // status });
+	 * 
+	 * }
+	 * 
+	 * } catch (SQLException er) { er.printStackTrace(); } catch (Exception er) {
+	 * er.printStackTrace(); } finally { try {
+	 * 
+	 * Conexion.cerrarConexion(cn, rset, stm);
+	 * 
+	 * } catch (SQLException er) { er.printStackTrace(); } catch (Exception er) {
+	 * er.printStackTrace(); } }
+	 * 
+	 * }
+	 */
 
 	public void eliminarCliente(int idCliente) throws SQLException {
 

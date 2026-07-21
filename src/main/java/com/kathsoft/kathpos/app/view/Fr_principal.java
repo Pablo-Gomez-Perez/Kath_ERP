@@ -383,7 +383,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelEmpleados = new JMenuItem("Empleados");
 		opcionReporteExcelEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//panelEmpleados.exportarEmpleadosExcel();
+				// panelEmpleados.exportarEmpleadosExcel();
 			}
 		});
 		opcionReporteExcelEmpleados.setIcon(
