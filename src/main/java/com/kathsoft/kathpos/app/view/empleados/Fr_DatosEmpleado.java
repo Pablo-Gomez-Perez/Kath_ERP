@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.SucursalController;
@@ -99,6 +100,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JPasswordField passwordFieldVerificarContraseniaEmpleado;
 	private JLabel lblNewLabel_1;
 	private CuentaContableResponseViewModel cuentaContable;
+	private DefaultTableModel modelTablaTelefonoEmpleado;;
 
 	/**
 	 * Launch the application.
@@ -355,8 +357,12 @@ public class Fr_DatosEmpleado extends JFrame {
 						.addComponent(lblNewLabel_1))
 					.addContainerGap(57, Short.MAX_VALUE))
 		);
-
+		
+		
+		this.modelTablaTelefonoEmpleado = this.setModelTablaTelefonos();
+		
 		tableNumerosTelefonicos = new JTable();
+		tableNumerosTelefonicos.setModel(modelTablaTelefonoEmpleado);
 		scrollPaneNumerosTelefonicos.setViewportView(tableNumerosTelefonicos);
 
 		textAreaDireccionEmpleado = new JTextArea();
@@ -548,6 +554,23 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		AppContext.sucursalController.consultarNombreSucursales().forEach(cmbSucursalEmpleado::addItem);
 
+	}
+	
+	private void listarTelefonoDeEmpleado() {
+		
+		
+		
+	}
+	
+	private DefaultTableModel setModelTablaTelefonos() {
+		
+		DefaultTableModel model = new DefaultTableModel();
+		
+		model.addColumn("id");
+		model.addColumn("Telefono");
+		
+		return model;
+		
 	}
 	
 	private void abrirFormConsultaCuentaContableEmpleado() {
