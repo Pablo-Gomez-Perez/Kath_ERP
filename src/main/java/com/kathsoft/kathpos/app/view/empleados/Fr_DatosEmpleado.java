@@ -416,6 +416,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		if (opcion == 1) {
 
 			this.consultarEmpleadoPorId(idEmpleado);
+			this.listarTelefonoDeEmpleado(idEmpleado);
 
 		}
 
@@ -556,9 +557,16 @@ public class Fr_DatosEmpleado extends JFrame {
 
 	}
 	
-	private void listarTelefonoDeEmpleado() {
+	private void listarTelefonoDeEmpleado(int idEmpleado) {
 		
+		this.modelTablaTelefonoEmpleado.getDataVector().removeAllElements();
+		this.tableNumerosTelefonicos.updateUI();
 		
+		var list = AppContext.telefonoEmpleadoController.listTelefonoPorIdEmpleado(idEmpleado);
+		
+		if(list == null || list.size() <= 0) return;
+		
+		list.forEach(modelTablaTelefonoEmpleado::addRow);
 		
 	}
 	
