@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.model;
+package com.kathsoft.kathpos.app.model.telefono_x_empleado;
 
 public class TelefonoEmpleado {
 

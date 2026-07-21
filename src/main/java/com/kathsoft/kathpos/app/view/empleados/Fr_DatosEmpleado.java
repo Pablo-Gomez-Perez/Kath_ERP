@@ -34,9 +34,11 @@ import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
+import com.kathsoft.kathpos.app.model.telefono_x_empleado.TelefonoEmpleado;
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.MessageHandler;
 import com.kathsoft.kathpos.tools.UiTools;
 
 import javax.swing.GroupLayout;
@@ -203,6 +205,11 @@ public class Fr_DatosEmpleado extends JFrame {
 		scrollPaneNumerosTelefonicos = new JScrollPane();
 
 		btnAgregarTelefono = new JButton("Nuevo");
+		btnAgregarTelefono.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				createTelefonoEmpleado(idEmpleado);
+			}
+		});
 		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
 		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 
@@ -608,5 +615,15 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		this.txfClaveCuentaContable.setText(this.cuentaContable.claveCuentaContable());
 
+	}
+	
+	private void createTelefonoEmpleado(int idEmpleado) {
+		
+		String telefono = JOptionPane.showInputDialog(this, "Indique el número a registrar:", "Telefonos", JOptionPane.INFORMATION_MESSAGE);
+		
+		var result = AppContext.telefonoEmpleadoController.createTelefonoEmpleado(new TelefonoEmpleado(0, idEmpleado, telefono));
+		
+		MessageHandler.displayMessage(result.id() == 200 ? MessageHandler.CREATE_SUCCESS_MESSAGE: MessageHandler.ERROR_MESSAGE, this, result.message());
+		
 	}
 }
