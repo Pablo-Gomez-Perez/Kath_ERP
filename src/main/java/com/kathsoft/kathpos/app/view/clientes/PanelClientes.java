@@ -27,6 +27,9 @@ import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 import javax.swing.JTextField;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class PanelClientes extends JPanel {
 
@@ -37,22 +40,17 @@ public class PanelClientes extends JPanel {
 	 * 
 	 */	
 	private JPanel panelEtiquetaClientes;
-	private JLabel lblNewLabel_7;
-	private JPanel panelClientesCentral;
-	private JPanel panelClientesCentralBotones;
-	private JButton btnAgregarCliente;
-	private JButton btnActualizarCliente;
-	private JButton btnEliminarCliente;
-	private JButton btnExportarClientesExcel;
-	private JScrollPane scrollPaneTablaClientes;
 	private DefaultTableModel modelTablaClientes;
-	private JTable tablaClientes;
-	private JPanel panelClientesCentralBuscar;
-	private JLabel lblNewLabel_21;
-	private Component horizontalStrut_22;
-	private JButton btnBuscarCliente;
-	private JTextField txfBuscarCliente;	
 	private JLabel lblNewLabel;
+	private JPanel panelCentralContenedor;
+	private JPanel panelSuperiorBotones;
+	private JPanel panelInferiorBusqueda;
+	private JTextField txfNombreCliente;
+	private JButton btnExcel;
+	private JButton btnEliminar;
+	private JButton btnModificar;
+	private JButton btnAgregar;
+	private JTable tablaClientes;
 	
 
 	/**
@@ -61,90 +59,118 @@ public class PanelClientes extends JPanel {
 	public PanelClientes() {
 		
 		this.setBackground(new Color(255, 215, 0));
-		this.setLayout(new BorderLayout(0, 0));
 		
 		this.panelEtiquetaClientes = new JPanel();
 		this.panelEtiquetaClientes.setBackground(new Color(25, 25, 112));
-		
-		this.add(panelEtiquetaClientes, BorderLayout.NORTH);
 		
 		lblNewLabel = new JLabel("Catálogo de clientes");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel.setForeground(new Color(255, 255, 255));
 		panelEtiquetaClientes.add(lblNewLabel);
-		
-		this.lblNewLabel_7 = new JLabel("Modulo de Clientes");
-		this.lblNewLabel_7.setFont(new Font("Tahoma", Font.BOLD, 16));
-		this.lblNewLabel_7.setForeground(new Color(255, 255, 255));
-		
-		this.add(lblNewLabel_7);
-		
-		this.panelClientesCentral = new JPanel();
-		this.panelClientesCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		this.panelClientesCentral.setBackground(new Color(255, 215, 0));
-		this.panelClientesCentral.setLayout(new BorderLayout(0, 0));
-		this.add(panelClientesCentral, BorderLayout.CENTER);
-		
-		this.panelClientesCentralBotones = new JPanel();
-		FlowLayout fl_panelClientesCentralBotones = (FlowLayout) panelClientesCentralBotones.getLayout();
-		fl_panelClientesCentralBotones.setAlignment(FlowLayout.RIGHT);
-		panelClientesCentralBotones.setBackground(new Color(255, 215, 0));
-		panelClientesCentral.add(panelClientesCentralBotones, BorderLayout.NORTH);
-		
-		this.btnAgregarCliente = new JButton("Agregar");
-		this.btnAgregarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(0, 0);
-			}
-		});
-		
-		this.btnAgregarCliente.setBackground(new Color(144, 238, 144));
-		this.btnAgregarCliente.setIcon(
-				new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		this.panelClientesCentralBotones.add(btnAgregarCliente);
-
-		this.btnActualizarCliente = new JButton("Actualizar");
-		this.btnActualizarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormClientes(1, DataTools.getIndiceElementoSeleccionado(tablaClientes, modelTablaClientes, 0));
-			}
-		});
-		
-		this.btnActualizarCliente.setBackground(new Color(144, 238, 144));
-		this.btnActualizarCliente.setIcon(new ImageIcon(
-				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		this.panelClientesCentralBotones.add(btnActualizarCliente);
-		
-		this.btnEliminarCliente = new JButton("Eliminar");
-		this.btnEliminarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.btnEliminarCliente.setBackground(new Color(255, 51, 0));
-		this.btnEliminarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarCliente();
-			}
-		});
-		this.panelClientesCentralBotones.add(btnEliminarCliente);
-		
-		this.btnExportarClientesExcel = new JButton("Exportar a Excel");
-		this.btnExportarClientesExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarClientesExcel();
-			}
-		});
-		this.btnExportarClientesExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		this.btnExportarClientesExcel.setBackground(new Color(102, 205, 170));
-		this.panelClientesCentralBotones.add(btnExportarClientesExcel);
-		
-		this.scrollPaneTablaClientes = new JScrollPane();
-		this.panelClientesCentral.add(scrollPaneTablaClientes, BorderLayout.CENTER);
 
 		this.modelTablaClientes = new DefaultTableModel();
-		this.tablaClientes = new JTable();
-		this.tablaClientes.setModel(modelTablaClientes);
-		this.tablaClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		this.scrollPaneTablaClientes.setViewportView(tablaClientes);
+		
+		panelCentralContenedor = new JPanel();
+		panelCentralContenedor.setBackground(new Color(255, 204, 0));
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addComponent(panelEtiquetaClientes, GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)
+				.addComponent(panelCentralContenedor, GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addComponent(panelEtiquetaClientes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelCentralContenedor, GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE))
+		);
+		
+		panelSuperiorBotones = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
+		
+		panelInferiorBusqueda = new JPanel();
+		panelInferiorBusqueda.setBackground(new Color(0, 153, 255));
+		
+		JScrollPane scrollPaneClientes = new JScrollPane();
+		GroupLayout gl_panelCentralContenedor = new GroupLayout(panelCentralContenedor);
+		gl_panelCentralContenedor.setHorizontalGroup(
+			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
+				.addComponent(panelSuperiorBotones, GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)
+				.addComponent(panelInferiorBusqueda, GroupLayout.DEFAULT_SIZE, 881, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_panelCentralContenedor.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(scrollPaneClientes, GroupLayout.DEFAULT_SIZE, 857, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		gl_panelCentralContenedor.setVerticalGroup(
+			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralContenedor.createSequentialGroup()
+					.addComponent(panelSuperiorBotones, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneClientes, GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelInferiorBusqueda, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		tablaClientes = new JTable();
+		scrollPaneClientes.setViewportView(tablaClientes);
+		
+		btnAgregar = new JButton("Agregar");
+		btnAgregar.setIcon(new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		this.btnAgregar.setBackground(new Color(144,238,144));
+		panelSuperiorBotones.add(btnAgregar);
+		
+		btnModificar = new JButton("Modificar");
+		btnModificar.setIcon(new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		this.btnModificar.setBackground(new Color(144,238,144));
+		panelSuperiorBotones.add(btnModificar);
+		
+		btnEliminar = new JButton("Eliminar");
+		btnEliminar.setIcon(new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		this.btnEliminar.setBackground(new Color(255,51,0));
+		panelSuperiorBotones.add(btnEliminar);
+		
+		btnExcel = new JButton("Exportar Excel");
+		btnExcel.setIcon(new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		this.btnExcel.setBackground(new Color(102,205,170));
+		panelSuperiorBotones.add(btnExcel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Buscar");
+		
+		txfNombreCliente = new JTextField();
+		txfNombreCliente.setColumns(10);
+		
+		JButton btnNewButton = new JButton("Buscar");
+		btnNewButton.setBackground(new Color(153, 102, 51));
+		btnNewButton.setIcon(new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		GroupLayout gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
+		gl_panelInferiorBusqueda.setHorizontalGroup(
+			gl_panelInferiorBusqueda.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel_1)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfNombreCliente, GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnNewButton)
+					.addContainerGap())
+		);
+		gl_panelInferiorBusqueda.setVerticalGroup(
+			gl_panelInferiorBusqueda.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_panelInferiorBusqueda.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNewLabel_1)
+						.addComponent(txfNombreCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnNewButton))
+					.addContainerGap())
+		);
+		panelInferiorBusqueda.setLayout(gl_panelInferiorBusqueda);
+		panelCentralContenedor.setLayout(gl_panelCentralContenedor);
+		setLayout(groupLayout);
 		
 		this.modelTablaClientes.addColumn("Id");
 		this.modelTablaClientes.addColumn("RFC");
@@ -159,100 +185,12 @@ public class PanelClientes extends JPanel {
 		this.modelTablaClientes.addColumn("Codigo P.");
 		this.modelTablaClientes.addColumn("Activo");
 		
-		// se remueve el editor de la tabla provedoores
-		DataTools.removerEditorDeTabla(tablaClientes, modelTablaClientes);
 		
-		this.panelClientesCentralBuscar = new JPanel();
-		this.panelClientesCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_4 = (FlowLayout) panelClientesCentralBuscar.getLayout();
-		flowLayout_4.setAlignment(FlowLayout.RIGHT);
-		this.panelClientesCentral.add(panelClientesCentralBuscar, BorderLayout.SOUTH);
-
-		this.lblNewLabel_21 = new JLabel("Buscar cliente");
-		this.lblNewLabel_21.setFont(new Font("Tahoma", Font.BOLD, 13));
-		this.panelClientesCentralBuscar.add(lblNewLabel_21);
-		
-		horizontalStrut_22 = Box.createHorizontalStrut(20);
-		panelClientesCentralBuscar.add(horizontalStrut_22);
-
-		btnBuscarCliente = new JButton("Buscar");
-		btnBuscarCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buscarClientePorNombre();
-			}
-		});
-		
-		this.txfBuscarCliente = new JTextField();
-		this.txfBuscarCliente.setMaximumSize(this.txfBuscarCliente.getPreferredSize());
-		
-		panelClientesCentralBuscar.add(txfBuscarCliente);
-		txfBuscarCliente.setColumns(70);
-		btnBuscarCliente.setBackground(new Color(184, 134, 11));
-		btnBuscarCliente.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		panelClientesCentralBuscar.add(btnBuscarCliente);
-		
-		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaClientesColumnsWidth, tablaClientes);
-		
-		
-	}
-	
-	
-	private void abrirFormClientes(int tipoOperacion, int indiceCliente) {
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				Fr_DatosCliente frame = new Fr_DatosCliente(tipoOperacion, indiceCliente);
-				frame.setLocationRelativeTo(cm);
-				frame.setVisible(true);
-			}
-		});
-	}
-	
-	private void eliminarCliente() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			AppContext.clientesController.eliminarCliente(
-					DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-
-	}
-	
-	public void exportarClientesExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaClientes, this);
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
-	}
-	
-	private void buscarClientePorNombre() {
-		this.modelTablaClientes.getDataVector().removeAllElements();
-		this.tablaClientes.updateUI();
-		AppContext.clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), this.modelTablaClientes);
 	}
 	
 	public void llenarTablaClientes() {
 		this.borrarElementosDeLaTablaClientes();
-		AppContext.clientesController.verClientesEnTabla(this.txfBuscarCliente.getText(), modelTablaClientes);
+		AppContext.clientesController.verClientesEnTabla(this.txfNombreCliente.getText(), modelTablaClientes);
 	}
 	
 	private void borrarElementosDeLaTablaClientes() {
