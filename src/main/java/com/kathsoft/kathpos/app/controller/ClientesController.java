@@ -5,6 +5,8 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
+
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -23,40 +25,41 @@ public class ClientesController implements Serializable {
 	 */
 	private Connection cn = null;
 
-	public void verClientesEnTabla(String nombre, DefaultTableModel tabla) {
+	public Vector<Object[]> verClientesEnTabla(String nombre) {
 
 		CallableStatement stm = null;
 		ResultSet rset = null;
+		var data = new Vector<Object[]>();
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_clientes(?);");
-			stm.setString(1, nombre);
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL listClientes(?);");
+			stm.setString("nombre_c", nombre);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
 
-				tabla.addRow(new Object[] { rset.getInt(1), // indice
-						rset.getString(2), // rfc
-						rset.getString(3), // tipo de cliente
-						rset.getString(4), // cuenta contable
-						rset.getString(5), // nombre completo
-						rset.getString(6), // nombre corto
-						rset.getString(7), // correo electronico
-						rset.getString(8), // estado
-						rset.getString(9), // ciudad
-						rset.getString(10), // direccion
-						rset.getString(11), // codigo postal
-						rset.getShort(12) == 1 ? "Activo" : "Inactivo" // status
+				data.add(new Object[] { rset.getInt("id_cliente"), // indice
+						rset.getString("rfc"), // rfc
+						rset.getString("nombre"), // tipo de cliente
+						rset.getString("clave"), // cuenta contable
+						rset.getString("nombre_completo"), // nombre completo
+						rset.getString("nombre_corto"), // nombre corto
+						rset.getString("correo_electronico"), // correo electronico
+						rset.getShort("activo") == 1 ? "Activo" : "Inactivo" // status
 				});
 
 			}
 
+			return data;
+
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return data;
 		} catch (Exception er) {
 			er.printStackTrace();
+			return data;
 		} finally {
 			try {
 
