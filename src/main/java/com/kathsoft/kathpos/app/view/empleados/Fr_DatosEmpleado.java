@@ -38,6 +38,7 @@ import com.kathsoft.kathpos.app.model.telefono_x_empleado.TelefonoEmpleado;
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 import com.kathsoft.kathpos.tools.UiTools;
 
@@ -214,6 +215,12 @@ public class Fr_DatosEmpleado extends JFrame {
 		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 
 		btnEliminarTelefono = new JButton("Borrar");
+		btnEliminarTelefono.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eliminarTelefonoEmpleado();
+				listarTelefonoDeEmpleado(idEmpleado);
+			}
+		});
 		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
 
@@ -621,9 +628,31 @@ public class Fr_DatosEmpleado extends JFrame {
 		
 		String telefono = JOptionPane.showInputDialog(this, "Indique el número a registrar:", "Telefonos", JOptionPane.INFORMATION_MESSAGE);
 		
+		if(telefono == null || telefono.length() <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Indique el número telefonico");
+		}
+		
 		var result = AppContext.telefonoEmpleadoController.createTelefonoEmpleado(new TelefonoEmpleado(0, idEmpleado, telefono));
 		
 		MessageHandler.displayMessage(result.id() == 200 ? MessageHandler.CREATE_SUCCESS_MESSAGE: MessageHandler.ERROR_MESSAGE, this, result.message());
+		
+		listarTelefonoDeEmpleado(idEmpleado);
+		
+	}
+	
+	
+	private void eliminarTelefonoEmpleado() {
+		
+		int idTelefono = DataTools.getIndiceElementoSeleccionado(tableNumerosTelefonicos, modelTablaTelefonoEmpleado, 0);
+		
+		if(idTelefono < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un elemento");
+			return;
+		}
+		
+		var result = AppContext.telefonoEmpleadoController.deleteTelefonoEmpleado(idTelefono);
+		
+		MessageHandler.displayMessage(result.id() == 200 ? MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 		
 	}
 }
