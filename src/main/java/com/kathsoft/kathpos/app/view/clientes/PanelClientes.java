@@ -144,6 +144,11 @@ public class PanelClientes extends JPanel {
 		panelSuperiorBotones.add(btnModificar);
 
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarCliente();
+			}
+		});
 		btnEliminar.setIcon(
 				new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminar.setBackground(new Color(255, 51, 0));
@@ -221,6 +226,31 @@ public class PanelClientes extends JPanel {
 	private void borrarElementosDeLaTablaClientes() {
 		this.modelTablaClientes.getDataVector().removeAllElements();
 		this.tablaClientes.updateUI();
+	}
+	
+	private void eliminarCliente() {
+		
+		int selectedRow = this.tablaClientes.getSelectedRow();
+		
+		if (selectedRow < 0) return;
+		
+		int modelRow = this.tablaClientes.convertRowIndexToModel(selectedRow);
+		int idCliente = (int) this.modelTablaClientes.getValueAt(modelRow, 0);
+		
+		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
+		
+		if (option != 0) return;
+		
+		var response = AppContext.clientesController.eliminarCliente(idCliente);
+		
+		if (response.id() == 200) {
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, response.message());
+			this.llenarTablaClientes();
+			return;
+		}
+		
+		MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, response.message());
+		
 	}
 	
 	private void abrirFormDatosCliente(int idOperacion, int idCliente) {
