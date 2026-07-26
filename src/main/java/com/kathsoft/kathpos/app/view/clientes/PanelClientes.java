@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingUtilities;
 
 public class PanelClientes extends JPanel {
 
@@ -114,12 +116,28 @@ public class PanelClientes extends JPanel {
 		scrollPaneClientes.setViewportView(tablaClientes);
 
 		btnAgregar = new JButton("Agregar");
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormDatosCliente(1, 0);
+			}
+		});
 		btnAgregar.setIcon(
 				new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		this.btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
 
 		btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int index = DataTools.getIndiceElementoSeleccionado(tablaClientes, modelTablaClientes, 0);
+				
+				if(index < 0 ) return;
+				
+				abrirFormDatosCliente(2, index);
+				
+			}
+		});
 		btnModificar.setIcon(
 				new ImageIcon(PanelClientes.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		this.btnModificar.setBackground(new Color(144, 238, 144));
@@ -204,4 +222,42 @@ public class PanelClientes extends JPanel {
 		this.modelTablaClientes.getDataVector().removeAllElements();
 		this.tablaClientes.updateUI();
 	}
+	
+	private void abrirFormDatosCliente(int idOperacion, int idCliente) {
+		
+		JComponent cmp = this;
+		
+		try {
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+					try {
+						
+						Fr_DatosCliente form = new Fr_DatosCliente(idOperacion, idCliente);
+						form.setLocationRelativeTo(cmp);
+						form.setVisible(true);
+						
+					}catch (Exception e) {
+					
+						e.printStackTrace(System.err);
+						MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, e.getMessage());
+						
+					}
+					
+				}
+				
+				
+			});
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
+		}
+		
+	}
+	
 }

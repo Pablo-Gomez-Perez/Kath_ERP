@@ -1,26 +1,12 @@
-/**
- * 
- */
-package com.kathsoft.kathpos.app.model.cliente;
+package com.kathsoft.kathpos.app.model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.Objects;
 
-import com.kathsoft.kathpos.app.model.Usuario;
+public class ClienteById implements Serializable {
 
-/**
- * @author PABLO
- *
- */
-public class Clientes {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8677714515131885067L;
-	/**
-	 * 
-	 */
+	private static final long serialVersionUID = 1L;
 
 	private int idCliente;
 	private int idTipoCliente;
@@ -36,29 +22,6 @@ public class Clientes {
 	private String direccion;
 	private String codigoPostal;
 	private boolean activo;
-
-	public Clientes(int idCliente, int idTipoCliente, int idCuentaContable, String rfc, String nombreCompleto,
-			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad, String direccion,
-			String codigoPostal, boolean activo) {
-		super();
-		this.idCliente = idCliente;
-		this.idTipoCliente = idTipoCliente;
-		this.idCuentaContable = idCuentaContable;
-		this.rfc = rfc;
-		this.nombreCompleto = nombreCompleto;
-		this.nombreCorto = nombreCorto;
-		this.fechaNac = fechaNac;
-		this.correoElectronico = correoElectronico;
-		this.estado = estado;
-		this.ciudad = ciudad;
-		this.direccion = direccion;
-		this.codigoPostal = codigoPostal;
-		this.activo = activo;
-	}
-
-	public Clientes() {
-
-	}
 
 	public int getIdCliente() {
 		return idCliente;
@@ -84,44 +47,12 @@ public class Clientes {
 		this.idCuentaContable = idCuentaContable;
 	}
 
-	public int getId() {
-		return getIdCliente();
-	}
-
-	public void setId(int id) {
-		setIdCliente(id);
-	}
-
 	public String getClaveCuentaContable() {
 		return claveCuentaContable;
 	}
 
 	public void setClaveCuentaContable(String claveCuentaContable) {
 		this.claveCuentaContable = claveCuentaContable;
-	}
-
-	public String getNombre() {
-		return getNombreCompleto();
-	}
-
-	public void setNombre(String nombre) {
-		setNombreCompleto(nombre);
-	}
-
-	public Date getFechaNacimiento() {
-		return getFechaNac();
-	}
-
-	public void setFechaNacimiento(Date fechaNacimiento) {
-		setFechaNac(fechaNacimiento);
-	}
-
-	public String getEmail() {
-		return getCorreoElectronico();
-	}
-
-	public void setEmail(String email) {
-		setCorreoElectronico(email);
 	}
 
 	public String getRfc() {
@@ -205,38 +136,27 @@ public class Clientes {
 	}
 
 	@Override
-	public String toString() {
-		return "Clientes [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente + ", idCuentaContable="
-				+ idCuentaContable + ", rfc=" + rfc + ", nombreCompleto=" + nombreCompleto + ", nombreCorto="
-				+ nombreCorto + ", fechaNac=" + fechaNac + ", correoElectronico=" + correoElectronico + ", estado="
-				+ estado + ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal=" + codigoPostal
-				+ ", activo=" + activo + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		return Objects.hash(Boolean.valueOf(activo), ciudad, codigoPostal, correoElectronico, direccion, estado,
 				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idCuentaContable), Integer.valueOf(idTipoCliente),
-				nombreCompleto, nombreCorto, rfc);
+				claveCuentaContable, nombreCompleto, nombreCorto, rfc);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (!(obj instanceof ClienteById)) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Clientes other = (Clientes) obj;
-		return activo == other.activo && Objects.equals(ciudad, other.ciudad)
-				&& Objects.equals(codigoPostal, other.codigoPostal)
-				&& Objects.equals(correoElectronico, other.correoElectronico)
-				&& Objects.equals(direccion, other.direccion) && Objects.equals(estado, other.estado)
-				&& Objects.equals(fechaNac, other.fechaNac) && idCliente == other.idCliente
-				&& idCuentaContable == other.idCuentaContable && idTipoCliente == other.idTipoCliente
-				&& Objects.equals(nombreCompleto, other.nombreCompleto)
-				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(rfc, other.rfc);
+		}
+		ClienteById other = (ClienteById) obj;
+		return activo == other.activo && idCliente == other.idCliente && idTipoCliente == other.idTipoCliente
+				&& idCuentaContable == other.idCuentaContable && Objects.equals(claveCuentaContable, other.claveCuentaContable)
+				&& Objects.equals(rfc, other.rfc) && Objects.equals(nombreCompleto, other.nombreCompleto)
+				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(fechaNac, other.fechaNac)
+				&& Objects.equals(correoElectronico, other.correoElectronico) && Objects.equals(estado, other.estado)
+				&& Objects.equals(ciudad, other.ciudad) && Objects.equals(direccion, other.direccion)
+				&& Objects.equals(codigoPostal, other.codigoPostal);
 	}
-
 }
