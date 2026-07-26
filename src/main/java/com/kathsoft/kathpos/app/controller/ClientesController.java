@@ -60,18 +60,41 @@ public class ClientesController implements Serializable {
 		}
 	}
 
-	public void eliminarCliente(int idCliente) throws SQLException {
+	public SpResponseModel eliminarCliente(int idCliente) {
 
 		CallableStatement stm = null;
+		ResultSet rset = null;
 
-		cn = Conexion.establecerConexionLocal("kath_erp");
-		stm = cn.prepareCall("CALL eliminar_cliente(?);");
-		stm.setInt(1, idCliente);
+		try {
 
-		stm.execute();
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL deleteCliente(?);");
+			stm.setInt("p_id_cliente", idCliente);
 
-		Conexion.cerrarConexion(cn, stm);
+			if (stm.execute()) {
+				rset = stm.getResultSet();
+				if (rset != null && rset.next()) {
+					return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
+				}
+			}
 
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
+
+		} catch (SQLException er) {
+			er.printStackTrace();
+			return new SpResponseModel(500, er.getMessage());
+		} catch (Exception er) {
+			er.printStackTrace();
+			return new SpResponseModel(500, er.getMessage());
+		} finally {
+			try {
+				Conexion.cerrarConexion(cn, rset, stm);
+			} catch (SQLException er) {
+				er.printStackTrace();
+			} catch (Exception er) {
+				er.printStackTrace();
+			}
+		}
 	}
 
 	public void consultarRFCClientes(JComboBox<String> cmb) throws SQLException, Exception {
