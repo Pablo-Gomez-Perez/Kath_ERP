@@ -11,11 +11,18 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.TipoClienteController;
+import com.kathsoft.kathpos.app.model.ClienteById;
 import com.kathsoft.kathpos.app.model.cliente.Clientes;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
+import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
+import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
+import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
 import javax.swing.JButton;
@@ -28,15 +35,27 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JFormattedTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class Fr_DatosCliente extends JFrame {
 
@@ -44,13 +63,13 @@ public class Fr_DatosCliente extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 4955801027954256510L;
+	private static final DateTimeFormatter FECHA_VISIBLE = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+	private static final DateTimeFormatter FECHA_SQL = DateTimeFormatter.ofPattern("uuuu-MM-dd");
 	/**
 	 * 
 	 * 
 	 * 
 	 */
-	private ClientesController clientesController = new ClientesController();
-	private TipoClienteController tipoClienteController = new TipoClienteController();
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JLabel lblNewLabel;
@@ -59,74 +78,46 @@ public class Fr_DatosCliente extends JFrame {
 	private JButton btnCancelar;
 	private Component horizontalStrut;
 	private JButton btnGuardar;
-	private Component verticalStrut;
-	private Box horizontalBox;
-	private JLabel lblNewLabel_1;
-	private Component horizontalStrut_1;
-	private JTextField txfRfcCliente;
-	// private JComboBox<String> cmbRfcCliente;
-	private Component horizontalStrut_2;
-	private JLabel lblNewLabel_2;
-	private Component horizontalStrut_3;
-	private JTextField txfCtaContableCliente;
-	private Component verticalStrut_1;
-	private Box horizontalBox_1;
-	private JLabel lblNewLabel_3;
-	private Component horizontalStrut_4;
-	private JTextField txfNombreCompleto;
-	private Component horizontalStrut_5;
-	private JLabel lblNewLabel_4;
-	private Component horizontalStrut_6;
-	private JTextField txfNombreCorto;
-	private Component verticalStrut_2;
-	private Box verticalBox;
-	private JPanel panel;
-	private JLabel lblNewLabel_5;
-	private Box horizontalBox_2;
-	private JTextArea txaDescripcion;
-	private Component verticalStrut_3;
-	private Box horizontalBox_3;
-	private JLabel lblNewLabel_6;
-	private Component horizontalStrut_7;
-	private JTextField txfDiaNac;
-	private Component horizontalStrut_8;
-	private JTextField txfMesNac;
-	private Component horizontalStrut_9;
-	private JTextField txfAnioNac;
-	private Component horizontalStrut_10;
-	private JLabel lblNewLabel_7;
-	private Component horizontalStrut_11;
-	private JTextField txfEmail;
-	private Component verticalStrut_4;
-	private Box horizontalBox_4;
-	private JLabel lblEstado;
-	private Component horizontalStrut_12;
-	private JTextField txfEstado;
-	private Component horizontalStrut_13;
-	private JLabel lblNewLabel_8;
-	private JTextField txfCiudad;
-	private Component horizontalStrut_14;
-	private JLabel lblNewLabel_9;
-	private JTextField txfCodigoPostal;
-	private Component verticalStrut_5;
-	private Box verticalBox_1;
-	private JPanel panel_1;
-	private JLabel lblNewLabel_10;
-	private JTextArea txaDireccion;
-	private Component verticalStrut_6;
 	private int indiceCliente;
 	private Component horizontalStrut_15;
 	private JButton btnHistorialCred;
-	private Component horizontalStrut_16;
-	private JLabel lblNewLabel_11;
-	private Component horizontalStrut_17;
-	private JComboBox<TipoCliente> cmbTipoCliente;
+	private JTextField txfRfcCliente;
+	private JTextField txfNombreCompleto;
+	private JTextField txfNombreCorto;
+	private JTextField txfCtaContable;
+	private JTextField txfCodigoPostal;
+	private JTextField txfCorreoElectronico;
+	private JTextField txfEstado;
+	private JTextField txfCiudad;
+	private JScrollPane scrollPaneNumerosTelefonicos;
+	private JTable tablaNumerosTelefonicos;
+	private JLabel lblRfc;
+	private JLabel lblNombre;
+	private JLabel lblAlias;
+	private JLabel lblCtaContable;
+	private JButton btnFormConsultaCuentaContable;
+	private JLabel lblCategoria;
+	private JComboBox<JComboboxDataViewModel> comboBoxTipoCliente;
+	private JLabel lblFNacimiento;
+	private JFormattedTextField frmtdtxtfldFechaNacimiento;
+	private JLabel lblMail;
+	private JLabel lblCPostal;
+	private JLabel lblEstado;
+	private JLabel lblCiudad;
+	private JLabel lblDireccion;
+	private JTextArea txaDireccionCliente;
+	private FlowLayout flowLayout;
+	private int tipoOperacion;
+	private JButton btnAgregarTelefono;
+	private JButton btnEliminarTelefono;
+	private CuentaContableResponseViewModel cuentaContable;
 
 	/**
 	 * Create the frame.
 	 */
 	public Fr_DatosCliente(int tipoOperacion, int indiceCliente) {
 
+		this.tipoOperacion = tipoOperacion;
 		this.indiceCliente = indiceCliente;
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Fr_DatosCliente.class.getResource(
@@ -165,249 +156,216 @@ public class Fr_DatosCliente extends JFrame {
 				.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(new Color(0, 0, 0))));
 		panelCentralFormulario.setBackground(new Color(255, 215, 0));
 		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
-		panelCentralFormulario.setLayout(new BoxLayout(panelCentralFormulario, BoxLayout.Y_AXIS));
 
-		verticalStrut = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut);
-
-		horizontalBox = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox);
-
-		lblNewLabel_1 = new JLabel("RFC");
-		horizontalBox.add(lblNewLabel_1);
-
-		horizontalStrut_1 = Box.createHorizontalStrut(5);
-		horizontalBox.add(horizontalStrut_1);
+		lblRfc = new JLabel("RFC");
 
 		txfRfcCliente = new JTextField();
-		txfRfcCliente.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(txfRfcCliente.getText().length() >= 13) {
-					e.consume();
-				}
-			}
-		});
-		txfRfcCliente.setColumns(15);
-		txfRfcCliente.setMaximumSize(this.txfRfcCliente.getPreferredSize());
-		horizontalBox.add(this.txfRfcCliente);
+		txfRfcCliente.setColumns(10);
 
-		horizontalStrut_2 = Box.createHorizontalStrut(10);
-		horizontalBox.add(horizontalStrut_2);
-
-		lblNewLabel_2 = new JLabel("Cta Contable");
-		horizontalBox.add(lblNewLabel_2);
-
-		horizontalStrut_3 = Box.createHorizontalStrut(5);
-		horizontalBox.add(horizontalStrut_3);
-
-		txfCtaContableCliente = new JTextField();
-		txfCtaContableCliente.setEditable(false);
-		txfCtaContableCliente.setColumns(10);
-		this.txfCtaContableCliente.setMaximumSize(this.txfCtaContableCliente.getPreferredSize());
-		horizontalBox.add(txfCtaContableCliente);
-		
-		horizontalStrut_16 = Box.createHorizontalStrut(10);
-		horizontalBox.add(horizontalStrut_16);
-		
-		lblNewLabel_11 = new JLabel("Tipo");
-		horizontalBox.add(lblNewLabel_11);
-		
-		horizontalStrut_17 = Box.createHorizontalStrut(5);
-		horizontalBox.add(horizontalStrut_17);
-		
-		cmbTipoCliente = new JComboBox<TipoCliente>();
-		horizontalBox.add(cmbTipoCliente);
-
-		verticalStrut_1 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_1);
-
-		horizontalBox_1 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_1);
-
-		lblNewLabel_3 = new JLabel("Nombre");
-		horizontalBox_1.add(lblNewLabel_3);
-
-		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_1.add(horizontalStrut_4);
+		lblNombre = new JLabel("Nombre");
 
 		txfNombreCompleto = new JTextField();
-		horizontalBox_1.add(txfNombreCompleto);
-		txfNombreCompleto.setColumns(50);
-		this.txfNombreCompleto.setMaximumSize(this.txfNombreCompleto.getPreferredSize());
+		txfNombreCompleto.setColumns(10);
 
-		horizontalStrut_5 = Box.createHorizontalStrut(20);
-		horizontalBox_1.add(horizontalStrut_5);
-
-		lblNewLabel_4 = new JLabel("Nombre corto");
-		horizontalBox_1.add(lblNewLabel_4);
-
-		horizontalStrut_6 = Box.createHorizontalStrut(5);
-		horizontalBox_1.add(horizontalStrut_6);
+		lblAlias = new JLabel("Alias");
 
 		txfNombreCorto = new JTextField();
-		txfNombreCorto.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(txfNombreCorto.getText().length() >= 10) {
-					e.consume();
-				}
+		txfNombreCorto.setColumns(10);
+
+		lblCtaContable = new JLabel("Cta. Contable");
+
+		txfCtaContable = new JTextField();
+		txfCtaContable.setColumns(10);
+
+		btnFormConsultaCuentaContable = new JButton("");
+		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				abrirFormConsultaCuentaContablCliente();
+				
 			}
 		});
-		horizontalBox_1.add(txfNombreCorto);
-		txfNombreCorto.setColumns(20);
-		this.txfNombreCorto.setMaximumSize(this.txfNombreCorto.getPreferredSize());
+		btnFormConsultaCuentaContable.setIcon(new ImageIcon(
+				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 
-		verticalStrut_2 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_2);
+		lblCategoria = new JLabel("Categoria");
 
-		verticalBox = Box.createVerticalBox();
-		panelCentralFormulario.add(verticalBox);
+		comboBoxTipoCliente = new JComboBox<>();
 
-		panel = new JPanel();
-		panel.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_1 = (FlowLayout) panel.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		verticalBox.add(panel);
+		lblFNacimiento = new JLabel("F. Nacimiento");
 
-		lblNewLabel_5 = new JLabel("Descripcion");
-		panel.add(lblNewLabel_5);
+		MaskFormatter formatter = this.crearCampoFechaNacimiento();
+		frmtdtxtfldFechaNacimiento = new JFormattedTextField(formatter);
+		frmtdtxtfldFechaNacimiento.setFocusLostBehavior(JFormattedTextField.PERSIST);
 
-		horizontalBox_2 = Box.createHorizontalBox();
-		verticalBox.add(horizontalBox_2);
-
-		txaDescripcion = new JTextArea();
-		txaDescripcion.setLineWrap(true);
-		horizontalBox_2.add(txaDescripcion);
-
-		verticalStrut_3 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_3);
-
-		horizontalBox_3 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_3);
-
-		lblNewLabel_6 = new JLabel("Fecha de n.");
-		horizontalBox_3.add(lblNewLabel_6);
-
-		horizontalStrut_7 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_7);
-
-		txfDiaNac = new JTextField();
-		horizontalBox_3.add(txfDiaNac);
-		txfDiaNac.setColumns(2);
-		this.txfDiaNac.setMaximumSize(this.txfDiaNac.getPreferredSize());
-
-		horizontalStrut_8 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_8);
-
-		txfMesNac = new JTextField();
-		horizontalBox_3.add(txfMesNac);
-		txfMesNac.setColumns(2);
-		this.txfMesNac.setMaximumSize(this.txfMesNac.getPreferredSize());
-
-		horizontalStrut_9 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_9);
-
-		txfAnioNac = new JTextField();
-		horizontalBox_3.add(txfAnioNac);
-		txfAnioNac.setColumns(4);
-		this.txfAnioNac.setMaximumSize(this.txfAnioNac.getPreferredSize());
-
-		horizontalStrut_10 = Box.createHorizontalStrut(20);
-		horizontalBox_3.add(horizontalStrut_10);
-
-		lblNewLabel_7 = new JLabel("Correo Electrónico");
-		horizontalBox_3.add(lblNewLabel_7);
-
-		horizontalStrut_11 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_11);
-
-		txfEmail = new JTextField();
-		horizontalBox_3.add(txfEmail);
-		txfEmail.setColumns(35);
-		this.txfEmail.setMaximumSize(this.txfEmail.getPreferredSize());
-
-		verticalStrut_4 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_4);
-
-		horizontalBox_4 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_4);
-
-		lblEstado = new JLabel("Estado");
-		horizontalBox_4.add(lblEstado);
-
-		horizontalStrut_12 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_12);
-
-		txfEstado = new JTextField();
-		horizontalBox_4.add(txfEstado);
-		txfEstado.setColumns(20);
-		this.txfEstado.setMaximumSize(this.txfEstado.getPreferredSize());
-
-		horizontalStrut_13 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_13);
-
-		lblNewLabel_8 = new JLabel("Ciudad");
-		horizontalBox_4.add(lblNewLabel_8);
-
-		txfCiudad = new JTextField();
-		horizontalBox_4.add(txfCiudad);
-		txfCiudad.setColumns(20);
-		this.txfCiudad.setMaximumSize(this.txfCiudad.getPreferredSize());
-
-		horizontalStrut_14 = Box.createHorizontalStrut(5);
-		horizontalBox_4.add(horizontalStrut_14);
-
-		lblNewLabel_9 = new JLabel("Codigo P.");
-		horizontalBox_4.add(lblNewLabel_9);
+		lblCPostal = new JLabel("C. postal");
 
 		txfCodigoPostal = new JTextField();
-		horizontalBox_4.add(txfCodigoPostal);
 		txfCodigoPostal.setColumns(10);
-		this.txfCodigoPostal.setMaximumSize(this.txfCodigoPostal.getPreferredSize());
 
-		verticalStrut_5 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_5);
+		lblMail = new JLabel("Mail");
 
-		verticalBox_1 = Box.createVerticalBox();
-		panelCentralFormulario.add(verticalBox_1);
+		txfCorreoElectronico = new JTextField();
+		txfCorreoElectronico.setColumns(10);
 
-		panel_1 = new JPanel();
-		panel_1.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_2 = (FlowLayout) panel_1.getLayout();
-		flowLayout_2.setAlignment(FlowLayout.LEFT);
-		verticalBox_1.add(panel_1);
+		lblEstado = new JLabel("Estado");
 
-		lblNewLabel_10 = new JLabel("Direccion");
-		panel_1.add(lblNewLabel_10);
+		txfEstado = new JTextField();
+		txfEstado.setColumns(10);
 
-		txaDireccion = new JTextArea();
-		verticalBox_1.add(txaDireccion);
+		lblCiudad = new JLabel("Ciudad");
 
-		verticalStrut_6 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_6);
+		txfCiudad = new JTextField();
+		txfCiudad.setColumns(10);
+
+		lblDireccion = new JLabel("Direccion");
+
+		JScrollPane scrollPaneDireccionCliente = new JScrollPane();
+
+		JLabel lblTelefonos = new JLabel("Telefonos");
+
+		scrollPaneNumerosTelefonicos = new JScrollPane();
+		
+		btnAgregarTelefono = new JButton("Nuevo");
+		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
+		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
+		
+		btnEliminarTelefono = new JButton("Borrar");
+		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
+		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
+		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
+		gl_panelCentralFormulario.setHorizontalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblRfc)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfRfcCliente, GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblNombre)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfNombreCompleto, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE))
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(lblCategoria)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(comboBoxTipoCliente, 0, 129, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblFNacimiento)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(frmtdtxtfldFechaNacimiento, GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblCPostal)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfCodigoPostal, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(lblAlias)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfNombreCorto, GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblCtaContable)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfCtaContable, GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblMail)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfCorreoElectronico, GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblEstado)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfEstado, GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblCiudad)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfCiudad, GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+					.addContainerGap())
+				.addComponent(scrollPaneDireccionCliente, GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblTelefonos)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+					.addGap(367))
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblDireccion)
+					.addContainerGap())
+				.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+		);
+		gl_panelCentralFormulario.setVerticalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblRfc)
+						.addComponent(txfRfcCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNombre)
+						.addComponent(txfNombreCompleto, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblAlias)
+							.addComponent(txfNombreCorto, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblCtaContable)
+							.addComponent(txfCtaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblCategoria)
+						.addComponent(comboBoxTipoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblFNacimiento)
+						.addComponent(frmtdtxtfldFechaNacimiento, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCPostal)
+						.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblMail)
+						.addComponent(txfCorreoElectronico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblEstado)
+						.addComponent(txfEstado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCiudad)
+						.addComponent(txfCiudad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lblDireccion)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneDireccionCliente, GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblTelefonos)
+							.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+
+		tablaNumerosTelefonicos = new JTable();
+		scrollPaneNumerosTelefonicos.setViewportView(tablaNumerosTelefonicos);
+
+		txaDireccionCliente = new JTextArea();
+		scrollPaneDireccionCliente.setViewportView(txaDireccionCliente);
+		panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 
 		panelInferiorBotones = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panelInferiorBotones.getLayout();
+		flowLayout = (FlowLayout) panelInferiorBotones.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panelInferiorBotones.setBackground(new Color(30, 144, 255));
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		btnHistorialCred = new JButton("Historial");
 		btnHistorialCred.setBackground(new Color(0, 255, 255));
-		btnHistorialCred.setIcon(new ImageIcon(
-				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/creditoLogo2.png")));
+		btnHistorialCred.setIcon(
+				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/creditoLogo2.png")));
 		panelInferiorBotones.add(btnHistorialCred);
 
 		horizontalStrut_15 = Box.createHorizontalStrut(20);
 		panelInferiorBotones.add(horizontalStrut_15);
 
 		btnCancelar = new JButton("Cancelar");
-		btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cerrarForm();
-			}
-		});
+
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		btnCancelar.setIcon(
 				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
@@ -419,243 +377,212 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar = new JButton("Guardar");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (tipoOperacion == 0) {
+				if(tipoOperacion == 1) {
 					insertarNuevoCliente();
-				} else if (tipoOperacion == 1) {
+				}else {
 					actualizarCliente();
 				}
 			}
 		});
+
 		btnGuardar.setBackground(new Color(144, 238, 144));
-		btnGuardar.setIcon(new ImageIcon(
-				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnGuardar.setIcon(
+				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
 		
 		this.llenarCmbTipoCliente();
 		
-		if (tipoOperacion == 1) {
+		if(this.tipoOperacion != 1) {
 			this.consultarClientePorId();
+		}
+
+	}
+
+	private MaskFormatter crearCampoFechaNacimiento() {
+		try {
+			MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
+			maskFormatter.setPlaceholderCharacter('_');						
+			return maskFormatter;
+		} catch (ParseException er) {
+			throw new IllegalStateException("No se pudo crear la máscara de fecha", er);
 		}
 	}
 
-	/*
-	 * private void llenarCmbRfcClientes() {
-	 * 
-	 * this.limpiarCmbClientes();
-	 * 
-	 * try { clientesController.consultarRFCClientes(cmbRfcCliente); } catch
-	 * (SQLException er) { er.printStackTrace(); JOptionPane.showMessageDialog(this,
-	 * "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-	 * JOptionPane.ERROR_MESSAGE); } catch (Exception er) { er.printStackTrace();
-	 * JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] -> " +
-	 * er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); }
-	 * 
-	 * }
-	 * 
-	 * private void limpiarCmbClientes() { this.cmbRfcCliente.removeAllItems();
-	 * this.cmbRfcCliente.updateUI(); }
-	 */
-	
 	private void llenarCmbTipoCliente() {
-		this.cmbTipoCliente.removeAllItems();
-		this.cmbTipoCliente.updateUI();
-		this.tipoClienteController.cmbTipoCliente().stream().forEach(t -> {
-			this.cmbTipoCliente.addItem(t);
-		});
+		this.comboBoxTipoCliente.removeAllItems();
+		Vector<TipoCliente> tipos = AppContext.tipoClienteController.cmbTipoCliente();
+		tipos.forEach(tipo -> this.comboBoxTipoCliente
+				.addItem(new JComboboxDataViewModel(tipo.getIdTipoCliente(), tipo.getNombre())));
+		this.comboBoxTipoCliente.updateUI();
 	}
-	
+
 	private void consultarClientePorId() {
-
-		String dia = "";
-		String mes = "";
-		String anio = "";
-
 		try {
-
-			Clientes cl = clientesController.buscarClientePorId(this.indiceCliente);
-
-			if (cl.getFechaNacimiento() != null) {
-				String[] fecha = cl.getFechaNacimiento().toString().split("-");
-				dia = fecha[2];
-				mes = fecha[1];
-				anio = fecha[0];
+			ClienteById cl = AppContext.clientesController.buscarClientePorId(this.indiceCliente);
+			if (cl == null) {
+				MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No se pudo cargar el cliente");
+				return;
 			}
 
-			this.indiceCliente = cl.getId();
+			this.indiceCliente = cl.getIdCliente();
 			this.txfRfcCliente.setText(cl.getRfc());
-			this.txfCtaContableCliente.setText(cl.getClaveCuentaContable());
-			this.txfNombreCompleto.setText(cl.getNombre());
+			this.txfCtaContable.setText(cl.getClaveCuentaContable());
+			this.txfNombreCompleto.setText(cl.getNombreCompleto());
 			this.txfNombreCorto.setText(cl.getNombreCorto());
-			this.txaDescripcion.setText(cl.getDescripcion());
-			this.txfDiaNac.setText(dia);
-			this.txfMesNac.setText(mes);
-			this.txfAnioNac.setText(anio);
-			this.txfEmail.setText(cl.getEmail());
+			this.frmtdtxtfldFechaNacimiento.setText(formatearFechaVisible(cl.getFechaNac()));
+			this.txfCorreoElectronico.setText(cl.getCorreoElectronico());
 			this.txfEstado.setText(cl.getEstado());
 			this.txfCiudad.setText(cl.getCiudad());
 			this.txfCodigoPostal.setText(cl.getCodigoPostal());
-			this.txaDireccion.setText(cl.getDireccion());
-
+			this.txaDireccionCliente.setText(cl.getDireccion());
+			seleccionarTipoCliente(cl.getIdTipoCliente());
 		} catch (Exception er) {
 			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 
-	/**
-	 * inserta un nuevo registro en la bd
-	 */
+	private void seleccionarTipoCliente(int idTipoCliente) {
+		for (int i = 0; i < this.comboBoxTipoCliente.getItemCount(); i++) {
+			JComboboxDataViewModel item = this.comboBoxTipoCliente.getItemAt(i);
+			if (item.id() == idTipoCliente) {
+				this.comboBoxTipoCliente.setSelectedIndex(i);
+				return;
+			}
+		}
+	}
+
 	private void insertarNuevoCliente() {
-		
-		if(validarCamposVacios()) {
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Existen campos obligatorios vacios o error en formato de entrada");
+		if (validarCamposVacios()) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Existen campos obligatorios vacios o error en formato de entrada");
 			return;
 		}
-		
-		Clientes cl = new Clientes();		
-		String fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
-		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmbTipoCliente.getSelectedIndex()).getIdTipoCliente();
-		
+
 		try {
-
-			cl.setRfc(this.txfRfcCliente.getText());
-			cl.setNombre(this.txfNombreCompleto.getText());
-			cl.setNombreCorto(this.txfNombreCorto.getText());
-			cl.setDescripcion(this.txaDescripcion.getText());
-			cl.setFechaNacimiento(Date.valueOf(fecha));
-			cl.setEmail(this.txfEmail.getText());
-			cl.setEstado(this.txfEstado.getText());
-			cl.setCiudad(this.txfCiudad.getText());
-			cl.setDireccion(this.txaDireccion.getText());
-			cl.setCodigoPostal(this.txfCodigoPostal.getText());
-			cl.setIdTipoCliente(idTipoCliente);
-
-			clientesController.insertarNuevoCliente(cl);
-
-			JOptionPane.showMessageDialog(this, "Cliente registrado", "Exito", JOptionPane.INFORMATION_MESSAGE);
-
-			this.limpiarCamposFormulario();
-
-		} catch (SQLException er) {
+			Clientes cl = construirCliente();
+			SpResponseModel respuesta = AppContext.clientesController.insertarNuevoCliente(cl);
+			MessageHandler.displayMessage(
+					respuesta.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
+					respuesta.message());
+			if (respuesta.id() == 200) {
+				this.dispose();
+			}
+		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		} catch (Exception er) {
-			er.printStackTrace();			
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
-	}	
+	}
 
-	private void actualizarCliente() {			
-		
-		Clientes cl = new Clientes();
-		
-		String fecha = null;				
-		fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
-		int idTipoCliente = this.tipoClienteController.cmbTipoCliente().get(this.cmbTipoCliente.getSelectedIndex()).getIdTipoCliente();
-		
-		//System.out.println("Tipo cliente: " + idTipoCliente );
-		
+	private void actualizarCliente() {
+		if (validarCamposVacios()) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Existen campos obligatorios vacios o error en formato de entrada");
+			return;
+		}
+
 		try {
-
+			Clientes cl = construirCliente();
 			cl.setId(this.indiceCliente);
-			cl.setClaveCuentaContable(this.txfCtaContableCliente.getText());
-			cl.setNombre(this.txfNombreCompleto.getText());
-			cl.setNombreCorto(this.txfNombreCorto.getText());
-			cl.setDescripcion(this.txaDescripcion.getText());
-			cl.setFechaNacimiento(Date.valueOf(fecha));
-			cl.setEmail(this.txfEmail.getText());
-			cl.setEstado(this.txfEstado.getText());
-			cl.setCiudad(this.txfCiudad.getText());
-			cl.setDireccion(this.txaDireccion.getText());
-			cl.setCodigoPostal(this.txfCodigoPostal.getText());
-			cl.setIdTipoCliente(idTipoCliente);
-
-			clientesController.actualizarCliente(cl);
-
-			JOptionPane.showMessageDialog(this, "Cliente actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+			SpResponseModel respuesta = AppContext.clientesController.actualizarCliente(cl);
+			MessageHandler.displayMessage(
+					respuesta.id() == 200 ? MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
+					respuesta.message());
+			if (respuesta.id() == 200) {
+				this.dispose();
+			}
 		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 
-	/**
-	 * borra el contenido de todos los campos del formulario
-	 */
-	private void limpiarCamposFormulario() {
-
-		this.txfRfcCliente.setText("");
-		this.txfNombreCompleto.setText("");
-		this.txfNombreCorto.setText("");
-		this.txaDescripcion.setText("");
-		this.txfDiaNac.setText("");
-		this.txfMesNac.setText("");
-		this.txfAnioNac.setText("");
-		this.txfEmail.setText("");
-		this.txfEstado.setText("");
-		this.txfCiudad.setText("");
-		this.txaDireccion.setText("");
-		this.txfCodigoPostal.setText("");
-
+	private Clientes construirCliente() {
+		Clientes cl = new Clientes();
+		cl.setRfc(this.txfRfcCliente.getText().trim());
+		cl.setNombreCompleto(this.txfNombreCompleto.getText().trim());
+		cl.setNombreCorto(this.txfNombreCorto.getText().trim());
+		cl.setIdCuentaContable(this.cuentaContable != null ? this.cuentaContable.idCuentaContable() : 0);
+		cl.setClaveCuentaContable(this.txfCtaContable.getText().trim());
+		cl.setFechaNac(convertirFechaSql(this.frmtdtxtfldFechaNacimiento.getText().trim()));
+		cl.setCorreoElectronico(this.txfCorreoElectronico.getText().trim());
+		cl.setEstado(this.txfEstado.getText().trim());
+		cl.setCiudad(this.txfCiudad.getText().trim());
+		cl.setCodigoPostal(this.txfCodigoPostal.getText().trim());
+		cl.setDireccion(this.txaDireccionCliente.getText().trim());
+		cl.setIdTipoCliente(obtenerTipoClienteSeleccionado());
+		cl.setActivo(true);
+		return cl;
 	}
-	
+
+	private int obtenerTipoClienteSeleccionado() {
+		JComboboxDataViewModel item = (JComboboxDataViewModel) this.comboBoxTipoCliente.getSelectedItem();
+		return item == null ? -1 : item.id();
+	}
+
+	private java.sql.Date convertirFechaSql(String fechaVisible) {
+		LocalDate localDate = LocalDate.parse(fechaVisible, FECHA_VISIBLE);
+		return java.sql.Date.valueOf(localDate.format(FECHA_SQL));
+	}
+
+	private String formatearFechaVisible(java.sql.Date fecha) {
+		return fecha == null ? "" : fecha.toLocalDate().format(FECHA_VISIBLE);
+	}
+
 	private boolean validarCamposVacios() {
-						
-		String fecha = this.txfAnioNac.getText() + "-" + this.txfMesNac.getText() + "-" + this.txfDiaNac.getText();
-		
-		if (this.txfNombreCompleto.getText().length() < 1 || this.txfNombreCompleto.getText().isEmpty()
-				|| this.txfNombreCompleto.getText().equals("") || this.txfNombreCompleto.getText().equals(null)) {			
+		if (this.txfRfcCliente.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.txfNombreCompleto.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.txfNombreCorto.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.frmtdtxtfldFechaNacimiento.getText().trim().isEmpty()
+				|| this.frmtdtxtfldFechaNacimiento.getText().contains("_")) {
+			return true;
+		}
+		if (this.comboBoxTipoCliente.getSelectedItem() == null) {
+			return true;
+		}
+		if (this.txfCorreoElectronico.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.txfEstado.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.txfCiudad.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.txfCodigoPostal.getText().trim().isEmpty()) {
+			return true;
+		}
+		if (this.txaDireccionCliente.getText().trim().isEmpty()) {
 			return true;
 		}
 
-		if (this.txfNombreCorto.getText().length() < 1 || this.txfNombreCorto.getText().isEmpty()
-				|| this.txfNombreCorto.getText().equals(null) || this.txfNombreCorto.getText().equals("")) {			
+		try {
+			LocalDate.parse(this.frmtdtxtfldFechaNacimiento.getText().trim(), FECHA_VISIBLE);
+			return false;
+		} catch (DateTimeParseException er) {
 			return true;
 		}
-
-		if (this.txfDiaNac.getText().length() < 1 || this.txfMesNac.getText().length() < 1
-				|| this.txfAnioNac.getText().length() < 1) {
-			return true;
-		}
-
-		if (this.txfEmail.getText().length() < 1 || this.txfEmail.getText().isEmpty()
-				|| this.txfEmail.getText().equals(null) || this.txfEmail.getText().equals("")) {
-			return true;
-		}		
-
-		if (fecha.isBlank() || fecha.isEmpty()) {
-			return true;
-		}
-
-		if (this.txfEstado.getText().isEmpty() || this.txfEstado.getText().isBlank()
-				|| this.txfEstado.getText().length() < 1 || this.txfEstado.getText().equals(null)) {
-			return true;
-		}
-
-		if (this.txfCiudad.getText().isEmpty() || this.txfCiudad.getText().isBlank()
-				|| this.txfCiudad.getText().length() < 1 || this.txfCiudad.getText().equals(null)) {
-			return true;
-		}
-
-		if (this.txaDireccion.getText().isEmpty() || this.txaDireccion.getText().isBlank()
-				|| this.txaDireccion.getText().length() < 1 || this.txaDireccion.getText().equals(null)) {
-			return true;
-		}
-
-		if (this.txfCodigoPostal.getText().isEmpty() || this.txfCodigoPostal.getText().isBlank()
-				|| this.txfCodigoPostal.getText().length() < 1 || this.txfCodigoPostal.getText().equals(null)) {		
-			return true;
-		}
-		
-		return false;
 	}
 	
-	private void cerrarForm() {
-		this.dispose();
+	private void abrirFormConsultaCuentaContablCliente() {
+
+		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setVisible(true);
+
+		this.cuentaContable = dialog.getCuentaContable();
+
+		if (cuentaContable.idCuentaContable() < 0)
+			return;
+
+		this.txfCtaContable.setText(this.cuentaContable.claveCuentaContable());
+
 	}
 
 }
