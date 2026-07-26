@@ -373,7 +373,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelClientes = new JMenuItem("Clientes");
 		opcionReporteExcelClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panelClientes.exportarClientesExcel();
+				//panelClientes.exportarClientesExcel();
 			}
 		});
 		opcionReporteExcelClientes.setIcon(new ImageIcon(Fr_principal.class.getResource(

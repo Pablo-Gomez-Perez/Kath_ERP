@@ -747,8 +747,8 @@ public class Fr_PuntoDeVentas extends JFrame {
 			cliente = this.clienteController.buscarClientePorRFC(rfcCliente);
 
 			this.txfAliasCliente.setText(cliente.getNombreCorto());
-			this.txfNombreCliente.setText(cliente.getNombre());
-			this.txfClaveContableCliente.setText(cliente.getClaveCuentaContable());
+			this.txfNombreCliente.setText(cliente.getNombreCompleto());
+			//this.txfClaveContableCliente.setText(cliente.getClaveCuentaContable());
 
 		} catch (SQLException er) {
 			er.printStackTrace();
