@@ -129,13 +129,14 @@ public class PanelClientes extends JPanel {
 		btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				int index = DataTools.getIndiceElementoSeleccionado(tablaClientes, modelTablaClientes, 0);
-				
-				if(index < 0 ) return;
-				
+
+				if (index < 0)
+					return;
+
 				abrirFormDatosCliente(2, index);
-				
+
 			}
 		});
 		btnModificar.setIcon(
@@ -227,67 +228,81 @@ public class PanelClientes extends JPanel {
 		this.modelTablaClientes.getDataVector().removeAllElements();
 		this.tablaClientes.updateUI();
 	}
-	
+
 	private void eliminarCliente() {
-		
-		int selectedRow = this.tablaClientes.getSelectedRow();
-		
-		if (selectedRow < 0) return;
-		
-		int modelRow = this.tablaClientes.convertRowIndexToModel(selectedRow);
-		int idCliente = (int) this.modelTablaClientes.getValueAt(modelRow, 0);
-		
+
+		if (this.tablaClientes.getSelectedRow() < 0) {
+			return;
+		}
+
+		int idCliente = DataTools.getIndiceElementoSeleccionado(this.tablaClientes, this.modelTablaClientes, 0);
+
+		if (idCliente < 0) {
+			return;
+		}
+
 		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
-		
-		if (option != 0) return;
-		
+
+		if (option != 0) {
+			return;
+		}
+
 		var response = AppContext.clientesController.eliminarCliente(idCliente);
-		
+
 		if (response.id() == 200) {
 			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, response.message());
+
 			this.llenarTablaClientes();
 			return;
 		}
-		
+
 		MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, response.message());
-		
+
 	}
-	
+
 	private void abrirFormDatosCliente(int idOperacion, int idCliente) {
-		
+
 		JComponent cmp = this;
-		
+
 		try {
-			
+
 			SwingUtilities.invokeLater(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					
+
 					try {
-						
+
 						Fr_DatosCliente form = new Fr_DatosCliente(idOperacion, idCliente);
 						form.setLocationRelativeTo(cmp);
 						form.setVisible(true);
-						
-					}catch (Exception e) {
-					
+
+						form.addWindowListener(new java.awt.event.WindowAdapter() {
+							@Override
+							public void windowClosed(java.awt.event.WindowEvent e) {
+								if (form.isOperacionEjecutada()) {
+									llenarTablaClientes();
+								}
+							}
+						});
+
+					} catch (Exception e) {
+
 						e.printStackTrace(System.err);
 						MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, e.getMessage());
-						
+
 					}
-					
+
 				}
-				
-				
+
 			});
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
 		}
-		
+
 	}
-	
+
 }

@@ -111,6 +111,7 @@ public class Fr_DatosCliente extends JFrame {
 	private JButton btnAgregarTelefono;
 	private JButton btnEliminarTelefono;
 	private CuentaContableResponseViewModel cuentaContable;
+	private boolean operacionEjecutada = false;
 
 	/**
 	 * Create the frame.
@@ -180,9 +181,9 @@ public class Fr_DatosCliente extends JFrame {
 		btnFormConsultaCuentaContable = new JButton("");
 		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				abrirFormConsultaCuentaContablCliente();
-				
+
 			}
 		});
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(
@@ -225,122 +226,115 @@ public class Fr_DatosCliente extends JFrame {
 		JLabel lblTelefonos = new JLabel("Telefonos");
 
 		scrollPaneNumerosTelefonicos = new JScrollPane();
-		
+
 		btnAgregarTelefono = new JButton("Nuevo");
 		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
-		
+
 		btnEliminarTelefono = new JButton("Borrar");
 		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
-		gl_panelCentralFormulario.setHorizontalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addComponent(lblRfc)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfRfcCliente, GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblNombre)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfNombreCompleto, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE))
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(lblCategoria)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(comboBoxTipoCliente, 0, 129, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblFNacimiento)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(frmtdtxtfldFechaNacimiento, GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblCPostal)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfCodigoPostal, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(lblAlias)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfNombreCorto, GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblCtaContable)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txfCtaContable, GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addComponent(lblMail)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfCorreoElectronico, GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblEstado)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfEstado, GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblCiudad)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txfCiudad, GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-					.addContainerGap())
+		gl_panelCentralFormulario.setHorizontalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(lblRfc)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txfRfcCliente, GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblNombre)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txfNombreCompleto, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE))
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addGroup(gl_panelCentralFormulario
+						.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(lblCategoria)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(comboBoxTipoCliente, 0, 129, Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblFNacimiento)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(frmtdtxtfldFechaNacimiento, GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblCPostal)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(txfCodigoPostal, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(lblAlias)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(txfNombreCorto, GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblCtaContable)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(txfCtaContable, GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 68,
+										GroupLayout.PREFERRED_SIZE)))
+						.addContainerGap())
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(lblMail)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txfCorreoElectronico, GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblEstado)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txfEstado, GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblCiudad)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(txfCiudad, GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE).addContainerGap())
 				.addComponent(scrollPaneDireccionCliente, GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(lblTelefonos)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+						.addGap(367))
+				.addGroup(
+						gl_panelCentralFormulario.createSequentialGroup().addComponent(lblDireccion).addContainerGap())
+				.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE));
+		gl_panelCentralFormulario.setVerticalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addComponent(lblTelefonos)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-					.addGap(367))
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addComponent(lblDireccion)
-					.addContainerGap())
-				.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
-		);
-		gl_panelCentralFormulario.setVerticalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblRfc)
-						.addComponent(txfRfcCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNombre)
-						.addComponent(txfNombreCompleto, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblAlias)
-							.addComponent(txfNombreCorto, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(lblCtaContable)
-							.addComponent(txfCtaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblCategoria)
-						.addComponent(comboBoxTipoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblFNacimiento)
-						.addComponent(frmtdtxtfldFechaNacimiento, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblCPostal)
-						.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblMail)
-						.addComponent(txfCorreoElectronico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblEstado)
-						.addComponent(txfEstado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblCiudad)
-						.addComponent(txfCiudad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(lblDireccion)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPaneDireccionCliente, GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-							.addComponent(lblTelefonos)
-							.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-						.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-					.addContainerGap())
-		);
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE).addComponent(lblRfc)
+								.addComponent(txfRfcCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblNombre).addComponent(txfNombreCompleto, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblAlias)
+										.addComponent(txfNombreCorto, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblCtaContable).addComponent(txfCtaContable,
+												GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 21,
+										GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(
+								gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblCategoria)
+										.addComponent(comboBoxTipoCliente, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblFNacimiento)
+										.addComponent(frmtdtxtfldFechaNacimiento, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblCPostal)
+										.addComponent(txfCodigoPostal, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(
+								gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE).addComponent(lblMail)
+										.addComponent(txfCorreoElectronico, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblEstado)
+										.addComponent(txfEstado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblCiudad).addComponent(txfCiudad, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(lblDireccion)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPaneDireccionCliente, GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblTelefonos).addComponent(btnAgregarTelefono,
+												GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 21,
+										GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+						.addContainerGap()));
 
 		tablaNumerosTelefonicos = new JTable();
 		scrollPaneNumerosTelefonicos.setViewportView(tablaNumerosTelefonicos);
@@ -377,9 +371,9 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar = new JButton("Guardar");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(tipoOperacion == 1) {
+				if (tipoOperacion == 1) {
 					insertarNuevoCliente();
-				}else {
+				} else {
 					actualizarCliente();
 				}
 			}
@@ -389,10 +383,10 @@ public class Fr_DatosCliente extends JFrame {
 		btnGuardar.setIcon(
 				new ImageIcon(Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
-		
+
 		this.llenarCmbTipoCliente();
-		
-		if(this.tipoOperacion != 1) {
+
+		if (this.tipoOperacion != 1) {
 			this.consultarClientePorId();
 		}
 
@@ -401,7 +395,7 @@ public class Fr_DatosCliente extends JFrame {
 	private MaskFormatter crearCampoFechaNacimiento() {
 		try {
 			MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
-			maskFormatter.setPlaceholderCharacter('_');						
+			maskFormatter.setPlaceholderCharacter('_');
 			return maskFormatter;
 		} catch (ParseException er) {
 			throw new IllegalStateException("No se pudo crear la máscara de fecha", er);
@@ -465,9 +459,12 @@ public class Fr_DatosCliente extends JFrame {
 			MessageHandler.displayMessage(
 					respuesta.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
 					respuesta.message());
+
 			if (respuesta.id() == 200) {
+				this.operacionEjecutada = true;
 				this.dispose();
 			}
+
 		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
@@ -488,9 +485,12 @@ public class Fr_DatosCliente extends JFrame {
 			MessageHandler.displayMessage(
 					respuesta.id() == 200 ? MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
 					respuesta.message());
+			
 			if (respuesta.id() == 200) {
+				this.operacionEjecutada = true;
 				this.dispose();
 			}
+			
 		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
@@ -569,7 +569,7 @@ public class Fr_DatosCliente extends JFrame {
 			return true;
 		}
 	}
-	
+
 	private void abrirFormConsultaCuentaContablCliente() {
 
 		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
@@ -583,6 +583,10 @@ public class Fr_DatosCliente extends JFrame {
 
 		this.txfCtaContable.setText(this.cuentaContable.claveCuentaContable());
 
+	}
+
+	public boolean isOperacionEjecutada() {
+		return operacionEjecutada;
 	}
 
 }
