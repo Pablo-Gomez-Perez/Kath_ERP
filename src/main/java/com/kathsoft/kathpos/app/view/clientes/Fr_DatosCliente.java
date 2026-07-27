@@ -359,6 +359,12 @@ public class Fr_DatosCliente extends JFrame {
 		panelInferiorBotones.add(horizontalStrut_15);
 
 		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				operacionEjecutada = false;
+				dispose();
+			}
+		});
 
 		btnCancelar.setBackground(new Color(205, 92, 92));
 		btnCancelar.setIcon(
