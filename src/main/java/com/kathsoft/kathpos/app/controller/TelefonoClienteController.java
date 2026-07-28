@@ -35,8 +35,7 @@ public class TelefonoClienteController {
 
 				while (rset.next()) {
 					data.add(new Object[] {
-							rset.getInt("id_telefono"),
-							rset.getInt("id_cliente"),
+							rset.getInt("id_telefono"),							
 							rset.getString("telefono")
 					});
 				}
