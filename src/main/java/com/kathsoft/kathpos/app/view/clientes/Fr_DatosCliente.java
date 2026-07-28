@@ -415,7 +415,7 @@ public class Fr_DatosCliente extends JFrame {
 	}
 
 	private void listTelefonosCliente() {
-	
+
 		this.borrarTelefonosCliente();
 
 		if (this.indiceCliente <= 0) {
@@ -429,25 +429,27 @@ public class Fr_DatosCliente extends JFrame {
 		}
 
 		list.forEach(this.tablaTelefonosModel::addRow);
-		
+
 	}
-	
+
 	/**
 	 * Limpia los registros visibles en la tabla de teléfonos del cliente.
 	 */
 	private void borrarTelefonosCliente() {
-		
+
 		this.tablaTelefonosModel.getDataVector().removeAllElements();
 		this.tablaNumerosTelefonicos.updateUI();
-		
+
 	}
-	
+
 	/**
 	 * Solicita un teléfono mediante un cuadro de entrada y lo registra para el
 	 * cliente actual.
 	 *
-	 * <p>Si el registro es exitoso, muestra el mensaje correspondiente y actualiza
-	 * la tabla de teléfonos.</p>
+	 * <p>
+	 * Si el registro es exitoso, muestra el mensaje correspondiente y actualiza la
+	 * tabla de teléfonos.
+	 * </p>
 	 *
 	 * @see JOptionPane#showInputDialog(java.awt.Component, Object, String, int)
 	 * @see AppContext#telefonoClienteController
@@ -455,68 +457,52 @@ public class Fr_DatosCliente extends JFrame {
 	private void insertTelefonoCliente() {
 
 		if (this.indiceCliente <= 0) {
-			MessageHandler.displayMessage(
-					MessageHandler.WARN_MESSAGE,
-					this,
-					"Primero debe registrar el cliente antes de agregar telefonos"
-			);
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Primero debe registrar el cliente antes de agregar telefonos");
 			return;
 		}
 
-		String telefono = JOptionPane.showInputDialog(
-				this,
-				"Ingrese el telefono del cliente:",
-				"Agregar telefono",
-				JOptionPane.QUESTION_MESSAGE
-		);
+		String telefono = JOptionPane.showInputDialog(this, "Ingrese el telefono del cliente:", "Agregar telefono",
+				JOptionPane.QUESTION_MESSAGE);
 
 		if (telefono == null || telefono.trim().isEmpty()) {
 			return;
 		}
 
-		var response = AppContext.telefonoClienteController.insertTelefonoCliente(
-				this.indiceCliente,
-				telefono.trim()
-		);
+		var response = AppContext.telefonoClienteController.insertTelefonoCliente(this.indiceCliente, telefono.trim());
 
 		MessageHandler.displayMessage(
-				response.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
-				this,
-				response.message()
-		);			
+				response.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
+				response.message());
 
 		if (response.id() == 200) {
 			this.listTelefonosCliente();
 		}
 	}
-	
+
 	/**
 	 * Elimina el teléfono seleccionado en la tabla.
 	 *
-	 * <p>Obtiene el identificador mediante
+	 * <p>
+	 * Obtiene el identificador mediante
 	 * {@link DataTools#getIndiceElementoSeleccionado(javax.swing.JTable, javax.swing.table.DefaultTableModel, int)}.
-	 * Si la eliminación es exitosa, actualiza la tabla de teléfonos.</p>
+	 * Si la eliminación es exitosa, actualiza la tabla de teléfonos.
+	 * </p>
 	 *
-	 * @see DataTools#getIndiceElementoSeleccionado(javax.swing.JTable, javax.swing.table.DefaultTableModel, int)
+	 * @see DataTools#getIndiceElementoSeleccionado(javax.swing.JTable,
+	 *      javax.swing.table.DefaultTableModel, int)
 	 * @see AppContext#telefonoClienteController
 	 */
 	private void deleteTelefonoCliente() {
 
-		int idTelefono = DataTools.getIndiceElementoSeleccionado(
-				this.tablaNumerosTelefonicos,
-				this.tablaTelefonosModel,
-				0
-		);
+		int idTelefono = DataTools.getIndiceElementoSeleccionado(this.tablaNumerosTelefonicos, this.tablaTelefonosModel,
+				0);
 
 		if (idTelefono < 0) {
 			return;
 		}
 
-		int option = MessageHandler.displayMessage(
-				MessageHandler.DELETE_DATA_QUESTION_MESSAGE,
-				this,
-				" seleccionado?"
-		);
+		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
 
 		if (option != JOptionPane.YES_OPTION) {
 			return;
@@ -525,10 +511,8 @@ public class Fr_DatosCliente extends JFrame {
 		var response = AppContext.telefonoClienteController.deleteTelefonoCliente(idTelefono);
 
 		MessageHandler.displayMessage(
-				response.id() == 200 ? MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
-				this,
-				response.message()
-		);
+				response.id() == 200 ? MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
+				response.message());
 
 		if (response.id() == 200) {
 			this.listTelefonosCliente();
@@ -554,8 +538,10 @@ public class Fr_DatosCliente extends JFrame {
 	/**
 	 * Carga los tipos de cliente disponibles en el combo.
 	 *
-	 * <p>Consulta los datos desde {@link AppContext#tipoClienteController} y los
-	 * agrega como {@link JComboboxDataViewModel}.</p>
+	 * <p>
+	 * Consulta los datos desde {@link AppContext#tipoClienteController} y los
+	 * agrega como {@link JComboboxDataViewModel}.
+	 * </p>
 	 *
 	 * @see TipoCliente
 	 * @see JComboboxDataViewModel
@@ -571,8 +557,10 @@ public class Fr_DatosCliente extends JFrame {
 	/**
 	 * Consulta el cliente actual y carga sus datos en el formulario.
 	 *
-	 * <p>Usa {@code indiceCliente} como identificador de búsqueda. Si no encuentra
-	 * información, muestra un mensaje de error y detiene la carga.</p>
+	 * <p>
+	 * Usa {@code indiceCliente} como identificador de búsqueda. Si no encuentra
+	 * información, muestra un mensaje de error y detiene la carga.
+	 * </p>
 	 *
 	 * @see ClienteById
 	 * @see AppContext#clientesController
@@ -620,12 +608,13 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
-	
 	/**
 	 * Registra un nuevo cliente con los datos capturados en el formulario.
 	 *
-	 * <p>Si la operación es exitosa, marca {@code operacionEjecutada} y cierra el
-	 * formulario.</p>
+	 * <p>
+	 * Si la operación es exitosa, marca {@code operacionEjecutada} y cierra el
+	 * formulario.
+	 * </p>
 	 *
 	 * @see #validarCamposVacios()
 	 * @see #construirCliente()
@@ -656,12 +645,13 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
-	
 	/**
 	 * Actualiza el cliente actual con los datos capturados en el formulario.
 	 *
-	 * <p>Si la operación es exitosa, marca {@code operacionEjecutada} y cierra el
-	 * formulario.</p>
+	 * <p>
+	 * Si la operación es exitosa, marca {@code operacionEjecutada} y cierra el
+	 * formulario.
+	 * </p>
 	 *
 	 * @see #validarCamposVacios()
 	 * @see #construirCliente()
@@ -681,12 +671,12 @@ public class Fr_DatosCliente extends JFrame {
 			MessageHandler.displayMessage(
 					respuesta.id() == 200 ? MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this,
 					respuesta.message());
-			
+
 			if (respuesta.id() == 200) {
 				this.operacionEjecutada = true;
 				this.dispose();
 			}
-			
+
 		} catch (Exception er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
@@ -698,7 +688,8 @@ public class Fr_DatosCliente extends JFrame {
 	 * formulario.
 	 *
 	 * @return cliente construido para alta o actualización
-	 * @throws DateTimeParseException si la fecha capturada no cumple el formato esperado
+	 * @throws DateTimeParseException si la fecha capturada no cumple el formato
+	 *                                esperado
 	 *
 	 * @see Clientes
 	 * @see #convertirFechaSql(String)
@@ -725,7 +716,8 @@ public class Fr_DatosCliente extends JFrame {
 	/**
 	 * Obtiene el identificador del tipo de cliente seleccionado.
 	 *
-	 * @return identificador seleccionado, o {@code -1} si no existe selección válida
+	 * @return identificador seleccionado, o {@code -1} si no existe selección
+	 *         válida
 	 *
 	 * @see JComboboxDataViewModel
 	 */
@@ -750,8 +742,9 @@ public class Fr_DatosCliente extends JFrame {
 	 * Formatea una fecha SQL para mostrarla en el formulario.
 	 *
 	 * @param fecha fecha SQL a formatear
-	 * @return fecha en formato visible, o cadena vacía si {@code fecha} es {@code null}
-	 */	
+	 * @return fecha en formato visible, o cadena vacía si {@code fecha} es
+	 *         {@code null}
+	 */
 	private String formatearFechaVisible(java.sql.Date fecha) {
 		return fecha == null ? "" : fecha.toLocalDate().format(FECHA_VISIBLE);
 	}
@@ -759,8 +752,8 @@ public class Fr_DatosCliente extends JFrame {
 	/**
 	 * Valida campos obligatorios y formato de fecha del formulario.
 	 *
-	 * @return {@code true} si existen campos vacíos o fecha inválida;
-	 *         {@code false} si los datos mínimos son válidos
+	 * @return {@code true} si existen campos vacíos o fecha inválida; {@code false}
+	 *         si los datos mínimos son válidos
 	 */
 	private boolean validarCamposVacios() {
 		if (this.txfRfcCliente.getText().trim().isEmpty()) {
@@ -807,7 +800,9 @@ public class Fr_DatosCliente extends JFrame {
 	 * Abre el diálogo de consulta de cuentas contables y asigna la cuenta
 	 * seleccionada al cliente.
 	 *
-	 * <p>Si no se selecciona una cuenta válida, no modifica el campo contable.</p>
+	 * <p>
+	 * Si no se selecciona una cuenta válida, no modifica el campo contable.
+	 * </p>
 	 *
 	 * @see ConsultaCuentaContableDialog
 	 * @see CuentaContableResponseViewModel
@@ -830,14 +825,16 @@ public class Fr_DatosCliente extends JFrame {
 	/**
 	 * Consulta y carga en tabla los teléfonos asociados al cliente actual.
 	 *
-	 * <p>Si el cliente aún no tiene identificador válido, no ejecuta la consulta.</p>
+	 * <p>
+	 * Si el cliente aún no tiene identificador válido, no ejecuta la consulta.
+	 * </p>
 	 *
 	 * @see AppContext#telefonoClienteController
 	 */
 	public boolean isOperacionEjecutada() {
 		return operacionEjecutada;
 	}
-	
+
 	/**
 	 * Crea el modelo de tabla para mostrar los teléfonos asociados al cliente.
 	 *
@@ -845,10 +842,10 @@ public class Fr_DatosCliente extends JFrame {
 	 */
 	private DefaultTableModel getTableModel() {
 		DefaultTableModel model = new DefaultTableModel();
-		
-		model.addColumn("id");				
+
+		model.addColumn("id");
 		model.addColumn("Telefono");
-		
+
 		return model;
 	}
 
