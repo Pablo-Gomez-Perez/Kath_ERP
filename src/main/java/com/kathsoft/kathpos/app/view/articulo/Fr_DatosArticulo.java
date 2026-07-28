@@ -502,7 +502,7 @@ public class Fr_DatosArticulo extends JFrame {
 			return;
 		}
 
-		int idProveedor = this.listProveedores.get(this.cmbProveedorArticulo.getSelectedIndex()).getId();
+		int idProveedor = 0;
 		int idCategoria = this.listCategoria.get(this.cmbMarcaArticulo.getSelectedIndex()).getIdCategoria();
 
 		try {
