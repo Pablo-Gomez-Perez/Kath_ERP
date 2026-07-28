@@ -26,27 +26,29 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class PanelProveedor extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panelProveedorEtiqueta;
 	private JLabel lblNewLabel_2;
-	private JPanel panelProovedorCentral;
-	private JScrollPane scrollPaneTablaProveedores;
 	private DefaultTableModel modelTablaProveedores;
-	private JTable tablaProveedores;
-	private JPanel panelProveedorCentralBotones;
-	private JButton btnAgregarProveedor;
-	private JButton btnActualizarProveedor;
-	private JButton btnEliminarProveedor;
-	private JButton btnExportarProveedoresExcel;
-	private JPanel panelProveedorCentralBuscar;
-	private JLabel lblNewLabel_5;
-	private Component horizontalStrut_2;
-	private JTextField txfBuscarProveedor;
-	private Component horizontalStrut_3;
-	private JButton btnBuscarProveedor;
+	private JPanel panelCentralContenedor;
+	private JTextField txfNombreProveedor;
+	private JTable tablaProveedor;
+	private JPanel panelInferiorBusqueda;
+	private JPanel panelSuperiorBotones;
+	private FlowLayout flowLayout;
+	private JScrollPane scrollPaneTablaProveedor;
+	private JButton btnAgregar;
+	private JButton btnModificar;
+	private JButton btnEliminar;
+	private JButton btnToExcel;
+	private JLabel lblNombre;
+	private JButton btnBuscar;
 
 	/**
 	 * Create the panel.
@@ -64,192 +66,119 @@ public class PanelProveedor extends JPanel {
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_2.setForeground(new Color(255, 255, 255));
 		panelProveedorEtiqueta.add(lblNewLabel_2);
-
-		panelProovedorCentral = new JPanel();
-		panelProovedorCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		panelProovedorCentral.setBackground(new Color(255, 215, 0));
-		this.add(panelProovedorCentral, BorderLayout.CENTER);
-		panelProovedorCentral.setLayout(new BorderLayout(0, 0));
 		
-		scrollPaneTablaProveedores = new JScrollPane();
-		panelProovedorCentral.add(scrollPaneTablaProveedores, BorderLayout.CENTER);
-
-		modelTablaProveedores = new DefaultTableModel();
-
-		modelTablaProveedores.addColumn("Id");
-		modelTablaProveedores.addColumn("RFC");
-		modelTablaProveedores.addColumn("Cta Contable");
-		modelTablaProveedores.addColumn("Nombre");
-		modelTablaProveedores.addColumn("Descripcion");
-		modelTablaProveedores.addColumn("Email");
-		modelTablaProveedores.addColumn("Estado");
-		modelTablaProveedores.addColumn("Ciudad");
-		modelTablaProveedores.addColumn("Direccion");
-		modelTablaProveedores.addColumn("Codigo P.");
-		modelTablaProveedores.addColumn("Activo");
-
-		tablaProveedores = new JTable();
-		tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaProveedores.setViewportView(tablaProveedores);
-		tablaProveedores.setModel(modelTablaProveedores);
+		panelCentralContenedor = new JPanel();
+		panelCentralContenedor.setBackground(new Color(255, 204, 0));
+		add(panelCentralContenedor, BorderLayout.CENTER);
 		
-		panelProveedorCentralBotones = new JPanel();
-		panelProveedorCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_1 = (FlowLayout) panelProveedorCentralBotones.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.RIGHT);
-		panelProovedorCentral.add(panelProveedorCentralBotones, BorderLayout.NORTH);
-
-		btnAgregarProveedor = new JButton("Agregar");
-		btnAgregarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(0, 0);
-			}
-		});
-		btnAgregarProveedor.setBackground(new Color(144, 238, 144));
-		btnAgregarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		panelProveedorCentralBotones.add(btnAgregarProveedor);
-
-		btnActualizarProveedor = new JButton("Actualizar");
-		btnActualizarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioProveedor(1,
-						DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
-			}
-		});
-		btnActualizarProveedor.setBackground(new Color(144, 238, 144));
-		btnActualizarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		panelProveedorCentralBotones.add(btnActualizarProveedor);
+		panelInferiorBusqueda = new JPanel();
+		panelInferiorBusqueda.setBackground(new Color(0, 153, 255));
 		
-		btnEliminarProveedor = new JButton("Eliminar");
-		btnEliminarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarProveedor();
-			}
-		});
-		btnEliminarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.btnEliminarProveedor.setBackground(new Color(255, 51, 0));
-		panelProveedorCentralBotones.add(btnEliminarProveedor);
-
-		btnExportarProveedoresExcel = new JButton("Exportar a Excel");
-		btnExportarProveedoresExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarProveedoresExcel();
-			}
-		});
-		btnExportarProveedoresExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
-		this.btnExportarProveedoresExcel.setBackground(new Color(102, 205, 170));
-		panelProveedorCentralBotones.add(btnExportarProveedoresExcel);
+		panelSuperiorBotones = new JPanel();
+		flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
 		
-		DataTools.removerEditorDeTabla(this.tablaProveedores, this.modelTablaProveedores);
-
-		panelProveedorCentralBuscar = new JPanel();
-		FlowLayout flowLayout_13 = (FlowLayout) panelProveedorCentralBuscar.getLayout();
-		flowLayout_13.setAlignment(FlowLayout.RIGHT);
-		panelProveedorCentralBuscar.setBackground(new Color(255, 215, 0));
-		panelProovedorCentral.add(panelProveedorCentralBuscar, BorderLayout.SOUTH);
-
-		lblNewLabel_5 = new JLabel("Buscar Proveedor");
-		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panelProveedorCentralBuscar.add(lblNewLabel_5);
-
-		horizontalStrut_2 = Box.createHorizontalStrut(20);
-		panelProveedorCentralBuscar.add(horizontalStrut_2);
-
-		txfBuscarProveedor = new JTextField();
-		panelProveedorCentralBuscar.add(txfBuscarProveedor);
-		txfBuscarProveedor.setColumns(70);
-
-		horizontalStrut_3 = Box.createHorizontalStrut(20);
-		panelProveedorCentralBuscar.add(horizontalStrut_3);
+		scrollPaneTablaProveedor = new JScrollPane();
+		GroupLayout gl_panelCentralContenedor = new GroupLayout(panelCentralContenedor);
+		gl_panelCentralContenedor.setHorizontalGroup(
+			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
+				.addComponent(panelInferiorBusqueda, GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+				.addComponent(panelSuperiorBotones, GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+				.addGroup(gl_panelCentralContenedor.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(scrollPaneTablaProveedor, GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		gl_panelCentralContenedor.setVerticalGroup(
+			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panelCentralContenedor.createSequentialGroup()
+					.addComponent(panelSuperiorBotones, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneTablaProveedor, GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelInferiorBusqueda, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE))
+		);
 		
-		btnBuscarProveedor = new JButton("Buscar");
-		btnBuscarProveedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaProveedor(txfBuscarProveedor.getText());
-			}
-		});
-		btnBuscarProveedor.setBackground(new Color(184, 134, 11));
-		btnBuscarProveedor.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		panelProveedorCentralBuscar.add(btnBuscarProveedor);
+		modelTablaProveedores = this.setTableModel();
+		tablaProveedor = new JTable();
+		this.tablaProveedor.setModel(modelTablaProveedores);
+		scrollPaneTablaProveedor.setViewportView(tablaProveedor);
 		
-		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaProveedoresColumnsWidth, tablaProveedores);
+		btnAgregar = new JButton("Agregar");
+		btnAgregar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		panelSuperiorBotones.add(btnAgregar);
+		
+		btnModificar = new JButton("Modificar");
+		btnModificar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		panelSuperiorBotones.add(btnModificar);
+		
+		btnEliminar = new JButton("Eliminar");
+		btnEliminar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		panelSuperiorBotones.add(btnEliminar);
+		
+		btnToExcel = new JButton("Exportar Excel");
+		btnToExcel.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		panelSuperiorBotones.add(btnToExcel);
+		
+		lblNombre = new JLabel("Nombre");
+		
+		btnBuscar = new JButton("Buscar");
+		btnBuscar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		
+		txfNombreProveedor = new JTextField();
+		txfNombreProveedor.setColumns(10);
+		GroupLayout gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
+		gl_panelInferiorBusqueda.setHorizontalGroup(
+			gl_panelInferiorBusqueda.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNombre)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(txfNombreProveedor, GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuscar)
+					.addContainerGap())
+		);
+		gl_panelInferiorBusqueda.setVerticalGroup(
+			gl_panelInferiorBusqueda.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelInferiorBusqueda.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNombre)
+						.addComponent(btnBuscar)
+						.addComponent(txfNombreProveedor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(23, Short.MAX_VALUE))
+		);
+		panelInferiorBusqueda.setLayout(gl_panelInferiorBusqueda);
+		panelCentralContenedor.setLayout(gl_panelCentralContenedor);		
 
-	}
-	
-	private void abrirVentanaFormularioProveedor(int opcion, int indiceProveedor) {
-
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Fr_DatosProveedor fr = new Fr_DatosProveedor(opcion, indiceProveedor);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-
-			}
-
-		});
-	}
-	
-	/**
-	 * modifica el estatus de activo a inactivo de un proveedor registrado en la bd
-	 */
-	private void eliminarProveedor() {
-
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			AppContext.proveedorController.eliminarProveedor(
-					DataTools.getIndiceElementoSeleccionado(tablaProveedores, modelTablaProveedores, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this);
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-	}
-	
-	public void exportarProveedoresExcel() {
-		try {
-			DataTools.exportarTablaExcel(modelTablaProveedores, this);
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
 	}
 	
 	
 	
 	private void borrarElementosDeLaTablaProveedor() {
 		this.modelTablaProveedores.getDataVector().removeAllElements();
-		this.tablaProveedores.updateUI();
+		this.tablaProveedor.updateUI();
 	}
 	
-	public void llenarTablaProveedor(String nombre) {
-		this.borrarElementosDeLaTablaProveedor();
-		AppContext.proveedorController.verProveedoresEnTabla(nombre).forEach(d -> {
-			this.modelTablaProveedores.addRow(d);
-		});;
+	private DefaultTableModel setTableModel() {
+		
+		DefaultTableModel model = new DefaultTableModel();
+		
+		model.addColumn("Id");
+		model.addColumn("RFC");
+		model.addColumn("Cta Contable");
+		model.addColumn("Nombre");
+		model.addColumn("Descripcion");
+		model.addColumn("Email");
+		model.addColumn("Estado");
+		model.addColumn("Ciudad");
+		model.addColumn("Direccion");
+		model.addColumn("Codigo P.");
+		model.addColumn("Activo");
+		
+		return model;
+		
 	}
-
 }

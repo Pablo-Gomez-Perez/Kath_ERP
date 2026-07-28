@@ -37,7 +37,7 @@ public class ProveedorController implements java.io.Serializable {
 		
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL ver_proveedores(?);");
 			stm.setString(1, nombre);
 			rset = stm.executeQuery();

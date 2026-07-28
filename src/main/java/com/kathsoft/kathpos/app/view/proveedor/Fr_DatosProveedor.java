@@ -425,74 +425,13 @@ public class Fr_DatosProveedor extends JFrame {
 	 */
 	private void insertarNuevoProveedor() {
 
-		Proveedor prv = new Proveedor();
 		
-		if(this.validarCamposVacios() == true) {
-			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
-		try {
-
-			prv.setRfc(this.txfRfcProveedor.getText());
-			prv.setNombre(this.txfNombreProveedor.getText());
-			prv.setDescripcion(this.txaDescripcionProveedor.getText());
-			prv.setEmail(this.txfEmailProveedor.getText());
-			prv.setEstado(this.txfEstadoProveedor.getText());
-			prv.setCiudad(this.txfCiudadProveedor.getText());
-			prv.setDireccion(this.txaDireccionProveedor.getText());
-			prv.setCodigoPostal(this.txfCodigoPostalProveedor.getText());
-
-			// System.out.println(prv.toString());
-
-			proveedorController.insertarNuevoProveedor(prv);
-			
-			JOptionPane.showMessageDialog(this, "Registro guardado", "Exito", JOptionPane.INFORMATION_MESSAGE);
-			
-			this.cerrarForm();
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error al intentar guardar: " + er.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
-		}
 
 	}
 
 	private void actualizarProveedor() {
 
-		Proveedor prv = new Proveedor();
 		
-		if(this.validarCamposVacios() == true) {
-			JOptionPane.showMessageDialog(this, "No deje campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		try {
-
-			prv.setId(this.indiceProveedor);
-			prv.setNombre(this.txfNombreProveedor.getText());
-			prv.setDescripcion(this.txaDescripcionProveedor.getText());
-			prv.setEmail(this.txfEmailProveedor.getText());
-			prv.setEstado(this.txfEstadoProveedor.getText());
-			prv.setCiudad(this.txfCiudadProveedor.getText());
-			prv.setDireccion(this.txaDireccionProveedor.getText());
-			prv.setCodigoPostal(this.txfCodigoPostalProveedor.getText());
-
-			proveedorController.actualizarProveedor(prv);
-			
-			JOptionPane.showMessageDialog(this, "Registro actualizado", "Exito", JOptionPane.INFORMATION_MESSAGE);
-			
-			this.cerrarForm();
-			
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error en proceso: " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error en proceso: " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
 	}
 
 	/**
@@ -502,45 +441,13 @@ public class Fr_DatosProveedor extends JFrame {
 	 */
 	private void buscarProveedorPorRFC(String rfc) {
 
-		try {
-
-			Proveedor prv = proveedorController.buscarProveedorPorRFC(rfc);
-
-			this.indiceProveedor = prv.getId();
-			this.txfCtaContableProveedor.setText(prv.getClaveCuentaContable());
-			this.txfNombreProveedor.setText(prv.getNombre());
-			this.txaDescripcionProveedor.setText(prv.getDescripcion());
-			this.txfEmailProveedor.setText(prv.getEmail());
-			this.txfEstadoProveedor.setText(prv.getEstado());
-			this.txfCiudadProveedor.setText(prv.getCiudad());
-			this.txfCodigoPostalProveedor.setText(prv.getCodigoPostal());
-			this.txaDireccionProveedor.setText(prv.getDireccion());
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error en proceso " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error en procesos " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+		
 
 	}
 	
 	private void buscarProveedorPorId() {
 		
-		Proveedor prv = proveedorController.buscarProveedorPorId(this.indiceProveedor);
 		
-		this.txfRfcProveedor.setText(prv.getRfc());
-		this.txfCtaContableProveedor.setText(prv.getClaveCuentaContable());
-		this.txfNombreProveedor.setText(prv.getNombre());
-		this.txaDescripcionProveedor.setText(prv.getDescripcion());
-		this.txfEmailProveedor.setText(prv.getEmail());
-		this.txfEstadoProveedor.setText(prv.getEstado());
-		this.txfCiudadProveedor.setText(prv.getCiudad());
-		this.txfCodigoPostalProveedor.setText(prv.getCodigoPostal());
-		this.txaDireccionProveedor.setText(prv.getDireccion());
 		
 	}
 

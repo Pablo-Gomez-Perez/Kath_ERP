@@ -238,9 +238,7 @@ public class Fr_principal extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
-				cr.show(panelPrincipalContenedor, "panelProveedor");
-
-				panelProveedor.llenarTablaProveedor("");
+				cr.show(panelPrincipalContenedor, "panelProveedor");				
 			}
 		});
 		opcionProveedores.setIcon(
@@ -393,7 +391,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelProveedores = new JMenuItem("Proveedores");
 		opcionReporteExcelProveedores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panelProveedor.exportarProveedoresExcel();
+				
 			}
 		});
 		opcionReporteExcelProveedores.setIcon(
