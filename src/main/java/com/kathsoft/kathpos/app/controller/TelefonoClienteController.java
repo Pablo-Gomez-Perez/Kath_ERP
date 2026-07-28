@@ -10,10 +10,10 @@ import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class TelefonoClienteController {
-	
-	public TelefonoClienteController() {}
-	
-	
+
+	public TelefonoClienteController() {
+	}
+
 	/**
 	 * Lista los teléfonos asociados a un cliente.
 	 *
@@ -24,20 +24,15 @@ public class TelefonoClienteController {
 
 		var data = new Vector<Object[]>();
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL listTelefonosCliente(?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listTelefonosCliente(?);")) {
 
 			stm.setInt("p_id_cliente", idCliente);
 
 			try (ResultSet rset = stm.executeQuery()) {
 
 				while (rset.next()) {
-					data.add(new Object[] {
-							rset.getInt("id_telefono"),							
-							rset.getString("telefono")
-					});
+					data.add(new Object[] { rset.getInt("id_telefono"), rset.getString("telefono") });
 				}
 
 			}
@@ -55,15 +50,13 @@ public class TelefonoClienteController {
 	 * Registra un teléfono asociado a un cliente.
 	 *
 	 * @param idCliente identificador del cliente
-	 * @param telefono número telefónico a registrar
+	 * @param telefono  número telefónico a registrar
 	 * @return respuesta estandarizada del procedimiento almacenado
 	 */
 	public SpResponseModel insertTelefonoCliente(int idCliente, String telefono) {
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL insertTelefonoCliente(?, ?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL insertTelefonoCliente(?, ?);")) {
 
 			stm.setInt("p_id_cliente", idCliente);
 			stm.setString("p_telefono", telefono);
@@ -73,10 +66,7 @@ public class TelefonoClienteController {
 				try (ResultSet rset = stm.getResultSet()) {
 
 					if (rset != null && rset.next()) {
-						return new SpResponseModel(
-								rset.getInt("id"),
-								rset.getString("message")
-						);
+						return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
 					}
 
 				}
@@ -102,10 +92,8 @@ public class TelefonoClienteController {
 	 */
 	public SpResponseModel deleteTelefonoCliente(int idTelefono) {
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL deleteTelefonoCliente(?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL deleteTelefonoCliente(?);")) {
 
 			stm.setInt("p_id_telefono", idTelefono);
 
@@ -114,10 +102,7 @@ public class TelefonoClienteController {
 				try (ResultSet rset = stm.getResultSet()) {
 
 					if (rset != null && rset.next()) {
-						return new SpResponseModel(
-								rset.getInt("id"),
-								rset.getString("message")
-						);
+						return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
 					}
 
 				}
@@ -134,5 +119,5 @@ public class TelefonoClienteController {
 			return new SpResponseModel(500, er.getMessage());
 		}
 	}
-	
+
 }
