@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.ProveedorController;
-import com.kathsoft.kathpos.app.model.Proveedor;
+import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
