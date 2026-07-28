@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.controller.ClientesController;
@@ -23,6 +24,7 @@ import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
 import javax.swing.JButton;
@@ -111,6 +113,7 @@ public class Fr_DatosCliente extends JFrame {
 	private JButton btnAgregarTelefono;
 	private JButton btnEliminarTelefono;
 	private CuentaContableResponseViewModel cuentaContable;
+	private DefaultTableModel tablaTelefonosModel;
 	private boolean operacionEjecutada = false;
 
 	/**
@@ -228,10 +231,20 @@ public class Fr_DatosCliente extends JFrame {
 		scrollPaneNumerosTelefonicos = new JScrollPane();
 
 		btnAgregarTelefono = new JButton("Nuevo");
+		btnAgregarTelefono.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				insertTelefonoCliente();
+			}
+		});
 		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
 
 		btnEliminarTelefono = new JButton("Borrar");
+		btnEliminarTelefono.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteTelefonoCliente();
+			}
+		});
 		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
@@ -336,7 +349,9 @@ public class Fr_DatosCliente extends JFrame {
 						.addComponent(scrollPaneNumerosTelefonicos, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
 						.addContainerGap()));
 
+		this.tablaTelefonosModel = this.getTableModel();
 		tablaNumerosTelefonicos = new JTable();
+		this.tablaNumerosTelefonicos.setModel(tablaTelefonosModel);
 		scrollPaneNumerosTelefonicos.setViewportView(tablaNumerosTelefonicos);
 
 		txaDireccionCliente = new JTextArea();
@@ -394,8 +409,107 @@ public class Fr_DatosCliente extends JFrame {
 
 		if (this.tipoOperacion != 1) {
 			this.consultarClientePorId();
+			this.listTelefonosCliente();
 		}
 
+	}
+
+	private void listTelefonosCliente() {
+	
+		this.borrarTelefonosCliente();
+
+		if (this.indiceCliente <= 0) {
+			return;
+		}
+
+		var list = AppContext.telefonoClienteController.listTelefonosCliente(this.indiceCliente);
+
+		if (list == null || list.isEmpty()) {
+			return;
+		}
+
+		list.forEach(this.tablaTelefonosModel::addRow);
+		
+	}
+
+	private void borrarTelefonosCliente() {
+		
+		this.tablaTelefonosModel.getDataVector().removeAllElements();
+		this.tablaNumerosTelefonicos.updateUI();
+		
+	}
+	
+	private void insertTelefonoCliente() {
+
+		if (this.indiceCliente <= 0) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"Primero debe registrar el cliente antes de agregar telefonos"
+			);
+			return;
+		}
+
+		String telefono = JOptionPane.showInputDialog(
+				this,
+				"Ingrese el telefono del cliente:",
+				"Agregar telefono",
+				JOptionPane.QUESTION_MESSAGE
+		);
+
+		if (telefono == null || telefono.trim().isEmpty()) {
+			return;
+		}
+
+		var response = AppContext.telefonoClienteController.insertTelefonoCliente(
+				this.indiceCliente,
+				telefono.trim()
+		);
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);			
+
+		if (response.id() == 200) {
+			this.listTelefonosCliente();
+		}
+	}
+	
+	private void deleteTelefonoCliente() {
+
+		int idTelefono = DataTools.getIndiceElementoSeleccionado(
+				this.tablaNumerosTelefonicos,
+				this.tablaTelefonosModel,
+				0
+		);
+
+		if (idTelefono < 0) {
+			return;
+		}
+
+		int option = MessageHandler.displayMessage(
+				MessageHandler.DELETE_DATA_QUESTION_MESSAGE,
+				this,
+				" seleccionado?"
+		);
+
+		if (option != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		var response = AppContext.telefonoClienteController.deleteTelefonoCliente(idTelefono);
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.listTelefonosCliente();
+		}
 	}
 
 	private MaskFormatter crearCampoFechaNacimiento() {
@@ -593,6 +707,15 @@ public class Fr_DatosCliente extends JFrame {
 
 	public boolean isOperacionEjecutada() {
 		return operacionEjecutada;
+	}
+	
+	private DefaultTableModel getTableModel() {
+		DefaultTableModel model = new DefaultTableModel();
+		
+		model.addColumn("id");				
+		model.addColumn("Telefono");
+		
+		return model;
 	}
 
 }
