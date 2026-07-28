@@ -40,7 +40,7 @@ import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.Articulo;
 import com.kathsoft.kathpos.app.model.Categoria;
-import com.kathsoft.kathpos.app.model.Proveedor;
+import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.tools.MessageHandler;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
