@@ -431,7 +431,10 @@ public class Fr_DatosCliente extends JFrame {
 		list.forEach(this.tablaTelefonosModel::addRow);
 		
 	}
-
+	
+	/**
+	 * Limpia los registros visibles en la tabla de teléfonos del cliente.
+	 */
 	private void borrarTelefonosCliente() {
 		
 		this.tablaTelefonosModel.getDataVector().removeAllElements();
@@ -439,6 +442,16 @@ public class Fr_DatosCliente extends JFrame {
 		
 	}
 	
+	/**
+	 * Solicita un teléfono mediante un cuadro de entrada y lo registra para el
+	 * cliente actual.
+	 *
+	 * <p>Si el registro es exitoso, muestra el mensaje correspondiente y actualiza
+	 * la tabla de teléfonos.</p>
+	 *
+	 * @see JOptionPane#showInputDialog(java.awt.Component, Object, String, int)
+	 * @see AppContext#telefonoClienteController
+	 */
 	private void insertTelefonoCliente() {
 
 		if (this.indiceCliente <= 0) {
@@ -477,6 +490,16 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 	
+	/**
+	 * Elimina el teléfono seleccionado en la tabla.
+	 *
+	 * <p>Obtiene el identificador mediante
+	 * {@link DataTools#getIndiceElementoSeleccionado(javax.swing.JTable, javax.swing.table.DefaultTableModel, int)}.
+	 * Si la eliminación es exitosa, actualiza la tabla de teléfonos.</p>
+	 *
+	 * @see DataTools#getIndiceElementoSeleccionado(javax.swing.JTable, javax.swing.table.DefaultTableModel, int)
+	 * @see AppContext#telefonoClienteController
+	 */
 	private void deleteTelefonoCliente() {
 
 		int idTelefono = DataTools.getIndiceElementoSeleccionado(
@@ -512,6 +535,12 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	/**
+	 * Crea la máscara de captura para la fecha de nacimiento.
+	 *
+	 * @return máscara con formato {@code dd/MM/yyyy}
+	 * @throws IllegalStateException si no se puede crear la máscara
+	 */
 	private MaskFormatter crearCampoFechaNacimiento() {
 		try {
 			MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
@@ -522,6 +551,15 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	/**
+	 * Carga los tipos de cliente disponibles en el combo.
+	 *
+	 * <p>Consulta los datos desde {@link AppContext#tipoClienteController} y los
+	 * agrega como {@link JComboboxDataViewModel}.</p>
+	 *
+	 * @see TipoCliente
+	 * @see JComboboxDataViewModel
+	 */
 	private void llenarCmbTipoCliente() {
 		this.comboBoxTipoCliente.removeAllItems();
 		Vector<TipoCliente> tipos = AppContext.tipoClienteController.cmbTipoCliente();
@@ -530,6 +568,16 @@ public class Fr_DatosCliente extends JFrame {
 		this.comboBoxTipoCliente.updateUI();
 	}
 
+	/**
+	 * Consulta el cliente actual y carga sus datos en el formulario.
+	 *
+	 * <p>Usa {@code indiceCliente} como identificador de búsqueda. Si no encuentra
+	 * información, muestra un mensaje de error y detiene la carga.</p>
+	 *
+	 * @see ClienteById
+	 * @see AppContext#clientesController
+	 * @see MessageHandler
+	 */
 	private void consultarClientePorId() {
 		try {
 			ClienteById cl = AppContext.clientesController.buscarClientePorId(this.indiceCliente);
@@ -556,6 +604,12 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	/**
+	 * Selecciona en el combo el tipo de cliente indicado.
+	 *
+	 * @param idTipoCliente identificador del tipo de cliente a seleccionar
+	 * @see JComboboxDataViewModel
+	 */
 	private void seleccionarTipoCliente(int idTipoCliente) {
 		for (int i = 0; i < this.comboBoxTipoCliente.getItemCount(); i++) {
 			JComboboxDataViewModel item = this.comboBoxTipoCliente.getItemAt(i);
@@ -566,6 +620,17 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	
+	/**
+	 * Registra un nuevo cliente con los datos capturados en el formulario.
+	 *
+	 * <p>Si la operación es exitosa, marca {@code operacionEjecutada} y cierra el
+	 * formulario.</p>
+	 *
+	 * @see #validarCamposVacios()
+	 * @see #construirCliente()
+	 * @see AppContext#clientesController
+	 */
 	private void insertarNuevoCliente() {
 		if (validarCamposVacios()) {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
@@ -591,6 +656,17 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	
+	/**
+	 * Actualiza el cliente actual con los datos capturados en el formulario.
+	 *
+	 * <p>Si la operación es exitosa, marca {@code operacionEjecutada} y cierra el
+	 * formulario.</p>
+	 *
+	 * @see #validarCamposVacios()
+	 * @see #construirCliente()
+	 * @see AppContext#clientesController
+	 */
 	private void actualizarCliente() {
 		if (validarCamposVacios()) {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
@@ -617,6 +693,17 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	/**
+	 * Construye una entidad {@link Clientes} con los datos capturados en el
+	 * formulario.
+	 *
+	 * @return cliente construido para alta o actualización
+	 * @throws DateTimeParseException si la fecha capturada no cumple el formato esperado
+	 *
+	 * @see Clientes
+	 * @see #convertirFechaSql(String)
+	 * @see #obtenerTipoClienteSeleccionado()
+	 */
 	private Clientes construirCliente() {
 		Clientes cl = new Clientes();
 		cl.setRfc(this.txfRfcCliente.getText().trim());
@@ -635,20 +722,46 @@ public class Fr_DatosCliente extends JFrame {
 		return cl;
 	}
 
+	/**
+	 * Obtiene el identificador del tipo de cliente seleccionado.
+	 *
+	 * @return identificador seleccionado, o {@code -1} si no existe selección válida
+	 *
+	 * @see JComboboxDataViewModel
+	 */
 	private int obtenerTipoClienteSeleccionado() {
 		JComboboxDataViewModel item = (JComboboxDataViewModel) this.comboBoxTipoCliente.getSelectedItem();
 		return item == null ? -1 : item.id();
 	}
 
+	/**
+	 * Convierte una fecha visible del formulario a fecha SQL.
+	 *
+	 * @param fechaVisible fecha en formato {@code dd/MM/uuuu}
+	 * @return fecha convertida a {@link java.sql.Date}
+	 * @throws DateTimeParseException si la fecha no cumple el formato esperado
+	 */
 	private java.sql.Date convertirFechaSql(String fechaVisible) {
 		LocalDate localDate = LocalDate.parse(fechaVisible, FECHA_VISIBLE);
 		return java.sql.Date.valueOf(localDate.format(FECHA_SQL));
 	}
 
+	/**
+	 * Formatea una fecha SQL para mostrarla en el formulario.
+	 *
+	 * @param fecha fecha SQL a formatear
+	 * @return fecha en formato visible, o cadena vacía si {@code fecha} es {@code null}
+	 */	
 	private String formatearFechaVisible(java.sql.Date fecha) {
 		return fecha == null ? "" : fecha.toLocalDate().format(FECHA_VISIBLE);
 	}
 
+	/**
+	 * Valida campos obligatorios y formato de fecha del formulario.
+	 *
+	 * @return {@code true} si existen campos vacíos o fecha inválida;
+	 *         {@code false} si los datos mínimos son válidos
+	 */
 	private boolean validarCamposVacios() {
 		if (this.txfRfcCliente.getText().trim().isEmpty()) {
 			return true;
@@ -690,6 +803,15 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
+	/**
+	 * Abre el diálogo de consulta de cuentas contables y asigna la cuenta
+	 * seleccionada al cliente.
+	 *
+	 * <p>Si no se selecciona una cuenta válida, no modifica el campo contable.</p>
+	 *
+	 * @see ConsultaCuentaContableDialog
+	 * @see CuentaContableResponseViewModel
+	 */
 	private void abrirFormConsultaCuentaContablCliente() {
 
 		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
@@ -705,10 +827,22 @@ public class Fr_DatosCliente extends JFrame {
 
 	}
 
+	/**
+	 * Consulta y carga en tabla los teléfonos asociados al cliente actual.
+	 *
+	 * <p>Si el cliente aún no tiene identificador válido, no ejecuta la consulta.</p>
+	 *
+	 * @see AppContext#telefonoClienteController
+	 */
 	public boolean isOperacionEjecutada() {
 		return operacionEjecutada;
 	}
 	
+	/**
+	 * Crea el modelo de tabla para mostrar los teléfonos asociados al cliente.
+	 *
+	 * @return modelo con las columnas {@code id} y {@code Telefono}
+	 */
 	private DefaultTableModel getTableModel() {
 		DefaultTableModel model = new DefaultTableModel();
 		
