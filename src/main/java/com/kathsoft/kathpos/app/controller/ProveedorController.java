@@ -141,7 +141,7 @@ public class ProveedorController implements java.io.Serializable {
 
 			while (rset.next()) {
 				var prov = new Proveedor();
-				prov.setId(rset.getInt(1));
+				prov.setIdProveedor(rset.getInt(1));
 				prov.setNombre(rset.getString(2));
 				data.add(prov);
 			}
@@ -191,7 +191,7 @@ public class ProveedorController implements java.io.Serializable {
 			stm.setString(1, prv.getRfc());
 			stm.setString(2, prv.getNombre());
 			stm.setString(3, prv.getDescripcion());
-			stm.setString(4, prv.getEmail());
+			stm.setString(4, prv.getCorreoElectronico());
 			stm.setString(5, prv.getEstado());
 			stm.setString(6, prv.getCiudad());
 			stm.setString(7, prv.getDireccion());
@@ -226,10 +226,10 @@ public class ProveedorController implements java.io.Serializable {
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL update_proveedor(?,?,?,?,?,?,?,?);");
 
-			stm.setInt(1, prv.getId());
+			stm.setInt(1, prv.getIdProveedor());
 			stm.setString(2, prv.getNombre());
 			stm.setString(3, prv.getDescripcion());
-			stm.setString(4, prv.getEmail());
+			stm.setString(4, prv.getCorreoElectronico());
 			stm.setString(5, prv.getEstado());
 			stm.setString(6, prv.getCiudad());
 			stm.setString(7, prv.getDireccion());
@@ -275,12 +275,11 @@ public class ProveedorController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				prv.setId(rset.getInt(1));
-				prv.setIdCuentaContable(rset.getInt(2));
-				prv.setClaveCuentaContable(rset.getString(3));
+				prv.setIdProveedor(rset.getInt(1));
+				prv.setIdCuentaContable(rset.getInt(2));				
 				prv.setNombre(rset.getString(4));
 				prv.setDescripcion(rset.getString(5));
-				prv.setEmail(rset.getString(6));
+				prv.setCorreoElectronico(rset.getString(6));
 				prv.setEstado(rset.getString(7));
 				prv.setCiudad(rset.getString(8));
 				prv.setDireccion(rset.getString(9));
@@ -324,13 +323,12 @@ public class ProveedorController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				prv.setId(rset.getInt(1));
+				prv.setIdProveedor(rset.getInt(1));
 				prv.setRfc(rset.getString(2));
-				prv.setIdCuentaContable(rset.getInt(3));
-				prv.setClaveCuentaContable(rset.getString(4));
+				prv.setIdCuentaContable(rset.getInt(3));				
 				prv.setNombre(rset.getString(5));
 				prv.setDescripcion(rset.getString(6));
-				prv.setEmail(rset.getString(7));
+				prv.setCorreoElectronico(rset.getString(7));
 				prv.setEstado(rset.getString(8));
 				prv.setCiudad(rset.getString(9));
 				prv.setDireccion(rset.getString(10));
