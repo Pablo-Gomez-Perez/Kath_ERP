@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class ProveedorController implements java.io.Serializable {
@@ -31,59 +32,78 @@ public class ProveedorController implements java.io.Serializable {
 	 * @param tabla
 	 */
 	public Vector<Object[]> verProveedoresEnTabla(String nombre) {
-		ResultSet rset = null;
-		CallableStatement stm = null;
+
 		var data = new Vector<Object[]>();
-		
-		try {
 
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL ver_proveedores(?);");
-			stm.setString(1, nombre);
-			rset = stm.executeQuery();
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listProveedores(?);")
+		) {
 
-			while (rset.next()) {
+			stm.setString("p_nombre_proveedor", nombre);
 
-				data.add(new Object[] { rset.getInt(1), // Id
-						rset.getString(2), // RFC
-						rset.getString(3), // clave contable
-						rset.getString(4), // Nombre
-						rset.getString(5), // Descripcion
-						rset.getString(6), // Correo Electronico
-						rset.getString(7), // Estado
-						rset.getString(8), // Ciudad
-						rset.getString(9), // Direccion
-						rset.getString(10), // Codigo Postal;
-						rset.getShort(11) == 1 ? "Activo" : "Inactivo" // status
-				});
+			try (ResultSet rset = stm.executeQuery()) {
+
+				while (rset.next()) {
+					data.add(new Object[] {
+							rset.getInt("id_proveedor"),
+							rset.getString("rfc"),
+							rset.getString("clave"),
+							rset.getString("nombre"),
+							rset.getString("descripcion"),
+							rset.getString("correo_electronico"),
+							rset.getString("estado"),
+							rset.getString("ciudad"),
+							rset.getString("direccion"),
+							rset.getString("codigo_postal"),
+							rset.getShort("activo") == 1 ? "Activo" : "Inactivo"
+					});
+				}
+
 			}
-			
-			return data;
+
 		} catch (SQLException er) {
-			er.printStackTrace();
-			return null;
+			er.printStackTrace(System.err);
 		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
+			er.printStackTrace(System.err);
 		}
+
+		return data;
 	}	
 
-	public void eliminarProveedor(int idProveedor) throws SQLException {
+	public SpResponseModel eliminarProveedor(int idProveedor) {
 
-		CallableStatement stm = null;
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL deleteProveedor(?);")
+		) {
 
-		cn = Conexion.establecerConexionLocal("kath_erp");
-		stm = cn.prepareCall("CALL eliminar_proveedor(?);");
-		stm.setInt(1, idProveedor);
-		stm.execute();
+			stm.setInt("p_id_proveedor", idProveedor);
 
-		Conexion.cerrarConexion(cn, stm);
+			if (stm.execute()) {
+
+				try (ResultSet rset = stm.getResultSet()) {
+
+					if (rset != null && rset.next()) {
+						return new SpResponseModel(
+								rset.getInt("id"),
+								rset.getString("message")
+						);
+					}
+
+				}
+
+			}
+
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
+
+		} catch (SQLException er) {
+			er.printStackTrace(System.err);
+			return new SpResponseModel(500, er.getMessage());
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			return new SpResponseModel(500, er.getMessage());
+		}
 
 	}
 
@@ -173,83 +193,92 @@ public class ProveedorController implements java.io.Serializable {
 	 * @param prv
 	 * @throws Exception
 	 */
-	public void insertarNuevoProveedor(Proveedor prv) throws Exception, SQLException {
+	public SpResponseModel insertarNuevoProveedor(Proveedor prv) {
 
-		// System.out.println(prv.toString());
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL insertProveedor(?, ?, ?, ?, ?, ?, ?, ?, ?);")
+		) {
 
-		CallableStatement stm = null;
+			stm.setInt("p_id_cuenta_contable", prv.getIdCuentaContable());
+			stm.setString("p_rfc", prv.getRfc());
+			stm.setString("p_nombre", prv.getNombre());
+			stm.setString("p_descripcion", prv.getDescripcion());
+			stm.setString("p_correo_electronico", prv.getCorreoElectronico());
+			stm.setString("p_estado", prv.getEstado());
+			stm.setString("p_ciudad", prv.getCiudad());
+			stm.setString("p_direccion", prv.getDireccion());
+			stm.setString("p_codigo_postal", prv.getCodigoPostal());
 
-		if (prv.getRfc().isEmpty() || prv.getNombre().isEmpty()) {
-			throw new Exception("campos vacios");
-		}
+			if (stm.execute()) {
 
-		try {
+				try (ResultSet rset = stm.getResultSet()) {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_nuevo_proveedor(?,?,?,?,?,?,?,?);");
+					if (rset != null && rset.next()) {
+						return new SpResponseModel(
+								rset.getInt("id"),
+								rset.getString("message")
+						);
+					}
 
-			stm.setString(1, prv.getRfc());
-			stm.setString(2, prv.getNombre());
-			stm.setString(3, prv.getDescripcion());
-			stm.setString(4, prv.getCorreoElectronico());
-			stm.setString(5, prv.getEstado());
-			stm.setString(6, prv.getCiudad());
-			stm.setString(7, prv.getDireccion());
-			stm.setString(8, prv.getCodigoPostal());
+				}
 
-			stm.execute();
+			}
+
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
 
 		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace(System.err);
+			return new SpResponseModel(500, er.getMessage());
 		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, null, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
+			er.printStackTrace(System.err);
+			return new SpResponseModel(500, er.getMessage());
 		}
+
 	}
 
-	public void actualizarProveedor(Proveedor prv) throws Exception, SQLException {
+	public SpResponseModel actualizarProveedor(Proveedor prv) {
 
-		CallableStatement stm = null;
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL updateProveedor(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
+		) {
 
-		try {
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL update_proveedor(?,?,?,?,?,?,?,?);");
+			stm.setInt("p_id_proveedor", prv.getIdProveedor());
+			stm.setInt("p_id_cuenta_contable", prv.getIdCuentaContable());
+			stm.setString("p_rfc", prv.getRfc());
+			stm.setString("p_nombre", prv.getNombre());
+			stm.setString("p_descripcion", prv.getDescripcion());
+			stm.setString("p_correo_electronico", prv.getCorreoElectronico());
+			stm.setString("p_estado", prv.getEstado());
+			stm.setString("p_ciudad", prv.getCiudad());
+			stm.setString("p_direccion", prv.getDireccion());
+			stm.setString("p_codigo_postal", prv.getCodigoPostal());
+			stm.setBoolean("p_activo", prv.isActivo());
 
-			stm.setInt(1, prv.getIdProveedor());
-			stm.setString(2, prv.getNombre());
-			stm.setString(3, prv.getDescripcion());
-			stm.setString(4, prv.getCorreoElectronico());
-			stm.setString(5, prv.getEstado());
-			stm.setString(6, prv.getCiudad());
-			stm.setString(7, prv.getDireccion());
-			stm.setString(8, prv.getCodigoPostal());
+			if (stm.execute()) {
 
-			stm.execute();
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
+				try (ResultSet rset = stm.getResultSet()) {
+
+					if (rset != null && rset.next()) {
+						return new SpResponseModel(
+								rset.getInt("id"),
+								rset.getString("message")
+						);
+					}
+
+				}
+
 			}
+
+			return new SpResponseModel(500, "Ocurrio un error desconocido");
+
+		} catch (SQLException er) {
+			er.printStackTrace(System.err);
+			return new SpResponseModel(500, er.getMessage());
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			return new SpResponseModel(500, er.getMessage());
 		}
 
 	}
