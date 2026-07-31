@@ -3,10 +3,6 @@
  */
 package com.kathsoft.kathpos.app.model.proveedor;
 
-import java.sql.Date;
-
-import com.kathsoft.kathpos.app.model.Usuario;
-
 /**
  * @author PABLO
  *
