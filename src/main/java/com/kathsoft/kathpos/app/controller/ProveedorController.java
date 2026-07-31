@@ -8,9 +8,9 @@ import java.util.Vector;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
+import com.kathsoft.kathpos.app.model.proveedor.ProveedorById;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
@@ -337,52 +337,41 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 
-	public Proveedor buscarProveedorPorId(int idProveedor) {
+	public ProveedorById buscarProveedorPorId(int idProveedor) {
 
-		Proveedor prv = new Proveedor();
-		CallableStatement stm = null;
-		ResultSet rset = null;
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL getProveedorById(?);")
+		) {
 
-		try {
+			stm.setInt("idProveedor", idProveedor);
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_proveedor_por_id(?);");
-			stm.setInt(1, idProveedor);
+			try (ResultSet rset = stm.executeQuery()) {
 
-			rset = stm.executeQuery();
+				if (rset.next()) {
+					return new ProveedorById.ProveedorByIdBuilder()
+							.idProveedor(rset.getInt("id_proveedor"))
+							.idCuentaContable(rset.getInt("id_cuenta_contable"))
+							.claveCuentaContable(rset.getString("clave"))
+							.nombre(rset.getString("nombre"))
+							.descripcion(rset.getString("descripcion"))
+							.correoElectronico(rset.getString("correo_electronico"))
+							.estado(rset.getString("estado"))
+							.ciudad(rset.getString("ciudad"))
+							.direccion(rset.getString("direccion"))
+							.codigoPostal(rset.getString("codigo_postal"))
+							.activo(rset.getBoolean("activo"))
+							.build();
+				}
 
-			if (rset.next()) {
-				prv.setIdProveedor(rset.getInt(1));
-				prv.setRfc(rset.getString(2));
-				prv.setIdCuentaContable(rset.getInt(3));				
-				prv.setNombre(rset.getString(5));
-				prv.setDescripcion(rset.getString(6));
-				prv.setCorreoElectronico(rset.getString(7));
-				prv.setEstado(rset.getString(8));
-				prv.setCiudad(rset.getString(9));
-				prv.setDireccion(rset.getString(10));
-				prv.setCodigoPostal(rset.getString(11));
 			}
-
-			return prv;
 
 		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			return null;
+			er.printStackTrace(System.err);
 		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, er.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			return null;
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, rset, stm);
-
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
+			er.printStackTrace(System.err);
 		}
 
+		return null;
 	}
 }
