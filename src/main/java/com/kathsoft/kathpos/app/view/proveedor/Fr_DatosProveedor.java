@@ -32,6 +32,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.CompoundBorder;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JScrollPane;
 
 public class Fr_DatosProveedor extends JFrame {
 
@@ -50,6 +54,20 @@ public class Fr_DatosProveedor extends JFrame {
 	private Component horizontalStrut_10;
 	private JButton btn_Guardar;
 	private int indiceProveedor;
+	private JLabel lblRfc;
+	private JTextField txfRFC;
+	private JTextField txfNombre;
+	private JTextField txfClaveCtaContable;
+	private JTextField txfCorreoElectronico;
+	private JTextField txfEstado;
+	private JTextField txfCiudad;
+	private JTextField textField;
+	private JTextField txfDireccion;
+	private JScrollPane scrollPaneDescripcion;
+	private JLabel lblTelefonos;
+	private JButton btnAgregarTelefono;
+	private JButton btnEliminarTelefono;
+	private JScrollPane scrollPaneTelefonos;
 
 	/**
 	 * Create the frame.
@@ -62,7 +80,7 @@ public class Fr_DatosProveedor extends JFrame {
 				.getImage(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/proveedores.png")));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 581, 512);
+		setBounds(100, 100, 581, 434);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -92,7 +110,165 @@ public class Fr_DatosProveedor extends JFrame {
 				.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(new Color(0, 0, 0))));
 		panelCentralFormulario.setBackground(new Color(255, 215, 0));
 		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
-		panelCentralFormulario.setLayout(new BoxLayout(panelCentralFormulario, BoxLayout.Y_AXIS));
+		
+		lblRfc = new JLabel("RFC");
+		
+		txfRFC = new JTextField();
+		txfRFC.setColumns(10);
+		
+		JLabel lblNombre = new JLabel("Nombre");
+		
+		txfNombre = new JTextField();
+		txfNombre.setColumns(10);
+		
+		JLabel lblCtaContable = new JLabel("Cta. Contable");
+		
+		txfClaveCtaContable = new JTextField();
+		txfClaveCtaContable.setColumns(10);
+		
+		JButton btnFormConsultaCuentaContable = new JButton("");
+		btnFormConsultaCuentaContable.setIcon(new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
+		
+		JLabel lblMail = new JLabel("Mail");
+		
+		txfCorreoElectronico = new JTextField();
+		txfCorreoElectronico.setColumns(10);
+		
+		JLabel lblEstado = new JLabel("Estado");
+		
+		txfEstado = new JTextField();
+		txfEstado.setColumns(10);
+		
+		JLabel lblCiudad = new JLabel("Ciudad");
+		
+		txfCiudad = new JTextField();
+		txfCiudad.setColumns(10);
+		
+		JLabel lblCPostal = new JLabel("C. Postal");
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		
+		JLabel lblDireccin = new JLabel("Dirección");
+		
+		txfDireccion = new JTextField();
+		txfDireccion.setColumns(10);
+		
+		JLabel lblDescripcin = new JLabel("Descripción");
+		
+		scrollPaneDescripcion = new JScrollPane();
+		
+		lblTelefonos = new JLabel("Telefonos");
+		
+		btnAgregarTelefono = new JButton("Nuevo");
+		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
+		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
+		
+		btnEliminarTelefono = new JButton("Borrar");
+		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
+		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
+		
+		scrollPaneTelefonos = new JScrollPane();
+		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
+		gl_panelCentralFormulario.setHorizontalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblDescripcin)
+					.addContainerGap())
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblTelefonos)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+					.addGap(367))
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPaneTelefonos, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
+						.addComponent(scrollPaneDescripcion, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 567, Short.MAX_VALUE)
+						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(lblDireccin)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfDireccion, GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(lblRfc)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfRFC, GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblNombre)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfNombre, GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(lblCtaContable)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfClaveCtaContable, GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblMail)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfCorreoElectronico, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(lblEstado)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfEstado, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblCiudad)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txfCiudad, GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(lblCPostal)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)))
+					.addGap(2))
+		);
+		gl_panelCentralFormulario.setVerticalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblRfc)
+						.addComponent(txfRFC, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNombre)
+						.addComponent(txfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblCtaContable)
+							.addComponent(txfClaveCtaContable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnFormConsultaCuentaContable, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblMail)
+							.addComponent(txfCorreoElectronico, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblEstado)
+						.addComponent(txfEstado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCiudad)
+						.addComponent(txfCiudad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCPostal)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblDireccin)
+						.addComponent(txfDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblDescripcin)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(scrollPaneDescripcion, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblTelefonos)
+							.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnEliminarTelefono, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneTelefonos, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(27, Short.MAX_VALUE))
+		);
+		
+		JTextArea textAreaDescripcion = new JTextArea();
+		scrollPaneDescripcion.setViewportView(textAreaDescripcion);
+		panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 
 		panelInferiorBotones = new JPanel();
 		panelInferiorBotones.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -204,5 +380,4 @@ public class Fr_DatosProveedor extends JFrame {
 	private void cerrarForm() {
 		this.dispose();
 	}
-
 }
