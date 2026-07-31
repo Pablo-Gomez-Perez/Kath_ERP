@@ -124,6 +124,11 @@ public class PanelProveedor extends JPanel {
 		lblNombre = new JLabel("Nombre");
 		
 		btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaProveedor(txfNombreProveedor.getText());
+			}
+		});
 		btnBuscar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		
 		txfNombreProveedor = new JTextField();
@@ -151,7 +156,8 @@ public class PanelProveedor extends JPanel {
 					.addContainerGap(23, Short.MAX_VALUE))
 		);
 		panelInferiorBusqueda.setLayout(gl_panelInferiorBusqueda);
-		panelCentralContenedor.setLayout(gl_panelCentralContenedor);		
+		panelCentralContenedor.setLayout(gl_panelCentralContenedor);
+		this.llenarTablaProveedor("");
 
 	}
 	
@@ -160,6 +166,17 @@ public class PanelProveedor extends JPanel {
 	private void borrarElementosDeLaTablaProveedor() {
 		this.modelTablaProveedores.getDataVector().removeAllElements();
 		this.tablaProveedor.updateUI();
+	}
+	
+	public void llenarTablaProveedor(String nombre) {
+		this.borrarElementosDeLaTablaProveedor();
+		var proveedores = AppContext.proveedorController.verProveedoresEnTabla(nombre);
+		
+		if (proveedores == null || proveedores.isEmpty()) {
+			return;
+		}
+		
+		proveedores.forEach(this.modelTablaProveedores::addRow);
 	}
 	
 	private DefaultTableModel setTableModel() {
