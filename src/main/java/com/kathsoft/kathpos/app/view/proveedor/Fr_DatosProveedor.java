@@ -6,6 +6,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
+import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
+import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,6 +19,7 @@ import java.awt.Font;
 import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
@@ -54,6 +57,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private Component horizontalStrut_10;
 	private JButton btn_Guardar;
 	private int indiceProveedor;
+	private CuentaContableResponseViewModel cuentaContable;
 	private JLabel lblRfc;
 	private JTextField txfRFC;
 	private JTextField txfNombre;
@@ -124,9 +128,17 @@ public class Fr_DatosProveedor extends JFrame {
 		JLabel lblCtaContable = new JLabel("Cta. Contable");
 		
 		txfClaveCtaContable = new JTextField();
+		txfClaveCtaContable.setEnabled(false);
+		txfClaveCtaContable.setEditable(false);
 		txfClaveCtaContable.setColumns(10);
 		
 		JButton btnFormConsultaCuentaContable = new JButton("");
+		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				abrirFormConsultaCuentaContableProveedor();
+			}
+		});
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		
 		JLabel lblMail = new JLabel("Mail");
@@ -354,6 +366,33 @@ public class Fr_DatosProveedor extends JFrame {
 		
 		
 		
+	}
+
+	/**
+	 * Abre el dialogo de consulta de cuentas contables y asigna la cuenta
+	 * seleccionada al proveedor.
+	 *
+	 * <p>
+	 * Si no se selecciona una cuenta valida, no modifica el campo contable.
+	 * </p>
+	 *
+	 * @see ConsultaCuentaContableDialog
+	 * @see CuentaContableResponseViewModel
+	 */
+	private void abrirFormConsultaCuentaContableProveedor() {
+
+		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setVisible(true);
+
+		this.cuentaContable = dialog.getCuentaContable();
+
+		if (this.cuentaContable.idCuentaContable() < 0) {
+			return;
+		}
+
+		this.txfClaveCtaContable.setText(this.cuentaContable.claveCuentaContable());
+
 	}
 
 	/**
