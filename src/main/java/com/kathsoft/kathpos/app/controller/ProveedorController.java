@@ -254,7 +254,7 @@ public class ProveedorController implements java.io.Serializable {
 			stm.setString("p_ciudad", prv.getCiudad());
 			stm.setString("p_direccion", prv.getDireccion());
 			stm.setString("p_codigo_postal", prv.getCodigoPostal());
-			stm.setBoolean("p_activo", prv.isActivo());
+			stm.setBoolean("p_activo", true);
 
 			if (stm.execute()) {
 
