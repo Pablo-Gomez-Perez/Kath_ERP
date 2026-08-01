@@ -106,14 +106,35 @@ public class PanelProveedor extends JPanel {
 		scrollPaneTablaProveedor.setViewportView(tablaProveedor);
 		
 		btnAgregar = new JButton("Agregar");
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormDatosProveedor(0, 0);
+			}
+		});
 		btnAgregar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelSuperiorBotones.add(btnAgregar);
 		
 		btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int idProveedor = DataTools.getIndiceElementoSeleccionado(tablaProveedor, modelTablaProveedores, 0);
+
+				if (idProveedor < 0) {
+					return;
+				}
+
+				abrirFormDatosProveedor(1, idProveedor);
+			}
+		});
 		btnModificar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		panelSuperiorBotones.add(btnModificar);
 		
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarProveedor();
+			}
+		});
 		btnEliminar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		panelSuperiorBotones.add(btnEliminar);
 		
@@ -177,6 +198,47 @@ public class PanelProveedor extends JPanel {
 		}
 		
 		proveedores.forEach(this.modelTablaProveedores::addRow);
+	}
+	
+	private void eliminarProveedor() {
+
+		if (this.tablaProveedor.getSelectedRow() < 0) {
+			return;
+		}
+
+		int idProveedor = DataTools.getIndiceElementoSeleccionado(this.tablaProveedor, this.modelTablaProveedores, 0);
+
+		if (idProveedor < 0) {
+			return;
+		}
+
+		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
+
+		if (option != 0) {
+			return;
+		}
+
+		var response = AppContext.proveedorController.eliminarProveedor(idProveedor);
+
+		if (response.id() == 200) {
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, response.message());
+			this.llenarTablaProveedor(this.txfNombreProveedor.getText());
+			return;
+		}
+
+		MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, response.message());
+	}
+	
+	private void abrirFormDatosProveedor(int idOperacion, int idProveedor) {
+
+		try {
+			Fr_DatosProveedor form = new Fr_DatosProveedor(idOperacion, idProveedor);
+			form.setLocationRelativeTo(this);
+			form.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
+		}
 	}
 	
 	private DefaultTableModel setTableModel() {
