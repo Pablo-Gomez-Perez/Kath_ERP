@@ -352,6 +352,7 @@ public class ProveedorController implements java.io.Serializable {
 					return new ProveedorById.ProveedorByIdBuilder()
 							.idProveedor(rset.getInt("id_proveedor"))
 							.idCuentaContable(rset.getInt("id_cuenta_contable"))
+							.rfc(rset.getString("rfc"))
 							.claveCuentaContable(rset.getString("clave"))
 							.nombre(rset.getString("nombre"))
 							.descripcion(rset.getString("descripcion"))
