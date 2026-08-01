@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.model;
+package com.kathsoft.kathpos.app.model.categoria;
 
 import java.io.Serializable;
 import java.util.Objects;

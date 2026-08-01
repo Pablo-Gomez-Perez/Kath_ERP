@@ -16,7 +16,7 @@ import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.TipoClienteController;
-import com.kathsoft.kathpos.app.model.ClienteById;
+import com.kathsoft.kathpos.app.model.cliente.ClienteById;
 import com.kathsoft.kathpos.app.model.cliente.Clientes;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
