@@ -173,9 +173,6 @@ public class Fr_DatosProveedor extends JFrame {
 		gl_panelCentralFormulario.setHorizontalGroup(
 			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addComponent(lblDescripcin)
-					.addContainerGap())
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
 					.addComponent(lblTelefonos)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btnAgregarTelefono, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
@@ -221,6 +218,9 @@ public class Fr_DatosProveedor extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)))
 					.addGap(2))
+				.addGroup(Alignment.LEADING, gl_panelCentralFormulario.createSequentialGroup()
+					.addComponent(lblDescripcin)
+					.addContainerGap())
 		);
 		gl_panelCentralFormulario.setVerticalGroup(
 			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
@@ -251,9 +251,9 @@ public class Fr_DatosProveedor extends JFrame {
 					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblDireccin)
 						.addComponent(txfDireccion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblDescripcin)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lblDescripcin)
+					.addGap(10)
 					.addComponent(scrollPaneDescripcion, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
