@@ -3,12 +3,16 @@ package com.kathsoft.kathpos.app.view.proveedor;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.ProveedorController;
+import com.kathsoft.kathpos.app.controller.TelefonosProveedorController;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.app.model.proveedor.ProveedorById;
+import com.kathsoft.kathpos.app.model.proveedor.TelefonoProveedor;
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
+import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
 import java.awt.BorderLayout;
@@ -25,6 +29,7 @@ import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
@@ -50,6 +55,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private static final long serialVersionUID = 2374525545404673239L;
 	private JPanel contentPane;
 	private ProveedorController proveedorController = new ProveedorController();
+	private TelefonosProveedorController telefonosProveedorController = new TelefonosProveedorController();
 	private JPanel panelSuperiorEtiqueta;
 	private JLabel lblNewLabel;
 	private JPanel panelCentralFormulario;
@@ -77,6 +83,8 @@ public class Fr_DatosProveedor extends JFrame {
 	private JButton btnAgregarTelefono;
 	private JButton btnEliminarTelefono;
 	private JScrollPane scrollPaneTelefonos;
+	private JTable tablaTelefonosProveedor;
+	private DefaultTableModel tablaTelefonosModel;
 
 	/**
 	 * Create the frame.
@@ -178,10 +186,22 @@ public class Fr_DatosProveedor extends JFrame {
 		lblTelefonos = new JLabel("Telefonos");
 		
 		btnAgregarTelefono = new JButton("Nuevo");
+		btnAgregarTelefono.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				insertTelefonoProveedor();
+			}
+		});
 		btnAgregarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnAgregarTelefono.setBackground(new Color(0, 255, 51));
 		
 		btnEliminarTelefono = new JButton("Borrar");
+		btnEliminarTelefono.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteTelefonoProveedor();
+			}
+		});
 		btnEliminarTelefono.setFont(new Font("Dialog", Font.BOLD, 9));
 		btnEliminarTelefono.setBackground(new Color(255, 102, 102));
 		
@@ -283,6 +303,11 @@ public class Fr_DatosProveedor extends JFrame {
 					.addContainerGap(27, Short.MAX_VALUE))
 		);
 		
+		this.tablaTelefonosModel = this.setTableModel();
+		tablaTelefonosProveedor = new JTable();
+		this.tablaTelefonosProveedor.setModel(this.tablaTelefonosModel);
+		scrollPaneTelefonos.setViewportView(tablaTelefonosProveedor);
+
 		textAreaDescripcion = new JTextArea();
 		scrollPaneDescripcion.setViewportView(textAreaDescripcion);
 		panelCentralFormulario.setLayout(gl_panelCentralFormulario);
@@ -328,12 +353,119 @@ public class Fr_DatosProveedor extends JFrame {
 		panelInferiorBotones.add(btn_Guardar);
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.btnAgregarTelefono.setEnabled(tipoOperacion == 1);
+		this.btnEliminarTelefono.setEnabled(tipoOperacion == 1);
 		
 		if(tipoOperacion == 1) {
 			this.buscarProveedorPorId();
+			this.listTelefonosProveedor();
 		}
 	}
 	
+	private DefaultTableModel setTableModel() {
+		DefaultTableModel model = new DefaultTableModel();
+
+		model.addColumn("id");
+		model.addColumn("Telefono");
+
+		return model;
+	}
+
+	private void listTelefonosProveedor() {
+		this.borrarTelefonosProveedor();
+
+		if (this.indiceProveedor <= 0) {
+			return;
+		}
+
+		var telefonos = this.telefonosProveedorController.listTelefonosProveedor(this.indiceProveedor);
+
+		if (telefonos == null || telefonos.isEmpty()) {
+			return;
+		}
+
+		telefonos.forEach(this.tablaTelefonosModel::addRow);
+	}
+
+	private void borrarTelefonosProveedor() {
+		this.tablaTelefonosModel.getDataVector().removeAllElements();
+		this.tablaTelefonosProveedor.updateUI();
+	}
+
+	private void insertTelefonoProveedor() {
+		if (this.indiceProveedor <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Primero debe registrar el proveedor antes de agregar telefonos");
+			return;
+		}
+
+		String telefono = JOptionPane.showInputDialog(this, "Ingrese el telefono del proveedor:", "Agregar telefono",
+				JOptionPane.QUESTION_MESSAGE);
+
+		if (telefono == null || telefono.trim().isEmpty()) {
+			return;
+		}
+
+		telefono = telefono.trim();
+
+		if (telefono.length() != 10) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"El telefono debe tener exactamente 10 caracteres");
+			return;
+		}
+
+		TelefonoProveedor data = new TelefonoProveedor();
+		data.setIdProveedor(this.indiceProveedor);
+		data.setTelefono(telefono);
+
+		var response = this.telefonosProveedorController.insertTelefonoProveedor(data);
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.listTelefonosProveedor();
+		}
+	}
+
+	private void deleteTelefonoProveedor() {
+		if (this.tablaTelefonosProveedor.getSelectedRow() < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione un telefono para eliminar");
+			return;
+		}
+
+		int idTelefono = DataTools.getIndiceElementoSeleccionado(
+				this.tablaTelefonosProveedor,
+				this.tablaTelefonosModel,
+				0
+		);
+
+		if (idTelefono < 0) {
+			return;
+		}
+
+		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
+
+		if (option != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		var response = this.telefonosProveedorController.deleteTelefonoProveedor(idTelefono);
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.listTelefonosProveedor();
+		}
+	}
+
 	private boolean validarCamposVacios() {
 		String rfc = this.txfRFC.getText() == null ? "" : this.txfRFC.getText().trim();
 		String nombre = this.txfNombre.getText() == null ? "" : this.txfNombre.getText().trim();
