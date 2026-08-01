@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
+import com.kathsoft.kathpos.app.model.proveedor.ProveedorById;
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -60,6 +61,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private int indiceProveedor;
 	private CuentaContableResponseViewModel cuentaContable;
 	private boolean operacionEjecutada = false;
+	private boolean proveedorActivo = true;
 	private JLabel lblRfc;
 	private JTextField txfRFC;
 	private JTextField txfNombre;
@@ -396,7 +398,22 @@ public class Fr_DatosProveedor extends JFrame {
 
 	private void actualizarProveedor() {
 
-		
+		if (this.validarCamposVacios()) {
+			return;
+		}
+
+		var response = this.proveedorController.actualizarProveedor(this.buildProveedor());
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.operacionEjecutada = true;
+			this.cerrarForm();
+		}
 	}
 
 	/**
@@ -416,7 +433,7 @@ public class Fr_DatosProveedor extends JFrame {
 				.ciudad(this.txfCiudad.getText().trim())
 				.direccion(this.txfDireccion.getText().trim())
 				.codigoPostal(this.textField.getText().trim())
-				.activo(true)
+				.activo(this.proveedorActivo)
 				.build();
 	}
 
@@ -441,9 +458,34 @@ public class Fr_DatosProveedor extends JFrame {
 	}
 	
 	private void buscarProveedorPorId() {
-		
-		
-		
+		if (this.indiceProveedor <= 0) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No se recibio un proveedor valido");
+			return;
+		}
+
+		ProveedorById proveedor = this.proveedorController.buscarProveedorPorId(this.indiceProveedor);
+
+		if (proveedor == null) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No se pudo cargar el proveedor");
+			return;
+		}
+
+		this.indiceProveedor = proveedor.getIdProveedor();
+		this.cuentaContable = new CuentaContableResponseViewModel(
+				proveedor.getIdCuentaContable(),
+				proveedor.getClaveCuentaContable()
+		);
+		this.proveedorActivo = proveedor.isActivo();
+
+		this.txfRFC.setText(this.valueOrEmpty(proveedor.getRfc()));
+		this.txfNombre.setText(this.valueOrEmpty(proveedor.getNombre()));
+		this.txfClaveCtaContable.setText(this.valueOrEmpty(proveedor.getClaveCuentaContable()));
+		this.txfCorreoElectronico.setText(this.valueOrEmpty(proveedor.getCorreoElectronico()));
+		this.txfEstado.setText(this.valueOrEmpty(proveedor.getEstado()));
+		this.txfCiudad.setText(this.valueOrEmpty(proveedor.getCiudad()));
+		this.textField.setText(this.valueOrEmpty(proveedor.getCodigoPostal()));
+		this.txfDireccion.setText(this.valueOrEmpty(proveedor.getDireccion()));
+		this.textAreaDescripcion.setText(this.valueOrEmpty(proveedor.getDescripcion()));
 	}
 
 	/**
@@ -489,6 +531,10 @@ public class Fr_DatosProveedor extends JFrame {
 	private void limpiarCmbProveedor() {
 		this.cmbRFCProveedor.removeAllItems();
 		this.cmbRFCProveedor.updateUI();
+	}
+
+	private String valueOrEmpty(String value) {
+		return value == null ? "" : value;
 	}
 
 	/**
