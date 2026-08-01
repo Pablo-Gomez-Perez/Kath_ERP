@@ -117,6 +117,16 @@ public class PanelProveedor extends JPanel {
 		btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
+				if (tablaProveedor.getSelectedRow() < 0) {
+					MessageHandler.displayMessage(
+							MessageHandler.WARN_MESSAGE,
+							PanelProveedor.this,
+							"Seleccione un proveedor para modificar"
+					);
+					return;
+				}
+
 				int idProveedor = DataTools.getIndiceElementoSeleccionado(tablaProveedor, modelTablaProveedores, 0);
 
 				if (idProveedor < 0) {
