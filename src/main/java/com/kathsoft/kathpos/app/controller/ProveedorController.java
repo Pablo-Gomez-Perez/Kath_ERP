@@ -78,7 +78,7 @@ public class ProveedorController implements java.io.Serializable {
 				CallableStatement stm = cn.prepareCall("CALL deleteProveedor(?);")
 		) {
 
-			stm.setInt("p_id_proveedor", idProveedor);
+			stm.setInt("idProveedor", idProveedor);
 
 			if (stm.execute()) {
 
