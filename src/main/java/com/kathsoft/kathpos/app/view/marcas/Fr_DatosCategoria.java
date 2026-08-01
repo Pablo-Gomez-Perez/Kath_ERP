@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.kathsoft.kathpos.app.controller.CategoriaController;
-import com.kathsoft.kathpos.app.model.Categoria;
+import com.kathsoft.kathpos.app.model.categoria.Categoria;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -9,7 +9,7 @@ import java.util.Vector;
 
 import javax.swing.JComboBox;
 
-import com.kathsoft.kathpos.app.model.ClienteById;
+import com.kathsoft.kathpos.app.model.cliente.ClienteById;
 import com.kathsoft.kathpos.app.model.cliente.Clientes;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
