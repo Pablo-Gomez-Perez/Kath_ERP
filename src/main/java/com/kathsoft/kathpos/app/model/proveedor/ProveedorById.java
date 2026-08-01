@@ -12,6 +12,7 @@ public class ProveedorById {
 
 	private int idProveedor;
 	private int idCuentaContable;
+	private String rfc;
 	private String claveCuentaContable;
 	private String nombre;
 	private String descripcion;
@@ -26,12 +27,13 @@ public class ProveedorById {
 		super();
 	}
 
-	public ProveedorById(int idProveedor, int idCuentaContable, String claveCuentaContable, String nombre,
+	public ProveedorById(int idProveedor, int idCuentaContable, String rfc, String claveCuentaContable, String nombre,
 			String descripcion, String correoElectronico, String estado, String ciudad, String direccion,
 			String codigoPostal, boolean activo) {
 		super();
 		this.idProveedor = idProveedor;
 		this.idCuentaContable = idCuentaContable;
+		this.rfc = rfc;
 		this.claveCuentaContable = claveCuentaContable;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
@@ -57,6 +59,14 @@ public class ProveedorById {
 
 	public void setIdCuentaContable(int idCuentaContable) {
 		this.idCuentaContable = idCuentaContable;
+	}
+
+	public String getRfc() {
+		return rfc;
+	}
+
+	public void setRfc(String rfc) {
+		this.rfc = rfc;
 	}
 
 	public String getClaveCuentaContable() {
@@ -134,9 +144,10 @@ public class ProveedorById {
 	@Override
 	public String toString() {
 		return "ProveedorById [idProveedor=" + idProveedor + ", idCuentaContable=" + idCuentaContable
-				+ ", claveCuentaContable=" + claveCuentaContable + ", nombre=" + nombre + ", descripcion=" + descripcion
-				+ ", correoElectronico=" + correoElectronico + ", estado=" + estado + ", ciudad=" + ciudad
-				+ ", direccion=" + direccion + ", codigoPostal=" + codigoPostal + ", activo=" + activo + "]";
+				+ ", rfc=" + rfc + ", claveCuentaContable=" + claveCuentaContable + ", nombre=" + nombre
+				+ ", descripcion=" + descripcion + ", correoElectronico=" + correoElectronico + ", estado=" + estado
+				+ ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal=" + codigoPostal
+				+ ", activo=" + activo + "]";
 	}
 
 	/**
@@ -157,6 +168,11 @@ public class ProveedorById {
 
 		public ProveedorByIdBuilder idCuentaContable(int idCuentaContable) {
 			this.proveedor.idCuentaContable = idCuentaContable;
+			return this;
+		}
+
+		public ProveedorByIdBuilder rfc(String rfc) {
+			this.proveedor.rfc = rfc;
 			return this;
 		}
 
