@@ -8,6 +8,7 @@ import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -58,6 +59,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private JButton btn_Guardar;
 	private int indiceProveedor;
 	private CuentaContableResponseViewModel cuentaContable;
+	private boolean operacionEjecutada = false;
 	private JLabel lblRfc;
 	private JTextField txfRFC;
 	private JTextField txfNombre;
@@ -67,6 +69,7 @@ public class Fr_DatosProveedor extends JFrame {
 	private JTextField txfCiudad;
 	private JTextField textField;
 	private JTextField txfDireccion;
+	private JTextArea textAreaDescripcion;
 	private JScrollPane scrollPaneDescripcion;
 	private JLabel lblTelefonos;
 	private JButton btnAgregarTelefono;
@@ -278,7 +281,7 @@ public class Fr_DatosProveedor extends JFrame {
 					.addContainerGap(27, Short.MAX_VALUE))
 		);
 		
-		JTextArea textAreaDescripcion = new JTextArea();
+		textAreaDescripcion = new JTextArea();
 		scrollPaneDescripcion.setViewportView(textAreaDescripcion);
 		panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 
@@ -330,9 +333,39 @@ public class Fr_DatosProveedor extends JFrame {
 	}
 	
 	private boolean validarCamposVacios() {
-		
-		
-		
+		String rfc = this.txfRFC.getText() == null ? "" : this.txfRFC.getText().trim();
+		String nombre = this.txfNombre.getText() == null ? "" : this.txfNombre.getText().trim();
+		String correo = this.txfCorreoElectronico.getText() == null ? "" : this.txfCorreoElectronico.getText().trim();
+
+		if (rfc.isEmpty()) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El RFC del proveedor es obligatorio");
+			return true;
+		}
+
+		if (rfc.length() != 10 && rfc.length() != 13) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"El RFC del proveedor debe tener exactamente 10 o 13 caracteres"
+			);
+			return true;
+		}
+
+		if (nombre.isEmpty()) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El nombre del proveedor es obligatorio");
+			return true;
+		}
+
+		if (this.cuentaContable == null || this.cuentaContable.idCuentaContable() < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar una cuenta contable");
+			return true;
+		}
+
+		if (correo.isEmpty()) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El correo electronico del proveedor es obligatorio");
+			return true;
+		}
+
 		return false;
 		
 	}
@@ -342,13 +375,58 @@ public class Fr_DatosProveedor extends JFrame {
 	 */
 	private void insertarNuevoProveedor() {
 
-		
+		if (this.validarCamposVacios()) {
+			return;
+		}
+
+		var response = this.proveedorController.insertarNuevoProveedor(this.buildProveedor());
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.operacionEjecutada = true;
+			this.cerrarForm();
+		}
 
 	}
 
 	private void actualizarProveedor() {
 
 		
+	}
+
+	/**
+	 * Construye una entidad {@link Proveedor} con los datos capturados en el formulario.
+	 *
+	 * @return proveedor construido para alta o actualizacion
+	 */
+	private Proveedor buildProveedor() {
+		return new Proveedor.ProveedorBuilder()
+				.idProveedor(this.indiceProveedor)
+				.idCuentaContable(this.cuentaContable.idCuentaContable())
+				.rfc(this.txfRFC.getText().trim().toUpperCase())
+				.nombre(this.txfNombre.getText().trim())
+				.descripcion(this.textAreaDescripcion.getText().trim())
+				.correoElectronico(this.txfCorreoElectronico.getText().trim())
+				.estado(this.txfEstado.getText().trim())
+				.ciudad(this.txfCiudad.getText().trim())
+				.direccion(this.txfDireccion.getText().trim())
+				.codigoPostal(this.textField.getText().trim())
+				.activo(true)
+				.build();
+	}
+
+	/**
+	 * Indica si el formulario ejecuto una operacion de base de datos correctamente.
+	 *
+	 * @return {@code true} si la operacion fue exitosa; {@code false} en caso contrario
+	 */
+	public boolean isOperacionEjecutada() {
+		return this.operacionEjecutada;
 	}
 
 	/**

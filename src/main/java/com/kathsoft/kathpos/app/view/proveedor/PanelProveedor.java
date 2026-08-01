@@ -245,6 +245,14 @@ public class PanelProveedor extends JPanel {
 			Fr_DatosProveedor form = new Fr_DatosProveedor(idOperacion, idProveedor);
 			form.setLocationRelativeTo(this);
 			form.setVisible(true);
+			form.addWindowListener(new java.awt.event.WindowAdapter() {
+				@Override
+				public void windowClosed(java.awt.event.WindowEvent e) {
+					if (form.isOperacionEjecutada()) {
+						llenarTablaProveedor(txfNombreProveedor.getText());
+					}
+				}
+			});
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
