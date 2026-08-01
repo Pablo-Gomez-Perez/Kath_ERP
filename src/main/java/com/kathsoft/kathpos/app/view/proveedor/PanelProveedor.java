@@ -112,6 +112,7 @@ public class PanelProveedor extends JPanel {
 			}
 		});
 		btnAgregar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
 		
 		btnModificar = new JButton("Modificar");
@@ -137,6 +138,7 @@ public class PanelProveedor extends JPanel {
 			}
 		});
 		btnModificar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnModificar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnModificar);
 		
 		btnEliminar = new JButton("Eliminar");
@@ -146,10 +148,12 @@ public class PanelProveedor extends JPanel {
 			}
 		});
 		btnEliminar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		btnEliminar.setBackground(new Color(255, 51, 0));
 		panelSuperiorBotones.add(btnEliminar);
 		
 		btnToExcel = new JButton("Exportar Excel");
 		btnToExcel.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		btnToExcel.setBackground(new Color(102, 205, 170));
 		panelSuperiorBotones.add(btnToExcel);
 		
 		lblNombre = new JLabel("Nombre");
@@ -160,6 +164,7 @@ public class PanelProveedor extends JPanel {
 				llenarTablaProveedor(txfNombreProveedor.getText());
 			}
 		});
+		btnBuscar.setBackground(new Color(153, 102, 51));
 		btnBuscar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		
 		txfNombreProveedor = new JTextField();
