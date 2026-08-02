@@ -9,7 +9,6 @@ import java.util.Vector;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
-import com.mysql.cj.protocol.Resultset;
 
 public class TipoClienteController {
 

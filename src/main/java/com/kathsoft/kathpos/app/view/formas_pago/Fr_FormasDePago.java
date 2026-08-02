@@ -1,7 +1,5 @@
 package com.kathsoft.kathpos.app.view.formas_pago;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -27,7 +25,6 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 

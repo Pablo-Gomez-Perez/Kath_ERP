@@ -14,8 +14,6 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.MaskFormatter;
-
 import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableFormDetails;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
@@ -24,8 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import java.awt.RenderingHints.Key;
-
 import javax.swing.ButtonGroup;
 
 import java.awt.Component;
@@ -49,8 +45,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class Fr_DatosCuentasContables extends JFrame {
 
