@@ -1,34 +1,32 @@
 package com.kathsoft.kathpos.app.view.marcas;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import com.kathsoft.kathpos.app.controller.CategoriaController;
-import com.kathsoft.kathpos.app.model.categoria.Categoria;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.BoxLayout;
 import java.awt.Component;
-import javax.swing.Box;
 import java.awt.FlowLayout;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.ImageIcon;
-import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+import com.kathsoft.kathpos.app.model.categoria.Categoria;
+import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_DatosCategoria extends JFrame {
 	
@@ -47,16 +45,8 @@ public class Fr_DatosCategoria extends JFrame {
 	private JLabel lblDescripcion;
 	private JScrollPane scrollPaneDescripcion;
 	private JTextArea textAreaDescripcion;
-
-	/**
-	 * Launch the application.
-	 */
-	/*
-	 * public static void main(String[] args) { EventQueue.invokeLater(new
-	 * Runnable() { public void run() { try { Fr_DatosCategoria frame = new
-	 * Fr_DatosCategoria(); frame.setVisible(true); } catch (Exception e) {
-	 * e.printStackTrace(); } } }); }
-	 */
+	private boolean operacionEjecutada = false;
+	private boolean categoriaActiva = true;
 
 	/**
 	 * Create the frame.
@@ -172,30 +162,116 @@ public class Fr_DatosCategoria extends JFrame {
 			this.getCategoriaPorId();
 		}
 
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
+	/**
+	 * Consulta una categoria de producto por id y mapea el resultado al formulario.
+	 */
 	private void getCategoriaPorId() {
+		if (this.idCategoria <= 0) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No se recibio una categoria valida");
+			return;
+		}
 
-		
+		Categoria categoria = AppContext.categoriaController.buscarCategoriaPorId(this.idCategoria);
 
+		if (categoria == null) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No se pudo cargar la categoria");
+			return;
+		}
+
+		this.idCategoria = categoria.getIdCategoria();
+		this.categoriaActiva = categoria.isActivo();
+		this.txfNombre.setText(this.valueOrEmpty(categoria.getNombre()));
+		this.textAreaDescripcion.setText(this.valueOrEmpty(categoria.getDescripcion()));
 	}
 
+	/**
+	 * Valida los campos obligatorios del formulario.
+	 *
+	 * @return {@code true} si hay errores de validacion; {@code false} si el formulario es valido
+	 */
 	private boolean validarCamposVacios() {
-		
-		
-		
+		String nombre = this.txfNombre.getText() == null ? "" : this.txfNombre.getText().trim();
+
+		if (nombre.isEmpty()) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El nombre de la categoria es obligatorio");
+			return true;
+		}
+
 		return false;
 	}
 	
-
+	/**
+	 * Registra una nueva categoria de producto.
+	 */
 	private void insertNuevaCategoria() {
+		if (this.validarCamposVacios()) {
+			return;
+		}
 
+		var response = AppContext.categoriaController.insertarNuevaCategoria(this.buildCategoria());
 
-		
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.operacionEjecutada = true;
+			this.cerrarForm();
+		}
 	}
 
+	/**
+	 * Actualiza la categoria de producto cargada en el formulario.
+	 */
 	private void actualizarCategoria() {
+		if (this.validarCamposVacios()) {
+			return;
+		}
 
+		var response = AppContext.categoriaController.actualizarCategoria(this.buildCategoria());
+
+		MessageHandler.displayMessage(
+				response.id() == 200 ? MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				response.message()
+		);
+
+		if (response.id() == 200) {
+			this.operacionEjecutada = true;
+			this.cerrarForm();
+		}
+	}
+
+	/**
+	 * Construye la entidad {@link Categoria} con los datos capturados en el formulario.
+	 *
+	 * @return categoria construida para alta o actualizacion
+	 */
+	private Categoria buildCategoria() {
+		var categoria = new Categoria();
+		categoria.setIdCategoria(this.idCategoria);
+		categoria.setNombre(this.txfNombre.getText().trim());
+		categoria.setDescripcion(this.textAreaDescripcion.getText().trim());
+		categoria.setActivo(this.categoriaActiva);
+		return categoria;
+	}
+
+	/**
+	 * Indica si el formulario ejecuto una operacion de base de datos correctamente.
+	 *
+	 * @return {@code true} si la operacion fue exitosa; {@code false} en caso contrario
+	 */
+	public boolean isOperacionEjecutada() {
+		return this.operacionEjecutada;
+	}
+
+	private String valueOrEmpty(String value) {
+		return value == null ? "" : value;
 	}
 
 	private void cerrarForm() {
