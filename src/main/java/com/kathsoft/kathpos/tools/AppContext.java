@@ -13,7 +13,6 @@ import com.kathsoft.kathpos.app.controller.TelefonoClienteController;
 import com.kathsoft.kathpos.app.controller.TelefonoEmpleadoController;
 import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.controller.VentasController;
-import com.kathsoft.kathpos.app.model.RubroCuentaContable;
 
 public class AppContext implements java.io.Serializable{
 

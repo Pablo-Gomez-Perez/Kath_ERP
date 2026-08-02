@@ -861,8 +861,7 @@ public class Fr_PuntoDeVentas extends JFrame {
 			return;
 		}
 
-		int cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Indique la cantidad a comprar"));
-		//double subtotal = cantidad * this.articulo.getPrecioGeneral();
+		
 
 		//modelTablaArticulo.addRow(new Object[] { this.articulo.getCodigoArticulo(), this.articulo.getDescripcion(),
 		//		this.articulo.getPrecioGeneral(), cantidad, 0, subtotal });

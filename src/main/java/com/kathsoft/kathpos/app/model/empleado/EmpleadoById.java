@@ -2,8 +2,6 @@ package com.kathsoft.kathpos.app.model.empleado;
 
 import java.sql.Date;
 
-import com.kathsoft.kathpos.app.model.empleado.Empleado.EmpleadoBuilder;
-
 public class EmpleadoById {
 
 	private int idEmpleado;

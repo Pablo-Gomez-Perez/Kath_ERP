@@ -1,10 +1,8 @@
 package com.kathsoft.kathpos.app.view.contabilidad;
 
-import java.awt.EventQueue;
 import java.awt.Frame;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;

@@ -6,18 +6,12 @@ package com.kathsoft.kathpos.app.model.cliente;
 import java.sql.Date;
 import java.util.Objects;
 
-import com.kathsoft.kathpos.app.model.Usuario;
-
 /**
  * @author PABLO
  *
  */
 public class Clientes {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8677714515131885067L;
 	/**
 	 * 
 	 */

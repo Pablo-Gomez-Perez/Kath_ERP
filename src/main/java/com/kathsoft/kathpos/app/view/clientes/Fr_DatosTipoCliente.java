@@ -7,7 +7,6 @@ import javax.swing.border.EmptyBorder;
 import com.kathsoft.kathpos.app.controller.TipoClienteController;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.tools.AppContext;
-import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
 import java.awt.BorderLayout;

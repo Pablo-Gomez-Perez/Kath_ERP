@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,11 +20,7 @@ public class CategoriaController implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6835247986143695345L;
-	/**
-	 * 
-	 */
-	//private Categoria categoria;
-	private static Connection cn;
+	
 
 	/*public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;

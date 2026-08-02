@@ -17,14 +17,12 @@ import com.kathsoft.kathpos.tools.MessageHandler;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import java.awt.Component;
 import javax.swing.Box;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
@@ -33,15 +31,10 @@ import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.border.LineBorder;
 import javax.swing.border.CompoundBorder;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -59,7 +52,6 @@ public class Fr_DatosProveedor extends JFrame {
 	private JPanel panelSuperiorEtiqueta;
 	private JLabel lblNewLabel;
 	private JPanel panelCentralFormulario;
-	private JComboBox<String> cmbRFCProveedor;
 	private JPanel panelInferiorBotones;
 	private JButton btn_Cancelar;
 	private Component horizontalStrut_10;
@@ -578,17 +570,6 @@ public class Fr_DatosProveedor extends JFrame {
 		return this.operacionEjecutada;
 	}
 
-	/**
-	 * busca en la bse de datos el registro de un proveedor en base a su RFC
-	 * 
-	 * @param rfc
-	 */
-	private void buscarProveedorPorRFC(String rfc) {
-
-		
-
-	}
-	
 	private void buscarProveedorPorId() {
 		if (this.indiceProveedor <= 0) {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "No se recibio un proveedor valido");
@@ -645,24 +626,6 @@ public class Fr_DatosProveedor extends JFrame {
 
 		this.txfClaveCtaContable.setText(this.cuentaContable.claveCuentaContable());
 
-	}
-
-	/**
-	 * llena el combobox de los RFC de los proveedores con sus datos
-	 * correspondientes consultando la base de datos
-	 */
-	private void llenarCmbRfcProveedor() {
-		this.limpiarCmbProveedor();
-		proveedorController.consultarRFCProveedor(this.cmbRFCProveedor);
-	}
-
-	/**
-	 * borra todos los items o elementos contenidos en el ComboBox de RFC de los
-	 * proveedores
-	 */
-	private void limpiarCmbProveedor() {
-		this.cmbRFCProveedor.removeAllItems();
-		this.cmbRFCProveedor.updateUI();
 	}
 
 	private String valueOrEmpty(String value) {
