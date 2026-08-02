@@ -8,29 +8,25 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
-import javax.swing.Box;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
-import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.UIManager;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class PanelMarcas extends JPanel {
 
@@ -81,6 +77,11 @@ public class PanelMarcas extends JPanel {
 		textField.setColumns(10);
 		
 		btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaCategoria(textField.getText());
+			}
+		});
 		btnBuscar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		btnBuscar.setBackground(UIManager.getColor("OptionPane.warningDialog.border.background"));
 		GroupLayout gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
@@ -115,16 +116,31 @@ public class PanelMarcas extends JPanel {
 		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
 		
 		btnAgregar = new JButton("Agregar");
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirVentanaFormularioCategoria(1, 0);
+			}
+		});
 		btnAgregar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnAgregar);
 		
 		btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modificarCategoria();
+			}
+		});
 		btnModificar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnModificar.setBackground(new Color(144, 238, 144));
 		panelSuperiorBotones.add(btnModificar);
 		
 		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eliminarCategoria();
+			}
+		});
 		btnEliminar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnEliminar.setBackground(new Color(255, 51, 0));
 		panelSuperiorBotones.add(btnEliminar);
@@ -165,13 +181,119 @@ public class PanelMarcas extends JPanel {
 		this.modelTablaCategoriaArticulo.addColumn("Nombre");
 		this.modelTablaCategoriaArticulo.addColumn("Descripcion");
 		this.modelTablaCategoriaArticulo.addColumn("Activo");
+		this.tableCategoriaProducto.setModel(this.modelTablaCategoriaArticulo);
+		this.tableCategoriaProducto.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
+		DataTools.removerEditorDeTabla(this.tableCategoriaProducto, modelTablaCategoriaArticulo);
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaCategoriaColumnsWidth, tableCategoriaProducto);
+		
+		this.llenarTablaCategoria("");
 	}
 	
 	/**
-	 * borra todos los elementos contenidos en la tabla categorias
+	 * Abre el formulario para agregar o modificar una categoria de producto.
+	 *
+	 * @param opcion tipo de operacion del formulario
+	 * @param idCategoria identificador de la categoria seleccionada
+	 */
+	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
+		Component cm = this;
+
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Fr_DatosCategoria fr = new Fr_DatosCategoria(opcion, idCategoria);
+					fr.setLocationRelativeTo(cm);
+					fr.setVisible(true);
+					fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				} catch (Exception er) {
+					er.printStackTrace(System.err);
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cm, er.getMessage());
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Abre el formulario de modificacion con la categoria seleccionada en la tabla.
+	 */
+	private void modificarCategoria() {
+		if (this.tableCategoriaProducto.getSelectedRow() < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione una categoria para modificar");
+			return;
+		}
+
+		int idCategoria = DataTools.getIndiceElementoSeleccionado(
+				this.tableCategoriaProducto,
+				this.modelTablaCategoriaArticulo,
+				0
+		);
+
+		if (idCategoria < 0) {
+			return;
+		}
+
+		this.abrirVentanaFormularioCategoria(2, idCategoria);
+	}
+	
+	/**
+	 * Inhabilita la categoria seleccionada y actualiza la tabla si la operacion fue exitosa.
+	 */
+	private void eliminarCategoria() {
+		if (this.tableCategoriaProducto.getSelectedRow() < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione una categoria para eliminar");
+			return;
+		}
+
+		int idCategoria = DataTools.getIndiceElementoSeleccionado(
+				this.tableCategoriaProducto,
+				this.modelTablaCategoriaArticulo,
+				0
+		);
+
+		if (idCategoria < 0) {
+			return;
+		}
+
+		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionada?");
+
+		if (option != 0) {
+			return;
+		}
+
+		var response = AppContext.categoriaController.eliminarCategoria(idCategoria);
+
+		if (response.id() == 200) {
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, response.message());
+			this.llenarTablaCategoria(this.textField.getText());
+			return;
+		}
+
+		MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, response.message());
+	}
+	
+	/**
+	 * borra todos los elementos contenidos en la tabla categorias.
 	 */
 	private void borrarElementosDeLaTablaCategorias() {
-		
+		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
+		this.tableCategoriaProducto.updateUI();
+	}
+	
+	/**
+	 * Llena la tabla de categorias de producto usando el filtro de nombre indicado.
+	 *
+	 * @param nombre nombre o fragmento de nombre para filtrar categorias
+	 */
+	public void llenarTablaCategoria(String nombre) {
+		this.borrarElementosDeLaTablaCategorias();
+		var categorias = AppContext.categoriaController.verCategoriasEnTabla(nombre);
+
+		if (categorias == null || categorias.isEmpty()) {
+			return;
+		}
+
+		categorias.forEach(this.modelTablaCategoriaArticulo::addRow);
 	}
 }
