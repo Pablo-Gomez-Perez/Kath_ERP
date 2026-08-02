@@ -253,9 +253,7 @@ public class Fr_principal extends JFrame {
 
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
-				panelPrincipalContenedor.updateUI();
-
-				panelMarcas.llenarTablaCategoria("");
+				panelPrincipalContenedor.updateUI();				
 			}
 		});
 		menuConsultar.add(opcionMarcas);
