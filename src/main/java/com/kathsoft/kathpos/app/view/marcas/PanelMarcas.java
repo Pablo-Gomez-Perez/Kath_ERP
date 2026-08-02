@@ -27,6 +27,10 @@ import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.UIManager;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class PanelMarcas extends JPanel {
 
@@ -35,17 +39,16 @@ public class PanelMarcas extends JPanel {
 	private JLabel lblNewLabel_1;
 	private JPanel panelMarcasCentral;
 	private DefaultTableModel modelTablaCategoriaArticulo;
-	private JScrollPane scrollPaneTablaCategorias;
-	private JTable tablaCategorias;
-	private JPanel panelCategoriasCentralBotones;
-	private JButton btnAgregarCategoria;
-	private JButton btnActualizarCategoria;
-	private JButton btnEliminarCategoria;
-	private JPanel panelMarcasCentralBuscar;
-	private JLabel lblNewLabel_3;
-	private Component horizontalStrut;
-	private JTextField txfBuscarCategoria;
-	private JButton btnBuscarCategoria;
+	private JPanel panelInferiorBusqueda;
+	private JLabel lblNombre;
+	private JTextField textField;
+	private JButton btnBuscar;
+	private JPanel panelSuperiorBotones;
+	private JButton btnAgregar;
+	private JButton btnModificar;
+	private JButton btnEliminar;
+	private JButton btnToExcel;
+	private JTable tableCategoriaProducto;
 
 	/**
 	 * Create the panel.
@@ -65,10 +68,96 @@ public class PanelMarcas extends JPanel {
 		this.panelMarcasEtiquetaSuperior.add(lblNewLabel_1);
 		
 		this.panelMarcasCentral = new JPanel();
-		this.panelMarcasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
-		this.panelMarcasCentral.setBackground(new Color(255, 215, 0));
+		this.panelMarcasCentral.setBorder(null);
+		this.panelMarcasCentral.setBackground(new Color(255, 204, 0));
 		this.add(panelMarcasCentral, BorderLayout.CENTER);
-		this.panelMarcasCentral.setLayout(new BorderLayout(0, 0));
+		
+		panelInferiorBusqueda = new JPanel();
+		panelInferiorBusqueda.setBackground(new Color(0, 153, 255));
+		
+		lblNombre = new JLabel("Nombre");
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		
+		btnBuscar = new JButton("Buscar");
+		btnBuscar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		btnBuscar.setBackground(UIManager.getColor("OptionPane.warningDialog.border.background"));
+		GroupLayout gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
+		gl_panelInferiorBusqueda.setHorizontalGroup(
+			gl_panelInferiorBusqueda.createParallelGroup(Alignment.LEADING)
+				.addGap(0, 703, Short.MAX_VALUE)
+				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNombre)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(textField, GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuscar)
+					.addContainerGap())
+		);
+		gl_panelInferiorBusqueda.setVerticalGroup(
+			gl_panelInferiorBusqueda.createParallelGroup(Alignment.LEADING)
+				.addGap(0, 49, Short.MAX_VALUE)
+				.addGroup(gl_panelInferiorBusqueda.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelInferiorBusqueda.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNombre)
+						.addComponent(btnBuscar)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		panelInferiorBusqueda.setLayout(gl_panelInferiorBusqueda);
+		
+		panelSuperiorBotones = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelSuperiorBotones.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		panelSuperiorBotones.setBackground(new Color(255, 204, 0));
+		
+		btnAgregar = new JButton("Agregar");
+		btnAgregar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnAgregar.setBackground(new Color(144, 238, 144));
+		panelSuperiorBotones.add(btnAgregar);
+		
+		btnModificar = new JButton("Modificar");
+		btnModificar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnModificar.setBackground(new Color(144, 238, 144));
+		panelSuperiorBotones.add(btnModificar);
+		
+		btnEliminar = new JButton("Eliminar");
+		btnEliminar.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		btnEliminar.setBackground(new Color(255, 51, 0));
+		panelSuperiorBotones.add(btnEliminar);
+		
+		btnToExcel = new JButton("Exportar Excel");
+		btnToExcel.setIcon(new ImageIcon(PanelMarcas.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		btnToExcel.setBackground(new Color(102, 205, 170));
+		panelSuperiorBotones.add(btnToExcel);
+		
+		JScrollPane scrollPaneTablaCategoriaProducto = new JScrollPane();
+		GroupLayout gl_panelMarcasCentral = new GroupLayout(panelMarcasCentral);
+		gl_panelMarcasCentral.setHorizontalGroup(
+			gl_panelMarcasCentral.createParallelGroup(Alignment.LEADING)
+				.addComponent(panelInferiorBusqueda, GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+				.addComponent(panelSuperiorBotones, GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+				.addGroup(gl_panelMarcasCentral.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(scrollPaneTablaCategoriaProducto, GroupLayout.DEFAULT_SIZE, 741, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		gl_panelMarcasCentral.setVerticalGroup(
+			gl_panelMarcasCentral.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panelMarcasCentral.createSequentialGroup()
+					.addComponent(panelSuperiorBotones, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPaneTablaCategoriaProducto, GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelInferiorBusqueda, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		tableCategoriaProducto = new JTable();
+		scrollPaneTablaCategoriaProducto.setViewportView(tableCategoriaProducto);
+		panelMarcasCentral.setLayout(gl_panelMarcasCentral);
 		
 		this.modelTablaCategoriaArticulo = new DefaultTableModel();
 
@@ -76,148 +165,13 @@ public class PanelMarcas extends JPanel {
 		this.modelTablaCategoriaArticulo.addColumn("Nombre");
 		this.modelTablaCategoriaArticulo.addColumn("Descripcion");
 		this.modelTablaCategoriaArticulo.addColumn("Activo");
-
-		this.scrollPaneTablaCategorias = new JScrollPane();
-		this.panelMarcasCentral.add(scrollPaneTablaCategorias, BorderLayout.CENTER);
-
-		this.tablaCategorias = new JTable();
-		this.tablaCategorias.setModel(modelTablaCategoriaArticulo);
-		this.tablaCategorias.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		this.scrollPaneTablaCategorias.setViewportView(tablaCategorias);
-
-		DataTools.removerEditorDeTabla(this.tablaCategorias, modelTablaCategoriaArticulo);
 		
-		this.panelCategoriasCentralBotones = new JPanel();
-		this.panelCategoriasCentralBotones.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_10 = (FlowLayout) panelCategoriasCentralBotones.getLayout();
-		flowLayout_10.setAlignment(FlowLayout.RIGHT);
-		this.panelMarcasCentral.add(panelCategoriasCentralBotones, BorderLayout.NORTH);
-		
-		this.btnAgregarCategoria = new JButton("Agregar");
-		this.btnAgregarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(1, 0);
-			}
-		});
-		this.btnAgregarCategoria.setBackground(new Color(144, 238, 144));
-		this.btnAgregarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		this.panelCategoriasCentralBotones.add(btnAgregarCategoria);
-
-		this.btnActualizarCategoria = new JButton("Actualizar");
-		this.btnActualizarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirVentanaFormularioCategoria(2,
-						DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
-			}
-		});
-		this.btnActualizarCategoria.setBackground(new Color(144, 238, 144));
-		this.btnActualizarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
-		this.panelCategoriasCentralBotones.add(btnActualizarCategoria);
-		
-		this.btnEliminarCategoria = new JButton("Eliminar");
-		this.btnEliminarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminarCategoria();
-			}
-		});
-		this.btnEliminarCategoria.setBackground(new Color(255, 51, 0));
-		this.btnEliminarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		this.panelCategoriasCentralBotones.add(btnEliminarCategoria);
-		
-		this.panelMarcasCentralBuscar = new JPanel();
-		this.panelMarcasCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_11 = (FlowLayout) panelMarcasCentralBuscar.getLayout();
-		flowLayout_11.setAlignment(FlowLayout.RIGHT);
-		this.panelMarcasCentral.add(panelMarcasCentralBuscar, BorderLayout.SOUTH);
-
-		this.lblNewLabel_3 = new JLabel("Buscar categoría");
-		this.lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 13));
-		this.panelMarcasCentralBuscar.add(lblNewLabel_3);
-
-		this.horizontalStrut = Box.createHorizontalStrut(20);
-		this.panelMarcasCentralBuscar.add(horizontalStrut);
-
-		this.txfBuscarCategoria = new JTextField();
-		this.panelMarcasCentralBuscar.add(txfBuscarCategoria);
-		this.txfBuscarCategoria.setColumns(70);
-		
-		btnBuscarCategoria = new JButton("Buscar");
-		btnBuscarCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaCategoria(txfBuscarCategoria.getText());
-			}
-		});
-		btnBuscarCategoria.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		this.btnBuscarCategoria.setBackground(new Color(184, 134, 11));
-		panelMarcasCentralBuscar.add(btnBuscarCategoria);
-		
-		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaCategoriaColumnsWidth, tablaCategorias);
-		
-	}
-	
-	private void abrirVentanaFormularioCategoria(int opcion, int idCategoria) {
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Fr_DatosCategoria fr = new Fr_DatosCategoria(opcion, idCategoria);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-					fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	private void eliminarCategoria() {
-
-		int input = JOptionPane.showConfirmDialog(this, "Desea eliminara el registro?", "Eliminar Categoría",
-				JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-
-			AppContext.categoriaController.eliminarCategoria(
-					DataTools.getIndiceElementoSeleccionado(tablaCategorias, modelTablaCategoriaArticulo, 0));
-
-			JOptionPane.showMessageDialog(this, "Registro eliminado", "Eliminar Categoria",
-					JOptionPane.INFORMATION_MESSAGE);
-
-		} catch (SQLException er) {
-			JOptionPane.showMessageDialog(this, er.getMessage(), "Eliminar Categoria", JOptionPane.INFORMATION_MESSAGE);
-		}
-
 	}
 	
 	/**
 	 * borra todos los elementos contenidos en la tabla categorias
 	 */
 	private void borrarElementosDeLaTablaCategorias() {
-		this.modelTablaCategoriaArticulo.getDataVector().removeAllElements();
-		this.tablaCategorias.updateUI();
+		
 	}
-	
-	
-	/**
-	 * llena el JTable del panel de categorias con todos los registros encontrados
-	 * en la bd
-	 */
-	public void llenarTablaCategoria(String nombre) {
-		this.borrarElementosDeLaTablaCategorias();
-		AppContext.categoriaController.verCategoriasEnTabla(nombre).forEach(d -> {
-			this.modelTablaCategoriaArticulo.addRow(d);
-		});
-	}
-
 }
