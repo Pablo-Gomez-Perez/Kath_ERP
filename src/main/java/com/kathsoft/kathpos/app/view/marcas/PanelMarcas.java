@@ -207,6 +207,14 @@ public class PanelMarcas extends JPanel {
 					fr.setLocationRelativeTo(cm);
 					fr.setVisible(true);
 					fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					fr.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosed(java.awt.event.WindowEvent e) {
+							if (fr.isOperacionEjecutada()) {
+								llenarTablaCategoria(textField.getText());
+							}
+						}
+					});
 				} catch (Exception er) {
 					er.printStackTrace(System.err);
 					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cm, er.getMessage());
