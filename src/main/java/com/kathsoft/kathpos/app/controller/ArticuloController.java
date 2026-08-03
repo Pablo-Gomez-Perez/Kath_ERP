@@ -25,127 +25,76 @@ public class ArticuloController implements java.io.Serializable {
 	 */
 	private static Connection cn = null;
 
+	/**
+	 * Lista los articulos usando los parametros base para la carga inicial de tabla.
+	 *
+	 * @param idSucursal identificador de la sucursal desde la que se consulta
+	 * @param idTipoCliente identificador del tipo de cliente usado para obtener precio
+	 * @return vector con las filas de articulos
+	 */
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, int idTipoCliente) {
-
-		ResultSet rset = null;
-		CallableStatement stm = null;
-		var articulos = new Vector<Object[]>();
-
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_articulos(?,?);");
-			stm.setInt(1, idSucursal);
-			stm.setInt(2, idTipoCliente);
-			rset = stm.executeQuery();
-
-			while (rset.next()) {
-
-				Object[] fila = { rset.getInt(1), // indice del articulo
-						rset.getString(2), // codigo del articulo
-						rset.getString(3), // Nombre del proveedor
-						rset.getString(4), // nombre de la categoría
-						rset.getString(5), // codigo SAT del articulo
-						rset.getString(6), // nombre del articulo
-						rset.getString(7), // descripcion
-						rset.getString(8), // existencia
-						rset.getString(9), // precio general
-						rset.getString(10), // precio especial
-						rset.getInt(11), // piezas para precio especial
-						rset.getInt(12) == 1 ? "Activo" : "Inactivo" // Estatus
-				};
-
-				articulos.add(fila);
-			}
-
-			return articulos;
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			return null;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, rset, stm);
-
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
-		}
-
+		return this.verArticulosEnTabla(idSucursal, "TODOS", "NOMBRE", "", idTipoCliente);
 	}
 
 	/**
-	 * 
-	 * retorna un {@code Vector<Object[]>} con el listado completo de los artículos
-	 * almacenado en la bd filtrando por opción de busqueda, sucursal actual y los
-	 * precios por tipo de cliente
-	 * 
-	 * @param nombre
-	 * @param opcion
-	 * @param id_sucursal
-	 * @param idTipoCliente
-	 * @return Vector<Object[]>
+	 * Lista los articulos registrados usando el procedimiento almacenado listArticulos.
+	 *
+	 * @param idSucursal identificador de la sucursal desde la que se consulta la existencia
+	 * @param tipoBusqueda criterio de busqueda: TODOS, CODIGO, NOMBRE, PROVEEDOR, CATEGORIA o DESCRIPCION
+	 * @param ordenarPor criterio de ordenamiento: CODIGO, NOMBRE, PROVEEDOR o CATEGORIA
+	 * @param textoBusqueda texto usado para filtrar la consulta
+	 * @param idTipoCliente identificador del tipo de cliente usado para obtener precio
+	 * @return vector con las filas de articulos
 	 */
-	public Vector<Object[]> consultarArticulosPorNombre(String nombre, int opcion, int id_sucursal, int idTipoCliente) {
+	public Vector<Object[]> verArticulosEnTabla(
+			int idSucursal,
+			String tipoBusqueda,
+			String ordenarPor,
+			String textoBusqueda,
+			int idTipoCliente
+	) {
 
-		ResultSet rset = null;
-		CallableStatement stm = null;
 		var articulos = new Vector<Object[]>();
 
-		try {
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listArticulos(?, ?, ?, ?, ?);")
+		) {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL buscar_articulos_por_nombre(?,?,?,?);");
-			stm.setString(1, nombre);
-			stm.setInt(2, opcion);
-			stm.setInt(3, id_sucursal);
-			stm.setInt(4, idTipoCliente);
-			rset = stm.executeQuery();
+			stm.setInt(1, idSucursal);
+			stm.setString(2, tipoBusqueda);
+			stm.setString(3, ordenarPor);
+			stm.setString(4, textoBusqueda);
+			stm.setInt(5, idTipoCliente);
 
-			while (rset.next()) {
+			try (ResultSet rset = stm.executeQuery()) {
 
-				Object[] fila = { rset.getInt(1), // indice del articulo
-						rset.getString(2), // codigo del articulo
-						rset.getString(3), // Nombre del proveedor
-						rset.getString(4), // nombre de la categoría
-						rset.getString(5), // codigo SAT del articulo
-						rset.getString(6), // nombre del articulo
-						rset.getString(7), // descripcion
-						rset.getString(8), // existencia
-						rset.getString(9), // precio
-						rset.getString(10), // precio especial
-						rset.getString(11), // cantidad para precio especial
-						rset.getInt(12) == 1 ? "Activo" : "Inactivo" // Estatus
-				};
+				while (rset.next()) {
+					Object[] fila = {
+							rset.getInt("id_articulo"),
+							rset.getString("nombre_proveedor"),
+							rset.getString("nombre_categoria"),
+							rset.getString("codigo_articulo"),
+							rset.getString("nombre"),
+							rset.getBoolean("es_exento") ? "Exento" : "Gravado",
+							rset.getBigDecimal("costo_unitario"),
+							rset.getBigDecimal("precio"),
+							rset.getInt("existencia"),
+							rset.getInt("activo") == 1 ? "Activo" : "Inactivo"
+					};
 
-				articulos.add(fila);
+					articulos.add(fila);
+				}
+
 			}
 
-			return articulos;
 		} catch (SQLException er) {
-			er.printStackTrace();
-			return null;
+			er.printStackTrace(System.err);
 		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		} finally {
-			try {
-
-				Conexion.cerrarConexion(cn, rset, stm);
-
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
+			er.printStackTrace(System.err);
 		}
 
+		return articulos;
 	}
 
 	/**
