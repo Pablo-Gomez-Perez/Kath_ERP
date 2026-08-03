@@ -36,7 +36,7 @@ import javax.swing.border.TitledBorder;
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
-import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.categoria.Categoria;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -226,7 +226,6 @@ public class Fr_DatosArticulo extends JFrame {
 
 		cmbProveedorArticulo = new JComboBox<Proveedor>();
 		horizontalBox_1.add(cmbProveedorArticulo);
-		this.llenarCmbProveedor();
 
 		horizontalStrut_4 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_4);
@@ -239,7 +238,6 @@ public class Fr_DatosArticulo extends JFrame {
 
 		cmbMarcaArticulo = new JComboBox<Categoria>();
 		horizontalBox_1.add(cmbMarcaArticulo);
-		this.llenarCmbMarca();
 
 		verticalStrut_2 = Box.createVerticalStrut(20);
 		panelCentralFormulario.add(verticalStrut_2);
@@ -431,7 +429,7 @@ public class Fr_DatosArticulo extends JFrame {
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cerrarForm();
+				
 			}
 		});
 		btnCancelar.setBackground(new Color(205, 92, 92));
@@ -464,70 +462,9 @@ public class Fr_DatosArticulo extends JFrame {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
-	private void llenarCmbMarca() {
-		this.limpiarCmbMarca();
-		this.listCategoria.stream().forEach(c -> {
-			this.cmbMarcaArticulo.addItem(c);
-		});
-	}
+	void insertarNuevoArticulo() {
 
-	private void limpiarCmbMarca() {
-		this.cmbMarcaArticulo.removeAllItems();
-		this.cmbMarcaArticulo.updateUI();
-	}
-
-	private void llenarCmbProveedor() {
-		this.limpiarCmbProveedor();
-		this.listProveedores.stream().forEach(p -> {
-			this.cmbProveedorArticulo.addItem(p);
-		});
-	}
-
-	private void limpiarCmbProveedor() {
-		this.cmbProveedorArticulo.removeAllItems();
-		this.cmbProveedorArticulo.updateUI();
-	}
-
-	private void cerrarForm() {
-		this.dispose();
-	}
-
-	private void insertarNuevoArticulo() {
-
-		Articulo art = new Articulo();
-
-		if (this.verificarCamposVacios()) {
-			return;
-		}
-
-		int idProveedor = 0;
-		int idCategoria = this.listCategoria.get(this.cmbMarcaArticulo.getSelectedIndex()).getIdCategoria();
-
-		try {
-
-			// art.setNombreCategoria((String) this.cmbMarcaArticulo.getSelectedItem());
-			// art.setNombreProveedor((String) this.cmbProveedorArticulo.getSelectedItem());
-			art.setCodigoArticulo(this.txfCodigoArticulo.getText());
-			art.setIdProvedor(idProveedor);
-			art.setIdCategoria(idCategoria);
-			art.setCodigoSat(this.txfCodigoSat.getText());
-			art.setNombre(this.txfNombreArticulo.getText());
-			art.setDescripcion(this.txaDescripcionArticulo.getText());
-			art.setExento((this.rdbtnExento.isSelected() || this.rdbtnNoObjeto.isSelected()) ? true : false);
-			art.setCostoUnitario(Double.parseDouble(this.txfCostoArticulo.getText()));
-
-			// System.out.println(art.toString());
-
-			articuloController.insertarNuevoArticulo(art);
-
-			MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
-
-			this.limpiarCampos();
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
+		
 
 	}
 
@@ -537,178 +474,29 @@ public class Fr_DatosArticulo extends JFrame {
 	 */
 	private void consultarArticuloPorId() {
 
-		try {
-
-			Articulo art = articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
-
-			this.txfIdArticulo.setText(String.valueOf(art.getIdArticulo()));
-			this.txfCodigoArticulo.setText(art.getCodigoArticulo());
-			this.cmbProveedorArticulo.setSelectedItem(art.getNombreProveedor());
-			this.cmbMarcaArticulo.setSelectedItem(art.getNombreCategoria());
-			this.txfNombreArticulo.setText(art.getNombre());
-			this.txfCodigoSat.setText(art.getCodigoSat());
-			this.txaDescripcionArticulo.setText(art.getDescripcion());
-
-			if (art.isExento() == true) {
-				this.rdbtnExento.setSelected(true);
-			} else {
-				this.rdbtnGravado.setSelected(true);
-			}
-
-			this.txfExistenciaArticulo.setText(String.valueOf(art.getExistencia()));
-			this.txfCostoArticulo.setText(String.valueOf(art.getCostoUnitario()));
-			/*
-			 * this.txfPrecioGArticulo.setText(String.valueOf(art.getPrecioGeneral()));
-			 * this.txfPrecioMayoreoArticulo.setText(String.valueOf(art.getPrecioMayoreo()))
-			 * ;
-			 * this.txfCantidadParaMayoreo.setText(String.valueOf(art.getCantidadMayoreo()))
-			 * ;
-			 */
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
 
 	}
 
 	private void actualizarArticulo() {
 
-		Articulo art = new Articulo();
-
-		if (this.verificarCamposVacios()) {
-			return;
-		}
-
-		try {
-
-			art.setIdArticulo(Integer.parseInt(this.txfIdArticulo.getText()));
-			art.setNombreProveedor((String) this.cmbProveedorArticulo.getSelectedItem());
-			art.setNombreCategoria((String) this.cmbMarcaArticulo.getSelectedItem());
-			art.setCodigoSat(this.txfCodigoSat.getText());
-			art.setNombre(this.txfNombreArticulo.getText());
-			art.setDescripcion(this.txaDescripcionArticulo.getText());
-			art.setExento((this.rdbtnExento.isSelected() || this.rdbtnNoObjeto.isSelected()) ? true : false);
-			art.setCostoUnitario(Double.parseDouble(this.txfCostoArticulo.getText()));
-			/*
-			 * art.setPrecioGeneral(Double.parseDouble(this.txfPrecioGArticulo.getText()));
-			 * art.setPrecioMayoreo(Double.parseDouble(this.txfPrecioMayoreoArticulo.getText
-			 * ()));
-			 * art.setCantidadMayoreo(Integer.parseInt(this.txfCantidadParaMayoreo.getText()
-			 * ));
-			 */
-
-			articuloController.actualizarArticulo(art);
-
-			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
-
-			this.cerrarForm();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [SQL] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error: [Generic] ->" + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+		
 
 	}
 
 	private void abrirFormExistencias() {
-		Component componente = this;
-		try {
-
-			Articulo art = articuloController.consultarArticuloPorCodigo(this.txfCodigoArticulo.getText(),
-					this.idSucursal);
-
-			EventQueue.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-
-					Fr_ExistenciasArticulos frame = new Fr_ExistenciasArticulos(art.getIdArticulo());
-					frame.setLocationRelativeTo(componente);
-					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-					frame.setVisible(true);
-
-				}
-			});
-		} catch (Exception er) {
-			er.printStackTrace();
-		}
+		
 
 	}
 
 	private boolean verificarCamposVacios() {
 
-		if (this.txfCodigoArticulo.getText().length() < 1 || this.txfCodigoArticulo.getText().equals(null)
-				|| this.txfCodigoArticulo.getText().isEmpty() || this.txfCodigoArticulo.getText().isBlank()) {
-			JOptionPane.showMessageDialog(this, "Se debe indicar un codigo de articulo", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return true;
-		}
-
-		if (this.txfCodigoSat.getText().length() < 1 || this.txfCodigoSat.getText().equals(null)
-				|| this.txfCodigoSat.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Se debe asignar un codigo agrupador SAT", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return true;
-		}
-
-		if (this.txfNombreArticulo.getText().length() < 1 || this.txfNombreArticulo.getText().equals(null)
-				|| this.txfNombreArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el nombre comercial del acrticulo", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return true;
-		}
-
-		if (this.txfCostoArticulo.getText().length() < 1 || this.txfCostoArticulo.getText().equals(null)
-				|| this.txfCostoArticulo.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Debe indicar el costo del articulo", "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return true;
-		}
-		/*
-		 * if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-		 * .parseDouble(this.txfPrecioGArticulo.getText())) {
-		 * JOptionPane.showMessageDialog(this,
-		 * "El costo unitario no puede ser superior al precio de venta", "Error",
-		 * JOptionPane.WARNING_MESSAGE); return true; }
-		 * 
-		 * if (Double.parseDouble(this.txfCostoArticulo.getText()) > Double
-		 * .parseDouble(this.txfPrecioMayoreoArticulo.getText())) {
-		 * JOptionPane.showMessageDialog(this,
-		 * "El costo unitario no puede ser superior al precio de venta", "Error",
-		 * JOptionPane.WARNING_MESSAGE); return true; }
-		 * 
-		 * if (this.txfPrecioGArticulo.getText().length() < 1 ||
-		 * this.txfPrecioGArticulo.getText().equals(null) ||
-		 * this.txfPrecioGArticulo.getText().isEmpty()) {
-		 * JOptionPane.showMessageDialog(this,
-		 * "Debe indicar el precio de venta del articulo", "Error",
-		 * JOptionPane.WARNING_MESSAGE); return true; }
-		 */
+		
 		return false;
 	}
 
 	private void limpiarCampos() {
 
-		this.txfCodigoArticulo.setText("");
-		this.txfNombreArticulo.setText("");
-		this.txfCodigoSat.setText("");
-		this.txaDescripcionArticulo.setText("");
-		this.txfCostoArticulo.setText("");
-		/*
-		 * this.txfPrecioGArticulo.setText("");
-		 * this.txfPrecioMayoreoArticulo.setText("");
-		 * this.txfCantidadParaMayoreo.setText("");
-		 */
+		
 
 	}
 

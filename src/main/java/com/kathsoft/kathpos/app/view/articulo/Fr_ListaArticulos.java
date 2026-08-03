@@ -25,8 +25,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
-import com.kathsoft.kathpos.app.model.Articulo;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
+import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 
 public class Fr_ListaArticulos extends JFrame {
