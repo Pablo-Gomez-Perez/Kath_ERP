@@ -348,14 +348,9 @@ public class PanelArticulos extends JPanel {
 	}
 
 	private void consultarArticulosPorNombre() {
-		this.borrarElementosDeLaTablaArticulos();
-		int idTipoCliente = AppContext.tipoClienteController.cmbTipoCliente()
-				.get(this.cmb_tipoCliente.getSelectedIndex()).getIdTipoCliente();
-		AppContext.articuloController.consultarArticulosPorNombre(this.txfBuscarArticulo.getText(),
-				opcionDeBusquedaDeArticulo(), sucursal.getIdSucursal(), idTipoCliente).forEach(Ar -> {
-					this.modelTablaArticulos.addRow(Ar);
-				});
-		;
+		
+		
+		
 	}
 
 	private void borrarElementosDeLaTablaArticulos() {
