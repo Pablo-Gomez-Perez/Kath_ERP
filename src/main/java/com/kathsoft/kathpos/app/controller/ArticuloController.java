@@ -9,7 +9,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import com.kathsoft.kathpos.app.model.Articulo;
+import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class ArticuloController implements java.io.Serializable {
@@ -190,27 +190,7 @@ public class ArticuloController implements java.io.Serializable {
 	 */
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
 
-		CallableStatement stm = null;
 
-		cn = Conexion.establecerConexionLocal("kath_erp");
-
-		stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
-
-		stm.setInt(1, art.getIdArticulo());
-		stm.setString(2, art.getNombreProveedor());
-		stm.setString(3, art.getNombreCategoria());
-		stm.setString(4, art.getCodigoSat());
-		stm.setString(5, art.getNombre());
-		stm.setString(6, art.getDescripcion());
-		stm.setInt(7, art.isExento() == true ? 1 : 0);
-		stm.setDouble(8, art.getCostoUnitario());
-		// stm.setDouble(9, art.getPrecioGeneral());
-		// stm.setDouble(10, art.getPrecioMayoreo());
-		// stm.setInt(11, art.getCantidadMayoreo());
-
-		stm.execute();
-
-		Conexion.cerrarConexion(cn, stm);
 
 	}
 
@@ -238,17 +218,12 @@ public class ArticuloController implements java.io.Serializable {
 
 				art.setIdArticulo(rset.getInt(1));
 				art.setCodigoArticulo(rset.getString(2));
-				art.setNombreProveedor(rset.getString(3));
-				art.setNombreCategoria(rset.getString(4));
 				art.setNombre(rset.getString(5));
 				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));
-				art.setExistencia(rset.getInt(8));
+				art.setDescripcion(rset.getString(7));				
 				art.setExento((rset.getInt(9) == 1) ? true : false);
 				art.setCostoUnitario(rset.getDouble(10));
-				// art.setPrecioGeneral(rset.getDouble(11));
-				// art.setPrecioMayoreo(rset.getDouble(12));
-				// art.setCantidadMayoreo(rset.getInt(13));
+
 
 			}
 
@@ -325,13 +300,10 @@ public class ArticuloController implements java.io.Serializable {
 			if (rset.next()) {
 
 				art.setIdArticulo(rset.getInt(1));
-				art.setCodigoArticulo(rset.getString(2));
-				art.setNombreProveedor(rset.getString(3));
-				art.setNombreCategoria(rset.getString(4));
+				art.setCodigoArticulo(rset.getString(2));				
 				art.setNombre(rset.getString(5));
 				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));
-				art.setExistencia(rset.getInt(8));
+				art.setDescripcion(rset.getString(7));				
 				art.setExento((rset.getInt(9) == 1) ? true : false);
 				art.setCostoUnitario(rset.getDouble(10));
 				// art.setPrecioGeneral(rset.getDouble(11));
