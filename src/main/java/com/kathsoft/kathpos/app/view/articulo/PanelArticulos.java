@@ -286,113 +286,33 @@ public class PanelArticulos extends JPanel {
 
 		verticalBox_1.add(btnBuscarArticulo);
 
-		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaArticulosColumnsWidth, tablaArticulos);
 	}
 
 	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
-
-		Component cm = this;
-
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-
-					Fr_DatosArticulo fr = new Fr_DatosArticulo(opcion, idArticulo, sucursal);
-					fr.setLocationRelativeTo(cm);
-					fr.setVisible(true);
-
-				} catch (Exception er) {
-					er.printStackTrace();
-				}
-
-			}
-
-		});
 
 	}
 
 	private void eliminarArticulo() {
 
-		int input = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, "");
-
-		if (input > 0) {
-			return;
-		}
-
-		try {
-			AppContext.articuloController
-					.eliminarArticulo(DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0));
-
-			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-
-		} catch (SQLException er) {
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
-
 	}
 
 	public void exportarArticuloExcel() {
-		try {
 
-			DataTools.exportarTablaExcel(modelTablaArticulos, this);
-
-		} catch (Exception er) {
-			er.printStackTrace();
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
-			er.printStackTrace();
-		}
 	}
 
 	private void consultarArticulosPorNombre() {
-		
-		
-		
+
 	}
 
 	private void borrarElementosDeLaTablaArticulos() {
-		this.modelTablaArticulos.getDataVector().removeAllElements();
-		this.tablaArticulos.updateUI();
-	}
-
-	/**
-	 * de acuer al radioButton selecionado será el tipo de busqueda de articulo
-	 * 
-	 * @return
-	 */
-	private int opcionDeBusquedaDeArticulo() {
-
-		if (this.rdbBuscarArtPorNombre.isSelected()) {
-			return 1;
-		} else if (this.rdbtBuscarArtPorProveedor.isSelected()) {
-			return 2;
-		} else if (this.rdbtBuscarArtPorCategoria.isSelected()) {
-			return 3;
-		} else if (this.rdbtBuscarArtPorCodigo.isSelected()) {
-			return 4;
-		} else {
-			return 5;
-		}
 
 	}
 
 	public void llenarTablaArticulos() {
-		this.borrarElementosDeLaTablaArticulos();
-		int idTipoCliente = AppContext.tipoClienteController.cmbTipoCliente()
-				.get(this.cmb_tipoCliente.getSelectedIndex()).getIdTipoCliente();
-		AppContext.articuloController.verArticulosEnTabla(this.sucursal.getIdSucursal(), idTipoCliente).forEach(a -> {
-			this.modelTablaArticulos.addRow(a);
-		});
+
 	}
 
 	public void llenarCmbTipoCliente() {
-		this.cmb_tipoCliente.removeAllItems();
-		this.cmb_tipoCliente.updateUI();
-		AppContext.tipoClienteController.cmbTipoCliente().forEach(Tc -> {
-			this.cmb_tipoCliente.addItem(Tc);
-		});
+
 	}
 }
