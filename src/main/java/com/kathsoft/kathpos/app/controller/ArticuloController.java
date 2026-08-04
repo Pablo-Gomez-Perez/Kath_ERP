@@ -10,42 +10,19 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.categoria.Categoria;
+import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class ArticuloController implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8759492279100460054L;
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	private static Connection cn = null;
 
-	/**
-	 * Lista los articulos usando los parametros base para la carga inicial de tabla.
-	 *
-	 * @param idSucursal identificador de la sucursal desde la que se consulta
-	 * @param idTipoCliente identificador del tipo de cliente usado para obtener precio
-	 * @return vector con las filas de articulos
-	 */
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, int idTipoCliente) {
 		return this.verArticulosEnTabla(idSucursal, "TODOS", "NOMBRE", "", idTipoCliente);
 	}
 
-	/**
-	 * Lista los articulos registrados usando el procedimiento almacenado listArticulos.
-	 *
-	 * @param idSucursal identificador de la sucursal desde la que se consulta la existencia
-	 * @param tipoBusqueda criterio de busqueda: TODOS, CODIGO, NOMBRE, PROVEEDOR, CATEGORIA o DESCRIPCION
-	 * @param ordenarPor criterio de ordenamiento: CODIGO, NOMBRE, PROVEEDOR o CATEGORIA
-	 * @param textoBusqueda texto usado para filtrar la consulta
-	 * @param idTipoCliente identificador del tipo de cliente usado para obtener precio
-	 * @return vector con las filas de articulos
-	 */
 	public Vector<Object[]> verArticulosEnTabla(
 			int idSucursal,
 			String tipoBusqueda,
@@ -68,7 +45,6 @@ public class ArticuloController implements java.io.Serializable {
 			stm.setInt(5, idTipoCliente);
 
 			try (ResultSet rset = stm.executeQuery()) {
-
 				while (rset.next()) {
 					Object[] fila = {
 							rset.getInt("id_articulo"),
@@ -82,10 +58,8 @@ public class ArticuloController implements java.io.Serializable {
 							rset.getInt("existencia"),
 							rset.getInt("activo") == 1 ? "Activo" : "Inactivo"
 					};
-
 					articulos.add(fila);
 				}
-
 			}
 
 		} catch (SQLException er) {
@@ -97,58 +71,60 @@ public class ArticuloController implements java.io.Serializable {
 		return articulos;
 	}
 
-	/**
-	 * Inserta un nuevo registro en la base de datos
-	 * 
-	 * @param art
-	 * @throws SQLException
-	 * @throws Exception
-	 */
 	public void insertarNuevoArticulo(Articulo art) throws SQLException, Exception {
 
-		System.out.println(art);
-
 		CallableStatement stm = null;
+		try {
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?);");
 
-		cn = Conexion.establecerConexionLocal("kath_erp");
-		stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+			stm.setString(1, art.getCodigoArticulo());
+			stm.setInt(2, art.getIdProvedor());
+			stm.setInt(3, art.getIdCategoria());
+			stm.setString(4, art.getCodigoSat());
+			stm.setString(5, art.getNombre());
+			stm.setString(6, art.getDescripcion());
+			stm.setInt(7, art.isExento() ? 1 : 0);
+			stm.setDouble(8, art.getCostoUnitario());
 
-		stm.setString(1, art.getCodigoArticulo());
-		stm.setInt(2, art.getIdProvedor());
-		stm.setInt(3, art.getIdCategoria());
-		stm.setString(4, art.getCodigoSat());
-		stm.setString(5, art.getNombre());
-		stm.setString(6, art.getDescripcion());
-		stm.setInt(7, art.isExento() == true ? 1 : 0);
-		stm.setDouble(8, art.getCostoUnitario());
-		// stm.setDouble(9, art.getPrecioGeneral());
-		// stm.setDouble(10, art.getPrecioMayoreo());
-		// stm.setInt(11, art.getCantidadMayoreo());
-
-		stm.execute();
-
-		Conexion.cerrarConexion(cn, stm);
-
+			stm.execute();
+		} finally {
+			Conexion.cerrarConexion(cn, stm);
+		}
 	}
 
-	/**
-	 * 
-	 * @param art
-	 * @throws SQLException
-	 * @throws Exception
-	 */
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
 
+		CallableStatement stm = null;
+		try {
+			String nombreProveedor = obtenerNombreProveedor(art.getIdProvedor());
+			String nombreCategoria = obtenerNombreCategoria(art.getIdCategoria());
 
+			if (nombreProveedor == null || nombreCategoria == null) {
+				throw new Exception("No se pudo resolver proveedor o categoría para actualización");
+			}
 
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+
+			stm.setInt(1, art.getIdArticulo());
+			stm.setString(2, nombreProveedor);
+			stm.setString(3, nombreCategoria);
+			stm.setString(4, art.getCodigoSat());
+			stm.setString(5, art.getNombre());
+			stm.setString(6, art.getDescripcion());
+			stm.setInt(7, art.isExento() ? 1 : 0);
+			stm.setDouble(8, art.getCostoUnitario());
+			stm.setDouble(9, 0D);
+			stm.setDouble(10, 0D);
+			stm.setInt(11, 0);
+
+			stm.execute();
+		} finally {
+			Conexion.cerrarConexion(cn, stm);
+		}
 	}
 
-	/**
-	 * 
-	 * @param codigo -> codigo del articulo;
-	 * @return un objeto de tipo {@code Articulo} en función del codigo pasado como
-	 *         parámetro
-	 */
 	public Articulo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
 
 		Articulo art = new Articulo();
@@ -156,28 +132,25 @@ public class ArticuloController implements java.io.Serializable {
 		ResultSet rset = null;
 
 		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?,?);");
 			stm.setString(1, codigo);
 			stm.setInt(2, idSucursal);
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-
 				art.setIdArticulo(rset.getInt(1));
 				art.setCodigoArticulo(rset.getString(2));
+				art.setIdProvedor(obtenerIdProveedor(rset.getString(3)));
+				art.setIdCategoria(obtenerIdCategoria(rset.getString(4)));
 				art.setNombre(rset.getString(5));
 				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));				
-				art.setExento((rset.getInt(9) == 1) ? true : false);
+				art.setDescripcion(rset.getString(7));
+				art.setExento(rset.getInt(9) == 1);
 				art.setCostoUnitario(rset.getDouble(10));
-
-
 			}
 
 			return art;
-
 		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
@@ -190,16 +163,13 @@ public class ArticuloController implements java.io.Serializable {
 			return null;
 		} finally {
 			try {
-
 				Conexion.cerrarConexion(cn, rset, stm);
-
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
-
 	}
 
 	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
@@ -208,17 +178,15 @@ public class ArticuloController implements java.io.Serializable {
 		ResultSet rset = null;
 
 		try {
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL ver_existencias_articulo_sucursal(?);");
 			stm.setInt(1, idArticulo);
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
 				Object[] fila = { rset.getString(1), rset.getInt(2) };
-
 				tabla.addRow(fila);
 			}
-
 		} catch (SQLException er) {
 			er.printStackTrace();
 		} catch (Exception er) {
@@ -230,7 +198,6 @@ public class ArticuloController implements java.io.Serializable {
 				er.printStackTrace();
 			}
 		}
-
 	}
 
 	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
@@ -239,30 +206,25 @@ public class ArticuloController implements java.io.Serializable {
 		ResultSet rset = null;
 
 		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL buscar_articulo_por_id(?,?);");
 			stm.setInt(1, id);
 			stm.setInt(2, idSucursal);
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-
 				art.setIdArticulo(rset.getInt(1));
-				art.setCodigoArticulo(rset.getString(2));				
+				art.setCodigoArticulo(rset.getString(2));
+				art.setIdProvedor(obtenerIdProveedor(rset.getString(3)));
+				art.setIdCategoria(obtenerIdCategoria(rset.getString(4)));
 				art.setNombre(rset.getString(5));
 				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));				
-				art.setExento((rset.getInt(9) == 1) ? true : false);
+				art.setDescripcion(rset.getString(7));
+				art.setExento(rset.getInt(9) == 1);
 				art.setCostoUnitario(rset.getDouble(10));
-				// art.setPrecioGeneral(rset.getDouble(11));
-				// art.setPrecioMayoreo(rset.getDouble(12));
-				// art.setCantidadMayoreo(rset.getInt(13));
-
 			}
 
 			return art;
-
 		} catch (SQLException er) {
 			er.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
@@ -275,16 +237,13 @@ public class ArticuloController implements java.io.Serializable {
 			return null;
 		} finally {
 			try {
-
 				Conexion.cerrarConexion(cn, rset, stm);
-
 			} catch (SQLException er) {
 				er.printStackTrace();
 			} catch (Exception er) {
 				er.printStackTrace();
 			}
 		}
-
 	}
 
 	public void eliminarArticulo(int idArticulo) throws SQLException {
@@ -299,4 +258,49 @@ public class ArticuloController implements java.io.Serializable {
 		Conexion.cerrarConexion(cn, stm);
 	}
 
+	private String obtenerNombreProveedor(int idProveedor) {
+		ProveedorController controller = new ProveedorController();
+		for (Proveedor proveedor : controller.consultarNombresProveedor()) {
+			if (proveedor != null && proveedor.getIdProveedor() == idProveedor) {
+				return proveedor.getNombre();
+			}
+		}
+		return null;
+	}
+
+	private String obtenerNombreCategoria(int idCategoria) {
+		CategoriaController controller = new CategoriaController();
+		for (Categoria categoria : controller.obtenerIndicesDeCategorias()) {
+			if (categoria != null && categoria.getIdCategoria() == idCategoria) {
+				return categoria.getNombre();
+			}
+		}
+		return null;
+	}
+
+	private int obtenerIdProveedor(String nombreProveedor) {
+		if (nombreProveedor == null) {
+			return 0;
+		}
+		ProveedorController controller = new ProveedorController();
+		for (Proveedor proveedor : controller.consultarNombresProveedor()) {
+			if (proveedor != null && nombreProveedor.equals(proveedor.getNombre())) {
+				return proveedor.getIdProveedor();
+			}
+		}
+		return 0;
+	}
+
+	private int obtenerIdCategoria(String nombreCategoria) {
+		if (nombreCategoria == null) {
+			return 0;
+		}
+		CategoriaController controller = new CategoriaController();
+		for (Categoria categoria : controller.obtenerIndicesDeCategorias()) {
+			if (categoria != null && nombreCategoria.equals(categoria.getNombre())) {
+				return categoria.getIdCategoria();
+			}
+		}
+		return 0;
+	}
 }
