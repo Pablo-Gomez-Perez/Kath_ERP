@@ -2,39 +2,31 @@ package com.kathsoft.kathpos.app.view.articulo;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
-import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
+import com.kathsoft.kathpos.app.model.articulo.CriterioBusquedaArticulo;
+import com.kathsoft.kathpos.app.model.articulo.CriterioOrdenamientoArticulo;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
-import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
-import com.kathsoft.kathpos.tools.MessageHandler;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Dimension;
 
 public class PanelArticulos extends JPanel {
 
@@ -51,28 +43,28 @@ public class PanelArticulos extends JPanel {
 	private JButton btnEliminarArticulo;
 	private JButton btnExportarArticuloExcel;
 	private JPanel panelArticulosCentralBuscar;
-	
-	/**Datos de la sucursal desde la que se inició sesión.*/
+
+	/** Datos de la sucursal desde la que se inició sesión. */
 	private Sucursal sucursal;
-	
+
 	private JLabel lblBuscar;
-	
+
 	/** Texto que será buscado dependiendo el criterio de busqueda */
 	private JTextField txfBuscarArticulo;
 	private JButton btnBuscar;
 	private JLabel lblBuscarPor;
 	private JLabel lblCliente;
-	
+
 	/** Listado de los tipos de cliente en base a los cuales se refleja el precio en la lista */
-	private JComboBox cmbTipoCliente;
-	
+	private JComboBox<JComboboxDataViewModel> cmbTipoCliente;
+
 	/** Representa la columna por la cual se filtrará la busqueda */
-	private JComboBox cmbTipoBusqueda;
-	
+	private JComboBox<CriterioBusquedaArticulo> cmbTipoBusqueda;
+
 	private JLabel lblOrdenarPor;
-	
+
 	/** Representa la forma en la que la busqueda ordenará el resultado listado */
-	private JComboBox cmbCriterioDeOrdenacion;
+	private JComboBox<CriterioOrdenamientoArticulo> cmbCriterioDeOrdenacion;
 
 	/**
 	 * Create the panel.
@@ -103,7 +95,7 @@ public class PanelArticulos extends JPanel {
 		this.tablaArticulos = new JTable();
 		this.tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.scrollPaneTablaArticulos.setViewportView(tablaArticulos);
-		this.tablaArticulos.setModel(modelTablaArticulos);		
+		this.tablaArticulos.setModel(modelTablaArticulos);
 
 		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos);
 
@@ -164,7 +156,7 @@ public class PanelArticulos extends JPanel {
 
 		panelArticulosCentralBuscar = new JPanel();
 		panelArticulosCentralBuscar.setBackground(new Color(51, 153, 255));
-		
+
 		GroupLayout gl_panelArticulosCentral = new GroupLayout(this.panelArticulosCentral);
 		gl_panelArticulosCentral.setHorizontalGroup(
 			gl_panelArticulosCentral.createParallelGroup(Alignment.LEADING)
@@ -184,25 +176,30 @@ public class PanelArticulos extends JPanel {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(this.panelArticulosCentralBuscar, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
 		);
-		
+
 		this.lblBuscar = new JLabel("Buscar");
-		
+
 		this.txfBuscarArticulo = new JTextField();
 		this.txfBuscarArticulo.setColumns(10);
-		
+
 		this.btnBuscar = new JButton("Buscar");
-		
+
 		this.lblBuscarPor = new JLabel("Buscar Por:");
-		
+
 		this.lblCliente = new JLabel("Tipo Cliente");
-		
-		this.cmbTipoCliente = new JComboBox();
-		
-		this.cmbTipoBusqueda = new JComboBox();
-		
+
+		this.cmbTipoCliente = new JComboBox<JComboboxDataViewModel>();
+
+		this.cmbTipoBusqueda = new JComboBox<CriterioBusquedaArticulo>();
+
 		this.lblOrdenarPor = new JLabel("Ordenar Por");
-		
-		this.cmbCriterioDeOrdenacion = new JComboBox();
+
+		this.cmbCriterioDeOrdenacion = new JComboBox<CriterioOrdenamientoArticulo>();
+
+		this.llenarCmbTipoBusqueda();
+		this.llenarCmbCriterioDeOrdenacion();
+		this.llenarCmbTipoCliente();
+
 		GroupLayout gl_panelArticulosCentralBuscar = new GroupLayout(this.panelArticulosCentralBuscar);
 		gl_panelArticulosCentralBuscar.setHorizontalGroup(
 			gl_panelArticulosCentralBuscar.createParallelGroup(Alignment.LEADING)
@@ -272,6 +269,23 @@ public class PanelArticulos extends JPanel {
 	}
 
 	public void llenarCmbTipoCliente() {
+		this.cmbTipoCliente.removeAllItems();
+		AppContext.tipoClienteController.cmbTipoCliente().forEach(tipoCliente -> {
+			this.cmbTipoCliente.addItem(new JComboboxDataViewModel(tipoCliente.getIdTipoCliente(), tipoCliente.getNombre()));
+		});
+	}
 
+	private void llenarCmbTipoBusqueda() {
+		this.cmbTipoBusqueda.removeAllItems();
+		for (CriterioBusquedaArticulo criterio : CriterioBusquedaArticulo.values()) {
+			this.cmbTipoBusqueda.addItem(criterio);
+		}
+	}
+
+	private void llenarCmbCriterioDeOrdenacion() {
+		this.cmbCriterioDeOrdenacion.removeAllItems();
+		for (CriterioOrdenamientoArticulo criterio : CriterioOrdenamientoArticulo.values()) {
+			this.cmbCriterioDeOrdenacion.addItem(criterio);
+		}
 	}
 }
