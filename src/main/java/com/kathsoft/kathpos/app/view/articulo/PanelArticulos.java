@@ -31,6 +31,10 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Dimension;
 
 public class PanelArticulos extends JPanel {
 
@@ -47,31 +51,28 @@ public class PanelArticulos extends JPanel {
 	private JButton btnEliminarArticulo;
 	private JButton btnExportarArticuloExcel;
 	private JPanel panelArticulosCentralBuscar;
-	private Box verticalBox;
-	private Box horizontalBox_16;
-	private Box horizontalBox_17;
-	private JLabel lblNewLabel_20;
-	private Component horizontalStrut_14;
-	private ButtonGroup btnRadioGroupArticulos;
-	private JRadioButton rdbBuscarArtPorNombre;
-	private Component horizontalStrut_15;
-	private JRadioButton rdbtBuscarArtPorProveedor;
-	private Component horizontalStrut_16;
-	private JRadioButton rdbtBuscarArtPorCategoria;
-	private Component horizontalStrut_17;
-	private JRadioButton rdbtBuscarArtPorCodigo;
-	private Component horizontalStrut_18;
-	private JRadioButton rdbtBuscarArtPorDescrip;
-	private Component horizontalStrut_19;
-	private JLabel lblNewLabel_10;
-	private Component horizontalStrut_4;
-	private JComboBox<TipoCliente> cmb_tipoCliente;
-	private JLabel lblNewLabel_19;
-	private Component horizontalStrut_13;
-	private JTextField txfBuscarArticulo;
-	private Box verticalBox_1;
-	private JButton btnBuscarArticulo;
+	
+	/**Datos de la sucursal desde la que se inició sesión.*/
 	private Sucursal sucursal;
+	
+	private JLabel lblBuscar;
+	
+	/** Texto que será buscado dependiendo el criterio de busqueda */
+	private JTextField txfBuscarArticulo;
+	private JButton btnBuscar;
+	private JLabel lblBuscarPor;
+	private JLabel lblCliente;
+	
+	/** Listado de los tipos de cliente en base a los cuales se refleja el precio en la lista */
+	private JComboBox cmbTipoCliente;
+	
+	/** Representa la columna por la cual se filtrará la busqueda */
+	private JComboBox cmbTipoBusqueda;
+	
+	private JLabel lblOrdenarPor;
+	
+	/** Representa la forma en la que la busqueda ordenará el resultado listado */
+	private JComboBox cmbCriterioDeOrdenacion;
 
 	/**
 	 * Create the panel.
@@ -92,32 +93,17 @@ public class PanelArticulos extends JPanel {
 		this.panelEtiquetaArticulos.add(lblNewLabel);
 
 		this.panelArticulosCentral = new JPanel();
-		this.panelArticulosCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
+		this.panelArticulosCentral.setBorder(null);
 		this.panelArticulosCentral.setBackground(new Color(255, 215, 0));
 		this.add(panelArticulosCentral, BorderLayout.CENTER);
-		this.panelArticulosCentral.setLayout(new BorderLayout(0, 0));
 
 		this.scrollPaneTablaArticulos = new JScrollPane();
-		this.panelArticulosCentral.add(scrollPaneTablaArticulos);
 
 		this.modelTablaArticulos = new DefaultTableModel();
 		this.tablaArticulos = new JTable();
 		this.tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.scrollPaneTablaArticulos.setViewportView(tablaArticulos);
-		this.tablaArticulos.setModel(modelTablaArticulos);
-
-		this.modelTablaArticulos.addColumn("Id");
-		this.modelTablaArticulos.addColumn("Codigo");
-		this.modelTablaArticulos.addColumn("Proveedor");
-		this.modelTablaArticulos.addColumn("Categoría");
-		this.modelTablaArticulos.addColumn("Codigo Sat");
-		this.modelTablaArticulos.addColumn("Nombre");
-		this.modelTablaArticulos.addColumn("Descripción");
-		this.modelTablaArticulos.addColumn("Existencia");
-		this.modelTablaArticulos.addColumn("Precios G");
-		this.modelTablaArticulos.addColumn("Precio E");
-		this.modelTablaArticulos.addColumn("Despues de");
-		this.modelTablaArticulos.addColumn("Estatus");
+		this.tablaArticulos.setModel(modelTablaArticulos);		
 
 		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos);
 
@@ -125,7 +111,6 @@ public class PanelArticulos extends JPanel {
 		panelArticulosCentralBotones.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_2 = (FlowLayout) panelArticulosCentralBotones.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.RIGHT);
-		panelArticulosCentral.add(panelArticulosCentralBotones, BorderLayout.NORTH);
 
 		btnAgregarArticulo = new JButton("Agregar");
 		btnAgregarArticulo.addActionListener(new ActionListener() {
@@ -178,113 +163,91 @@ public class PanelArticulos extends JPanel {
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
 		panelArticulosCentralBuscar = new JPanel();
-		FlowLayout flowLayout_3 = (FlowLayout) panelArticulosCentralBuscar.getLayout();
-		flowLayout_3.setAlignment(FlowLayout.LEFT);
-		panelArticulosCentralBuscar.setBackground(new Color(255, 215, 0));
-		panelArticulosCentral.add(panelArticulosCentralBuscar, BorderLayout.SOUTH);
-
-		verticalBox = Box.createVerticalBox();
-		panelArticulosCentralBuscar.add(verticalBox);
-
-		horizontalBox_16 = Box.createHorizontalBox();
-		verticalBox.add(horizontalBox_16);
-
-		horizontalBox_17 = Box.createHorizontalBox();
-		horizontalBox_17.setBorder(new EmptyBorder(5, 0, 0, 0));
-		verticalBox.add(horizontalBox_17);
-
-		lblNewLabel_20 = new JLabel("Buscar por");
-		lblNewLabel_20.setFont(new Font("Tahoma", Font.BOLD, 12));
-		horizontalBox_17.add(lblNewLabel_20);
-
-		horizontalStrut_14 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_14);
-
-		btnRadioGroupArticulos = new ButtonGroup();
-
-		rdbBuscarArtPorNombre = new JRadioButton("Nombre");
-		rdbBuscarArtPorNombre.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbBuscarArtPorNombre.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbBuscarArtPorNombre);
-
-		horizontalStrut_15 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_15);
-
-		rdbtBuscarArtPorProveedor = new JRadioButton("Proveedor");
-		rdbtBuscarArtPorProveedor.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorProveedor.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorProveedor);
-
-		horizontalStrut_16 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_16);
-
-		rdbtBuscarArtPorCategoria = new JRadioButton("Categoria");
-		rdbtBuscarArtPorCategoria.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorCategoria.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorCategoria);
-
-		horizontalStrut_17 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_17);
-
-		rdbtBuscarArtPorCodigo = new JRadioButton("Código");
-		rdbtBuscarArtPorCodigo.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorCodigo.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorCodigo);
-
-		horizontalStrut_18 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_18);
-
-		rdbtBuscarArtPorDescrip = new JRadioButton("Descripción");
-		rdbtBuscarArtPorDescrip.setFont(new Font("Tahoma", Font.BOLD, 12));
-		rdbtBuscarArtPorDescrip.setBackground(new Color(255, 215, 0));
-		horizontalBox_17.add(rdbtBuscarArtPorDescrip);
-
-		btnRadioGroupArticulos.add(this.rdbBuscarArtPorNombre);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCategoria);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorCodigo);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorDescrip);
-		btnRadioGroupArticulos.add(this.rdbtBuscarArtPorProveedor);
-
-		horizontalStrut_19 = Box.createHorizontalStrut(10);
-		horizontalBox_17.add(horizontalStrut_19);
-
-		lblNewLabel_10 = new JLabel("Tipo de Cliente");
-		lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 12));
-		horizontalBox_17.add(lblNewLabel_10);
-
-		horizontalStrut_4 = Box.createHorizontalStrut(5);
-		horizontalBox_17.add(horizontalStrut_4);
-
-		cmb_tipoCliente = new JComboBox<TipoCliente>();
-		horizontalBox_17.add(cmb_tipoCliente);
-
-		lblNewLabel_19 = new JLabel("Buscar artículo");
-		lblNewLabel_19.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_16.add(lblNewLabel_19);
-		horizontalStrut_13 = Box.createHorizontalStrut(5);
-		horizontalBox_16.add(horizontalStrut_13);
-
-		txfBuscarArticulo = new JTextField();
-		txfBuscarArticulo.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_16.add(txfBuscarArticulo);
-		txfBuscarArticulo.setColumns(70);
-		this.txfBuscarArticulo.setMaximumSize(this.txfBuscarArticulo.getPreferredSize());
-
-		verticalBox_1 = Box.createVerticalBox();
-		verticalBox_1.setBorder(new EmptyBorder(10, 30, 10, 10));
-		panelArticulosCentralBuscar.add(verticalBox_1);
-
-		btnBuscarArticulo = new JButton("Buscar");
-		btnBuscarArticulo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				consultarArticulosPorNombre();
-			}
-		});
-		btnBuscarArticulo.setBackground(new Color(184, 134, 11));
-		btnBuscarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-
-		verticalBox_1.add(btnBuscarArticulo);
+		panelArticulosCentralBuscar.setBackground(new Color(51, 153, 255));
+		
+		GroupLayout gl_panelArticulosCentral = new GroupLayout(this.panelArticulosCentral);
+		gl_panelArticulosCentral.setHorizontalGroup(
+			gl_panelArticulosCentral.createParallelGroup(Alignment.LEADING)
+				.addComponent(this.panelArticulosCentralBotones, GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+				.addComponent(this.panelArticulosCentralBuscar, GroupLayout.PREFERRED_SIZE, 775, Short.MAX_VALUE)
+				.addGroup(gl_panelArticulosCentral.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.scrollPaneTablaArticulos, GroupLayout.DEFAULT_SIZE, 751, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		gl_panelArticulosCentral.setVerticalGroup(
+			gl_panelArticulosCentral.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelArticulosCentral.createSequentialGroup()
+					.addComponent(this.panelArticulosCentralBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.scrollPaneTablaArticulos, GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.panelArticulosCentralBuscar, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		this.lblBuscar = new JLabel("Buscar");
+		
+		this.txfBuscarArticulo = new JTextField();
+		this.txfBuscarArticulo.setColumns(10);
+		
+		this.btnBuscar = new JButton("Buscar");
+		
+		this.lblBuscarPor = new JLabel("Buscar Por:");
+		
+		this.lblCliente = new JLabel("Tipo Cliente");
+		
+		this.cmbTipoCliente = new JComboBox();
+		
+		this.cmbTipoBusqueda = new JComboBox();
+		
+		this.lblOrdenarPor = new JLabel("Ordenar Por");
+		
+		this.cmbCriterioDeOrdenacion = new JComboBox();
+		GroupLayout gl_panelArticulosCentralBuscar = new GroupLayout(this.panelArticulosCentralBuscar);
+		gl_panelArticulosCentralBuscar.setHorizontalGroup(
+			gl_panelArticulosCentralBuscar.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelArticulosCentralBuscar.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelArticulosCentralBuscar.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelArticulosCentralBuscar.createSequentialGroup()
+							.addComponent(this.lblBuscar)
+							.addGap(3)
+							.addComponent(this.txfBuscarArticulo, GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.btnBuscar))
+						.addGroup(gl_panelArticulosCentralBuscar.createSequentialGroup()
+							.addComponent(this.lblBuscarPor)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbTipoBusqueda, 0, 112, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblOrdenarPor)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbCriterioDeOrdenacion, 0, 116, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblCliente)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbTipoCliente, 0, 180, Short.MAX_VALUE)))
+					.addGap(6))
+		);
+		gl_panelArticulosCentralBuscar.setVerticalGroup(
+			gl_panelArticulosCentralBuscar.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelArticulosCentralBuscar.createSequentialGroup()
+					.addGroup(gl_panelArticulosCentralBuscar.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.txfBuscarArticulo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.btnBuscar)
+						.addComponent(this.lblBuscar))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelArticulosCentralBuscar.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblBuscarPor)
+						.addComponent(this.cmbTipoBusqueda, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblOrdenarPor)
+						.addComponent(this.cmbCriterioDeOrdenacion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCliente)
+						.addComponent(this.cmbTipoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(13, Short.MAX_VALUE))
+		);
+		this.panelArticulosCentralBuscar.setLayout(gl_panelArticulosCentralBuscar);
+		this.panelArticulosCentral.setLayout(gl_panelArticulosCentral);
 
 	}
 
@@ -297,10 +260,6 @@ public class PanelArticulos extends JPanel {
 	}
 
 	public void exportarArticuloExcel() {
-
-	}
-
-	private void consultarArticulosPorNombre() {
 
 	}
 
