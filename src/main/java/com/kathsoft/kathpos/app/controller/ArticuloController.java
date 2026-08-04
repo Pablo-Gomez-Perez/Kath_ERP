@@ -2,16 +2,15 @@ package com.kathsoft.kathpos.app.controller;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
-import com.kathsoft.kathpos.app.model.categoria.Categoria;
-import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class ArticuloController implements java.io.Serializable {
@@ -73,103 +72,91 @@ public class ArticuloController implements java.io.Serializable {
 
 	public void insertarNuevoArticulo(Articulo art) throws SQLException, Exception {
 
-		CallableStatement stm = null;
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL insert_nuevo_articulo(?,?,?,?,?,?,?,?);");
+		String sql = "INSERT INTO articulo ("
+				+ "id_proveedor, id_categoria, codigo_articulo, codigo_sat, unidad_sat, "
+				+ "nombre, descripcion, es_exento, costo_unitario, activo"
+				+ ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-			stm.setString(1, art.getCodigoArticulo());
-			stm.setInt(2, art.getIdProvedor());
-			stm.setInt(3, art.getIdCategoria());
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				PreparedStatement stm = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+		) {
+			stm.setInt(1, art.getIdProvedor());
+			stm.setInt(2, art.getIdCategoria());
+			stm.setString(3, art.getCodigoArticulo());
 			stm.setString(4, art.getCodigoSat());
-			stm.setString(5, art.getNombre());
-			stm.setString(6, art.getDescripcion());
-			stm.setInt(7, art.isExento() ? 1 : 0);
-			stm.setDouble(8, art.getCostoUnitario());
+			stm.setString(5, art.getUnidadSat());
+			stm.setString(6, art.getNombre());
+			stm.setString(7, art.getDescripcion());
+			stm.setBoolean(8, art.isExento());
+			stm.setDouble(9, art.getCostoUnitario());
+			stm.setBoolean(10, art.isActivo());
 
-			stm.execute();
-		} finally {
-			Conexion.cerrarConexion(cn, stm);
+			stm.executeUpdate();
+
+			try (ResultSet generatedKeys = stm.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					art.setIdArticulo(generatedKeys.getInt(1));
+				}
+			}
 		}
 	}
 
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
 
-		CallableStatement stm = null;
-		try {
-			String nombreProveedor = obtenerNombreProveedor(art.getIdProvedor());
-			String nombreCategoria = obtenerNombreCategoria(art.getIdCategoria());
+		String sql = "UPDATE articulo SET "
+				+ "id_proveedor = ?, "
+				+ "id_categoria = ?, "
+				+ "codigo_sat = ?, "
+				+ "unidad_sat = ?, "
+				+ "nombre = ?, "
+				+ "descripcion = ?, "
+				+ "es_exento = ?, "
+				+ "costo_unitario = ?, "
+				+ "activo = ? "
+				+ "WHERE id_articulo = ?;";
 
-			if (nombreProveedor == null || nombreCategoria == null) {
-				throw new Exception("No se pudo resolver proveedor o categoría para actualización");
-			}
-
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
-
-			stm.setInt(1, art.getIdArticulo());
-			stm.setString(2, nombreProveedor);
-			stm.setString(3, nombreCategoria);
-			stm.setString(4, art.getCodigoSat());
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				PreparedStatement stm = cn.prepareStatement(sql)
+		) {
+			stm.setInt(1, art.getIdProvedor());
+			stm.setInt(2, art.getIdCategoria());
+			stm.setString(3, art.getCodigoSat());
+			stm.setString(4, art.getUnidadSat());
 			stm.setString(5, art.getNombre());
 			stm.setString(6, art.getDescripcion());
-			stm.setInt(7, art.isExento() ? 1 : 0);
+			stm.setBoolean(7, art.isExento());
 			stm.setDouble(8, art.getCostoUnitario());
-			stm.setDouble(9, 0D);
-			stm.setDouble(10, 0D);
-			stm.setInt(11, 0);
+			stm.setBoolean(9, art.isActivo());
+			stm.setInt(10, art.getIdArticulo());
 
-			stm.execute();
-		} finally {
-			Conexion.cerrarConexion(cn, stm);
+			stm.executeUpdate();
 		}
 	}
 
 	public Articulo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
+		String sql = "SELECT "
+				+ "art.id_articulo, art.id_proveedor, art.id_categoria, art.codigo_articulo, "
+				+ "art.codigo_sat, art.unidad_sat, art.nombre, art.descripcion, "
+				+ "art.es_exento, art.costo_unitario, art.activo "
+				+ "FROM articulo AS art "
+				+ "WHERE art.codigo_articulo = ?;";
 
-		Articulo art = new Articulo();
-		CallableStatement stm = null;
-		ResultSet rset = null;
-
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?,?);");
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				PreparedStatement stm = cn.prepareStatement(sql)
+		) {
 			stm.setString(1, codigo);
-			stm.setInt(2, idSucursal);
-			rset = stm.executeQuery();
 
-			if (rset.next()) {
-				art.setIdArticulo(rset.getInt(1));
-				art.setCodigoArticulo(rset.getString(2));
-				art.setIdProvedor(obtenerIdProveedor(rset.getString(3)));
-				art.setIdCategoria(obtenerIdCategoria(rset.getString(4)));
-				art.setNombre(rset.getString(5));
-				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));
-				art.setExento(rset.getInt(9) == 1);
-				art.setCostoUnitario(rset.getDouble(10));
-			}
-
-			return art;
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
+			try (ResultSet rset = stm.executeQuery()) {
+				if (rset.next()) {
+					return this.mapArticulo(rset);
+				}
 			}
 		}
+
+		return null;
 	}
 
 	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
@@ -201,49 +188,27 @@ public class ArticuloController implements java.io.Serializable {
 	}
 
 	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
-		Articulo art = new Articulo();
-		CallableStatement stm = null;
-		ResultSet rset = null;
+		String sql = "SELECT "
+				+ "art.id_articulo, art.id_proveedor, art.id_categoria, art.codigo_articulo, "
+				+ "art.codigo_sat, art.unidad_sat, art.nombre, art.descripcion, "
+				+ "art.es_exento, art.costo_unitario, art.activo "
+				+ "FROM articulo AS art "
+				+ "WHERE art.id_articulo = ?;";
 
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL buscar_articulo_por_id(?,?);");
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				PreparedStatement stm = cn.prepareStatement(sql)
+		) {
 			stm.setInt(1, id);
-			stm.setInt(2, idSucursal);
-			rset = stm.executeQuery();
 
-			if (rset.next()) {
-				art.setIdArticulo(rset.getInt(1));
-				art.setCodigoArticulo(rset.getString(2));
-				art.setIdProvedor(obtenerIdProveedor(rset.getString(3)));
-				art.setIdCategoria(obtenerIdCategoria(rset.getString(4)));
-				art.setNombre(rset.getString(5));
-				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));
-				art.setExento(rset.getInt(9) == 1);
-				art.setCostoUnitario(rset.getDouble(10));
-			}
-
-			return art;
-		} catch (SQLException er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [SQL] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		} catch (Exception er) {
-			er.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
+			try (ResultSet rset = stm.executeQuery()) {
+				if (rset.next()) {
+					return this.mapArticulo(rset);
+				}
 			}
 		}
+
+		return null;
 	}
 
 	public void eliminarArticulo(int idArticulo) throws SQLException {
@@ -258,49 +223,21 @@ public class ArticuloController implements java.io.Serializable {
 		Conexion.cerrarConexion(cn, stm);
 	}
 
-	private String obtenerNombreProveedor(int idProveedor) {
-		ProveedorController controller = new ProveedorController();
-		for (Proveedor proveedor : controller.consultarNombresProveedor()) {
-			if (proveedor != null && proveedor.getIdProveedor() == idProveedor) {
-				return proveedor.getNombre();
-			}
-		}
-		return null;
-	}
+	private Articulo mapArticulo(ResultSet rset) throws SQLException {
+		Articulo art = new Articulo();
 
-	private String obtenerNombreCategoria(int idCategoria) {
-		CategoriaController controller = new CategoriaController();
-		for (Categoria categoria : controller.obtenerIndicesDeCategorias()) {
-			if (categoria != null && categoria.getIdCategoria() == idCategoria) {
-				return categoria.getNombre();
-			}
-		}
-		return null;
-	}
+		art.setIdArticulo(rset.getInt("id_articulo"));
+		art.setIdProvedor(rset.getInt("id_proveedor"));
+		art.setIdCategoria(rset.getInt("id_categoria"));
+		art.setCodigoArticulo(rset.getString("codigo_articulo"));
+		art.setCodigoSat(rset.getString("codigo_sat"));
+		art.setUnidadSat(rset.getString("unidad_sat"));
+		art.setNombre(rset.getString("nombre"));
+		art.setDescripcion(rset.getString("descripcion"));
+		art.setExento(rset.getBoolean("es_exento"));
+		art.setCostoUnitario(rset.getDouble("costo_unitario"));
+		art.setActivo(rset.getBoolean("activo"));
 
-	private int obtenerIdProveedor(String nombreProveedor) {
-		if (nombreProveedor == null) {
-			return 0;
-		}
-		ProveedorController controller = new ProveedorController();
-		for (Proveedor proveedor : controller.consultarNombresProveedor()) {
-			if (proveedor != null && nombreProveedor.equals(proveedor.getNombre())) {
-				return proveedor.getIdProveedor();
-			}
-		}
-		return 0;
-	}
-
-	private int obtenerIdCategoria(String nombreCategoria) {
-		if (nombreCategoria == null) {
-			return 0;
-		}
-		CategoriaController controller = new CategoriaController();
-		for (Categoria categoria : controller.obtenerIndicesDeCategorias()) {
-			if (categoria != null && nombreCategoria.equals(categoria.getNombre())) {
-				return categoria.getIdCategoria();
-			}
-		}
-		return 0;
+		return art;
 	}
 }
