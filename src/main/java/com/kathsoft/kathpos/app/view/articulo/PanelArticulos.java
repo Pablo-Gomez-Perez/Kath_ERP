@@ -26,6 +26,7 @@ import com.kathsoft.kathpos.app.model.articulo.CriterioOrdenamientoArticulo;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -283,14 +284,14 @@ public class PanelArticulos extends JPanel {
 		this.modelTablaArticulos.addColumn("Categoría");
 		this.modelTablaArticulos.addColumn("Código");
 		this.modelTablaArticulos.addColumn("Nombre");
-		this.modelTablaArticulos.addColumn("Impuesto");
-		this.modelTablaArticulos.addColumn("Costo");
+		this.modelTablaArticulos.addColumn("Exento");
+		this.modelTablaArticulos.addColumn("Costo Unitario");
 		this.modelTablaArticulos.addColumn("Precio");
 		this.modelTablaArticulos.addColumn("Existencia");
-		this.modelTablaArticulos.addColumn("Estatus");
+		this.modelTablaArticulos.addColumn("Activo");
 
 		DataTools.definirTamanioDeColumnas(
-				new int[] { 60, 180, 140, 120, 220, 90, 90, 90, 90, 90 },
+				ConstantsConllections.tablaArticulosColumnsWidth,
 				this.tablaArticulos
 		);
 	}
