@@ -27,6 +27,7 @@ import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class PanelArticulos extends JPanel {
 
@@ -96,6 +97,7 @@ public class PanelArticulos extends JPanel {
 		this.tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.scrollPaneTablaArticulos.setViewportView(tablaArticulos);
 		this.tablaArticulos.setModel(modelTablaArticulos);
+		this.setDefaultTableModel();
 
 		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos);
 
@@ -155,7 +157,7 @@ public class PanelArticulos extends JPanel {
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
 		panelArticulosCentralBuscar = new JPanel();
-		panelArticulosCentralBuscar.setBackground(new Color(51, 153, 255));
+		panelArticulosCentralBuscar.setBackground(new Color(0, 153, 255));
 
 		GroupLayout gl_panelArticulosCentral = new GroupLayout(this.panelArticulosCentral);
 		gl_panelArticulosCentral.setHorizontalGroup(
@@ -183,6 +185,14 @@ public class PanelArticulos extends JPanel {
 		this.txfBuscarArticulo.setColumns(10);
 
 		this.btnBuscar = new JButton("Buscar");
+		this.btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaArticulos();
+			}
+		});
+		this.btnBuscar.setBackground(new Color(184, 134, 11));
+		this.btnBuscar.setIcon(
+				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 
 		this.lblBuscarPor = new JLabel("Buscar Por:");
 
@@ -246,6 +256,7 @@ public class PanelArticulos extends JPanel {
 		this.panelArticulosCentralBuscar.setLayout(gl_panelArticulosCentralBuscar);
 		this.panelArticulosCentral.setLayout(gl_panelArticulosCentral);
 
+		this.llenarTablaArticulos();
 	}
 
 	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
@@ -257,15 +268,56 @@ public class PanelArticulos extends JPanel {
 	}
 
 	public void exportarArticuloExcel() {
+		try {
+			DataTools.exportarTablaExcel(modelTablaArticulos, this);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Error de escritura en fichero CSV: " + er.getMessage());
+		}
+	}
 
+	private void setDefaultTableModel() {
+		this.modelTablaArticulos.addColumn("Id");
+		this.modelTablaArticulos.addColumn("Proveedor");
+		this.modelTablaArticulos.addColumn("Categoría");
+		this.modelTablaArticulos.addColumn("Código");
+		this.modelTablaArticulos.addColumn("Nombre");
+		this.modelTablaArticulos.addColumn("Impuesto");
+		this.modelTablaArticulos.addColumn("Costo");
+		this.modelTablaArticulos.addColumn("Precio");
+		this.modelTablaArticulos.addColumn("Existencia");
+		this.modelTablaArticulos.addColumn("Estatus");
+
+		DataTools.definirTamanioDeColumnas(
+				new int[] { 60, 180, 140, 120, 220, 90, 90, 90, 90, 90 },
+				this.tablaArticulos
+		);
 	}
 
 	private void borrarElementosDeLaTablaArticulos() {
-
+		this.modelTablaArticulos.getDataVector().removeAllElements();
+		this.tablaArticulos.updateUI();
 	}
 
 	public void llenarTablaArticulos() {
+		this.borrarElementosDeLaTablaArticulos();
 
+		JComboboxDataViewModel tipoCliente = (JComboboxDataViewModel) this.cmbTipoCliente.getSelectedItem();
+		CriterioBusquedaArticulo tipoBusqueda = (CriterioBusquedaArticulo) this.cmbTipoBusqueda.getSelectedItem();
+		CriterioOrdenamientoArticulo ordenarPor = (CriterioOrdenamientoArticulo) this.cmbCriterioDeOrdenacion.getSelectedItem();
+
+		if (tipoCliente == null || tipoBusqueda == null || ordenarPor == null) {
+			return;
+		}
+
+		AppContext.articuloController.verArticulosEnTabla(
+				this.sucursal.getIdSucursal(),
+				tipoBusqueda.name(),
+				ordenarPor.name(),
+				this.txfBuscarArticulo.getText().trim(),
+				tipoCliente.id()
+		).forEach(this.modelTablaArticulos::addRow);
 	}
 
 	public void llenarCmbTipoCliente() {
