@@ -265,7 +265,35 @@ public class PanelArticulos extends JPanel {
 	}
 
 	private void eliminarArticulo() {
+		if (this.tablaArticulos.getSelectedRow() < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione un articulo para eliminar");
+			return;
+		}
 
+		int idArticulo = DataTools.getIndiceElementoSeleccionado(
+				this.tablaArticulos,
+				this.modelTablaArticulos,
+				0
+		);
+
+		if (idArticulo < 0) {
+			return;
+		}
+
+		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
+
+		if (option != 0) {
+			return;
+		}
+
+		try {
+			AppContext.articuloController.eliminarArticulo(idArticulo);
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
+			this.llenarTablaArticulos();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
 	}
 
 	public void exportarArticuloExcel() {
