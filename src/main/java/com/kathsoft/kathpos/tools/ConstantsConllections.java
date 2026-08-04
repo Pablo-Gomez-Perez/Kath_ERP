@@ -29,18 +29,16 @@ public class ConstantsConllections implements java.io.Serializable{
 	};
 	
 	// Array que define el ancho de cada columna de la tabla de Articulos
-	public static final int[] tablaArticulosColumnsWidth = { 40, /* id */
-			150, /* codigo */
-			200, /* proveedor */
-			180, /* categoría */
-			100, /* codigo sat */
-			300, /* Nombre */
-			450, /* descripcion */
-			100, /* Existencia */
-			100, /* Precio G */
-			100, /* Precio E */
-			100, /* Despues de */
-			100 /* activo o inactivo */
+	public static final int[] tablaArticulosColumnsWidth = { 40, // id
+			200, // proveedor
+			180, // categoria
+			150, // codigo articulo
+			300, // nombre
+			90, // es exento
+			120, // costo unitario
+			120, // precio
+			100, // existencia
+			100 // activo
 	};
 	
 	// Array que define el ancho de cada columna de la tabla de empleados
