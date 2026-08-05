@@ -4,8 +4,14 @@ import java.util.Objects;
 
 public class Articulo implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -7086377815477726807L;
-
+	/**
+	 * 
+	 * 
+	 */
 	private int idArticulo;
 	private int idProveedor;
 	private int idCategoria;
@@ -16,7 +22,6 @@ public class Articulo implements java.io.Serializable {
 	private String descripcion;
 	private boolean exento;
 	private double costoUnitario;
-	private boolean activo;
 
 	public Articulo() {
 		super();
@@ -35,7 +40,6 @@ public class Articulo implements java.io.Serializable {
 		this.descripcion = descripcion;
 		this.exento = exento;
 		this.costoUnitario = costoUnitario;
-		this.activo = true;
 	}
 
 	public int getIdArticulo() {
@@ -118,14 +122,6 @@ public class Articulo implements java.io.Serializable {
 		this.costoUnitario = costoUnitario;
 	}
 
-	public boolean isActivo() {
-		return activo;
-	}
-
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -135,7 +131,7 @@ public class Articulo implements java.io.Serializable {
 		return "Articulo [idArticulo=" + idArticulo + ", idProvedor=" + idProveedor + ", idCategoria=" + idCategoria
 				+ ", codigoArticulo=" + codigoArticulo + ", codigoSat=" + codigoSat + ", unidadSat=" + unidadSat
 				+ ", nombre=" + nombre + ", descripcion=" + descripcion + ", exento=" + exento + ", costoUnitario="
-				+ costoUnitario + ", activo=" + activo + "]";
+				+ costoUnitario + "]";
 	}
 
 	@Override
@@ -212,11 +208,6 @@ public class Articulo implements java.io.Serializable {
 
 		public ArticuloBuilder costoUnitario(double costoUnitario) {
 			this.articulo.costoUnitario = costoUnitario;
-			return this;
-		}
-
-		public ArticuloBuilder activo(boolean activo) {
-			this.articulo.activo = activo;
 			return this;
 		}
 
