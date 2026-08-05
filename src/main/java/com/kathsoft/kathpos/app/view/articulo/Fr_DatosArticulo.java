@@ -38,6 +38,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.kathsoft.kathpos.app.controller.ArticuloController;
+import com.kathsoft.kathpos.app.controller.CategoriaController;
+import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.categoria.Categoria;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
@@ -56,6 +59,10 @@ public class Fr_DatosArticulo extends JFrame {
 	private static final int COL_PRECIO = 2;
 	private static final int COL_PRECIO_ESPECIAL = 3;
 	private static final int COL_CANTIDAD_PRECIO_ESPECIAL = 4;
+
+	private final ArticuloController articuloController = new ArticuloController();
+	private final CategoriaController categoriaController = new CategoriaController();
+	private final ProveedorController proveedorController = new ProveedorController();
 
 	private Vector<Proveedor> listProveedores = new Vector<>();
 	private Vector<Categoria> listCategoria = new Vector<>();
@@ -447,7 +454,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void getArticuloPorId() {
 		try {
-			Articulo articulo = AppContext.articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
+			Articulo articulo = this.articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
 			if (articulo == null) {
 				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "No se encontró articulo para editar");
 				return;
@@ -460,7 +467,7 @@ public class Fr_DatosArticulo extends JFrame {
 			txfNombreArticulo.setText(nullToEmpty(articulo.getNombre()));
 			txaDescripcionArticulo.setText(nullToEmpty(articulo.getDescripcion()));
 			txfCostoArticulo.setText(String.valueOf(articulo.getCostoUnitario()));
-			chkActivo.setSelected(articulo.isActivo());
+			chkActivo.setSelected(true);
 			setRadioExento(articulo.isExento());
 			seleccionarProveedorPorId(articulo.getIdProvedor());
 			seleccionarCategoriaPorId(articulo.getIdCategoria());
@@ -481,7 +488,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 		try {
 			Articulo articulo = buildArticulo();
-			AppContext.articuloController.insertarNuevoArticulo(articulo);
+			this.articuloController.insertarNuevoArticulo(articulo);
 			guardarPreciosArticulo();
 			this.operacionEjecutada = true;
 			MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
@@ -502,7 +509,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 		try {
 			Articulo articulo = buildArticulo();
-			AppContext.articuloController.actualizarArticulo(articulo);
+			this.articuloController.actualizarArticulo(articulo);
 			guardarPreciosArticulo();
 			this.operacionEjecutada = true;
 			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
@@ -632,7 +639,6 @@ public class Fr_DatosArticulo extends JFrame {
 				.descripcion(txaDescripcionArticulo.getText().trim())
 				.exento(rdbtnExento.isSelected())
 				.costoUnitario(parseDecimal(txfCostoArticulo.getText().trim()).doubleValue())
-				.activo(chkActivo.isSelected())
 				.build();
 	}
 
@@ -704,7 +710,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void llenarCmbProveedor() {
 		cmbProveedorArticulo.removeAllItems();
-		listProveedores = AppContext.proveedorController.consultarNombresProveedor();
+		listProveedores = proveedorController.consultarNombresProveedor();
 		if (listProveedores != null) {
 			for (Proveedor proveedor : listProveedores) {
 				cmbProveedorArticulo.addItem(proveedor);
@@ -714,7 +720,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void llenarCmbCategoria() {
 		cmbCategoriaArticulo.removeAllItems();
-		listCategoria = AppContext.categoriaController.obtenerIndicesDeCategorias();
+		listCategoria = categoriaController.obtenerIndicesDeCategorias();
 		if (listCategoria != null) {
 			for (Categoria categoria : listCategoria) {
 				cmbCategoriaArticulo.addItem(categoria);
