@@ -11,31 +11,14 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.categoria.Categoria;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class CategoriaController implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6835247986143695345L;
-	
 
-	/*public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
-	}
-
-	public Categoria getCategoria() {
-		return this.categoria;
-	}*/
-
-	/**
-	 * conecta a la base de datos e imprime en un JTable de un formulario todos los
-	 * datos recolectados.
-	 * 
-	 * @param tabla
-	 */
 	public Vector<Object[]> verCategoriasEnTabla(String nombre) {
 
 		var data = new Vector<Object[]>();
@@ -69,9 +52,9 @@ public class CategoriaController implements Serializable {
 		return data;
 	}
 
-	public Vector<Categoria> obtenerIndicesDeCategorias() {
+	public Vector<JComboboxDataViewModel> obtenerIndicesDeCategorias() {
 
-		var categorias = new Vector<Categoria>();
+		var categorias = new Vector<JComboboxDataViewModel>();
 		
 		try (
 				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
@@ -80,7 +63,7 @@ public class CategoriaController implements Serializable {
 		) {
 
 			while (rset.next()) {
-				categorias.add(new Categoria(
+				categorias.add(new JComboboxDataViewModel(
 						rset.getInt("id_categoria"),
 						rset.getString("nombre")
 				));
@@ -97,10 +80,6 @@ public class CategoriaController implements Serializable {
 		return categorias;
 	}
 
-	/**
-	 * @param txf
-	 * @param txa
-	 */
 	public void buscarCategoriaPorNombre(String nombre, DefaultTableModel model) {
 
 		try (
