@@ -5,9 +5,9 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.articulo.CriterioBusquedaArticulo;
 import com.kathsoft.kathpos.app.model.articulo.CriterioOrdenamientoArticulo;
-import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
@@ -48,36 +47,19 @@ public class PanelArticulos extends JPanel {
 	private JButton btnEliminarArticulo;
 	private JButton btnExportarArticuloExcel;
 	private JPanel panelArticulosCentralBuscar;
-
-	/** Datos de la sucursal desde la que se inició sesión. */
 	private Sucursal sucursal;
-
 	private JLabel lblBuscar;
-
-	/** Texto que será buscado dependiendo el criterio de busqueda */
 	private JTextField txfBuscarArticulo;
 	private JButton btnBuscar;
 	private JLabel lblBuscarPor;
 	private JLabel lblCliente;
-
-	/** Listado de los tipos de cliente en base a los cuales se refleja el precio en la lista */
 	private JComboBox<JComboboxDataViewModel> cmbTipoCliente;
-
-	/** Representa la columna por la cual se filtrará la busqueda */
 	private JComboBox<CriterioBusquedaArticulo> cmbTipoBusqueda;
-
 	private JLabel lblOrdenarPor;
-
-	/** Representa la forma en la que la busqueda ordenará el resultado listado */
 	private JComboBox<CriterioOrdenamientoArticulo> cmbCriterioDeOrdenacion;
 
-	/**
-	 * Create the panel.
-	 */
 	public PanelArticulos(Sucursal sucursal) {
-
 		this.sucursal = sucursal;
-
 		this.setLayout(new BorderLayout(0, 0));
 
 		this.panelEtiquetaArticulos = new JPanel();
@@ -95,14 +77,12 @@ public class PanelArticulos extends JPanel {
 		this.add(panelArticulosCentral, BorderLayout.CENTER);
 
 		this.scrollPaneTablaArticulos = new JScrollPane();
-
 		this.modelTablaArticulos = new DefaultTableModel();
 		this.tablaArticulos = new JTable();
 		this.tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.scrollPaneTablaArticulos.setViewportView(tablaArticulos);
 		this.tablaArticulos.setModel(modelTablaArticulos);
 		this.setDefaultTableModel();
-
 		DataTools.removerEditorDeTabla(tablaArticulos, modelTablaArticulos);
 
 		panelArticulosCentralBotones = new JPanel();
@@ -113,28 +93,20 @@ public class PanelArticulos extends JPanel {
 		btnAgregarArticulo = new JButton("Agregar");
 		btnAgregarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				abrirVentanaFormularioArticulo(0, 0, sucursal.getIdSucursal());
-
+				agregarArticulo();
 			}
 		});
-		btnAgregarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnAgregarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnAgregarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnAgregarArticulo);
 
 		btnActualizarArticulo = new JButton("Actualizar");
 		btnActualizarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				abrirVentanaFormularioArticulo(1,
-						DataTools.getIndiceElementoSeleccionado(tablaArticulos, modelTablaArticulos, 0),
-						sucursal.getIdSucursal());
-
+				actualizarArticulo();
 			}
 		});
-		btnActualizarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
+		btnActualizarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		btnActualizarArticulo.setBackground(new Color(144, 238, 144));
 		panelArticulosCentralBotones.add(btnActualizarArticulo);
 
@@ -144,8 +116,7 @@ public class PanelArticulos extends JPanel {
 				eliminarArticulo();
 			}
 		});
-		btnEliminarArticulo.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		btnEliminarArticulo.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminarArticulo.setBackground(new Color(255, 51, 0));
 		panelArticulosCentralBotones.add(btnEliminarArticulo);
 
@@ -155,8 +126,7 @@ public class PanelArticulos extends JPanel {
 				exportarArticuloExcel();
 			}
 		});
-		btnExportarArticuloExcel.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		btnExportarArticuloExcel.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		btnExportarArticuloExcel.setBackground(new Color(102, 205, 170));
 		panelArticulosCentralBotones.add(btnExportarArticuloExcel);
 
@@ -184,7 +154,6 @@ public class PanelArticulos extends JPanel {
 		);
 
 		this.lblBuscar = new JLabel("Buscar");
-
 		this.txfBuscarArticulo = new JTextField();
 		this.txfBuscarArticulo.setColumns(10);
 
@@ -195,19 +164,13 @@ public class PanelArticulos extends JPanel {
 			}
 		});
 		this.btnBuscar.setBackground(new Color(184, 134, 11));
-		this.btnBuscar.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscar.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 
 		this.lblBuscarPor = new JLabel("Buscar Por:");
-
 		this.lblCliente = new JLabel("Tipo Cliente");
-
 		this.cmbTipoCliente = new JComboBox<JComboboxDataViewModel>();
-
 		this.cmbTipoBusqueda = new JComboBox<CriterioBusquedaArticulo>();
-
 		this.lblOrdenarPor = new JLabel("Ordenar Por");
-
 		this.cmbCriterioDeOrdenacion = new JComboBox<CriterioOrdenamientoArticulo>();
 
 		this.llenarCmbTipoBusqueda();
@@ -263,13 +226,30 @@ public class PanelArticulos extends JPanel {
 		this.llenarTablaArticulos();
 	}
 
-	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
+	private void agregarArticulo() {
+		abrirVentanaFormularioArticulo(0, 0, this.sucursal.getIdSucursal());
+	}
 
+	private void actualizarArticulo() {
+		if (this.tablaArticulos.getSelectedRow() < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un articulo para actualizar");
+			return;
+		}
+
+		int idArticulo = DataTools.getIndiceElementoSeleccionado(this.tablaArticulos, this.modelTablaArticulos, 0);
+		if (idArticulo <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "No se pudo obtener el identificador del articulo seleccionado");
+			return;
+		}
+
+		abrirVentanaFormularioArticulo(1, idArticulo, this.sucursal.getIdSucursal());
+	}
+
+	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
 		try {
 			Fr_DatosArticulo form = new Fr_DatosArticulo(opcion, idArticulo, sucursal);
 			form.setLocationRelativeTo(this);
 			form.addWindowListener(new WindowAdapter() {
-				
 				public void windowClosed(WindowEvent e) {
 					if (form.isOperacionEjecutada()) {
 						llenarTablaArticulos();
@@ -281,7 +261,6 @@ public class PanelArticulos extends JPanel {
 			e.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
 		}
-
 	}
 
 	private void eliminarArticulo() {
@@ -290,18 +269,12 @@ public class PanelArticulos extends JPanel {
 			return;
 		}
 
-		int idArticulo = DataTools.getIndiceElementoSeleccionado(
-				this.tablaArticulos,
-				this.modelTablaArticulos,
-				0
-		);
-
+		int idArticulo = DataTools.getIndiceElementoSeleccionado(this.tablaArticulos, this.modelTablaArticulos, 0);
 		if (idArticulo < 0) {
 			return;
 		}
 
 		int option = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionado?");
-
 		if (option != 0) {
 			return;
 		}
@@ -321,8 +294,7 @@ public class PanelArticulos extends JPanel {
 			DataTools.exportarTablaExcel(modelTablaArticulos, this);
 		} catch (Exception er) {
 			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"Error de escritura en fichero CSV: " + er.getMessage());
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Error de escritura en fichero CSV: " + er.getMessage());
 		}
 	}
 
@@ -338,10 +310,7 @@ public class PanelArticulos extends JPanel {
 		this.modelTablaArticulos.addColumn("Existencia");
 		this.modelTablaArticulos.addColumn("Activo");
 
-		DataTools.definirTamanioDeColumnas(
-				ConstantsConllections.tablaArticulosColumnsWidth,
-				this.tablaArticulos
-		);
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaArticulosColumnsWidth, this.tablaArticulos);
 	}
 
 	private void borrarElementosDeLaTablaArticulos() {

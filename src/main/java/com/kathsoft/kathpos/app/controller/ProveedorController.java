@@ -11,26 +11,15 @@ import javax.swing.JOptionPane;
 
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.app.model.proveedor.ProveedorById;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class ProveedorController implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5820147766336769662L;
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	private static Connection cn = null;
 
-	/**
-	 * 
-	 * @param tabla
-	 */
 	public Vector<Object[]> verProveedoresEnTabla(String nombre) {
 
 		var data = new Vector<Object[]>();
@@ -107,13 +96,6 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 
-	/**
-	 * consulta la tabla de proveedores en la base de datos el listado completo de
-	 * proveedores registrados y extrae el RFC correspondiente agregandolo al
-	 * ComboBox que se le pasa como parámetro
-	 * 
-	 * @param cmb
-	 */
 	public void consultarRFCProveedor(JComboBox<String> cmb) {
 
 		CallableStatement stm = null;
@@ -147,23 +129,23 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 
-	public Vector<Proveedor> consultarNombresProveedor() {
+	public Vector<JComboboxDataViewModel> consultarNombresProveedor() {
 		
-		var data = new Vector<Proveedor>();
+		var data = new Vector<JComboboxDataViewModel>();
 		CallableStatement stm = null;
 		ResultSet rset = null;
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_nombres_proveedor();");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+			stm = cn.prepareCall("CALL listCmbProveeodor();");
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				var prov = new Proveedor();
-				prov.setIdProveedor(rset.getInt(1));
-				prov.setNombre(rset.getString(2));
-				data.add(prov);
+				data.add(new JComboboxDataViewModel(
+						rset.getInt("id"),
+						rset.getString("nombre")
+				));
 			}
 			
 			return data;
@@ -187,12 +169,6 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 
-	/**
-	 * inserta un nuevo registro en la base de datos
-	 * 
-	 * @param prv
-	 * @throws Exception
-	 */
 	public SpResponseModel insertarNuevoProveedor(Proveedor prv) {
 
 		try (
@@ -283,12 +259,6 @@ public class ProveedorController implements java.io.Serializable {
 
 	}
 
-	/**
-	 * 
-	 * @param rfc
-	 * @throws Exception
-	 * @throws SQLException
-	 */
 	public Proveedor buscarProveedorPorRFC(String rfc) throws Exception, SQLException {
 
 		Proveedor prv = new Proveedor();
