@@ -85,6 +85,10 @@ public class Fr_DatosArticulo extends JFrame {
 	private JScrollPane scrollPanePreciosTipoCliente;
 	private JTable tablePreciosPorTipoCliente;
 	private JButton btnConsultarExistencias;
+	private JLabel lblProveedor;
+	private JComboBox cmbProveedor;
+	private JLabel lblCategoria;
+	private JComboBox cmbCategoriaArticulo;
 
 	public Fr_DatosArticulo(int tipoOperacion, int idArticulo, int sucursal) {
 		this.tipoOperacion = tipoOperacion;
@@ -206,13 +210,20 @@ public class Fr_DatosArticulo extends JFrame {
 		this.lblPreciosPorCategoria = new JLabel("Precios por categoria de cliente");
 		
 		this.scrollPanePreciosTipoCliente = new JScrollPane();
+		
+		this.lblProveedor = new JLabel("Proveedor");
+		
+		this.cmbProveedor = new JComboBox();
+		
+		this.lblCategoria = new JLabel("Categoria");
+		
+		this.cmbCategoriaArticulo = new JComboBox();
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
 		gl_panelCentralFormulario.setHorizontalGroup(
 			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
 						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
 							.addComponent(this.lblCdigo)
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -229,6 +240,14 @@ public class Fr_DatosArticulo extends JFrame {
 							.addComponent(this.lblNombre)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(this.txfNombre, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblProveedor)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbProveedor, 0, 204, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblCategoria)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbCategoriaArticulo, 0, 207, Short.MAX_VALUE))
 						.addComponent(this.lblDescripcion)
 						.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
 							.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
@@ -239,7 +258,8 @@ public class Fr_DatosArticulo extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
 							.addComponent(this.lblCostoUnitario)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_panelCentralFormulario.setVerticalGroup(
@@ -258,6 +278,12 @@ public class Fr_DatosArticulo extends JFrame {
 						.addComponent(this.lblNombre)
 						.addComponent(this.txfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblProveedor)
+						.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCategoria)
+						.addComponent(this.cmbCategoriaArticulo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(this.lblDescripcion)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
@@ -269,7 +295,7 @@ public class Fr_DatosArticulo extends JFrame {
 						.addComponent(this.lblCostoUnitario)
 						.addComponent(this.lblPreciosPorCategoria))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+					.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
 					.addGap(22))
 		);
 		
