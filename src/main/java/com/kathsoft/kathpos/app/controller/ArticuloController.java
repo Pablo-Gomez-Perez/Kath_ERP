@@ -269,29 +269,27 @@ public class ArticuloController implements java.io.Serializable {
 
 	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
 
-		CallableStatement stm = null;
-		ResultSet rset = null;
-
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL ver_existencias_articulo_sucursal(?);");
+		try (
+				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listExistenciaGlobalArticulo(?);")
+		) {
 			stm.setInt(1, idArticulo);
-			rset = stm.executeQuery();
 
-			while (rset.next()) {
-				Object[] fila = { rset.getString(1), rset.getInt(2) };
-				tabla.addRow(fila);
+			try (ResultSet rset = stm.executeQuery()) {
+				while (rset.next()) {
+					Object[] fila = {
+							rset.getInt("id_sucursar"),
+							rset.getString("nombre"),
+							rset.getString("direccion"),
+							rset.getInt("existencia")
+					};
+					tabla.addRow(fila);
+				}
 			}
 		} catch (SQLException er) {
-			er.printStackTrace();
+			er.printStackTrace(System.err);
 		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
+			er.printStackTrace(System.err);
 		}
 	}
 
