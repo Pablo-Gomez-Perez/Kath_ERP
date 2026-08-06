@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
@@ -23,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.articulo.CriterioBusquedaArticulo;
 import com.kathsoft.kathpos.app.model.articulo.CriterioOrdenamientoArticulo;
+import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
@@ -261,6 +264,23 @@ public class PanelArticulos extends JPanel {
 	}
 
 	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
+
+		try {
+			Fr_DatosArticulo form = new Fr_DatosArticulo(opcion, idArticulo, sucursal);
+			form.setLocationRelativeTo(this);
+			form.addWindowListener(new WindowAdapter() {
+				
+				public void windowClosed(WindowEvent e) {
+					if (form.isOperacionEjecutada()) {
+						llenarTablaArticulos();
+					}
+				}
+			});
+			form.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
+		}
 
 	}
 

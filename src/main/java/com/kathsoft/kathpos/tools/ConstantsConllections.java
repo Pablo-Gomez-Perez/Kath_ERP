@@ -41,6 +41,13 @@ public class ConstantsConllections implements java.io.Serializable{
 			100 // activo
 	};
 	
+	public static final int[] tablaPreciosArticuloColumnsWidth = { 60, // id tipo cliente
+			240, // tipo cliente
+			120, // precio
+			150, // precio especial
+			170 // cantidad precio especial
+	};
+
 	// Array que define el ancho de cada columna de la tabla de empleados
 	public static final int[] tableEmpleadosColumnsWidth = { 40, // id
 			150, // sucursal
