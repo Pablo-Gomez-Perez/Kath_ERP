@@ -2,54 +2,38 @@ package com.kathsoft.kathpos.app.view.articulo;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-
-import com.kathsoft.kathpos.app.controller.ArticuloController;
-import com.kathsoft.kathpos.app.controller.CategoriaController;
-import com.kathsoft.kathpos.app.controller.ProveedorController;
-import com.kathsoft.kathpos.app.model.articulo.Articulo;
-import com.kathsoft.kathpos.app.model.categoria.Categoria;
-import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
-import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
-import com.kathsoft.kathpos.tools.AppContext;
-import com.kathsoft.kathpos.tools.ConstantsConllections;
-import com.kathsoft.kathpos.tools.DataTools;
-import com.kathsoft.kathpos.tools.MessageHandler;
 import javax.swing.GroupLayout.Alignment;
+
+import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_DatosArticulo extends JFrame {
 
@@ -86,9 +70,9 @@ public class Fr_DatosArticulo extends JFrame {
 	private JTable tablePreciosPorTipoCliente;
 	private JButton btnConsultarExistencias;
 	private JLabel lblProveedor;
-	private JComboBox cmbProveedor;
+	private JComboBox<JComboboxDataViewModel> cmbProveedor;
 	private JLabel lblCategoria;
-	private JComboBox cmbCategoriaArticulo;
+	private JComboBox<JComboboxDataViewModel> cmbCategoriaArticulo;
 
 	public Fr_DatosArticulo(int tipoOperacion, int idArticulo, int sucursal) {
 		this.tipoOperacion = tipoOperacion;
@@ -117,7 +101,6 @@ public class Fr_DatosArticulo extends JFrame {
 		} else {
 			getArticuloPorId();
 		}
-		
 	}
 
 	private void buildHeader() {
@@ -133,8 +116,6 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void buildCentralForm() {
 	}
-
-	
 
 	private void buildFooter() {
 		panelInferiorBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -213,11 +194,11 @@ public class Fr_DatosArticulo extends JFrame {
 		
 		this.lblProveedor = new JLabel("Proveedor");
 		
-		this.cmbProveedor = new JComboBox();
+		this.cmbProveedor = new JComboBox<JComboboxDataViewModel>();
 		
 		this.lblCategoria = new JLabel("Categoria");
 		
-		this.cmbCategoriaArticulo = new JComboBox();
+		this.cmbCategoriaArticulo = new JComboBox<JComboboxDataViewModel>();
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
 		gl_panelCentralFormulario.setHorizontalGroup(
 			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
@@ -324,8 +305,6 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private boolean validarCamposVacios() {
-		
-
 		return true;
 	}
 
@@ -337,13 +316,14 @@ public class Fr_DatosArticulo extends JFrame {
 		return new Articulo();
 	}
 
-	private void setDefaultTableModelPrecios() {		
-
+	private void setDefaultTableModelPrecios() {
+		modelTablaPrecios = new DefaultTableModel();
 		modelTablaPrecios.addColumn("Id Tipo Cliente");
 		modelTablaPrecios.addColumn("Tipo Cliente");
 		modelTablaPrecios.addColumn("Precio");
 		modelTablaPrecios.addColumn("Precio Especial");
 		modelTablaPrecios.addColumn("Cantidad Precio Especial");
+		this.tablePreciosPorTipoCliente.setModel(modelTablaPrecios);
 	}
 
 	private void llenarTablaPrecios() {
@@ -373,19 +353,24 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 	}
 
-	
-
 	private void guardarPreciosArticulo() {
-		
-		// Pendiente: no existe SP para persistir precios_x_tipocliente en este repo.
+		// Pendiente: conectar envio de precios al controlador transaccional.
 	}
 
 	private void llenarCmbProveedor() {
-		
+		this.cmbProveedor.removeAllItems();
+		Vector<JComboboxDataViewModel> proveedores = AppContext.proveedorController.consultarNombresProveedor();
+		for (JComboboxDataViewModel proveedor : proveedores) {
+			this.cmbProveedor.addItem(proveedor);
+		}
 	}
 
 	private void llenarCmbCategoria() {
-		
+		this.cmbCategoriaArticulo.removeAllItems();
+		Vector<JComboboxDataViewModel> categorias = AppContext.categoriaController.obtenerIndicesDeCategorias();
+		for (JComboboxDataViewModel categoria : categorias) {
+			this.cmbCategoriaArticulo.addItem(categoria);
+		}
 	}
 
 	public boolean isOperacionEjecutada() {
