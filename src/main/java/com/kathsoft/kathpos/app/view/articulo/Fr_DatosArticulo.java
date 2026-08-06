@@ -4,500 +4,456 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.categoria.Categoria;
+import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
+import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
+import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.GroupLayout.Alignment;
 
 public class Fr_DatosArticulo extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1528483064591725560L;
-	/**
-	 * 
-	 * 
-	 */
-	private ArticuloController articuloController = new ArticuloController();
-	private CategoriaController categoriaController = new CategoriaController();
-	private ProveedorController proveedorController = new ProveedorController();
-	private Vector<Proveedor> listProveedores;
-	private Vector<Categoria> listCategoria;
-	private int idSucursal;
-	private int idArticulo;
+	
+	private final int tipoOperacion;
+	private boolean operacionEjecutada;
+
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
-	private JPanel panelCentralFormulario;
 	private JPanel panelInferiorBotones;
-	private Component verticalStrut;
-	private Box horizontalBox;
-	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
-	private Component horizontalStrut;
-	private JTextField txfIdArticulo;
-	private Component horizontalStrut_1;
-	private JLabel lblNewLabel_2;
-	private Component horizontalStrut_2;
-	private JTextField txfCodigoArticulo;
-	private Component verticalStrut_1;
-	private Box horizontalBox_1;
-	private JLabel lblNewLabel_3;
-	private Component horizontalStrut_3;
-	private JComboBox<Proveedor> cmbProveedorArticulo;
-	private Component horizontalStrut_4;
-	private JLabel lblNewLabel_4;
-	private Component horizontalStrut_5;
-	private JComboBox<Categoria> cmbMarcaArticulo;
-	private Component verticalStrut_2;
-	private Box horizontalBox_2;
-	private JLabel lblNewLabel_5;
-	private Component horizontalStrut_6;
-	private JTextField txfNombreArticulo;
-	private Component verticalStrut_3;
-	private Box verticalBox;
-	private JPanel panel;
-	private JLabel lblNewLabel_6;
-	private JTextArea txaDescripcionArticulo;
-	private Component verticalStrut_4;
-	private Box horizontalBox_3;
-	private JLabel lblNewLabel_7;
-	private Component horizontalStrut_7;
-	private JTextField txfExistenciaArticulo;
-	private Component verticalStrut_5;
-	private Box horizontalBox_4;
-	private JLabel lblNewLabel_8;
-	private Component horizontalStrut_8;
-	private JTextField txfCostoArticulo;
-	private Component horizontalStrut_15;
-	private Box horizontalBox_5;
-	private ButtonGroup btnRadioGroup;
-	private JRadioButton rdbtnGravado;
-	private Component horizontalStrut_16;
-	private JRadioButton rdbtnExento;
-	private Component horizontalStrut_17;
-	private JRadioButton rdbtnNoObjeto;
 	private JButton btnCancelar;
-	private Component horizontalStrut_18;
 	private JButton btnGuardar;
-	private Component verticalStrut_6;
-	private Component horizontalStrut_19;
-	private JLabel lblNewLabel_12;
-	private Component horizontalStrut_20;
-	private JTextField txfCodigoSat;
-	private JButton btnExistenciaGlobal;
-	private Component horizontalStrut_21;
-	private Component horizontalStrut_9;
-	private Box verticalBox_1;
-	private JPanel panel_1;
-	private JScrollPane scrollPaneTablaPreciosTipoCliente;
-	private JTable table;
-	private JLabel lblNewLabel_9;
-	private JScrollPane scrollPaneTxaDescripcion;
+	private DefaultTableModel modelTablaPrecios;
+	private JPanel panelCentralFormulario;
+	private JLabel lblCdigo;
+	private JTextField txfCodigo;
+	private JLabel lblCodigoSat;
+	private JTextField txfCodigoSAT;
+	private JLabel lblUnidadSat;
+	private JTextField txfUnidadSAT;
+	private JLabel lblNombre;
+	private JTextField txfNombre;
+	private JLabel lblDescripcion;
+	private JScrollPane scrollPane;
+	private JLabel lblCostoUnitario;
+	private JTextField txfCostoUnitario;
+	private JPanel panelRdbIndicadorImpuestos;
+	private JRadioButton rdbtnExcento;
+	private JRadioButton rdbtnGravado;
+	private JLabel lblPreciosPorCategoria;
+	private JScrollPane scrollPanePreciosTipoCliente;
+	private JTable tablePreciosPorTipoCliente;
+	private JButton btnConsultarExistencias;
+	private JLabel lblProveedor;
+	private JComboBox cmbProveedor;
+	private JLabel lblCategoria;
+	private JComboBox cmbCategoriaArticulo;
 
-	/**
-	 * Create the frame.
-	 */
 	public Fr_DatosArticulo(int tipoOperacion, int idArticulo, int sucursal) {
+		this.tipoOperacion = tipoOperacion;
+		setTitle(tipoOperacion == 0 ? "Nuevo Articulo" : "Editar Articulo");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		this.idSucursal = sucursal;
-		this.idArticulo = idArticulo;
-		this.listProveedores = this.proveedorController.consultarNombresProveedor();
-		this.listCategoria = this.categoriaController.obtenerIndicesDeCategorias();
-
-		if (tipoOperacion == 0) {
-			this.setTitle("Nuevo Articulo");
-		} else if (tipoOperacion == 1) {
-			this.setTitle("Editar Articulo");
-		}
-
-		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 780, 632);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));		
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 
+		buildHeader();
+		buildCentralForm();
+		buildFooter();
+
+		llenarCmbProveedor();
+		llenarCmbCategoria();
+		setDefaultTableModelPrecios();
+		llenarTablaPrecios();
+
+		if (this.tipoOperacion == 0) {
+			limpiarCampos();
+		} else {
+			getArticuloPorId();
+		}
+		
+	}
+
+	private void buildHeader() {
 		panelSuperiorEtiqueta = new JPanel();
 		panelSuperiorEtiqueta.setBackground(new Color(25, 25, 112));
 		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
 
-		lblNewLabel_1 = new JLabel();
-
-		lblNewLabel_1.setForeground(new Color(255, 255, 255));
+		lblNewLabel_1 = new JLabel(getTitle());
+		lblNewLabel_1.setForeground(Color.WHITE);
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelSuperiorEtiqueta.add(lblNewLabel_1);
+	}
 
-		panelCentralFormulario = new JPanel();
-		panelCentralFormulario
-				.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(new Color(0, 0, 0))));
-		panelCentralFormulario.setBackground(new Color(255, 215, 0));
-		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
-		panelCentralFormulario.setLayout(new BoxLayout(panelCentralFormulario, BoxLayout.Y_AXIS));
+	private void buildCentralForm() {
+	}
 
-		verticalStrut = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut);
+	
 
-		horizontalBox = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox);
-
-		lblNewLabel = new JLabel("ID");
-		horizontalBox.add(lblNewLabel);
-
-		horizontalStrut = Box.createHorizontalStrut(5);
-		horizontalBox.add(horizontalStrut);
-
-		txfIdArticulo = new JTextField();
-		txfIdArticulo.setEditable(false);
-		horizontalBox.add(txfIdArticulo);
-		txfIdArticulo.setColumns(15);
-		this.txfIdArticulo.setMaximumSize(this.txfIdArticulo.getPreferredSize());
-
-		horizontalStrut_1 = Box.createHorizontalStrut(20);
-		horizontalBox.add(horizontalStrut_1);
-
-		lblNewLabel_2 = new JLabel("Código");
-		horizontalBox.add(lblNewLabel_2);
-
-		horizontalStrut_2 = Box.createHorizontalStrut(5);
-		horizontalBox.add(horizontalStrut_2);
-
-		this.txfCodigoArticulo = new JTextField();
-		this.txfCodigoArticulo.setColumns(50);
-		this.txfCodigoArticulo.setMaximumSize(this.txfCodigoArticulo.getPreferredSize());
-
-		if (tipoOperacion == 1) {
-			this.txfCodigoArticulo.setEditable(false);
-		} else {
-			this.txfCodigoArticulo.setEditable(true);
-		}
-
-		horizontalBox.add(this.txfCodigoArticulo);
-
-		verticalStrut_1 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_1);
-
-		horizontalBox_1 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_1);
-
-		lblNewLabel_3 = new JLabel("Proveedor");
-		horizontalBox_1.add(lblNewLabel_3);
-
-		horizontalStrut_3 = Box.createHorizontalStrut(5);
-		horizontalBox_1.add(horizontalStrut_3);
-
-		cmbProveedorArticulo = new JComboBox<Proveedor>();
-		horizontalBox_1.add(cmbProveedorArticulo);
-
-		horizontalStrut_4 = Box.createHorizontalStrut(20);
-		horizontalBox_1.add(horizontalStrut_4);
-
-		lblNewLabel_4 = new JLabel("Categoría");
-		horizontalBox_1.add(lblNewLabel_4);
-
-		horizontalStrut_5 = Box.createHorizontalStrut(5);
-		horizontalBox_1.add(horizontalStrut_5);
-
-		cmbMarcaArticulo = new JComboBox<Categoria>();
-		horizontalBox_1.add(cmbMarcaArticulo);
-
-		verticalStrut_2 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_2);
-
-		horizontalBox_2 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_2);
-
-		lblNewLabel_5 = new JLabel("Nombre");
-		horizontalBox_2.add(lblNewLabel_5);
-
-		horizontalStrut_6 = Box.createHorizontalStrut(5);
-		horizontalBox_2.add(horizontalStrut_6);
-
-		txfNombreArticulo = new JTextField();
-		horizontalBox_2.add(txfNombreArticulo);
-		txfNombreArticulo.setColumns(80);
-		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
-
-		horizontalStrut_19 = Box.createHorizontalStrut(20);
-		horizontalBox_2.add(horizontalStrut_19);
-
-		lblNewLabel_12 = new JLabel("Codigo SAT");
-		horizontalBox_2.add(lblNewLabel_12);
-
-		horizontalStrut_20 = Box.createHorizontalStrut(5);
-		horizontalBox_2.add(horizontalStrut_20);
-
-		txfCodigoSat = new JTextField();
-		txfCodigoSat.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!(ch >= '0' && ch <= '9') || txfCodigoSat.getText().length() >= 8) {
-					e.consume();
-				}
-			}
-		});
-		horizontalBox_2.add(txfCodigoSat);
-		txfCodigoSat.setColumns(20);
-		this.txfCodigoSat.setMaximumSize(this.txfCodigoSat.getPreferredSize());
-
-		verticalStrut_3 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_3);
-
-		panel = new JPanel();
-		// panelCentralFormulario.add(panel);
-		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel.setBackground(new Color(255, 215, 0));
-
-		lblNewLabel_6 = new JLabel("Descripción");
-		panel.add(lblNewLabel_6);
-
-		verticalBox = Box.createVerticalBox();
-		verticalBox.add(panel);
-		panelCentralFormulario.add(verticalBox);
-
-		scrollPaneTxaDescripcion = new JScrollPane();
-		verticalBox.add(scrollPaneTxaDescripcion);
-
-		txaDescripcionArticulo = new JTextArea();
-		scrollPaneTxaDescripcion.setViewportView(txaDescripcionArticulo);
-		scrollPaneTxaDescripcion.setPreferredSize(new Dimension(750, 150));
-		txaDescripcionArticulo.setLineWrap(true);
-
-		verticalBox_1 = Box.createVerticalBox();
-		panelCentralFormulario.add(verticalBox_1);
-
-		panel_1 = new JPanel();
-		FlowLayout flowLayout_2 = (FlowLayout) panel_1.getLayout();
-		flowLayout_2.setAlignment(FlowLayout.LEFT);
-		panel_1.setBackground(new Color(255, 215, 0));
-		verticalBox_1.add(panel_1);
-
-		lblNewLabel_9 = new JLabel("Precios por categoría de cliente");
-		panel_1.add(lblNewLabel_9);
-
-		scrollPaneTablaPreciosTipoCliente = new JScrollPane();
-		verticalBox_1.add(scrollPaneTablaPreciosTipoCliente);
-
-		table = new JTable();
-		scrollPaneTablaPreciosTipoCliente.setViewportView(table);
-		scrollPaneTablaPreciosTipoCliente.setPreferredSize(new Dimension(750, 150));
-
-		verticalStrut_4 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_4);
-
-		horizontalBox_3 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_3);
-
-		lblNewLabel_7 = new JLabel("Existencia");
-		horizontalBox_3.add(lblNewLabel_7);
-
-		horizontalStrut_7 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_7);
-
-		txfExistenciaArticulo = new JTextField();
-		txfExistenciaArticulo.setEditable(false);
-		horizontalBox_3.add(txfExistenciaArticulo);
-		txfExistenciaArticulo.setColumns(20);
-		this.txfExistenciaArticulo.setMaximumSize(this.txfExistenciaArticulo.getPreferredSize());
-
-		horizontalStrut_15 = Box.createHorizontalStrut(20);
-		horizontalBox_3.add(horizontalStrut_15);
-
-		btnExistenciaGlobal = new JButton("Global");
-		btnExistenciaGlobal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				abrirFormExistencias();
-			}
-		});
-		btnExistenciaGlobal.setBackground(new Color(102, 51, 255));
-		horizontalBox_3.add(btnExistenciaGlobal);
-
-		horizontalStrut_21 = Box.createHorizontalStrut(20);
-		horizontalBox_3.add(horizontalStrut_21);
-
-		horizontalBox_5 = Box.createHorizontalBox();
-		horizontalBox_5.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Impuestos Trasladado",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		horizontalBox_3.add(horizontalBox_5);
-
-		btnRadioGroup = new ButtonGroup();
-
-		rdbtnGravado = new JRadioButton("Gravado");
-		rdbtnGravado.setBackground(new Color(255, 215, 0));
-		rdbtnGravado.setSelected(true);
-		horizontalBox_5.add(rdbtnGravado);
-
-		horizontalStrut_16 = Box.createHorizontalStrut(5);
-		horizontalBox_5.add(horizontalStrut_16);
-
-		rdbtnExento = new JRadioButton("Exento");
-		rdbtnExento.setBackground(new Color(255, 215, 0));
-		horizontalBox_5.add(rdbtnExento);
-
-		horizontalStrut_17 = Box.createHorizontalStrut(5);
-		horizontalBox_5.add(horizontalStrut_17);
-
-		rdbtnNoObjeto = new JRadioButton("No Objeto");
-		rdbtnNoObjeto.setBackground(new Color(255, 215, 0));
-		horizontalBox_5.add(rdbtnNoObjeto);
-
-		btnRadioGroup.add(rdbtnGravado);
-		btnRadioGroup.add(rdbtnExento);
-		btnRadioGroup.add(rdbtnNoObjeto);
-
-		horizontalStrut_9 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_9);
-
-		lblNewLabel_8 = new JLabel("Costo");
-		horizontalBox_3.add(lblNewLabel_8);
-
-		horizontalStrut_8 = Box.createHorizontalStrut(5);
-		horizontalBox_3.add(horizontalStrut_8);
-
-		txfCostoArticulo = new JTextField();
-		horizontalBox_3.add(txfCostoArticulo);
-		txfCostoArticulo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!(ch >= '0' && ch <= '9' || ch == '.')) {
-					e.consume();
-				} else if (ch == '.' && txfCostoArticulo.getText().contains(".")) {
-					e.consume();
-				}
-			}
-		});
-		txfCostoArticulo.setColumns(10);
-		this.txfCostoArticulo.setMaximumSize(this.txfCostoArticulo.getPreferredSize());
-
-		verticalStrut_5 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_5);
-
-		horizontalBox_4 = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox_4);
-
-		verticalStrut_6 = Box.createVerticalStrut(20);
-		panelCentralFormulario.add(verticalStrut_6);
-
-		panelInferiorBotones = new JPanel();
-		panelInferiorBotones.setBorder(new LineBorder(new Color(0, 0, 0)));
+	private void buildFooter() {
+		panelInferiorBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		panelInferiorBotones.setBorder(new LineBorder(Color.BLACK));
 		panelInferiorBotones.setBackground(new Color(30, 144, 255));
-		FlowLayout flowLayout_1 = (FlowLayout) panelInferiorBotones.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		btnCancelar = new JButton("Cancelar");
+		btnCancelar.setBackground(new Color(205, 92, 92));
+		btnCancelar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnCancelar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				dispose();
 			}
 		});
-		btnCancelar.setBackground(new Color(205, 92, 92));
-		btnCancelar.setIcon(
-				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		
+		this.btnConsultarExistencias = new JButton("Existencias");
+		this.panelInferiorBotones.add(this.btnConsultarExistencias);
 		panelInferiorBotones.add(btnCancelar);
 
-		horizontalStrut_18 = Box.createHorizontalStrut(20);
-		panelInferiorBotones.add(horizontalStrut_18);
-
 		btnGuardar = new JButton("Guardar");
+		btnGuardar.setBackground(new Color(144, 238, 144));
+		btnGuardar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnGuardar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (tipoOperacion == 0) {
 					insertarNuevoArticulo();
-				} else if (tipoOperacion == 1) {
+				} else {
 					actualizarArticulo();
 				}
 			}
 		});
-		btnGuardar.setBackground(new Color(144, 238, 144));
-		btnGuardar.setIcon(
-				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		panelInferiorBotones.add(btnGuardar);
-
-		if (tipoOperacion == 1) {
-			this.consultarArticuloPorId();
-		}
-
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	}
-
-	void insertarNuevoArticulo() {
-
 		
-
+		this.panelCentralFormulario = new JPanel();
+		this.panelCentralFormulario.setBackground(new Color(255, 204, 0));
+		this.contentPane.add(this.panelCentralFormulario, BorderLayout.CENTER);
+		
+		this.lblCdigo = new JLabel("Código");
+		
+		this.txfCodigo = new JTextField();
+		this.txfCodigo.setColumns(10);
+		
+		this.lblCodigoSat = new JLabel("Codigo SAT");
+		
+		this.txfCodigoSAT = new JTextField();
+		this.txfCodigoSAT.setColumns(10);
+		
+		this.lblUnidadSat = new JLabel("Unidad SAT");
+		
+		this.txfUnidadSAT = new JTextField();
+		this.txfUnidadSAT.setColumns(10);
+		
+		this.lblNombre = new JLabel("Nombre");
+		
+		this.txfNombre = new JTextField();
+		this.txfNombre.setColumns(10);
+		
+		this.lblDescripcion = new JLabel("Descripcion");
+		
+		this.scrollPane = new JScrollPane();
+		
+		this.lblCostoUnitario = new JLabel("Costo Unitario");
+		
+		this.txfCostoUnitario = new JTextField();
+		this.txfCostoUnitario.setColumns(10);
+		
+		this.panelRdbIndicadorImpuestos = new JPanel();
+		this.panelRdbIndicadorImpuestos.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Iva", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		
+		this.lblPreciosPorCategoria = new JLabel("Precios por categoria de cliente");
+		
+		this.scrollPanePreciosTipoCliente = new JScrollPane();
+		
+		this.lblProveedor = new JLabel("Proveedor");
+		
+		this.cmbProveedor = new JComboBox();
+		
+		this.lblCategoria = new JLabel("Categoria");
+		
+		this.cmbCategoriaArticulo = new JComboBox();
+		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
+		gl_panelCentralFormulario.setHorizontalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblCdigo)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfCodigo, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblCodigoSat)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfCodigoSAT, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblUnidadSat)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfUnidadSAT, 52, 52, 52))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblNombre)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfNombre, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblProveedor)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbProveedor, 0, 204, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblCategoria)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbCategoriaArticulo, 0, 207, Short.MAX_VALUE))
+						.addComponent(this.lblDescripcion)
+						.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblPreciosPorCategoria)
+							.addPreferredGap(ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
+							.addComponent(this.lblCostoUnitario)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		gl_panelCentralFormulario.setVerticalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblCdigo)
+						.addComponent(this.txfCodigo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblUnidadSat)
+						.addComponent(this.txfUnidadSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCodigoSat)
+						.addComponent(this.txfCodigoSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblNombre)
+						.addComponent(this.txfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblProveedor)
+						.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCategoria)
+						.addComponent(this.cmbCategoriaArticulo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblDescripcion)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+						.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+						.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCostoUnitario)
+						.addComponent(this.lblPreciosPorCategoria))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+					.addGap(22))
+		);
+		
+		this.tablePreciosPorTipoCliente = new JTable();
+		this.scrollPanePreciosTipoCliente.setViewportView(this.tablePreciosPorTipoCliente);
+		this.panelRdbIndicadorImpuestos.setLayout(new GridLayout(2, 1, 0, 0));
+		
+		this.rdbtnExcento = new JRadioButton("Excento");
+		this.panelRdbIndicadorImpuestos.add(this.rdbtnExcento);
+		
+		this.rdbtnGravado = new JRadioButton("Gravado 16%");
+		this.panelRdbIndicadorImpuestos.add(this.rdbtnGravado);
+		this.panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 	}
 
-	/**
-	 * coloca valores de forma dinámica en cada uno de los campos correspondientes
-	 * al consultar la información de un artículo en específico en la bd
-	 */
-	private void consultarArticuloPorId() {
+	private void getArticuloPorId() {
+		
+	}
 
-
+	private void insertarNuevoArticulo() {
+		
 	}
 
 	private void actualizarArticulo() {
-
 		
-
 	}
 
-	private void abrirFormExistencias() {
+	private boolean validarCamposVacios() {
 		
 
-	}
-
-	private boolean verificarCamposVacios() {
-
-		
-		return false;
+		return true;
 	}
 
 	private void limpiarCampos() {
-
 		
-
 	}
 
+	private Articulo buildArticulo() {
+		return new Articulo();
+	}
+
+	private void setDefaultTableModelPrecios() {		
+
+		modelTablaPrecios.addColumn("Id Tipo Cliente");
+		modelTablaPrecios.addColumn("Tipo Cliente");
+		modelTablaPrecios.addColumn("Precio");
+		modelTablaPrecios.addColumn("Precio Especial");
+		modelTablaPrecios.addColumn("Cantidad Precio Especial");
+	}
+
+	private void llenarTablaPrecios() {
+		if (modelTablaPrecios == null) {
+			setDefaultTableModelPrecios();
+		}
+		llenarTiposClienteEnTablaPrecios();
+	}
+
+	private void llenarTiposClienteEnTablaPrecios() {
+		modelTablaPrecios.getDataVector().removeAllElements();
+
+		Vector<TipoCliente> tiposCliente = AppContext.tipoClienteController.cmbTipoCliente();
+		if (tiposCliente == null || tiposCliente.isEmpty()) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "No hay tipos de cliente para precios");
+			return;
+		}
+
+		for (TipoCliente tipoCliente : tiposCliente) {
+			modelTablaPrecios.addRow(new Object[] {
+					Integer.valueOf(tipoCliente.getIdTipoCliente()),
+					tipoCliente.getNombre(),
+					BigDecimal.ZERO,
+					null,
+					null
+			});
+		}
+	}
+
+	
+
+	private void guardarPreciosArticulo() {
+		
+		// Pendiente: no existe SP para persistir precios_x_tipocliente en este repo.
+	}
+
+	private void llenarCmbProveedor() {
+		
+	}
+
+	private void llenarCmbCategoria() {
+		
+	}
+
+	public boolean isOperacionEjecutada() {
+		return operacionEjecutada;
+	}
+
+	private void setRadioExento() {
+		
+	}
+
+	private void seleccionarProveedorPorId() {
+		
+	}
+
+	private void seleccionarCategoriaPorId() {
+		
+	}
+
+	private BigDecimal parseDecimal(String value) {
+		try {
+			if (value == null || value.isBlank()) {
+				return null;
+			}
+			return new BigDecimal(value);
+		} catch (Exception er) {
+			return null;
+		}
+	}
+
+	private BigDecimal parseOptionalDecimal(Object value) {
+		if (value == null) {
+			return null;
+		}
+		String text = String.valueOf(value).trim();
+		if (text.isEmpty()) {
+			return null;
+		}
+		return parseDecimal(text);
+	}
+
+	private Integer parseInteger(String value) {
+		try {
+			if (value == null || value.isBlank()) {
+				return null;
+			}
+			return Integer.valueOf(value);
+		} catch (Exception er) {
+			return null;
+		}
+	}
+
+	private Integer parseOptionalInteger(Object value) {
+		if (value == null) {
+			return null;
+		}
+		String text = String.valueOf(value).trim();
+		if (text.isEmpty()) {
+			return null;
+		}
+		return parseInteger(text);
+	}
+
+	private int parseIntegerOrZero(String value) {
+		Integer parsed = parseInteger(value);
+		return parsed == null ? 0 : parsed.intValue();
+	}
+
+	private String nullToEmpty(String value) {
+		return value == null ? "" : value;
+	}
 }
