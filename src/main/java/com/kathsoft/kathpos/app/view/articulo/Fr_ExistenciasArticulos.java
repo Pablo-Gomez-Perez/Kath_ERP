@@ -30,7 +30,8 @@ public class Fr_ExistenciasArticulos extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_ExistenciasArticulos(int id_articulo) {
-		setBounds(100, 100, 480, 480);
+		setTitle("Existencias globales del articulo");
+		setBounds(100, 100, 720, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -43,7 +44,9 @@ public class Fr_ExistenciasArticulos extends JFrame {
 		modelTablaExistencias = new DefaultTableModel();
 		tablaExistenciasArticulo = new JTable();
 		tablaExistenciasArticulo.setModel(modelTablaExistencias);
+		modelTablaExistencias.addColumn("Id Sucursal");
 		modelTablaExistencias.addColumn("Sucursal");
+		modelTablaExistencias.addColumn("Dirección");
 		modelTablaExistencias.addColumn("Existencia");
 		scrollPaneExistenciasArticulo.setViewportView(tablaExistenciasArticulo);
 
