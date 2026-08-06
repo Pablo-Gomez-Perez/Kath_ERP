@@ -49,77 +49,45 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.GroupLayout.Alignment;
 
 public class Fr_DatosArticulo extends JFrame {
 
 	private static final long serialVersionUID = -1528483064591725560L;
-
-	private static final int COL_TIPO_CLIENTE_ID = 0;
-	private static final int COL_TIPO_CLIENTE_NOMBRE = 1;
-	private static final int COL_PRECIO = 2;
-	private static final int COL_PRECIO_ESPECIAL = 3;
-	private static final int COL_CANTIDAD_PRECIO_ESPECIAL = 4;
-
-	private final ArticuloController articuloController = new ArticuloController();
-	private final CategoriaController categoriaController = new CategoriaController();
-	private final ProveedorController proveedorController = new ProveedorController();
-
-	private Vector<Proveedor> listProveedores = new Vector<>();
-	private Vector<Categoria> listCategoria = new Vector<>();
+	
 	private final int tipoOperacion;
-	private final int idSucursal;
-	private final int idArticulo;
 	private boolean operacionEjecutada;
 
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
-	private JPanel panelCentralFormulario;
 	private JPanel panelInferiorBotones;
-	private JPanel panelDatosGenerales;
-	private JPanel panelDescripcion;
-	private JPanel panelPrecios;
-	private JPanel panelInventario;
 	private JLabel lblNewLabel_1;
-	private JLabel lblIdArticulo;
-	private JLabel lblCodigoArticulo;
-	private JLabel lblProveedorArticulo;
-	private JLabel lblCategoriaArticulo;
-	private JLabel lblNombreArticulo;
-	private JLabel lblCodigoSat;
-	private JLabel lblUnidadSat;
-	private JLabel lblDescripcion;
-	private JLabel lblPrecios;
-	private JLabel lblExistencia;
-	private JLabel lblCosto;
-	private JLabel lblActivo;
-	private JTextField txfIdArticulo;
-	private JTextField txfCodigoArticulo;
-	private JComboBox<Proveedor> cmbProveedorArticulo;
-	private JComboBox<Categoria> cmbCategoriaArticulo;
-	private JTextField txfNombreArticulo;
-	private JTextField txfCodigoSat;
-	private JTextField txfUnidadSat;
-	private JTextArea txaDescripcionArticulo;
-	private JScrollPane scrollPaneTxaDescripcion;
-	private JScrollPane scrollPaneTablaPreciosTipoCliente;
-	private JTable table;
-	private JTextField txfExistenciaArticulo;
-	private JTextField txfCostoArticulo;
-	private JCheckBox chkActivo;
-	private ButtonGroup btnRadioGroup;
-	private JRadioButton rdbtnGravado;
-	private JRadioButton rdbtnExento;
-	private JRadioButton rdbtnNoObjeto;
 	private JButton btnCancelar;
 	private JButton btnGuardar;
-	private JButton btnExistenciaGlobal;
 	private DefaultTableModel modelTablaPrecios;
+	private JPanel panelCentralFormulario;
+	private JLabel lblCdigo;
+	private JTextField txfCodigo;
+	private JLabel lblCodigoSat;
+	private JTextField txfCodigoSAT;
+	private JLabel lblUnidadSat;
+	private JTextField txfUnidadSAT;
+	private JLabel lblNombre;
+	private JTextField txfNombre;
+	private JLabel lblDescripcion;
+	private JScrollPane scrollPane;
+	private JLabel lblCostoUnitario;
+	private JTextField txfCostoUnitario;
+	private JPanel panelRdbIndicadorImpuestos;
+	private JRadioButton rdbtnExcento;
+	private JRadioButton rdbtnGravado;
+	private JLabel lblPreciosPorCategoria;
+	private JScrollPane scrollPanePreciosTipoCliente;
+	private JTable tablePreciosPorTipoCliente;
+	private JButton btnConsultarExistencias;
 
 	public Fr_DatosArticulo(int tipoOperacion, int idArticulo, int sucursal) {
 		this.tipoOperacion = tipoOperacion;
-		this.idSucursal = sucursal;
-		this.idArticulo = idArticulo;
-
 		setTitle(tipoOperacion == 0 ? "Nuevo Articulo" : "Editar Articulo");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
@@ -127,8 +95,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(980, 760));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));		
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 
@@ -146,9 +113,7 @@ public class Fr_DatosArticulo extends JFrame {
 		} else {
 			getArticuloPorId();
 		}
-
-		pack();
-		setLocationRelativeTo(null);
+		
 	}
 
 	private void buildHeader() {
@@ -163,261 +128,9 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void buildCentralForm() {
-		panelCentralFormulario = new JPanel();
-		panelCentralFormulario.setBorder(new CompoundBorder(new EmptyBorder(5, 0, 5, 0), new LineBorder(Color.BLACK)));
-		panelCentralFormulario.setBackground(new Color(255, 215, 0));
-		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
-
-		panelDatosGenerales = buildPanelDatosGenerales();
-		panelDescripcion = buildPanelDescripcion();
-		panelPrecios = buildPanelPrecios();
-		panelInventario = buildPanelInventario();
-
-		GroupLayout gl = new GroupLayout(panelCentralFormulario);
-		panelCentralFormulario.setLayout(gl);
-		gl.setHorizontalGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(gl.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(panelDatosGenerales, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(panelDescripcion, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(panelPrecios, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(panelInventario, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addContainerGap()));
-		gl.setVerticalGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(gl.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(panelDatosGenerales, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(panelDescripcion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(panelPrecios, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(panelInventario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 	}
 
-	private JPanel buildPanelDatosGenerales() {
-		panelDatosGenerales = new JPanel(new GridLayout(3, 1, 0, 6));
-		panelDatosGenerales.setOpaque(false);
-
-		lblIdArticulo = new JLabel("ID");
-		lblCodigoArticulo = new JLabel("Código");
-		lblProveedorArticulo = new JLabel("Proveedor");
-		lblCategoriaArticulo = new JLabel("Categoría");
-		lblNombreArticulo = new JLabel("Nombre");
-		lblCodigoSat = new JLabel("Código SAT");
-		lblUnidadSat = new JLabel("Unidad SAT");
-		lblActivo = new JLabel("Activo");
-
-		txfIdArticulo = new JTextField();
-		txfIdArticulo.setEditable(false);
-		txfIdArticulo.setColumns(10);
-
-		txfCodigoArticulo = new JTextField();
-		txfCodigoArticulo.setColumns(25);
-		txfCodigoArticulo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if (Character.isWhitespace(e.getKeyChar())) {
-					e.consume();
-				}
-			}
-		});
-		if (this.tipoOperacion == 1) {
-			txfCodigoArticulo.setEditable(false);
-		}
-
-		cmbProveedorArticulo = new JComboBox<>();
-		cmbProveedorArticulo.setMaximumRowCount(12);
-		cmbProveedorArticulo.setRenderer(new javax.swing.DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				if (value instanceof Proveedor proveedor) {
-					setText(proveedor.getNombre());
-				}
-				return this;
-			}
-		});
-
-		cmbCategoriaArticulo = new JComboBox<>();
-		cmbCategoriaArticulo.setMaximumRowCount(12);
-		cmbCategoriaArticulo.setRenderer(new javax.swing.DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				if (value instanceof Categoria categoria) {
-					setText(categoria.getNombre());
-				}
-				return this;
-			}
-		});
-
-		txfNombreArticulo = new JTextField();
-		txfNombreArticulo.setColumns(40);
-
-		txfCodigoSat = new JTextField();
-		txfCodigoSat.setColumns(10);
-		txfCodigoSat.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!Character.isDigit(ch) || txfCodigoSat.getText().length() >= 9) {
-					e.consume();
-				}
-			}
-		});
-
-		txfUnidadSat = new JTextField();
-		txfUnidadSat.setColumns(15);
-
-		chkActivo = new JCheckBox("Activo");
-		chkActivo.setBackground(new Color(255, 215, 0));
-		chkActivo.setSelected(true);
-
-		JPanel row1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		row1.setOpaque(false);
-		row1.add(lblIdArticulo);
-		row1.add(txfIdArticulo);
-		row1.add(lblCodigoArticulo);
-		row1.add(txfCodigoArticulo);
-		row1.add(lblCodigoSat);
-		row1.add(txfCodigoSat);
-		row1.add(lblUnidadSat);
-		row1.add(txfUnidadSat);
-
-		JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		row2.setOpaque(false);
-		row2.add(lblProveedorArticulo);
-		row2.add(cmbProveedorArticulo);
-		row2.add(lblCategoriaArticulo);
-		row2.add(cmbCategoriaArticulo);
-		row2.add(lblActivo);
-		row2.add(chkActivo);
-
-		JPanel row3 = new JPanel(new BorderLayout(6, 0));
-		row3.setOpaque(false);
-		row3.add(lblNombreArticulo, BorderLayout.WEST);
-		row3.add(txfNombreArticulo, BorderLayout.CENTER);
-
-		panelDatosGenerales.add(row1);
-		panelDatosGenerales.add(row2);
-		panelDatosGenerales.add(row3);
-		return panelDatosGenerales;
-	}
-
-	private JPanel buildPanelDescripcion() {
-		panelDescripcion = new JPanel(new BorderLayout(0, 4));
-		panelDescripcion.setOpaque(false);
-
-		JPanel cabecera = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		cabecera.setOpaque(false);
-		lblDescripcion = new JLabel("Descripción");
-		cabecera.add(lblDescripcion);
-
-		txaDescripcionArticulo = new JTextArea();
-		txaDescripcionArticulo.setLineWrap(true);
-		txaDescripcionArticulo.setWrapStyleWord(true);
-		scrollPaneTxaDescripcion = new JScrollPane(txaDescripcionArticulo);
-		scrollPaneTxaDescripcion.setPreferredSize(new Dimension(0, 120));
-
-		panelDescripcion.add(cabecera, BorderLayout.NORTH);
-		panelDescripcion.add(scrollPaneTxaDescripcion, BorderLayout.CENTER);
-		return panelDescripcion;
-	}
-
-	private JPanel buildPanelPrecios() {
-		panelPrecios = new JPanel(new BorderLayout(0, 4));
-		panelPrecios.setOpaque(false);
-
-		JPanel cabecera = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		cabecera.setOpaque(false);
-		lblPrecios = new JLabel("Precios por tipo de cliente");
-		cabecera.add(lblPrecios);
-
-		table = new JTable();
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		scrollPaneTablaPreciosTipoCliente = new JScrollPane(table);
-		scrollPaneTablaPreciosTipoCliente.setPreferredSize(new Dimension(0, 160));
-
-		panelPrecios.add(cabecera, BorderLayout.NORTH);
-		panelPrecios.add(scrollPaneTablaPreciosTipoCliente, BorderLayout.CENTER);
-		return panelPrecios;
-	}
-
-	private JPanel buildPanelInventario() {
-		panelInventario = new JPanel(new GridLayout(2, 1, 0, 6));
-		panelInventario.setOpaque(false);
-
-		lblExistencia = new JLabel("Existencia");
-		lblCosto = new JLabel("Costo");
-
-		txfExistenciaArticulo = new JTextField();
-		txfExistenciaArticulo.setEditable(false);
-		txfExistenciaArticulo.setColumns(10);
-
-		btnExistenciaGlobal = new JButton("Global");
-		btnExistenciaGlobal.setBackground(new Color(102, 51, 255));
-		btnExistenciaGlobal.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				abrirFormExistencias();
-			}
-		});
-
-		btnRadioGroup = new ButtonGroup();
-		rdbtnGravado = new JRadioButton("Gravado");
-		rdbtnExento = new JRadioButton("Exento");
-		rdbtnNoObjeto = new JRadioButton("No Objeto");
-		rdbtnGravado.setBackground(new Color(255, 215, 0));
-		rdbtnExento.setBackground(new Color(255, 215, 0));
-		rdbtnNoObjeto.setBackground(new Color(255, 215, 0));
-		btnRadioGroup.add(rdbtnGravado);
-		btnRadioGroup.add(rdbtnExento);
-		btnRadioGroup.add(rdbtnNoObjeto);
-		rdbtnGravado.setSelected(true);
-
-		txfCostoArticulo = new JTextField();
-		txfCostoArticulo.setColumns(10);
-		txfCostoArticulo.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char ch = e.getKeyChar();
-				if (!(Character.isDigit(ch) || ch == '.')) {
-					e.consume();
-				} else if (ch == '.' && txfCostoArticulo.getText().contains(".")) {
-					e.consume();
-				}
-			}
-		});
-
-		JPanel row1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		row1.setOpaque(false);
-		row1.add(lblExistencia);
-		row1.add(txfExistenciaArticulo);
-		row1.add(btnExistenciaGlobal);
-
-		JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		row2.setOpaque(false);
-		row2.add(lblCosto);
-		row2.add(txfCostoArticulo);
-
-		JPanel panelImpuestos = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panelImpuestos.setOpaque(false);
-		panelImpuestos.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "Impuestos Trasladado",
-				TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		panelImpuestos.add(rdbtnGravado);
-		panelImpuestos.add(rdbtnExento);
-		panelImpuestos.add(rdbtnNoObjeto);
-		row2.add(panelImpuestos);
-
-		panelInventario.add(row1);
-		panelInventario.add(row2);
-		return panelInventario;
-	}
+	
 
 	private void buildFooter() {
 		panelInferiorBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -434,6 +147,9 @@ public class Fr_DatosArticulo extends JFrame {
 				dispose();
 			}
 		});
+		
+		this.btnConsultarExistencias = new JButton("Existencias");
+		this.panelInferiorBotones.add(this.btnConsultarExistencias);
 		panelInferiorBotones.add(btnCancelar);
 
 		btnGuardar = new JButton("Guardar");
@@ -450,216 +166,158 @@ public class Fr_DatosArticulo extends JFrame {
 			}
 		});
 		panelInferiorBotones.add(btnGuardar);
+		
+		this.panelCentralFormulario = new JPanel();
+		this.panelCentralFormulario.setBackground(new Color(255, 204, 0));
+		this.contentPane.add(this.panelCentralFormulario, BorderLayout.CENTER);
+		
+		this.lblCdigo = new JLabel("Código");
+		
+		this.txfCodigo = new JTextField();
+		this.txfCodigo.setColumns(10);
+		
+		this.lblCodigoSat = new JLabel("Codigo SAT");
+		
+		this.txfCodigoSAT = new JTextField();
+		this.txfCodigoSAT.setColumns(10);
+		
+		this.lblUnidadSat = new JLabel("Unidad SAT");
+		
+		this.txfUnidadSAT = new JTextField();
+		this.txfUnidadSAT.setColumns(10);
+		
+		this.lblNombre = new JLabel("Nombre");
+		
+		this.txfNombre = new JTextField();
+		this.txfNombre.setColumns(10);
+		
+		this.lblDescripcion = new JLabel("Descripcion");
+		
+		this.scrollPane = new JScrollPane();
+		
+		this.lblCostoUnitario = new JLabel("Costo Unitario");
+		
+		this.txfCostoUnitario = new JTextField();
+		this.txfCostoUnitario.setColumns(10);
+		
+		this.panelRdbIndicadorImpuestos = new JPanel();
+		this.panelRdbIndicadorImpuestos.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Iva", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		
+		this.lblPreciosPorCategoria = new JLabel("Precios por categoria de cliente");
+		
+		this.scrollPanePreciosTipoCliente = new JScrollPane();
+		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
+		gl_panelCentralFormulario.setHorizontalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblCdigo)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfCodigo, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblCodigoSat)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfCodigoSAT, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblUnidadSat)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfUnidadSAT, 52, 52, 52))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblNombre)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfNombre, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE))
+						.addComponent(this.lblDescripcion)
+						.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblPreciosPorCategoria)
+							.addPreferredGap(ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
+							.addComponent(this.lblCostoUnitario)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
+		);
+		gl_panelCentralFormulario.setVerticalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblCdigo)
+						.addComponent(this.txfCodigo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblUnidadSat)
+						.addComponent(this.txfUnidadSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCodigoSat)
+						.addComponent(this.txfCodigoSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblNombre)
+						.addComponent(this.txfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblDescripcion)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+						.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+						.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCostoUnitario)
+						.addComponent(this.lblPreciosPorCategoria))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+					.addGap(22))
+		);
+		
+		this.tablePreciosPorTipoCliente = new JTable();
+		this.scrollPanePreciosTipoCliente.setViewportView(this.tablePreciosPorTipoCliente);
+		this.panelRdbIndicadorImpuestos.setLayout(new GridLayout(2, 1, 0, 0));
+		
+		this.rdbtnExcento = new JRadioButton("Excento");
+		this.panelRdbIndicadorImpuestos.add(this.rdbtnExcento);
+		
+		this.rdbtnGravado = new JRadioButton("Gravado 16%");
+		this.panelRdbIndicadorImpuestos.add(this.rdbtnGravado);
+		this.panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 	}
 
 	private void getArticuloPorId() {
-		try {
-			Articulo articulo = this.articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
-			if (articulo == null) {
-				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "No se encontró articulo para editar");
-				return;
-			}
-
-			txfIdArticulo.setText(String.valueOf(articulo.getIdArticulo()));
-			txfCodigoArticulo.setText(nullToEmpty(articulo.getCodigoArticulo()));
-			txfCodigoSat.setText(nullToEmpty(articulo.getCodigoSat()));
-			txfUnidadSat.setText(nullToEmpty(articulo.getUnidadSat()));
-			txfNombreArticulo.setText(nullToEmpty(articulo.getNombre()));
-			txaDescripcionArticulo.setText(nullToEmpty(articulo.getDescripcion()));
-			txfCostoArticulo.setText(String.valueOf(articulo.getCostoUnitario()));
-			chkActivo.setSelected(true);
-			setRadioExento(articulo.isExento());
-			seleccionarProveedorPorId(articulo.getIdProvedor());
-			seleccionarCategoriaPorId(articulo.getIdCategoria());
-			llenarTablaPrecios();
-		} catch (SQLException er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		} catch (Exception er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
+		
 	}
 
 	private void insertarNuevoArticulo() {
-		if (!validarCamposVacios()) {
-			return;
-		}
-
-		try {
-			Articulo articulo = buildArticulo();
-			this.articuloController.insertarNuevoArticulo(articulo);
-			guardarPreciosArticulo();
-			this.operacionEjecutada = true;
-			MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
-			dispose();
-		} catch (SQLException er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		} catch (Exception er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
+		
 	}
 
 	private void actualizarArticulo() {
-		if (!validarCamposVacios()) {
-			return;
-		}
-
-		try {
-			Articulo articulo = buildArticulo();
-			this.articuloController.actualizarArticulo(articulo);
-			guardarPreciosArticulo();
-			this.operacionEjecutada = true;
-			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
-			dispose();
-		} catch (SQLException er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		} catch (Exception er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
-		}
+		
 	}
 
 	private boolean validarCamposVacios() {
-		if (cmbProveedorArticulo.getSelectedItem() == null) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione proveedor");
-			return false;
-		}
-		if (cmbCategoriaArticulo.getSelectedItem() == null) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione categoría");
-			return false;
-		}
-		if (txfCodigoArticulo.getText().trim().isEmpty()) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Código de artículo requerido");
-			return false;
-		}
-		if (txfCodigoSat.getText().trim().isEmpty()) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Código SAT requerido");
-			return false;
-		}
-		if (txfUnidadSat.getText().trim().isEmpty()) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Unidad SAT requerida");
-			return false;
-		}
-		if (txfNombreArticulo.getText().trim().isEmpty()) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Nombre requerido");
-			return false;
-		}
-
-		BigDecimal costo = parseDecimal(txfCostoArticulo.getText().trim());
-		if (costo == null) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Costo unitario inválido");
-			return false;
-		}
-		if (costo.compareTo(BigDecimal.ZERO) < 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Costo unitario debe ser mayor o igual a 0");
-			return false;
-		}
-
-		if (modelTablaPrecios == null || modelTablaPrecios.getRowCount() == 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Tabla de precios sin datos");
-			return false;
-		}
-
-		for (int i = 0; i < modelTablaPrecios.getRowCount(); i++) {
-			Object idTipoCliente = modelTablaPrecios.getValueAt(i, COL_TIPO_CLIENTE_ID);
-			Object nombreTipoCliente = modelTablaPrecios.getValueAt(i, COL_TIPO_CLIENTE_NOMBRE);
-			if (idTipoCliente == null || String.valueOf(idTipoCliente).trim().isEmpty() || nombreTipoCliente == null
-					|| String.valueOf(nombreTipoCliente).trim().isEmpty()) {
-				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
-						"Tipo cliente inválido en fila " + (i + 1));
-				return false;
-			}
-
-			BigDecimal precio = parseDecimal(String.valueOf(modelTablaPrecios.getValueAt(i, COL_PRECIO)).trim());
-			if (precio == null || precio.compareTo(BigDecimal.ZERO) < 0) {
-				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
-						"Precio inválido en fila " + (i + 1));
-				return false;
-			}
-
-			Object precioEspecialRaw = modelTablaPrecios.getValueAt(i, COL_PRECIO_ESPECIAL);
-			if (precioEspecialRaw != null && !String.valueOf(precioEspecialRaw).trim().isEmpty()) {
-				BigDecimal precioEspecial = parseDecimal(String.valueOf(precioEspecialRaw).trim());
-				if (precioEspecial == null || precioEspecial.compareTo(BigDecimal.ZERO) < 0) {
-					MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
-						"Precio especial inválido en fila " + (i + 1));
-					return false;
-				}
-			}
-
-			Object cantidadRaw = modelTablaPrecios.getValueAt(i, COL_CANTIDAD_PRECIO_ESPECIAL);
-			if (cantidadRaw != null && !String.valueOf(cantidadRaw).trim().isEmpty()) {
-				Integer cantidad = parseInteger(String.valueOf(cantidadRaw).trim());
-				if (cantidad == null || cantidad.intValue() <= 0) {
-					MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
-						"Cantidad precio especial inválida en fila " + (i + 1));
-					return false;
-				}
-			}
-		}
+		
 
 		return true;
 	}
 
 	private void limpiarCampos() {
-		txfIdArticulo.setText("");
-		txfCodigoArticulo.setText("");
-		txfCodigoSat.setText("");
-		txfUnidadSat.setText("");
-		txfNombreArticulo.setText("");
-		txaDescripcionArticulo.setText("");
-		txfExistenciaArticulo.setText("");
-		txfCostoArticulo.setText("");
-		chkActivo.setSelected(true);
-		rdbtnGravado.setSelected(true);
-		if (cmbProveedorArticulo.getItemCount() > 0) {
-			cmbProveedorArticulo.setSelectedIndex(0);
-		}
-		if (cmbCategoriaArticulo.getItemCount() > 0) {
-			cmbCategoriaArticulo.setSelectedIndex(0);
-		}
-		llenarTablaPrecios();
+		
 	}
 
 	private Articulo buildArticulo() {
-		Proveedor proveedor = (Proveedor) cmbProveedorArticulo.getSelectedItem();
-		Categoria categoria = (Categoria) cmbCategoriaArticulo.getSelectedItem();
-		return new Articulo.ArticuloBuilder()
-				.idArticulo(parseIntegerOrZero(txfIdArticulo.getText().trim()))
-				.idProvedor(proveedor != null ? proveedor.getIdProveedor() : 0)
-				.idCategoria(categoria != null ? categoria.getIdCategoria() : 0)
-				.codigoArticulo(txfCodigoArticulo.getText().trim())
-				.codigoSat(txfCodigoSat.getText().trim())
-				.unidadSat(txfUnidadSat.getText().trim())
-				.nombre(txfNombreArticulo.getText().trim())
-				.descripcion(txaDescripcionArticulo.getText().trim())
-				.exento(rdbtnExento.isSelected())
-				.costoUnitario(parseDecimal(txfCostoArticulo.getText().trim()).doubleValue())
-				.build();
+		return new Articulo();
 	}
 
-	private void setDefaultTableModelPrecios() {
-		modelTablaPrecios = new DefaultTableModel() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return column >= COL_PRECIO;
-			}
-		};
+	private void setDefaultTableModelPrecios() {		
 
 		modelTablaPrecios.addColumn("Id Tipo Cliente");
 		modelTablaPrecios.addColumn("Tipo Cliente");
 		modelTablaPrecios.addColumn("Precio");
 		modelTablaPrecios.addColumn("Precio Especial");
 		modelTablaPrecios.addColumn("Cantidad Precio Especial");
-
-		table.setModel(modelTablaPrecios);
-		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaPreciosArticuloColumnsWidth, table);
 	}
 
 	private void llenarTablaPrecios() {
@@ -671,7 +329,6 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void llenarTiposClienteEnTablaPrecios() {
 		modelTablaPrecios.getDataVector().removeAllElements();
-		table.updateUI();
 
 		Vector<TipoCliente> tiposCliente = AppContext.tipoClienteController.cmbTipoCliente();
 		if (tiposCliente == null || tiposCliente.isEmpty()) {
@@ -690,85 +347,35 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 	}
 
-	private Vector<Object[]> buildPreciosArticulo() {
-		Vector<Object[]> precios = new Vector<>();
-		for (int i = 0; i < modelTablaPrecios.getRowCount(); i++) {
-			Integer idTipoCliente = parseInteger(String.valueOf(modelTablaPrecios.getValueAt(i, COL_TIPO_CLIENTE_ID)).trim());
-			String nombreTipoCliente = String.valueOf(modelTablaPrecios.getValueAt(i, COL_TIPO_CLIENTE_NOMBRE)).trim();
-			BigDecimal precio = parseDecimal(String.valueOf(modelTablaPrecios.getValueAt(i, COL_PRECIO)).trim());
-			BigDecimal precioEspecial = parseOptionalDecimal(modelTablaPrecios.getValueAt(i, COL_PRECIO_ESPECIAL));
-			Integer cantidadEspecial = parseOptionalInteger(modelTablaPrecios.getValueAt(i, COL_CANTIDAD_PRECIO_ESPECIAL));
-			precios.add(new Object[] { idTipoCliente, nombreTipoCliente, precio, precioEspecial, cantidadEspecial });
-		}
-		return precios;
-	}
+	
 
 	private void guardarPreciosArticulo() {
-		buildPreciosArticulo();
+		
 		// Pendiente: no existe SP para persistir precios_x_tipocliente en este repo.
 	}
 
 	private void llenarCmbProveedor() {
-		cmbProveedorArticulo.removeAllItems();
-		listProveedores = proveedorController.consultarNombresProveedor();
-		if (listProveedores != null) {
-			for (Proveedor proveedor : listProveedores) {
-				cmbProveedorArticulo.addItem(proveedor);
-			}
-		}
+		
 	}
 
 	private void llenarCmbCategoria() {
-		cmbCategoriaArticulo.removeAllItems();
-		listCategoria = categoriaController.obtenerIndicesDeCategorias();
-		if (listCategoria != null) {
-			for (Categoria categoria : listCategoria) {
-				cmbCategoriaArticulo.addItem(categoria);
-			}
-		}
+		
 	}
 
 	public boolean isOperacionEjecutada() {
 		return operacionEjecutada;
 	}
 
-	private void abrirFormExistencias() {
-		int idActual = parseIntegerOrZero(txfIdArticulo.getText().trim());
-		if (idActual <= 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Guarde articulo antes de ver existencias");
-			return;
-		}
-		Fr_ExistenciasArticulos form = new Fr_ExistenciasArticulos(idActual);
-		form.setLocationRelativeTo(this);
-		form.setVisible(true);
+	private void setRadioExento() {
+		
 	}
 
-	private void setRadioExento(boolean exento) {
-		if (exento) {
-			rdbtnExento.setSelected(true);
-		} else {
-			rdbtnGravado.setSelected(true);
-		}
+	private void seleccionarProveedorPorId() {
+		
 	}
 
-	private void seleccionarProveedorPorId(int idProveedor) {
-		for (int i = 0; i < cmbProveedorArticulo.getItemCount(); i++) {
-			Proveedor proveedor = cmbProveedorArticulo.getItemAt(i);
-			if (proveedor != null && proveedor.getIdProveedor() == idProveedor) {
-				cmbProveedorArticulo.setSelectedIndex(i);
-				return;
-			}
-		}
-	}
-
-	private void seleccionarCategoriaPorId(int idCategoria) {
-		for (int i = 0; i < cmbCategoriaArticulo.getItemCount(); i++) {
-			Categoria categoria = cmbCategoriaArticulo.getItemAt(i);
-			if (categoria != null && categoria.getIdCategoria() == idCategoria) {
-				cmbCategoriaArticulo.setSelectedIndex(i);
-				return;
-			}
-		}
+	private void seleccionarCategoriaPorId() {
+		
 	}
 
 	private BigDecimal parseDecimal(String value) {
