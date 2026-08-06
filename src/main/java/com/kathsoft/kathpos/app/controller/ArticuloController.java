@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -79,8 +80,8 @@ public class ArticuloController implements java.io.Serializable {
 		}
 	}
 
-	public int insertarNuevoArticulo(Articulo art, int idSucursal, int existencia,
-			List<PrecioTipoCliente> preciosTipoCliente) throws SQLException, Exception {
+	public int insertarNuevoArticulo(Articulo art, List<PrecioTipoCliente> preciosTipoCliente)
+			throws SQLException, Exception {
 
 		List<PrecioTipoCliente> precios = preciosTipoCliente == null ? Collections.emptyList() : preciosTipoCliente;
 
@@ -90,7 +91,7 @@ public class ArticuloController implements java.io.Serializable {
 
 			try {
 				int idArticulo = this.insertarArticulo(cn, art);
-				this.insertarExistenciaArticuloSucursal(cn, idArticulo, idSucursal, existencia);
+				this.insertarExistenciaArticuloEnTodasLasSucursales(cn, idArticulo);
 
 				for (PrecioTipoCliente precioTipoCliente : precios) {
 					this.insertarPrecioArticuloTipoCliente(cn, idArticulo, precioTipoCliente);
@@ -108,6 +109,12 @@ public class ArticuloController implements java.io.Serializable {
 				cn.setAutoCommit(autoCommitOriginal);
 			}
 		}
+	}
+
+	@Deprecated
+	public int insertarNuevoArticulo(Articulo art, int idSucursal, int existencia,
+			List<PrecioTipoCliente> preciosTipoCliente) throws SQLException, Exception {
+		return this.insertarNuevoArticulo(art, preciosTipoCliente);
 	}
 
 	private int insertarArticulo(Connection cn, Articulo art) throws SQLException {
@@ -130,6 +137,31 @@ public class ArticuloController implements java.io.Serializable {
 		}
 
 		throw new SQLException("No se pudo obtener el identificador del articulo registrado");
+	}
+
+	private void insertarExistenciaArticuloEnTodasLasSucursales(Connection cn, int idArticulo) throws SQLException {
+		List<Integer> idsSucursales = this.obtenerIdsSucursales(cn);
+
+		if (idsSucursales.isEmpty()) {
+			throw new SQLException("No existen sucursales registradas para asignar existencia al articulo");
+		}
+
+		for (Integer idSucursal : idsSucursales) {
+			this.insertarExistenciaArticuloSucursal(cn, idArticulo, idSucursal.intValue(), 0);
+		}
+	}
+
+	private List<Integer> obtenerIdsSucursales(Connection cn) throws SQLException {
+		var idsSucursales = new ArrayList<Integer>();
+
+		try (CallableStatement stm = cn.prepareCall("CALL ver_sucursales_nombres();");
+				ResultSet rset = stm.executeQuery()) {
+			while (rset.next()) {
+				idsSucursales.add(Integer.valueOf(rset.getInt("id")));
+			}
+		}
+
+		return idsSucursales;
 	}
 
 	private void insertarExistenciaArticuloSucursal(Connection cn, int idArticulo, int idSucursal, int existencia)
