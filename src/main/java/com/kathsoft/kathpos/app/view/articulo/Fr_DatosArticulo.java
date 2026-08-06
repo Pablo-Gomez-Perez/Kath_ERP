@@ -271,6 +271,7 @@ public class Fr_DatosArticulo extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		this.btnConsultarExistencias = new JButton("Existencias");
+		this.btnConsultarExistencias.addActionListener(e -> abrirExistenciasArticulo());
 		this.panelInferiorBotones.add(this.btnConsultarExistencias);
 
 		btnCancelar = new JButton("Cancelar");
@@ -290,6 +291,18 @@ public class Fr_DatosArticulo extends JFrame {
 			}
 		});
 		panelInferiorBotones.add(btnGuardar);
+	}
+
+	private void abrirExistenciasArticulo() {
+		if (this.idArticulo <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Debe seleccionar o guardar un articulo antes de consultar existencias");
+			return;
+		}
+
+		Fr_ExistenciasArticulos form = new Fr_ExistenciasArticulos(this.idArticulo);
+		form.setLocationRelativeTo(this);
+		form.setVisible(true);
 	}
 
 	private void getArticuloPorId() {
