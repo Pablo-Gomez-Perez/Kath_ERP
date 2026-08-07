@@ -4,7 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -13,8 +16,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -26,7 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -94,11 +94,11 @@ public class Fr_DatosArticulo extends JFrame {
 				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(255, 215, 0));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+		this.contentPane = new JPanel();
+		this.contentPane.setBackground(new Color(255, 215, 0));
+		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(this.contentPane);
 
 		buildHeader();
 		buildCentralForm();
@@ -119,37 +119,33 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void buildHeader() {
-		panelSuperiorEtiqueta = new JPanel();
-		panelSuperiorEtiqueta.setBackground(new Color(25, 25, 112));
-		contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
+		this.panelSuperiorEtiqueta = new JPanel();
+		this.panelSuperiorEtiqueta.setBackground(new Color(25, 25, 112));
+		this.contentPane.add(this.panelSuperiorEtiqueta, BorderLayout.NORTH);
 
-		lblNewLabel_1 = new JLabel(getTitle());
-		lblNewLabel_1.setForeground(Color.WHITE);
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
-		panelSuperiorEtiqueta.add(lblNewLabel_1);
+		this.lblNewLabel_1 = new JLabel(getTitle());
+		this.lblNewLabel_1.setForeground(Color.WHITE);
+		this.lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
+		this.panelSuperiorEtiqueta.add(this.lblNewLabel_1);
 	}
 
 	private void buildCentralForm() {
-		this.panelCentralFormulario = new JPanel();
+		this.panelCentralFormulario = new JPanel(new GridBagLayout());
 		this.panelCentralFormulario.setBackground(new Color(255, 204, 0));
 		this.contentPane.add(this.panelCentralFormulario, BorderLayout.CENTER);
 
 		this.lblCodigo = new JLabel("Código");
-		this.txfCodigo = new JTextField();
-		this.txfCodigo.setColumns(10);
+		this.txfCodigo = new JTextField(12);
 		this.txfCodigo.setEditable(this.tipoOperacion == 0);
 
 		this.lblCodigoSat = new JLabel("Código SAT");
-		this.txfCodigoSAT = new JTextField();
-		this.txfCodigoSAT.setColumns(10);
+		this.txfCodigoSAT = new JTextField(12);
 
 		this.lblUnidadSat = new JLabel("Unidad SAT");
-		this.txfUnidadSAT = new JTextField();
-		this.txfUnidadSAT.setColumns(10);
+		this.txfUnidadSAT = new JTextField(8);
 
 		this.lblNombre = new JLabel("Nombre");
-		this.txfNombre = new JTextField();
-		this.txfNombre.setColumns(10);
+		this.txfNombre = new JTextField(30);
 
 		this.lblProveedor = new JLabel("Proveedor");
 		this.cmbProveedor = new JComboBox<JComboboxDataViewModel>();
@@ -158,19 +154,16 @@ public class Fr_DatosArticulo extends JFrame {
 		this.cmbCategoriaArticulo = new JComboBox<JComboboxDataViewModel>();
 
 		this.lblDescripcion = new JLabel("Descripción");
-		this.txaDescripcion = new JTextArea();
+		this.txaDescripcion = new JTextArea(5, 30);
 		this.txaDescripcion.setLineWrap(true);
 		this.txaDescripcion.setWrapStyleWord(true);
 		this.scrollPane = new JScrollPane(this.txaDescripcion);
 
 		this.lblCostoUnitario = new JLabel("Costo Unitario");
-		this.txfCostoUnitario = new JTextField();
-		this.txfCostoUnitario.setColumns(10);
+		this.txfCostoUnitario = new JTextField(10);
 
-		this.panelRdbIndicadorImpuestos = new JPanel();
-		this.panelRdbIndicadorImpuestos.setLayout(new GridLayout(2, 1, 0, 0));
-		this.panelRdbIndicadorImpuestos.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "IVA", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-
+		this.panelRdbIndicadorImpuestos = new JPanel(new GridLayout(2, 1, 0, 0));
+		this.panelRdbIndicadorImpuestos.setBorder(new TitledBorder(new LineBorder(Color.BLACK), "IVA"));
 		this.btnRadioGroup = new ButtonGroup();
 		this.rdbtnExento = new JRadioButton("Exento");
 		this.rdbtnGravado = new JRadioButton("Gravado 16%");
@@ -185,117 +178,123 @@ public class Fr_DatosArticulo extends JFrame {
 		this.tablePreciosPorTipoCliente = new JTable();
 		this.scrollPanePreciosTipoCliente.setViewportView(this.tablePreciosPorTipoCliente);
 
-		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
-		gl_panelCentralFormulario.setHorizontalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblCodigo)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCodigo, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblCodigoSat)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCodigoSAT, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblUnidadSat)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfUnidadSAT, 52, 52, 52))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblNombre)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfNombre, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblProveedor)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.cmbProveedor, 0, 204, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblCategoria)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.cmbCategoriaArticulo, 0, 207, Short.MAX_VALUE))
-						.addComponent(this.lblDescripcion)
-						.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblPreciosPorCategoria)
-							.addPreferredGap(ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
-							.addComponent(this.lblCostoUnitario)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))
-					.addContainerGap())
-		);
-		gl_panelCentralFormulario.setVerticalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblCodigo)
-						.addComponent(this.txfCodigo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblUnidadSat)
-						.addComponent(this.txfUnidadSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblCodigoSat)
-						.addComponent(this.txfCodigoSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblNombre)
-						.addComponent(this.txfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblProveedor)
-						.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblCategoria)
-						.addComponent(this.cmbCategoriaArticulo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.lblDescripcion)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
-						.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-						.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblCostoUnitario)
-						.addComponent(this.lblPreciosPorCategoria))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
-					.addGap(22))
-		);
-		this.panelCentralFormulario.setLayout(gl_panelCentralFormulario);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5, 5, 5, 5);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 0;
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		this.panelCentralFormulario.add(this.lblCodigo, gbc);
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		this.panelCentralFormulario.add(this.txfCodigo, gbc);
+		gbc.gridx = 2;
+		gbc.weightx = 0;
+		this.panelCentralFormulario.add(this.lblCodigoSat, gbc);
+		gbc.gridx = 3;
+		gbc.weightx = 1;
+		this.panelCentralFormulario.add(this.txfCodigoSAT, gbc);
+		gbc.gridx = 4;
+		gbc.weightx = 0;
+		this.panelCentralFormulario.add(this.lblUnidadSat, gbc);
+		gbc.gridx = 5;
+		gbc.weightx = 0.5;
+		this.panelCentralFormulario.add(this.txfUnidadSAT, gbc);
+
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.weightx = 0;
+		this.panelCentralFormulario.add(this.lblNombre, gbc);
+		gbc.gridx = 1;
+		gbc.gridwidth = 5;
+		gbc.weightx = 1;
+		this.panelCentralFormulario.add(this.txfNombre, gbc);
+		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		gbc.weightx = 0;
+		this.panelCentralFormulario.add(this.lblProveedor, gbc);
+		gbc.gridx = 1;
+		gbc.gridwidth = 2;
+		gbc.weightx = 1;
+		this.panelCentralFormulario.add(this.cmbProveedor, gbc);
+		gbc.gridx = 3;
+		gbc.gridwidth = 1;
+		gbc.weightx = 0;
+		this.panelCentralFormulario.add(this.lblCategoria, gbc);
+		gbc.gridx = 4;
+		gbc.gridwidth = 2;
+		gbc.weightx = 1;
+		this.panelCentralFormulario.add(this.cmbCategoriaArticulo, gbc);
+		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.gridwidth = 6;
+		gbc.weightx = 1;
+		this.panelCentralFormulario.add(this.lblDescripcion, gbc);
+
+		gbc.gridy = 4;
+		gbc.weighty = 0.2;
+		gbc.fill = GridBagConstraints.BOTH;
+		this.panelCentralFormulario.add(this.scrollPane, gbc);
+		gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = 5;
+		gbc.gridwidth = 3;
+		this.panelCentralFormulario.add(this.panelRdbIndicadorImpuestos, gbc);
+		gbc.gridx = 3;
+		gbc.gridwidth = 1;
+		this.panelCentralFormulario.add(this.lblCostoUnitario, gbc);
+		gbc.gridx = 4;
+		gbc.gridwidth = 2;
+		this.panelCentralFormulario.add(this.txfCostoUnitario, gbc);
+		gbc.gridwidth = 1;
+
+		gbc.gridx = 0;
+		gbc.gridy = 6;
+		gbc.gridwidth = 6;
+		this.panelCentralFormulario.add(this.lblPreciosPorCategoria, gbc);
+
+		gbc.gridy = 7;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		this.panelCentralFormulario.add(this.scrollPanePreciosTipoCliente, gbc);
 	}
 
 	private void buildFooter() {
-		panelInferiorBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		panelInferiorBotones.setBorder(new LineBorder(Color.BLACK));
-		panelInferiorBotones.setBackground(new Color(30, 144, 255));
-		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
+		this.panelInferiorBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		this.panelInferiorBotones.setBorder(new LineBorder(Color.BLACK));
+		this.panelInferiorBotones.setBackground(new Color(30, 144, 255));
+		this.contentPane.add(this.panelInferiorBotones, BorderLayout.SOUTH);
 
 		this.btnConsultarExistencias = new JButton("Existencias");
 		this.btnConsultarExistencias.setEnabled(this.tipoOperacion != 0);
 		this.btnConsultarExistencias.addActionListener(e -> abrirExistenciasArticulo());
 		this.panelInferiorBotones.add(this.btnConsultarExistencias);
 
-		btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBackground(new Color(205, 92, 92));
-		btnCancelar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
-		btnCancelar.addActionListener(e -> dispose());
-		panelInferiorBotones.add(btnCancelar);
+		this.btnCancelar = new JButton("Cancelar");
+		this.btnCancelar.setBackground(new Color(205, 92, 92));
+		this.btnCancelar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		this.btnCancelar.addActionListener(e -> dispose());
+		this.panelInferiorBotones.add(this.btnCancelar);
 
-		btnGuardar = new JButton("Guardar");
-		btnGuardar.setBackground(new Color(144, 238, 144));
-		btnGuardar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
-		btnGuardar.addActionListener(e -> {
-			if (tipoOperacion == 0) {
+		this.btnGuardar = new JButton("Guardar");
+		this.btnGuardar.setBackground(new Color(144, 238, 144));
+		this.btnGuardar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		this.btnGuardar.addActionListener(e -> {
+			if (this.tipoOperacion == 0) {
 				insertarNuevoArticulo();
 			} else {
 				actualizarArticulo();
 			}
 		});
-		panelInferiorBotones.add(btnGuardar);
+		this.panelInferiorBotones.add(this.btnGuardar);
 	}
 
 	private void abrirExistenciasArticulo() {
@@ -362,10 +361,39 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void actualizarArticulo() {
-		
+		cerrarEdicionTablaPrecios();
+
+		if (this.idArticulo <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un articulo para actualizar");
+			return;
+		}
+
+		if (!validarDatosArticulo()) {
+			return;
+		}
+
+		try {
+			Articulo articulo = buildArticulo();
+			AppContext.articuloController.actualizarArticulo(articulo);
+			this.operacionEjecutada = true;
+			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
+			dispose();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
 	}
 
 	private boolean validarCamposVacios() {
+		if (!validarDatosArticulo()) {
+			return false;
+		}
+
+		BigDecimal costoUnitario = parseDecimal(this.txfCostoUnitario.getText());
+		return validarPreciosArticulo(costoUnitario);
+	}
+
+	private boolean validarDatosArticulo() {
 		if (this.cmbProveedor.getSelectedItem() == null) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un proveedor");
 			return false;
@@ -407,7 +435,7 @@ public class Fr_DatosArticulo extends JFrame {
 			return false;
 		}
 
-		return validarPreciosArticulo(costoUnitario);
+		return true;
 	}
 
 	private boolean validarPreciosArticulo(BigDecimal costoUnitario) {
@@ -584,14 +612,14 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void llenarTablaPrecios() {
-		if (modelTablaPrecios == null) {
+		if (this.modelTablaPrecios == null) {
 			setDefaultTableModelPrecios();
 		}
 		llenarTiposClienteEnTablaPrecios();
 	}
 
 	private void llenarTiposClienteEnTablaPrecios() {
-		modelTablaPrecios.getDataVector().removeAllElements();
+		this.modelTablaPrecios.getDataVector().removeAllElements();
 
 		Vector<TipoCliente> tiposCliente = AppContext.tipoClienteController.cmbTipoCliente();
 		if (tiposCliente == null || tiposCliente.isEmpty()) {
@@ -600,7 +628,7 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 
 		for (TipoCliente tipoCliente : tiposCliente) {
-			modelTablaPrecios.addRow(new Object[] {
+			this.modelTablaPrecios.addRow(new Object[] {
 					Integer.valueOf(tipoCliente.getIdTipoCliente()),
 					tipoCliente.getNombre(),
 					BigDecimal.ZERO,
@@ -625,7 +653,7 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	public boolean isOperacionEjecutada() {
-		return operacionEjecutada;
+		return this.operacionEjecutada;
 	}
 
 	private void setRadioExento(boolean exento) {
@@ -702,11 +730,6 @@ public class Fr_DatosArticulo extends JFrame {
 			return null;
 		}
 		return parseInteger(text);
-	}
-
-	private int parseIntegerOrZero(String value) {
-		Integer parsed = parseInteger(value);
-		return parsed == null ? 0 : parsed.intValue();
 	}
 
 	private String nullToEmpty(String value) {
