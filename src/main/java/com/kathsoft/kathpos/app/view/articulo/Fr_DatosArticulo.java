@@ -363,7 +363,14 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void setDefaultTableModelPrecios() {
-		this.modelTablaPrecios = new DefaultTableModel();
+		this.modelTablaPrecios = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return column >= 2 && column <= 4;
+			}
+		};
 		this.modelTablaPrecios.addColumn("Id Tipo Cliente");
 		this.modelTablaPrecios.addColumn("Tipo Cliente");
 		this.modelTablaPrecios.addColumn("Precio");
