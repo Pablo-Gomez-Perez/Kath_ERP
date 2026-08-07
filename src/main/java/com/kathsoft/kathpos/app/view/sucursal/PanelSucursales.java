@@ -24,6 +24,10 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JTextField;
 
 public class PanelSucursales extends JPanel {
 
@@ -38,6 +42,10 @@ public class PanelSucursales extends JPanel {
 	private JButton btnNuevaSucursal;
 	private JButton btnActualizarSucursal;
 	private JButton btnEliminarSucursal;
+	private JPanel panel;
+	private JLabel lblNombreDeSucursal;
+	private JButton btnBuscar;
+	private JTextField txfNombreSucursal;
 
 	/**
 	 * Create the panel.
@@ -57,13 +65,11 @@ public class PanelSucursales extends JPanel {
 		panelEtiquetaSucursales.add(lblNewLabel_8);
 
 		panelSucursalCentral = new JPanel();
-		panelSucursalCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
+		panelSucursalCentral.setBorder(null);
 		panelSucursalCentral.setBackground(new Color(255, 215, 0));
 		this.add(panelSucursalCentral, BorderLayout.CENTER);
-		panelSucursalCentral.setLayout(new BorderLayout(0, 0));
 
 		scrollPaneTablaSucursales = new JScrollPane();
-		panelSucursalCentral.add(scrollPaneTablaSucursales, BorderLayout.CENTER);
 
 		modelTablaSucursales = new DefaultTableModel();
 		tablaSucursales = new JTable();
@@ -90,7 +96,6 @@ public class PanelSucursales extends JPanel {
 		panelSucursalCentralBotones.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_8 = (FlowLayout) panelSucursalCentralBotones.getLayout();
 		flowLayout_8.setAlignment(FlowLayout.RIGHT);
-		panelSucursalCentral.add(panelSucursalCentralBotones, BorderLayout.NORTH);
 
 		btnNuevaSucursal = new JButton("Agregar");
 		btnNuevaSucursal.addActionListener(new ActionListener() {
@@ -134,6 +139,59 @@ public class PanelSucursales extends JPanel {
 		panelSucursalCentralBotones.add(btnEliminarSucursal);
 		
 		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaSucursalesColumnWidth, tablaSucursales);
+		
+		this.panel = new JPanel();
+		this.panel.setBackground(new Color(255, 204, 0));
+		GroupLayout gl_panelSucursalCentral = new GroupLayout(this.panelSucursalCentral);
+		gl_panelSucursalCentral.setHorizontalGroup(
+			gl_panelSucursalCentral.createParallelGroup(Alignment.LEADING)
+				.addComponent(this.panelSucursalCentralBotones, GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+				.addComponent(this.panel, GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+				.addGroup(gl_panelSucursalCentral.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.scrollPaneTablaSucursales, GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		gl_panelSucursalCentral.setVerticalGroup(
+			gl_panelSucursalCentral.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelSucursalCentral.createSequentialGroup()
+					.addComponent(this.panelSucursalCentralBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.scrollPaneTablaSucursales, GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(this.panel, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		this.lblNombreDeSucursal = new JLabel("Nombre de Sucursal");
+		
+		this.btnBuscar = new JButton("Buscar");
+		
+		this.txfNombreSucursal = new JTextField();
+		this.txfNombreSucursal.setColumns(10);
+		GroupLayout gl_panel = new GroupLayout(this.panel);
+		gl_panel.setHorizontalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.lblNombreDeSucursal)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfNombreSucursal, GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.btnBuscar)
+					.addContainerGap())
+		);
+		gl_panel.setVerticalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+					.addContainerGap(18, Short.MAX_VALUE)
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblNombreDeSucursal)
+						.addComponent(this.btnBuscar)
+						.addComponent(this.txfNombreSucursal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
+		);
+		this.panel.setLayout(gl_panel);
+		this.panelSucursalCentral.setLayout(gl_panelSucursalCentral);
 	}
 	
 	private void abrirFormSucursales(int opcion, int idSucursal) {
@@ -183,5 +241,4 @@ public class PanelSucursales extends JPanel {
 		this.tablaSucursales.updateUI();
 		AppContext.sucursalController.verSucursalesEnTabla();
 	}
-
 }
