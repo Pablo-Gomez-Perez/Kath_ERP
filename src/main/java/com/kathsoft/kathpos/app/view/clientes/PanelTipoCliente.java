@@ -7,6 +7,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -240,6 +243,9 @@ public class PanelTipoCliente extends JPanel {
 				result.id() == 200 ?
 				MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 		
+		if (result.id() == 200) {
+			listarTipoClientes(this.txfNombreTipoCliente.getText());
+		}
 	}
 	
 	private void abrirFormTipoClientes(int opcion, int idTipoCliente) {
@@ -253,6 +259,14 @@ public class PanelTipoCliente extends JPanel {
 				try {
 					Fr_DatosTipoCliente frame = new Fr_DatosTipoCliente(opcion, idTipoCliente);
 					frame.setLocationRelativeTo(cmp);
+					frame.addWindowListener(new WindowAdapter() {
+						@Override
+						public void windowClosed(WindowEvent e) {
+							if (frame.isOperacionEjecutada()) {
+								listarTipoClientes(txfNombreTipoCliente.getText());
+							}
+						}
+					});
 					frame.setVisible(true);
 				} catch (Exception er) {
 					er.printStackTrace();
