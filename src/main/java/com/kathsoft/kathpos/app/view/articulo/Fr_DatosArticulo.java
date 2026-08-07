@@ -39,6 +39,7 @@ import com.kathsoft.kathpos.tools.MessageHandler;
 public class Fr_DatosArticulo extends JFrame {
 
 	private static final long serialVersionUID = -1528483064591725560L;
+	private static final Object VALOR_INVALIDO_TABLA = new Object();
 
 	private final int tipoOperacion;
 	private final int idArticulo;
@@ -370,6 +371,21 @@ public class Fr_DatosArticulo extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return column >= 2 && column <= 4;
 			}
+
+			@Override
+			public void setValueAt(Object aValue, int row, int column) {
+				if (column >= 2 && column <= 4) {
+					Object valorNormalizado = normalizarValorPrecio(aValue, column);
+					if (valorNormalizado == VALOR_INVALIDO_TABLA) {
+						return;
+					}
+
+					super.setValueAt(valorNormalizado, row, column);
+					return;
+				}
+
+				super.setValueAt(aValue, row, column);
+			}
 		};
 		this.modelTablaPrecios.addColumn("Id Tipo Cliente");
 		this.modelTablaPrecios.addColumn("Tipo Cliente");
@@ -377,6 +393,57 @@ public class Fr_DatosArticulo extends JFrame {
 		this.modelTablaPrecios.addColumn("Precio Especial");
 		this.modelTablaPrecios.addColumn("Cantidad Precio Especial");
 		this.tablePreciosPorTipoCliente.setModel(this.modelTablaPrecios);
+	}
+
+	private Object normalizarValorPrecio(Object value, int column) {
+		switch (column) {
+		case 2:
+			return normalizarDecimalPrecio(value, true, "Precio");
+		case 3:
+			return normalizarDecimalPrecio(value, false, "Precio especial");
+		case 4:
+			return normalizarCantidadPrecioEspecial(value);
+		default:
+			return value;
+		}
+	}
+
+	private Object normalizarDecimalPrecio(Object value, boolean requerido, String campo) {
+		String text = value == null ? "" : String.valueOf(value).trim();
+		if (text.isEmpty()) {
+			if (requerido) {
+				mostrarAdvertenciaValorNumerico(campo);
+				return VALOR_INVALIDO_TABLA;
+			}
+
+			return null;
+		}
+
+		try {
+			return new BigDecimal(text.replace(',', '.'));
+		} catch (NumberFormatException er) {
+			mostrarAdvertenciaValorNumerico(campo);
+			return VALOR_INVALIDO_TABLA;
+		}
+	}
+
+	private Object normalizarCantidadPrecioEspecial(Object value) {
+		String text = value == null ? "" : String.valueOf(value).trim();
+		if (text.isEmpty()) {
+			return null;
+		}
+
+		try {
+			return Integer.valueOf(text);
+		} catch (NumberFormatException er) {
+			mostrarAdvertenciaValorNumerico("Cantidad precio especial");
+			return VALOR_INVALIDO_TABLA;
+		}
+	}
+
+	private void mostrarAdvertenciaValorNumerico(String campo) {
+		MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+				campo + " debe ser un valor numérico válido");
 	}
 
 	private void llenarTablaPrecios() {
