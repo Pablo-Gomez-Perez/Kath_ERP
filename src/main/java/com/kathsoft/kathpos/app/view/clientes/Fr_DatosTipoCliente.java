@@ -36,6 +36,7 @@ public class Fr_DatosTipoCliente extends JFrame {
 	 */
 	private int tipoOperacion;
 	private int idTipoCliente;
+	private boolean operacionEjecutada;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JLabel lblNewLabel;
@@ -192,7 +193,11 @@ public class Fr_DatosTipoCliente extends JFrame {
 				result.id() == 200 ?
 				MessageHandler.INSERT_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 		
-		this.limpiarCampos();
+		if (result.id() == 200) {
+			this.operacionEjecutada = true;
+			this.limpiarCampos();
+			this.dispose();
+		}
 
 	}
 
@@ -229,11 +234,19 @@ public class Fr_DatosTipoCliente extends JFrame {
 				result.id() == 200 ?
 				MessageHandler.UPDATE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE, this, result.message());
 
+		if (result.id() == 200) {
+			this.operacionEjecutada = true;
+			this.dispose();
+		}
 	}
 		
 
 	private boolean validarCamposVacios() {
 		return this.txfNombre.getText().isBlank() || this.txfDescripcion.getText().isBlank() ? true : false;
+	}
+
+	public boolean isOperacionEjecutada() {
+		return operacionEjecutada;
 	}
 
 	private void cerrarForm() {

@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -31,6 +33,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.articulo.PrecioTipoCliente;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
@@ -39,6 +42,7 @@ import com.kathsoft.kathpos.tools.MessageHandler;
 public class Fr_DatosArticulo extends JFrame {
 
 	private static final long serialVersionUID = -1528483064591725560L;
+	private static final Object VALOR_INVALIDO_TABLA = new Object();
 
 	private final int tipoOperacion;
 	private final int idArticulo;
@@ -271,6 +275,7 @@ public class Fr_DatosArticulo extends JFrame {
 		contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
 
 		this.btnConsultarExistencias = new JButton("Existencias");
+		this.btnConsultarExistencias.setEnabled(this.tipoOperacion != 0);
 		this.btnConsultarExistencias.addActionListener(e -> abrirExistenciasArticulo());
 		this.panelInferiorBotones.add(this.btnConsultarExistencias);
 
@@ -337,7 +342,23 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void insertarNuevoArticulo() {
-		
+		cerrarEdicionTablaPrecios();
+
+		if (!validarCamposVacios()) {
+			return;
+		}
+
+		try {
+			Articulo articulo = buildArticulo();
+			List<PrecioTipoCliente> preciosTipoCliente = buildPreciosArticulo();
+			AppContext.articuloController.insertarNuevoArticulo(articulo, preciosTipoCliente);
+			this.operacionEjecutada = true;
+			MessageHandler.displayMessage(MessageHandler.INSERT_SUCCESS_MESSAGE, this, "");
+			dispose();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
 	}
 
 	private void actualizarArticulo() {
@@ -345,6 +366,87 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private boolean validarCamposVacios() {
+		if (this.cmbProveedor.getSelectedItem() == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un proveedor");
+			return false;
+		}
+
+		if (this.cmbCategoriaArticulo.getSelectedItem() == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar una categoría");
+			return false;
+		}
+
+		if (isBlank(this.txfCodigo.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el código del artículo");
+			return false;
+		}
+
+		if (isBlank(this.txfCodigoSAT.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el código SAT");
+			return false;
+		}
+
+		if (isBlank(this.txfUnidadSAT.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar la unidad SAT");
+			return false;
+		}
+
+		if (isBlank(this.txfNombre.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el nombre del artículo");
+			return false;
+		}
+
+		BigDecimal costoUnitario = parseDecimal(this.txfCostoUnitario.getText());
+		if (costoUnitario == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar un costo unitario válido");
+			return false;
+		}
+
+		if (costoUnitario.compareTo(BigDecimal.ZERO) < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El costo unitario no puede ser negativo");
+			return false;
+		}
+
+		return validarPreciosArticulo(costoUnitario);
+	}
+
+	private boolean validarPreciosArticulo(BigDecimal costoUnitario) {
+		if (this.modelTablaPrecios == null || this.modelTablaPrecios.getRowCount() == 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe existir al menos un tipo de cliente para registrar precios");
+			return false;
+		}
+
+		for (int row = 0; row < this.modelTablaPrecios.getRowCount(); row++) {
+			String tipoCliente = String.valueOf(this.modelTablaPrecios.getValueAt(row, 1));
+			BigDecimal precio = parseOptionalDecimal(this.modelTablaPrecios.getValueAt(row, 2));
+			BigDecimal precioEspecial = parseOptionalDecimal(this.modelTablaPrecios.getValueAt(row, 3));
+			Integer cantidadPrecioEspecial = parseOptionalInteger(this.modelTablaPrecios.getValueAt(row, 4));
+
+			if (precio == null) {
+				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+						"Debe capturar un precio válido para el tipo de cliente: " + tipoCliente);
+				return false;
+			}
+
+			if (precio.compareTo(costoUnitario) < 0) {
+				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+						"El precio normal no puede ser menor al costo unitario para: " + tipoCliente);
+				return false;
+			}
+
+			if (precioEspecial != null && precioEspecial.compareTo(costoUnitario) < 0) {
+				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+						"El precio especial no puede ser menor al costo unitario para: " + tipoCliente);
+				return false;
+			}
+
+			if (cantidadPrecioEspecial != null && cantidadPrecioEspecial.intValue() < 0) {
+				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+						"La cantidad para precio especial no puede ser negativa para: " + tipoCliente);
+				return false;
+			}
+		}
+
 		return true;
 	}
 
@@ -359,7 +461,43 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private Articulo buildArticulo() {
-		return new Articulo();
+		JComboboxDataViewModel proveedor = (JComboboxDataViewModel) this.cmbProveedor.getSelectedItem();
+		JComboboxDataViewModel categoria = (JComboboxDataViewModel) this.cmbCategoriaArticulo.getSelectedItem();
+		BigDecimal costoUnitario = parseDecimal(this.txfCostoUnitario.getText());
+
+		return new Articulo.ArticuloBuilder()
+				.idArticulo(this.idArticulo)
+				.idProvedor(proveedor.id())
+				.idCategoria(categoria.id())
+				.codigoArticulo(this.txfCodigo.getText().trim())
+				.codigoSat(this.txfCodigoSAT.getText().trim())
+				.unidadSat(this.txfUnidadSAT.getText().trim())
+				.nombre(this.txfNombre.getText().trim())
+				.descripcion(getOptionalText(this.txaDescripcion.getText()))
+				.exento(this.rdbtnExento.isSelected())
+				.costoUnitario(costoUnitario.doubleValue())
+				.activo(true)
+				.build();
+	}
+
+	private List<PrecioTipoCliente> buildPreciosArticulo() {
+		List<PrecioTipoCliente> preciosTipoCliente = new ArrayList<PrecioTipoCliente>();
+
+		for (int row = 0; row < this.modelTablaPrecios.getRowCount(); row++) {
+			Integer idTipoCliente = parseOptionalInteger(this.modelTablaPrecios.getValueAt(row, 0));
+			BigDecimal precio = parseOptionalDecimal(this.modelTablaPrecios.getValueAt(row, 2));
+			BigDecimal precioEspecial = parseOptionalDecimal(this.modelTablaPrecios.getValueAt(row, 3));
+			Integer cantidadPrecioEspecial = parseOptionalInteger(this.modelTablaPrecios.getValueAt(row, 4));
+
+			preciosTipoCliente.add(new PrecioTipoCliente(
+					idTipoCliente.intValue(),
+					precio,
+					precioEspecial,
+					cantidadPrecioEspecial
+			));
+		}
+
+		return preciosTipoCliente;
 	}
 
 	private void setDefaultTableModelPrecios() {
@@ -370,6 +508,21 @@ public class Fr_DatosArticulo extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return column >= 2 && column <= 4;
 			}
+
+			@Override
+			public void setValueAt(Object aValue, int row, int column) {
+				if (column >= 2 && column <= 4) {
+					Object valorNormalizado = normalizarValorPrecio(aValue, column);
+					if (valorNormalizado == VALOR_INVALIDO_TABLA) {
+						return;
+					}
+
+					super.setValueAt(valorNormalizado, row, column);
+					return;
+				}
+
+				super.setValueAt(aValue, row, column);
+			}
 		};
 		this.modelTablaPrecios.addColumn("Id Tipo Cliente");
 		this.modelTablaPrecios.addColumn("Tipo Cliente");
@@ -377,6 +530,57 @@ public class Fr_DatosArticulo extends JFrame {
 		this.modelTablaPrecios.addColumn("Precio Especial");
 		this.modelTablaPrecios.addColumn("Cantidad Precio Especial");
 		this.tablePreciosPorTipoCliente.setModel(this.modelTablaPrecios);
+	}
+
+	private Object normalizarValorPrecio(Object value, int column) {
+		switch (column) {
+		case 2:
+			return normalizarDecimalPrecio(value, true, "Precio");
+		case 3:
+			return normalizarDecimalPrecio(value, false, "Precio especial");
+		case 4:
+			return normalizarCantidadPrecioEspecial(value);
+		default:
+			return value;
+		}
+	}
+
+	private Object normalizarDecimalPrecio(Object value, boolean requerido, String campo) {
+		String text = value == null ? "" : String.valueOf(value).trim();
+		if (text.isEmpty()) {
+			if (requerido) {
+				mostrarAdvertenciaValorNumerico(campo);
+				return VALOR_INVALIDO_TABLA;
+			}
+
+			return null;
+		}
+
+		try {
+			return new BigDecimal(text.replace(',', '.'));
+		} catch (NumberFormatException er) {
+			mostrarAdvertenciaValorNumerico(campo);
+			return VALOR_INVALIDO_TABLA;
+		}
+	}
+
+	private Object normalizarCantidadPrecioEspecial(Object value) {
+		String text = value == null ? "" : String.valueOf(value).trim();
+		if (text.isEmpty()) {
+			return null;
+		}
+
+		try {
+			return Integer.valueOf(text);
+		} catch (NumberFormatException er) {
+			mostrarAdvertenciaValorNumerico("Cantidad precio especial");
+			return VALOR_INVALIDO_TABLA;
+		}
+	}
+
+	private void mostrarAdvertenciaValorNumerico(String campo) {
+		MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+				campo + " debe ser un valor numérico válido");
 	}
 
 	private void llenarTablaPrecios() {
@@ -450,12 +654,18 @@ public class Fr_DatosArticulo extends JFrame {
 		}
 	}
 
+	private void cerrarEdicionTablaPrecios() {
+		if (this.tablePreciosPorTipoCliente != null && this.tablePreciosPorTipoCliente.isEditing()) {
+			this.tablePreciosPorTipoCliente.getCellEditor().stopCellEditing();
+		}
+	}
+
 	private BigDecimal parseDecimal(String value) {
 		try {
 			if (value == null || value.isBlank()) {
 				return null;
 			}
-			return new BigDecimal(value);
+			return new BigDecimal(value.trim().replace(",", "."));
 		} catch (Exception er) {
 			return null;
 		}
@@ -477,7 +687,7 @@ public class Fr_DatosArticulo extends JFrame {
 			if (value == null || value.isBlank()) {
 				return null;
 			}
-			return Integer.valueOf(value);
+			return Integer.valueOf(value.trim());
 		} catch (Exception er) {
 			return null;
 		}
@@ -501,5 +711,16 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private String nullToEmpty(String value) {
 		return value == null ? "" : value;
+	}
+
+	private String getOptionalText(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		return value.trim();
+	}
+
+	private boolean isBlank(String value) {
+		return value == null || value.isBlank();
 	}
 }
