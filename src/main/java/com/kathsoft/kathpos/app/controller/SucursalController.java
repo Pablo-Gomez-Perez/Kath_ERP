@@ -7,27 +7,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class SucursalController implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6758797455027410479L;
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	private static Connection cn = null;
 
 	/**
-	 * consulta únicamente los nombres de las sucursales registradas
-	 * 
-	 * @param cmb
+	 * Lista las sucursales activas para controles de selección.
+	 *
+	 * @return sucursales disponibles con id y nombre
 	 */
 	public List<JComboboxDataViewModel> consultarNombreSucursales() {
 		
@@ -46,7 +40,6 @@ public class SucursalController implements java.io.Serializable {
 
 				sucursales.add(new JComboboxDataViewModel(rset.getInt("id"), rset.getString("nombre")));
 			}
-			
 			
 			return sucursales;
 			
@@ -70,10 +63,9 @@ public class SucursalController implements java.io.Serializable {
 	}
 
 	/**
-	 * consulta todos lo registros de las sucursales en la base de datos y los
-	 * agrega a un table model para ser mostrado en la vista
-	 * 
-	 * @param model
+	 * Consulta las sucursales registradas para mostrarlas en tabla.
+	 *
+	 * @return filas con el detalle de cada sucursal
 	 */
 	public Vector<Object[]> verSucursalesEnTabla() {
 
@@ -88,16 +80,16 @@ public class SucursalController implements java.io.Serializable {
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
-				data.add(new Object[] { rset.getInt(1), // indice
-						rset.getString(2), // nombre
-						rset.getString(3), // descripcion
-						rset.getString(4), // telefono
-						rset.getString(5), // email
-						rset.getString(6), // estado
-						rset.getString(7), // ciudad
-						rset.getString(8), // direccion
-						rset.getString(9), // codigo postal
-						rset.getShort(10) == 1 ? "Activo" : "Inactivo" // sucursar activa o inactiva
+				data.add(new Object[] { rset.getInt(1),
+						rset.getString(2),
+						rset.getString(3),
+						rset.getString(4),
+						rset.getString(5),
+						rset.getString(6),
+						rset.getString(7),
+						rset.getString(8),
+						rset.getString(9),
+						rset.getShort(10) == 1 ? "Activo" : "Inactivo"
 				});
 			}
 
@@ -119,18 +111,20 @@ public class SucursalController implements java.io.Serializable {
 	}
 
 	/**
-	 * inserta una nueva sucursal en la base de datos
-	 * 
-	 * @param sucursal
+	 * Registra una sucursal usando el SP vigente y devuelve su respuesta.
+	 *
+	 * @param sucursal datos de la sucursal a registrar
+	 * @return respuesta estándar del procedimiento almacenado
 	 */
-	public void insertarNuevaSucursal(Sucursal sucursal) {
+	public SpResponseModel insertarNuevaSucursal(Sucursal sucursal) {
 
 		CallableStatement stm = null;
+		ResultSet rset = null;
 
 		try {
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL insert_nueva_sucursal(?,?,?,?,?,?,?,?);");
+			stm = cn.prepareCall("CALL insertSucursal(?,?,?,?,?,?,?,?);");
 
 			stm.setString(1, sucursal.getNombre());
 			stm.setString(2, sucursal.getDescripcion());
@@ -141,15 +135,22 @@ public class SucursalController implements java.io.Serializable {
 			stm.setString(7, sucursal.getDireccion());
 			stm.setString(8, sucursal.getCodigoPostal());
 
-			stm.execute();
+			if (stm.execute()) {
+				rset = stm.getResultSet();
+				return buildSpResponse(rset);
+			}
+
+			return new SpResponseModel(500, "El procedimiento insertSucursal no devolvió respuesta");
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return new SpResponseModel(500, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
+			return new SpResponseModel(500, er.getMessage());
 		} finally {
 			try {
-				Conexion.cerrarConexion(cn, stm);
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -158,14 +159,21 @@ public class SucursalController implements java.io.Serializable {
 
 	}
 
-	public void actualizarSucursal(Sucursal sucursal) {
+	/**
+	 * Actualiza una sucursal usando el SP vigente y devuelve su respuesta.
+	 *
+	 * @param sucursal datos actualizados de la sucursal
+	 * @return respuesta estándar del procedimiento almacenado
+	 */
+	public SpResponseModel actualizarSucursal(Sucursal sucursal) {
 
 		CallableStatement stm = null;
+		ResultSet rset = null;
 
 		try {
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL update_sucursal(?,?,?,?,?,?,?,?,?);");
+			stm = cn.prepareCall("CALL updateSucursal(?,?,?,?,?,?,?,?,?);");
 
 			stm.setInt(1, sucursal.getIdSucursal());
 			stm.setString(2, sucursal.getNombre());
@@ -177,15 +185,22 @@ public class SucursalController implements java.io.Serializable {
 			stm.setString(8, sucursal.getDireccion());
 			stm.setString(9, sucursal.getCodigoPostal());
 
-			stm.execute();
+			if (stm.execute()) {
+				rset = stm.getResultSet();
+				return buildSpResponse(rset);
+			}
+
+			return new SpResponseModel(500, "El procedimiento updateSucursal no devolvió respuesta");
 
 		} catch (SQLException er) {
 			er.printStackTrace();
+			return new SpResponseModel(500, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
+			return new SpResponseModel(500, er.getMessage());
 		} finally {
 			try {
-				Conexion.cerrarConexion(cn, stm);
+				Conexion.cerrarConexion(cn, rset, stm);
 
 			} catch (SQLException er) {
 				er.printStackTrace();
@@ -254,6 +269,19 @@ public class SucursalController implements java.io.Serializable {
 
 	}
 
-}
+	/**
+	 * Construye la respuesta estándar devuelta por procedimientos de escritura.
+	 *
+	 * @param rset resultado con columnas id y message
+	 * @return respuesta del SP o error genérico si no hubo fila
+	 * @throws SQLException si falla la lectura del resultado
+	 */
+	private SpResponseModel buildSpResponse(ResultSet rset) throws SQLException {
+		if (rset != null && rset.next()) {
+			return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
+		}
 
-//
+		return new SpResponseModel(500, "El procedimiento almacenado no devolvió respuesta");
+	}
+
+}
