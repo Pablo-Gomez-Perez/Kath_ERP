@@ -43,6 +43,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private static final long serialVersionUID = -1528483064591725560L;
 	private static final Object VALOR_INVALIDO_TABLA = new Object();
+	private static final int MAX_LONGITUD_CODIGO_SAT = 9;
 
 	private final int tipoOperacion;
 	private final int idArticulo;
@@ -389,6 +390,12 @@ public class Fr_DatosArticulo extends JFrame {
 			return;
 		}
 
+		if (this.txfCodigoSAT.getText().trim().length() > MAX_LONGITUD_CODIGO_SAT) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"El código SAT no puede exceder " + MAX_LONGITUD_CODIGO_SAT + " caracteres");
+			return;
+		}
+
 		if (isBlank(this.txfUnidadSAT.getText())) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar la unidad SAT");
 			return;
@@ -440,6 +447,12 @@ public class Fr_DatosArticulo extends JFrame {
 
 		if (isBlank(this.txfCodigoSAT.getText())) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el código SAT");
+			return false;
+		}
+
+		if (this.txfCodigoSAT.getText().trim().length() > MAX_LONGITUD_CODIGO_SAT) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"El código SAT no puede exceder " + MAX_LONGITUD_CODIGO_SAT + " caracteres");
 			return false;
 		}
 
