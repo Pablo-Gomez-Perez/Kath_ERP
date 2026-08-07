@@ -15,36 +15,7 @@ public class TipoClienteController {
 	private static Connection cn = null;
 
 	public Vector<TipoCliente> cmbTipoCliente() {
-
-		var data = new Vector<TipoCliente>();
-		CallableStatement stm = null;
-		ResultSet rset = null;
-
-		try {
-
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL cmb_tipoCliente");
-			rset = stm.executeQuery();
-
-			while (rset.next()) {
-				data.add(new TipoCliente(rset.getInt(1), rset.getString(2)));
-			}
-
-			return data;
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			return data;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return data;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
-		}
+		return this.listarTipoClienteActivosParaPrecios("");
 	}
 
 	public Vector<Object[]> listarTipoCliente(String nombre) {
@@ -84,6 +55,28 @@ public class TipoClienteController {
 			}
 		}
 
+	}
+
+	/**
+	 * Lista los tipos de cliente activos reutilizando la consulta general.
+	 * Se usa para capturar precios de artículos y evitar referencias a tipos inactivos.
+	 */
+	public Vector<TipoCliente> listarTipoClienteActivosParaPrecios(String nombre) {
+		var data = new Vector<TipoCliente>();
+		Vector<Object[]> tiposCliente = this.listarTipoCliente(nombre);
+
+		if (tiposCliente == null || tiposCliente.isEmpty()) {
+			return data;
+		}
+
+		for (Object[] row : tiposCliente) {
+			String status = String.valueOf(row[3]);
+			if ("Activo".equalsIgnoreCase(status)) {
+				data.add(new TipoCliente(Integer.parseInt(String.valueOf(row[0])), String.valueOf(row[1])));
+			}
+		}
+
+		return data;
 	}
 
 	public SpResponseModel insertarNuevoTipoCliente(TipoCliente data) {
