@@ -26,20 +26,13 @@ public class ArticuloController implements java.io.Serializable {
 		return this.verArticulosEnTabla(idSucursal, "TODOS", "NOMBRE", "", idTipoCliente);
 	}
 
-	public Vector<Object[]> verArticulosEnTabla(
-			int idSucursal,
-			String tipoBusqueda,
-			String ordenarPor,
-			String textoBusqueda,
-			int idTipoCliente
-	) {
+	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String tipoBusqueda, String ordenarPor,
+			String textoBusqueda, int idTipoCliente) {
 
 		var articulos = new Vector<Object[]>();
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL listArticulos(?, ?, ?, ?, ?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listArticulos(?, ?, ?, ?, ?);")) {
 
 			stm.setInt(1, idSucursal);
 			stm.setString(2, tipoBusqueda);
@@ -49,18 +42,11 @@ public class ArticuloController implements java.io.Serializable {
 
 			try (ResultSet rset = stm.executeQuery()) {
 				while (rset.next()) {
-					Object[] fila = {
-							rset.getInt("id_articulo"),
-							rset.getString("nombre_proveedor"),
-							rset.getString("nombre_categoria"),
-							rset.getString("codigo_articulo"),
-							rset.getString("nombre"),
-							rset.getBoolean("es_exento") ? "Exento" : "Gravado",
-							rset.getBigDecimal("costo_unitario"),
-							rset.getBigDecimal("precio"),
-							rset.getInt("existencia"),
-							rset.getInt("activo") == 1 ? "Activo" : "Inactivo"
-					};
+					Object[] fila = { rset.getInt("id_articulo"), rset.getString("nombre_proveedor"),
+							rset.getString("nombre_categoria"), rset.getString("codigo_articulo"),
+							rset.getString("nombre"), rset.getBoolean("es_exento") ? "Exento" : "Gravado",
+							rset.getBigDecimal("costo_unitario"), rset.getBigDecimal("precio"),
+							rset.getInt("existencia"), rset.getInt("activo") == 1 ? "Activo" : "Inactivo" };
 					articulos.add(fila);
 				}
 			}
@@ -196,30 +182,112 @@ public class ArticuloController implements java.io.Serializable {
 			stm.execute();
 		}
 	}
-
+	
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
+	    this.actualizarArticulo(art, Collections.emptyList());
+	}
 
-		CallableStatement stm = null;
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL update_articulo(?,?,?,?,?,?,?,?,?,?,?);");
+	public void actualizarArticulo(Articulo art, List<PrecioTipoCliente> preciosTipoCliente)
+	        throws SQLException, Exception {
 
-			stm.setInt(1, art.getIdArticulo());
-			stm.setInt(2, art.getIdProvedor());
-			stm.setInt(3, art.getIdCategoria());
-			stm.setString(4, art.getCodigoArticulo());
-			stm.setString(5, art.getCodigoSat());
-			stm.setString(6, art.getUnidadSat());
-			stm.setString(7, art.getNombre());
-			stm.setString(8, art.getDescripcion());
-			stm.setInt(9, art.isExento() ? 1 : 0);
-			stm.setDouble(10, art.getCostoUnitario());
-			stm.setInt(11, art.isActivo() ? 1 : 0);
+	    List<PrecioTipoCliente> precios = preciosTipoCliente == null ? Collections.emptyList() : preciosTipoCliente;
 
-			stm.execute();
-		} finally {
-			Conexion.cerrarConexion(cn, stm);
-		}
+	    try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+	        boolean autoCommitOriginal = cn.getAutoCommit();
+	        cn.setAutoCommit(false);
+
+	        try {
+	            this.actualizarArticulo(cn, art);
+
+	            for (PrecioTipoCliente precioTipoCliente : precios) {
+	                this.actualizarPrecioPorTipoCliente(cn, art.getIdArticulo(), precioTipoCliente);
+	            }
+
+	            cn.commit();
+	        } catch (SQLException er) {
+	            cn.rollback();
+	            throw er;
+	        } catch (Exception er) {
+	            cn.rollback();
+	            throw er;
+	        } finally {
+	            cn.setAutoCommit(autoCommitOriginal);
+	        }
+	    }
+	}
+
+	public void actualizarPrecioPorTipoCliente(int idArticulo, PrecioTipoCliente precioTipoCliente)
+	        throws SQLException, Exception {
+	    try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+	        this.actualizarPrecioPorTipoCliente(cn, idArticulo, precioTipoCliente);
+	    }
+	}
+
+	private void actualizarArticulo(Connection cn, Articulo art) throws SQLException {
+	    try (CallableStatement stm = cn.prepareCall("CALL updateArticulo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
+	        stm.setInt(1, art.getIdArticulo());
+	        stm.setInt(2, art.getIdProvedor());
+	        stm.setInt(3, art.getIdCategoria());
+	        stm.setString(4, art.getCodigoArticulo());
+	        stm.setString(5, art.getCodigoSat());
+	        stm.setString(6, art.getUnidadSat());
+	        stm.setString(7, art.getNombre());
+	        stm.setString(8, art.getDescripcion());
+	        stm.setInt(9, art.isExento() ? 1 : 0);
+	        stm.setDouble(10, art.getCostoUnitario());
+	        stm.setInt(11, art.isActivo() ? 1 : 0);
+
+	        validarRespuestaProcedimiento(stm, "actualizar artículo");
+	    }
+	}
+
+	private void actualizarPrecioPorTipoCliente(Connection cn, int idArticulo, PrecioTipoCliente precioTipoCliente)
+	        throws SQLException {
+
+	    if (precioTipoCliente.getPrecio() == null) {
+	        throw new SQLException("El precio por tipo de cliente es obligatorio");
+	    }
+
+	    try (CallableStatement stm = cn.prepareCall("CALL updatePrecioPorTipoCliente(?, ?, ?, ?, ?);")) {
+	        stm.setInt(1, idArticulo);
+	        stm.setInt(2, precioTipoCliente.getIdTipoCliente());
+	        stm.setBigDecimal(3, precioTipoCliente.getPrecio());
+
+	        if (precioTipoCliente.getPrecioEspecial() == null) {
+	            stm.setNull(4, Types.DECIMAL);
+	        } else {
+	            stm.setBigDecimal(4, precioTipoCliente.getPrecioEspecial());
+	        }
+
+	        if (precioTipoCliente.getCantidadPrecioEspecial() == null) {
+	            stm.setNull(5, Types.INTEGER);
+	        } else {
+	            stm.setInt(5, precioTipoCliente.getCantidadPrecioEspecial().intValue());
+	        }
+
+	        validarRespuestaProcedimiento(stm, "actualizar precio por tipo de cliente");
+	    }
+	}
+
+	private void validarRespuestaProcedimiento(CallableStatement stm, String operacion) throws SQLException {
+	    if (!stm.execute()) {
+	        throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
+	    }
+
+	    try (ResultSet rset = stm.getResultSet()) {
+	        if (rset != null && rset.next()) {
+	            int id = rset.getInt("id");
+	            String message = rset.getString("message");
+
+	            if (id != 200) {
+	                throw new SQLException(message);
+	            }
+
+	            return;
+	        }
+	    }
+
+	    throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
 	}
 
 	public Articulo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
@@ -269,20 +337,14 @@ public class ArticuloController implements java.io.Serializable {
 
 	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL listExistenciaGlobalArticulo(?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listExistenciaGlobalArticulo(?);")) {
 			stm.setInt(1, idArticulo);
 
 			try (ResultSet rset = stm.executeQuery()) {
 				while (rset.next()) {
-					Object[] fila = {
-							rset.getInt("id_sucursar"),
-							rset.getString("nombre"),
-							rset.getString("direccion"),
-							rset.getInt("existencia")
-					};
+					Object[] fila = { rset.getInt("id_sucursar"), rset.getString("nombre"), rset.getString("direccion"),
+							rset.getInt("existencia") };
 					tabla.addRow(fila);
 				}
 			}
@@ -293,13 +355,34 @@ public class ArticuloController implements java.io.Serializable {
 		}
 	}
 
+	public List<PrecioTipoCliente> listarPreciosArticuloPorTipoCliente(int idArticulo) throws SQLException, Exception {
+		var precios = new ArrayList<PrecioTipoCliente>();
+
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listPreciosArticuloTipoCliente(?);")) {
+			stm.setInt(1, idArticulo);
+
+			try (ResultSet rset = stm.executeQuery()) {
+				while (rset.next()) {
+					Integer cantidadPrecioEspecial = Integer.valueOf(rset.getInt("cant_p_precioEspecial"));
+					if (rset.wasNull()) {
+						cantidadPrecioEspecial = null;
+					}
+
+					precios.add(new PrecioTipoCliente(rset.getInt("id_tipo_cliente"), rset.getBigDecimal("precio"),
+							rset.getBigDecimal("precios_especial"), cantidadPrecioEspecial));
+				}
+			}
+		}
+
+		return precios;
+	}
+
 	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
 		Articulo art = new Articulo();
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL getArticuloById(?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL getArticuloById(?);")) {
 			stm.setInt(1, id);
 
 			try (ResultSet rset = stm.executeQuery()) {

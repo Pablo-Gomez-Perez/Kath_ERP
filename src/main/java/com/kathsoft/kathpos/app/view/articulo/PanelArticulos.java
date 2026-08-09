@@ -231,18 +231,24 @@ public class PanelArticulos extends JPanel {
 	}
 
 	private void actualizarArticulo() {
-		if (this.tablaArticulos.getSelectedRow() < 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un articulo para actualizar");
+		int selectedRow = this.tablaArticulos.getSelectedRow();
+		if (selectedRow < 0) {
 			return;
 		}
 
-		int idArticulo = DataTools.getIndiceElementoSeleccionado(this.tablaArticulos, this.modelTablaArticulos, 0);
-		if (idArticulo <= 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "No se pudo obtener el identificador del articulo seleccionado");
-			return;
-		}
+		try {
+			int modelRow = this.tablaArticulos.convertRowIndexToModel(selectedRow);
+			int idArticulo = parseIntegerOrZero(this.modelTablaArticulos.getValueAt(modelRow, 0));
 
-		abrirVentanaFormularioArticulo(1, idArticulo, this.sucursal.getIdSucursal());
+			if (idArticulo <= 0) {
+				System.err.println("No se pudo obtener el identificador del articulo seleccionado");
+				return;
+			}
+
+			abrirVentanaFormularioArticulo(1, idArticulo, this.sucursal.getIdSucursal());
+		} catch (RuntimeException er) {
+			er.printStackTrace(System.err);
+		}
 	}
 
 	private void abrirVentanaFormularioArticulo(int opcion, int idArticulo, int sucursal) {
@@ -356,6 +362,15 @@ public class PanelArticulos extends JPanel {
 		this.cmbCriterioDeOrdenacion.removeAllItems();
 		for (CriterioOrdenamientoArticulo criterio : CriterioOrdenamientoArticulo.values()) {
 			this.cmbCriterioDeOrdenacion.addItem(criterio);
+		}
+	}
+
+	private int parseIntegerOrZero(Object value) {
+		try {
+			return value == null ? 0 : Integer.parseInt(String.valueOf(value));
+		} catch (NumberFormatException er) {
+			er.printStackTrace(System.err);
+			return 0;
 		}
 	}
 }
