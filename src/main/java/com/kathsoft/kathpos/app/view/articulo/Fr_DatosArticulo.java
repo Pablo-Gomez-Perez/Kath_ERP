@@ -43,6 +43,7 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private static final long serialVersionUID = -1528483064591725560L;
 	private static final Object VALOR_INVALIDO_TABLA = new Object();
+	private static final int MAX_LONGITUD_CODIGO_SAT = 9;
 
 	private final int tipoOperacion;
 	private final int idArticulo;
@@ -90,8 +91,8 @@ public class Fr_DatosArticulo extends JFrame {
 		this.idSucursal = sucursal;
 
 		setTitle(tipoOperacion == 0 ? "Nuevo Articulo" : "Editar Articulo");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/productos_icono.jpg")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		contentPane = new JPanel();
@@ -169,7 +170,8 @@ public class Fr_DatosArticulo extends JFrame {
 
 		this.panelRdbIndicadorImpuestos = new JPanel();
 		this.panelRdbIndicadorImpuestos.setLayout(new GridLayout(2, 1, 0, 0));
-		this.panelRdbIndicadorImpuestos.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "IVA", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		this.panelRdbIndicadorImpuestos.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "IVA",
+				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
 
 		this.btnRadioGroup = new ButtonGroup();
 		this.rdbtnExento = new JRadioButton("Exento");
@@ -186,85 +188,85 @@ public class Fr_DatosArticulo extends JFrame {
 		this.scrollPanePreciosTipoCliente.setViewportView(this.tablePreciosPorTipoCliente);
 
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
-		gl_panelCentralFormulario.setHorizontalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblCodigo)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCodigo, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblCodigoSat)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCodigoSAT, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblUnidadSat)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfUnidadSAT, 52, 52, 52))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblNombre)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfNombre, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblProveedor)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.cmbProveedor, 0, 204, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblCategoria)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.cmbCategoriaArticulo, 0, 207, Short.MAX_VALUE))
-						.addComponent(this.lblDescripcion)
-						.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-							.addComponent(this.lblPreciosPorCategoria)
-							.addPreferredGap(ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
-							.addComponent(this.lblCostoUnitario)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))
-					.addContainerGap())
-		);
-		gl_panelCentralFormulario.setVerticalGroup(
-			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblCodigo)
-						.addComponent(this.txfCodigo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblUnidadSat)
-						.addComponent(this.txfUnidadSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblCodigoSat)
-						.addComponent(this.txfCodigoSAT, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblNombre)
-						.addComponent(this.txfNombre, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblProveedor)
-						.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblCategoria)
-						.addComponent(this.cmbCategoriaArticulo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.lblDescripcion)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
-						.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-						.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblCostoUnitario)
-						.addComponent(this.lblPreciosPorCategoria))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
-					.addGap(22))
-		);
+		gl_panelCentralFormulario.setHorizontalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup().addContainerGap()
+						.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(this.lblCodigo)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.txfCodigo, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblCodigoSat)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.txfCodigoSAT, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblUnidadSat)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.txfUnidadSAT, 52, 52, 52))
+								.addGroup(gl_panelCentralFormulario.createSequentialGroup().addComponent(this.lblNombre)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.txfNombre, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE))
+								.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(this.lblProveedor).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.cmbProveedor, 0, 204, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblCategoria)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.cmbCategoriaArticulo, 0, 207, Short.MAX_VALUE))
+								.addComponent(this.lblDescripcion)
+								.addGroup(Alignment.TRAILING, gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.PREFERRED_SIZE, 195,
+												GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+										.addComponent(this.lblPreciosPorCategoria)
+										.addPreferredGap(ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
+										.addComponent(this.lblCostoUnitario).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 566,
+										Short.MAX_VALUE))
+						.addContainerGap()));
+		gl_panelCentralFormulario
+				.setVerticalGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup().addContainerGap()
+								.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+										.addComponent(this.lblCodigo)
+										.addComponent(this.txfCodigo, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.lblUnidadSat)
+										.addComponent(this.txfUnidadSAT, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.lblCodigoSat)
+										.addComponent(this.txfCodigoSAT, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+										.addComponent(this.lblNombre)
+										.addComponent(this.txfNombre, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(gl_panelCentralFormulario
+										.createParallelGroup(Alignment.BASELINE).addComponent(this.lblProveedor)
+										.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.lblCategoria).addComponent(this.cmbCategoriaArticulo,
+												GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblDescripcion)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(
+										gl_panelCentralFormulario.createParallelGroup(Alignment.TRAILING)
+												.addComponent(this.scrollPane, GroupLayout.DEFAULT_SIZE, 111,
+														Short.MAX_VALUE)
+												.addComponent(this.panelRdbIndicadorImpuestos, GroupLayout.DEFAULT_SIZE,
+														92, Short.MAX_VALUE))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+										.addComponent(this.txfCostoUnitario, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.lblCostoUnitario).addComponent(this.lblPreciosPorCategoria))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(this.scrollPanePreciosTipoCliente, GroupLayout.DEFAULT_SIZE, 262,
+										Short.MAX_VALUE)
+								.addGap(22)));
 		this.panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 	}
 
@@ -281,13 +283,15 @@ public class Fr_DatosArticulo extends JFrame {
 
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.setBackground(new Color(205, 92, 92));
-		btnCancelar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		btnCancelar.setIcon(
+				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		btnCancelar.addActionListener(e -> dispose());
 		panelInferiorBotones.add(btnCancelar);
 
 		btnGuardar = new JButton("Guardar");
 		btnGuardar.setBackground(new Color(144, 238, 144));
-		btnGuardar.setIcon(new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		btnGuardar.setIcon(
+				new ImageIcon(Fr_DatosArticulo.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		btnGuardar.addActionListener(e -> {
 			if (tipoOperacion == 0) {
 				insertarNuevoArticulo();
@@ -312,14 +316,16 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private void getArticuloPorId() {
 		if (this.idArticulo <= 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un articulo para editar");
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Debe seleccionar un articulo para editar");
 			return;
 		}
 
 		try {
 			Articulo articulo = AppContext.articuloController.consultarArticuloPorId(this.idArticulo, this.idSucursal);
 			if (articulo == null || articulo.getIdArticulo() <= 0) {
-				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "No se encontró el articulo seleccionado");
+				MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+						"No se encontró el articulo seleccionado");
 				return;
 			}
 
@@ -362,7 +368,71 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void actualizarArticulo() {
-		
+		cerrarEdicionTablaPrecios();
+
+		if (this.idArticulo <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Debe seleccionar un articulo para actualizar");
+			return;
+		}
+
+		if (this.cmbProveedor.getSelectedItem() == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar un proveedor");
+			return;
+		}
+
+		if (this.cmbCategoriaArticulo.getSelectedItem() == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar una categoría");
+			return;
+		}
+
+		if (isBlank(this.txfCodigo.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el código del artículo");
+			return;
+		}
+
+		if (isBlank(this.txfCodigoSAT.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el código SAT");
+			return;
+		}
+
+		if (this.txfCodigoSAT.getText().trim().length() > MAX_LONGITUD_CODIGO_SAT) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"El código SAT no puede exceder " + MAX_LONGITUD_CODIGO_SAT + " caracteres");
+			return;
+		}
+
+		if (isBlank(this.txfUnidadSAT.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar la unidad SAT");
+			return;
+		}
+
+		if (isBlank(this.txfNombre.getText())) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el nombre del artículo");
+			return;
+		}
+
+		BigDecimal costoUnitario = parseDecimal(this.txfCostoUnitario.getText());
+		if (costoUnitario == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar un costo unitario válido");
+			return;
+		}
+
+		if (costoUnitario.compareTo(BigDecimal.ZERO) < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El costo unitario no puede ser negativo");
+			return;
+		}
+
+		try {
+			Articulo articulo = buildArticulo();
+			AppContext.articuloController.actualizarArticulo(articulo);
+			this.operacionEjecutada = true;
+			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
+			dispose();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
 	}
 
 	private boolean validarCamposVacios() {
@@ -383,6 +453,12 @@ public class Fr_DatosArticulo extends JFrame {
 
 		if (isBlank(this.txfCodigoSAT.getText())) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe capturar el código SAT");
+			return false;
+		}
+
+		if (this.txfCodigoSAT.getText().trim().length() > MAX_LONGITUD_CODIGO_SAT) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"El código SAT no puede exceder " + MAX_LONGITUD_CODIGO_SAT + " caracteres");
 			return false;
 		}
 
@@ -412,7 +488,8 @@ public class Fr_DatosArticulo extends JFrame {
 
 	private boolean validarPreciosArticulo(BigDecimal costoUnitario) {
 		if (this.modelTablaPrecios == null || this.modelTablaPrecios.getRowCount() == 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe existir al menos un tipo de cliente para registrar precios");
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Debe existir al menos un tipo de cliente para registrar precios");
 			return false;
 		}
 
@@ -465,19 +542,11 @@ public class Fr_DatosArticulo extends JFrame {
 		JComboboxDataViewModel categoria = (JComboboxDataViewModel) this.cmbCategoriaArticulo.getSelectedItem();
 		BigDecimal costoUnitario = parseDecimal(this.txfCostoUnitario.getText());
 
-		return new Articulo.ArticuloBuilder()
-				.idArticulo(this.idArticulo)
-				.idProvedor(proveedor.id())
-				.idCategoria(categoria.id())
-				.codigoArticulo(this.txfCodigo.getText().trim())
-				.codigoSat(this.txfCodigoSAT.getText().trim())
-				.unidadSat(this.txfUnidadSAT.getText().trim())
-				.nombre(this.txfNombre.getText().trim())
-				.descripcion(getOptionalText(this.txaDescripcion.getText()))
-				.exento(this.rdbtnExento.isSelected())
-				.costoUnitario(costoUnitario.doubleValue())
-				.activo(true)
-				.build();
+		return new Articulo.ArticuloBuilder().idArticulo(this.idArticulo).idProvedor(proveedor.id())
+				.idCategoria(categoria.id()).codigoArticulo(this.txfCodigo.getText().trim())
+				.codigoSat(this.txfCodigoSAT.getText().trim()).unidadSat(this.txfUnidadSAT.getText().trim())
+				.nombre(this.txfNombre.getText().trim()).descripcion(getOptionalText(this.txaDescripcion.getText()))
+				.exento(this.rdbtnExento.isSelected()).costoUnitario(costoUnitario.doubleValue()).activo(true).build();
 	}
 
 	private List<PrecioTipoCliente> buildPreciosArticulo() {
@@ -489,12 +558,8 @@ public class Fr_DatosArticulo extends JFrame {
 			BigDecimal precioEspecial = parseOptionalDecimal(this.modelTablaPrecios.getValueAt(row, 3));
 			Integer cantidadPrecioEspecial = parseOptionalInteger(this.modelTablaPrecios.getValueAt(row, 4));
 
-			preciosTipoCliente.add(new PrecioTipoCliente(
-					idTipoCliente.intValue(),
-					precio,
-					precioEspecial,
-					cantidadPrecioEspecial
-			));
+			preciosTipoCliente.add(
+					new PrecioTipoCliente(idTipoCliente.intValue(), precio, precioEspecial, cantidadPrecioEspecial));
 		}
 
 		return preciosTipoCliente;
@@ -579,8 +644,7 @@ public class Fr_DatosArticulo extends JFrame {
 	}
 
 	private void mostrarAdvertenciaValorNumerico(String campo) {
-		MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
-				campo + " debe ser un valor numérico válido");
+		MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, campo + " debe ser un valor numérico válido");
 	}
 
 	private void llenarTablaPrecios() {
@@ -599,19 +663,45 @@ public class Fr_DatosArticulo extends JFrame {
 			return;
 		}
 
-		for (TipoCliente tipoCliente : tiposCliente) {
-			modelTablaPrecios.addRow(new Object[] {
-					Integer.valueOf(tipoCliente.getIdTipoCliente()),
-					tipoCliente.getNombre(),
-					BigDecimal.ZERO,
-					null,
-					null
-			});
+		if (this.tipoOperacion == 0) {
+			for (TipoCliente tipoCliente : tiposCliente) {
+				modelTablaPrecios.addRow(new Object[] { Integer.valueOf(tipoCliente.getIdTipoCliente()),
+						tipoCliente.getNombre(), BigDecimal.ZERO, null, null });
+			}
+			return;
+		}
+
+		try {
+			List<PrecioTipoCliente> precios = AppContext.articuloController
+					.listarPreciosArticuloPorTipoCliente(this.idArticulo);
+
+			for (TipoCliente tipoCliente : tiposCliente) {
+				PrecioTipoCliente precioRegistrado = buscarPrecioTipoCliente(precios, tipoCliente.getIdTipoCliente());
+
+				modelTablaPrecios
+						.addRow(new Object[] { Integer.valueOf(tipoCliente.getIdTipoCliente()), tipoCliente.getNombre(),
+								precioRegistrado == null ? BigDecimal.ZERO : precioRegistrado.getPrecio(),
+								precioRegistrado == null ? null : precioRegistrado.getPrecioEspecial(),
+								precioRegistrado == null ? null : precioRegistrado.getCantidadPrecioEspecial() });
+			}
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 
-	private void guardarPreciosArticulo() {
-		
+	private PrecioTipoCliente buscarPrecioTipoCliente(List<PrecioTipoCliente> precios, int idTipoCliente) {
+		if (precios == null || precios.isEmpty()) {
+			return null;
+		}
+
+		for (PrecioTipoCliente precio : precios) {
+			if (precio.getIdTipoCliente() == idTipoCliente) {
+				return precio;
+			}
+		}
+
+		return null;
 	}
 
 	private void llenarCmbProveedor() {

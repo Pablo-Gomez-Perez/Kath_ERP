@@ -26,20 +26,13 @@ public class ArticuloController implements java.io.Serializable {
 		return this.verArticulosEnTabla(idSucursal, "TODOS", "NOMBRE", "", idTipoCliente);
 	}
 
-	public Vector<Object[]> verArticulosEnTabla(
-			int idSucursal,
-			String tipoBusqueda,
-			String ordenarPor,
-			String textoBusqueda,
-			int idTipoCliente
-	) {
+	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String tipoBusqueda, String ordenarPor,
+			String textoBusqueda, int idTipoCliente) {
 
 		var articulos = new Vector<Object[]>();
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL listArticulos(?, ?, ?, ?, ?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listArticulos(?, ?, ?, ?, ?);")) {
 
 			stm.setInt(1, idSucursal);
 			stm.setString(2, tipoBusqueda);
@@ -49,18 +42,11 @@ public class ArticuloController implements java.io.Serializable {
 
 			try (ResultSet rset = stm.executeQuery()) {
 				while (rset.next()) {
-					Object[] fila = {
-							rset.getInt("id_articulo"),
-							rset.getString("nombre_proveedor"),
-							rset.getString("nombre_categoria"),
-							rset.getString("codigo_articulo"),
-							rset.getString("nombre"),
-							rset.getBoolean("es_exento") ? "Exento" : "Gravado",
-							rset.getBigDecimal("costo_unitario"),
-							rset.getBigDecimal("precio"),
-							rset.getInt("existencia"),
-							rset.getInt("activo") == 1 ? "Activo" : "Inactivo"
-					};
+					Object[] fila = { rset.getInt("id_articulo"), rset.getString("nombre_proveedor"),
+							rset.getString("nombre_categoria"), rset.getString("codigo_articulo"),
+							rset.getString("nombre"), rset.getBoolean("es_exento") ? "Exento" : "Gravado",
+							rset.getBigDecimal("costo_unitario"), rset.getBigDecimal("precio"),
+							rset.getInt("existencia"), rset.getInt("activo") == 1 ? "Activo" : "Inactivo" };
 					articulos.add(fila);
 				}
 			}
@@ -269,20 +255,14 @@ public class ArticuloController implements java.io.Serializable {
 
 	public void consultarExistenciasPorSucursal(int idArticulo, DefaultTableModel tabla) {
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL listExistenciaGlobalArticulo(?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL listExistenciaGlobalArticulo(?);")) {
 			stm.setInt(1, idArticulo);
 
 			try (ResultSet rset = stm.executeQuery()) {
 				while (rset.next()) {
-					Object[] fila = {
-							rset.getInt("id_sucursar"),
-							rset.getString("nombre"),
-							rset.getString("direccion"),
-							rset.getInt("existencia")
-					};
+					Object[] fila = { rset.getInt("id_sucursar"), rset.getString("nombre"), rset.getString("direccion"),
+							rset.getInt("existencia") };
 					tabla.addRow(fila);
 				}
 			}
@@ -293,13 +273,40 @@ public class ArticuloController implements java.io.Serializable {
 		}
 	}
 
+	public List<PrecioTipoCliente> listarPreciosArticuloPorTipoCliente(int idArticulo) throws SQLException, Exception {
+		var precios = new ArrayList<PrecioTipoCliente>();
+
+	    try (
+	            Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+	            CallableStatement stm = cn.prepareCall("CALL listPreciosArticuloTipoCliente(?);")
+	    ) {
+	        stm.setInt(1, idArticulo);
+
+	        try (ResultSet rset = stm.executeQuery()) {
+	            while (rset.next()) {
+	                Integer cantidadPrecioEspecial = Integer.valueOf(rset.getInt("cant_p_precioEspecial"));
+	                if (rset.wasNull()) {
+	                    cantidadPrecioEspecial = null;
+	                }
+
+	                precios.add(new PrecioTipoCliente(
+	                        rset.getInt("id_tipo_cliente"),
+	                        rset.getBigDecimal("precio"),
+	                        rset.getBigDecimal("precios_especial"),
+	                        cantidadPrecioEspecial
+	                ));
+	            }
+	        }
+	    }
+
+	    return precios;
+	}
+
 	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
 		Articulo art = new Articulo();
 
-		try (
-				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL getArticuloById(?);")
-		) {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL getArticuloById(?);")) {
 			stm.setInt(1, id);
 
 			try (ResultSet rset = stm.executeQuery()) {
