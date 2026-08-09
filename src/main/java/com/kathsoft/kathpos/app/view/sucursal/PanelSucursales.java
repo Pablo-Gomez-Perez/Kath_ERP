@@ -192,6 +192,7 @@ public class PanelSucursales extends JPanel {
 		);
 		this.panel.setLayout(gl_panel);
 		this.panelSucursalCentral.setLayout(gl_panelSucursalCentral);
+		this.llenarTablaSucursales();
 	}
 	
 	private void abrirFormSucursales(int opcion, int idSucursal) {
@@ -238,7 +239,7 @@ public class PanelSucursales extends JPanel {
 	 */
 	public void llenarTablaSucursales() {
 		this.modelTablaSucursales.getDataVector().removeAllElements();
+		AppContext.sucursalController.verSucursalesEnTabla().forEach(this.modelTablaSucursales::addRow);
 		this.tablaSucursales.updateUI();
-		AppContext.sucursalController.verSucursalesEnTabla();
 	}
 }
