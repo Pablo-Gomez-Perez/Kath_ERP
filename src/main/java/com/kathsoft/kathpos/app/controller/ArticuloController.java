@@ -261,8 +261,8 @@ public class ArticuloController implements java.io.Serializable {
 
 			try (ResultSet rset = stm.executeQuery()) {
 				while (rset.next()) {
-					Object[] fila = { rset.getInt("id_sucursar"), rset.getString("nombre"),
-							rset.getString("direccion"), rset.getInt("existencia") };
+					Object[] fila = { rset.getInt("id_sucursar"), rset.getString("nombre"), rset.getString("direccion"),
+							rset.getInt("existencia") };
 					tabla.addRow(fila);
 				}
 			}
