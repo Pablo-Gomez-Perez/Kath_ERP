@@ -423,15 +423,22 @@ public class Fr_DatosArticulo extends JFrame {
 			return;
 		}
 
+		if (!validarPreciosArticulo(costoUnitario)) {
+		    return;
+		}
+
 		try {
-			Articulo articulo = buildArticulo();
-			AppContext.articuloController.actualizarArticulo(articulo);
-			this.operacionEjecutada = true;
-			MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
-			dispose();
+		    Articulo articulo = buildArticulo();
+		    List<PrecioTipoCliente> preciosTipoCliente = buildPreciosArticulo();
+
+		    AppContext.articuloController.actualizarArticulo(articulo, preciosTipoCliente);
+
+		    this.operacionEjecutada = true;
+		    MessageHandler.displayMessage(MessageHandler.UPDATE_SUCCESS_MESSAGE, this, "");
+		    dispose();
 		} catch (Exception er) {
-			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		    er.printStackTrace(System.err);
+		    MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
 		}
 	}
 
