@@ -276,24 +276,30 @@ public class ArticuloController implements java.io.Serializable {
 	public List<PrecioTipoCliente> listarPreciosArticuloPorTipoCliente(int idArticulo) throws SQLException, Exception {
 		var precios = new ArrayList<PrecioTipoCliente>();
 
-		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL listPreciosArticuloTipoCliente(?);")) {
-			stm.setInt(1, idArticulo);
+	    try (
+	            Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+	            CallableStatement stm = cn.prepareCall("CALL listPreciosArticuloTipoCliente(?);")
+	    ) {
+	        stm.setInt(1, idArticulo);
 
-			try (ResultSet rset = stm.executeQuery()) {
-				while (rset.next()) {
-					Integer cantidadPrecioEspecial = Integer.valueOf(rset.getInt("cantidad_precio_especial"));
-					if (rset.wasNull()) {
-						cantidadPrecioEspecial = null;
-					}
+	        try (ResultSet rset = stm.executeQuery()) {
+	            while (rset.next()) {
+	                Integer cantidadPrecioEspecial = Integer.valueOf(rset.getInt("cant_p_precioEspecial"));
+	                if (rset.wasNull()) {
+	                    cantidadPrecioEspecial = null;
+	                }
 
-					precios.add(new PrecioTipoCliente(rset.getInt("id_tipo_cliente"), rset.getBigDecimal("precio"),
-							rset.getBigDecimal("precio_especial"), cantidadPrecioEspecial));
-				}
-			}
-		}
+	                precios.add(new PrecioTipoCliente(
+	                        rset.getInt("id_tipo_cliente"),
+	                        rset.getBigDecimal("precio"),
+	                        rset.getBigDecimal("precios_especial"),
+	                        cantidadPrecioEspecial
+	                ));
+	            }
+	        }
+	    }
 
-		return precios;
+	    return precios;
 	}
 
 	public Articulo consultarArticuloPorId(int id, int idSucursal) throws SQLException, Exception {
