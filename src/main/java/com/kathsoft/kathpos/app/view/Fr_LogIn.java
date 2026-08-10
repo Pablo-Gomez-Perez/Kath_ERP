@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
-import com.kathsoft.kathpos.app.model.empleado.Empleado;
+import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
 import com.kathsoft.kathpos.tools.AppContext;
 
 public class Fr_LogIn extends JFrame {
@@ -188,13 +188,13 @@ public class Fr_LogIn extends JFrame {
 				return;
 			}
 
-			Empleado empleado = AppContext.loginController.iniciarSesion(usuario.trim(), contrasenia);
-			if (empleado == null) {
+			EmpleadoLogin empleadoLogin = AppContext.loginController.iniciarSesion(usuario.trim(), contrasenia);
+			if (empleadoLogin == null) {
 				JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
-			this.sucursal = AppContext.sucursalController.consultarSucursal(empleado.getIdSucursal());
+			this.sucursal = AppContext.sucursalController.consultarSucursal(empleadoLogin.getIdSucursal());
 			if (this.sucursal == null || this.sucursal.getIdSucursal() <= 0) {
 				JOptionPane.showMessageDialog(this, "No se pudo obtener la sucursal del empleado", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -204,7 +204,7 @@ public class Fr_LogIn extends JFrame {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						Fr_principal frame = new Fr_principal(sucursal);
+						Fr_principal frame = new Fr_principal(sucursal, empleadoLogin);
 						frame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
