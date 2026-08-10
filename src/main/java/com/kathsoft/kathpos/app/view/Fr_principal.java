@@ -33,6 +33,7 @@ import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
 import com.kathsoft.kathpos.app.view.ventas.PanelVentas;
+import javax.swing.JLabel;
 
 public class Fr_principal extends JFrame {
 
@@ -50,7 +51,7 @@ public class Fr_principal extends JFrame {
 			public void run() {
 				try {
 					Fr_principal frame = new Fr_principal(
-							new Sucursal(1, null, null, null, null, null, null, null, null));
+							new Sucursal(9, null, null, null, null, null, null, null, null));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -139,6 +140,13 @@ public class Fr_principal extends JFrame {
 	private PanelCuentasContables panelConta;
 	private JMenu menuContable;
 	private JMenuItem opcionCatalogoCuentas;
+	private JPanel panelDatosDeSesion;
+	private JLabel lblEmpleado;
+	private JLabel lblNombreCompletoEmpleado;
+	private JLabel lblSucursal;
+	private JLabel lblNombreSucursal;
+	private JLabel lblFechaHoy;
+	private JLabel lblConsultaFechaDeHoy;
 
 	/**
 	 * Create the frame.
@@ -596,6 +604,32 @@ public class Fr_principal extends JFrame {
 
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
+		
+		this.panelDatosDeSesion = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) this.panelDatosDeSesion.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		this.contentPane.add(this.panelDatosDeSesion, BorderLayout.SOUTH);
+		
+		this.lblSucursal = new JLabel("Sucursal");
+		this.panelDatosDeSesion.add(this.lblSucursal);
+		
+		this.lblNombreSucursal = new JLabel("_");
+		this.lblNombreSucursal.setForeground(new Color(51, 0, 255));
+		this.panelDatosDeSesion.add(this.lblNombreSucursal);
+		
+		this.lblEmpleado = new JLabel("Empleado:");
+		this.panelDatosDeSesion.add(this.lblEmpleado);
+		
+		this.lblNombreCompletoEmpleado = new JLabel("_");
+		this.lblNombreCompletoEmpleado.setForeground(new Color(51, 0, 255));
+		this.panelDatosDeSesion.add(this.lblNombreCompletoEmpleado);
+		
+		this.lblFechaHoy = new JLabel("Hoy es:");
+		this.panelDatosDeSesion.add(this.lblFechaHoy);
+		
+		this.lblConsultaFechaDeHoy = new JLabel("_");
+		this.lblConsultaFechaDeHoy.setForeground(new Color(51, 0, 255));
+		this.panelDatosDeSesion.add(this.lblConsultaFechaDeHoy);
 
 		opcionCatalogoCuentas = new JMenuItem("Cuentas");
 
