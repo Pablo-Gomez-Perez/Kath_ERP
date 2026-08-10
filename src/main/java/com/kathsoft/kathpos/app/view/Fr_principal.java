@@ -10,6 +10,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
@@ -23,6 +25,7 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
 import com.kathsoft.kathpos.app.view.articulo.PanelArticulos;
 import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
 import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
@@ -66,6 +69,7 @@ public class Fr_principal extends JFrame {
 	 * 
 	 */
 	private Sucursal sucursal;
+	private EmpleadoLogin empleadoSesion;
 	private JPanel contentPane;
 	private JMenuBar BarraMenu;
 	private JMenu menuConsultar;
@@ -152,8 +156,13 @@ public class Fr_principal extends JFrame {
 	 * Create the frame.
 	 */
 	public Fr_principal(Sucursal sucursal) {
+		this(sucursal, null);
+	}
+
+	public Fr_principal(Sucursal sucursal, EmpleadoLogin empleadoSesion) {
 
 		this.sucursal = sucursal;
+		this.empleadoSesion = empleadoSesion;
 
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/1643231.png")));
@@ -631,16 +640,52 @@ public class Fr_principal extends JFrame {
 		this.lblConsultaFechaDeHoy.setForeground(new Color(51, 0, 255));
 		this.panelDatosDeSesion.add(this.lblConsultaFechaDeHoy);
 
+		cargarDatosDeSesion();
+
 		opcionCatalogoCuentas = new JMenuItem("Cuentas");
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	/**
-	 * abre la calculadora, valido unicamente en windows
-	 */
-	@SuppressWarnings("deprecation")
+	private void cargarDatosDeSesion() {
+		this.lblNombreSucursal.setText(getNombreSucursalSesion());
+		this.lblNombreCompletoEmpleado.setText(getNombreEmpleadoSesion());
+		this.lblConsultaFechaDeHoy.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+	}
+
+	private String getNombreSucursalSesion() {
+		if (this.empleadoSesion != null && !isBlank(this.empleadoSesion.getNombreSucursal())) {
+			return this.empleadoSesion.getNombreSucursal();
+		}
+
+		if (this.sucursal != null && !isBlank(this.sucursal.getNombre())) {
+			return this.sucursal.getNombre();
+		}
+
+		return "_";
+	}
+
+	private String getNombreEmpleadoSesion() {
+		if (this.empleadoSesion != null && !isBlank(this.empleadoSesion.getNombreCompleto())) {
+			return this.empleadoSesion.getNombreCompleto();
+		}
+
+		if (this.empleadoSesion != null && !isBlank(this.empleadoSesion.getNombreCorto())) {
+			return this.empleadoSesion.getNombreCorto();
+		}
+
+		return "_";
+	}
+
+	private boolean isBlank(String value) {
+		return value == null || value.isBlank();
+	}
+
+	public EmpleadoLogin getEmpleadoSesion() {
+		return empleadoSesion;
+	}
+
 	private void abrirCalculadora() {
 		try {
 			Runtime.getRuntime().exec("calc");
@@ -668,3 +713,4 @@ public class Fr_principal extends JFrame {
 	}
 
 }
+

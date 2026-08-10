@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
 import com.kathsoft.kathpos.tools.Conexion;
 import com.kathsoft.kathpos.tools.PasswordHashService;
@@ -14,7 +13,7 @@ public class LoginController implements java.io.Serializable {
 
 	private static final long serialVersionUID = -2632747518110861235L;
 
-	public Empleado iniciarSesion(String nombreCorto, char[] contrasenia) throws SQLException, Exception {
+	public EmpleadoLogin iniciarSesion(String nombreCorto, char[] contrasenia) throws SQLException, Exception {
 		if (nombreCorto == null || nombreCorto.isBlank()) {
 			throw new IllegalArgumentException("Debe capturar el usuario");
 		}
@@ -32,7 +31,7 @@ public class LoginController implements java.io.Serializable {
 			return null;
 		}
 
-		return empleadoLogin.toEmpleado();
+		return empleadoLogin;
 	}
 
 	public boolean validarCredenciales(String nombreCorto, char[] contrasenia) throws SQLException, Exception {
