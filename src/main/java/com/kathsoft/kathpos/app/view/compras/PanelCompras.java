@@ -4,12 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,10 +21,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.compra.TipoCompraFiltro;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
-import javax.swing.JFormattedTextField;
+import com.kathsoft.kathpos.tools.AppContext;
 
 public class PanelCompras extends JPanel {
 
@@ -131,7 +136,7 @@ public class PanelCompras extends JPanel {
 
 		this.lblProveedor = new JLabel("Proveedor");
 		this.cmbProveedor = new JComboBox<JComboboxDataViewModel>();
-		this.cmbProveedor.addItem(new JComboboxDataViewModel(0, "Todos"));
+		this.llenarCmbProveedor();
 
 		this.lblFechaFacturaInicio = new JLabel("Fecha factura inicio");
 
@@ -152,10 +157,19 @@ public class PanelCompras extends JPanel {
 
 		this.btnLimpiar = new JButton("Limpiar");
 		this.btnLimpiar.setBackground(new Color(176, 196, 222));
+		this.btnLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				limpiarFiltros();
+			}
+		});
 		
-		this.formattedTextFieldFechaInicio = new JFormattedTextField();
+		this.formattedTextFieldFechaInicio = new JFormattedTextField(buildDateFormatter());
+		this.formattedTextFieldFechaInicio.setColumns(10);
+		this.formattedTextFieldFechaInicio.setToolTipText("dd/MM/yyyy");
 		
-		this.formattedTextFieldFechaFin = new JFormattedTextField();
+		this.formattedTextFieldFechaFin = new JFormattedTextField(buildDateFormatter());
+		this.formattedTextFieldFechaFin.setColumns(10);
+		this.formattedTextFieldFechaFin.setToolTipText("dd/MM/yyyy");
 
 		GroupLayout glPanelFiltros = new GroupLayout(this.panelFiltros);
 		glPanelFiltros.setHorizontalGroup(
@@ -229,10 +243,42 @@ public class PanelCompras extends JPanel {
 		this.modelTablaCompras.addColumn("Activo");
 	}
 
+	private void llenarCmbProveedor() {
+		this.cmbProveedor.removeAllItems();
+		this.cmbProveedor.addItem(new JComboboxDataViewModel(0, "Todos"));
+		AppContext.proveedorController.consultarNombresProveedor().forEach(this.cmbProveedor::addItem);
+	}
+
 	private void llenarCmbTipoCompra() {
 		this.cmbTipoCompra.removeAllItems();
 		for (TipoCompraFiltro tipoCompraFiltro : TipoCompraFiltro.values()) {
 			this.cmbTipoCompra.addItem(tipoCompraFiltro);
+		}
+	}
+
+	private MaskFormatter buildDateFormatter() {
+		try {
+			MaskFormatter formatter = new MaskFormatter("##/##/####");
+			formatter.setPlaceholderCharacter('_');
+			formatter.setValidCharacters("0123456789");
+			return formatter;
+		} catch (ParseException er) {
+			er.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	private void limpiarFiltros() {
+		this.txfFolioFactura.setText("");
+		this.formattedTextFieldFechaInicio.setValue(null);
+		this.formattedTextFieldFechaFin.setValue(null);
+
+		if (this.cmbProveedor.getItemCount() > 0) {
+			this.cmbProveedor.setSelectedIndex(0);
+		}
+
+		if (this.cmbTipoCompra.getItemCount() > 0) {
+			this.cmbTipoCompra.setSelectedIndex(0);
 		}
 	}
 
