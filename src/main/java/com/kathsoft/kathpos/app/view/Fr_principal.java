@@ -29,6 +29,7 @@ import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
 import com.kathsoft.kathpos.app.view.articulo.PanelArticulos;
 import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
 import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
+import com.kathsoft.kathpos.app.view.compras.PanelCompras;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
 import com.kathsoft.kathpos.app.view.formas_pago.PanelFormasDePago;
@@ -115,7 +116,7 @@ public class Fr_principal extends JFrame {
 	private JButton btn_irAInicio;
 	private PanelClientes panelClientes;
 	private PanelEmpleados panelEmpleados;
-	private PanelProveedor panelProveedor;
+	private PanelProveedor panelProveedor;	
 	private JMenuItem opcionMarcas;
 	private PanelMarcas panelMarcas;
 	private JButton btnCalculadora;
@@ -151,9 +152,13 @@ public class Fr_principal extends JFrame {
 	private JLabel lblNombreSucursal;
 	private JLabel lblFechaHoy;
 	private JLabel lblConsultaFechaDeHoy;
+	private JMenu subMenuCompras;
+	private JMenuItem opcionRegistrarCompra;
+	private JMenuItem opcionConsultarCompra;
 
 	/**
 	 * Create the frame.
+	 * @wbp.parser.constructor
 	 */
 	public Fr_principal(Sucursal sucursal) {
 		this(sucursal, null);
@@ -362,6 +367,24 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
+		
+		this.subMenuCompras = new JMenu("Compras");
+		this.menuOperaciones.add(this.subMenuCompras);
+		
+		this.opcionRegistrarCompra = new JMenuItem("Registrar");
+		this.subMenuCompras.add(this.opcionRegistrarCompra);
+		
+		this.opcionConsultarCompra = new JMenuItem("Consultar");
+		this.opcionConsultarCompra.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelCompras");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+		});
+		this.subMenuCompras.add(this.opcionConsultarCompra);
 
 		menuReportes = new JMenu("Reportes");
 		menuReportes.setIcon(
@@ -524,7 +547,7 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 
-		panelCompras = new JPanel();
+		panelCompras = new PanelCompras();
 		panelPrincipalContenedor.add(panelCompras, "panelCompras");
 
 		// =======================================================================================================================================
