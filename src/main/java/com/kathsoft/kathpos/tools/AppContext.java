@@ -3,6 +3,7 @@ package com.kathsoft.kathpos.tools;
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.controller.CategoriaController;
 import com.kathsoft.kathpos.app.controller.ClientesController;
+import com.kathsoft.kathpos.app.controller.CompraController;
 import com.kathsoft.kathpos.app.controller.CuentaContableController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
@@ -33,6 +34,7 @@ public class AppContext implements java.io.Serializable{
 	public static LoginController loginController = new LoginController();
 	public static ProveedorController proveedorController = new ProveedorController();
 	public static ArticuloController articuloController = new ArticuloController();
+	public static CompraController compraController = new CompraController();
 	public static VentasController ventasController = new VentasController();
 	public static SucursalController sucursalController = new SucursalController();
 	public static FormasDePagoController formasDePagoController = new FormasDePagoController();
