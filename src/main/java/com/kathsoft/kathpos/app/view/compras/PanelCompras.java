@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.compra.TipoCompraFiltro;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import javax.swing.JFormattedTextField;
 
 public class PanelCompras extends JPanel {
 
@@ -46,10 +47,10 @@ public class PanelCompras extends JPanel {
 	private JLabel lblTipoCompra;
 	private JComboBox<JComboboxDataViewModel> cmbProveedor;
 	private JComboBox<TipoCompraFiltro> cmbTipoCompra;
-	private JTextField txfFechaFacturaInicio;
-	private JTextField txfFechaFacturaFin;
 	private JTextField txfFolioFactura;
 	private FlowLayout flowLayoutPanelBotones;
+	private JFormattedTextField formattedTextFieldFechaInicio;
+	private JFormattedTextField formattedTextFieldFechaFin;
 
 	public PanelCompras() {
 		this.setLayout(new BorderLayout(0, 0));
@@ -133,12 +134,8 @@ public class PanelCompras extends JPanel {
 		this.cmbProveedor.addItem(new JComboboxDataViewModel(0, "Todos"));
 
 		this.lblFechaFacturaInicio = new JLabel("Fecha factura inicio");
-		this.txfFechaFacturaInicio = new JTextField();
-		this.txfFechaFacturaInicio.setColumns(10);
 
 		this.lblFechaFacturaFin = new JLabel("Fecha factura fin");
-		this.txfFechaFacturaFin = new JTextField();
-		this.txfFechaFacturaFin.setColumns(10);
 
 		this.lblFolioFactura = new JLabel("Folio factura");
 		this.txfFolioFactura = new JTextField();
@@ -155,6 +152,10 @@ public class PanelCompras extends JPanel {
 
 		this.btnLimpiar = new JButton("Limpiar");
 		this.btnLimpiar.setBackground(new Color(176, 196, 222));
+		
+		this.formattedTextFieldFechaInicio = new JFormattedTextField();
+		
+		this.formattedTextFieldFechaFin = new JFormattedTextField();
 
 		GroupLayout glPanelFiltros = new GroupLayout(this.panelFiltros);
 		glPanelFiltros.setHorizontalGroup(
@@ -178,12 +179,12 @@ public class PanelCompras extends JPanel {
 						.addGroup(glPanelFiltros.createSequentialGroup()
 							.addComponent(this.lblFechaFacturaInicio)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfFechaFacturaInicio, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(this.formattedTextFieldFechaInicio, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(this.lblFechaFacturaFin)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfFechaFacturaFin, GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(this.formattedTextFieldFechaFin, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+							.addGap(4)
 							.addComponent(this.lblTipoCompra)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(this.cmbTipoCompra, 0, 148, Short.MAX_VALUE)))
@@ -203,12 +204,12 @@ public class PanelCompras extends JPanel {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(glPanelFiltros.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.lblFechaFacturaInicio)
-						.addComponent(this.txfFechaFacturaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.lblFechaFacturaFin)
-						.addComponent(this.txfFechaFacturaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.lblTipoCompra)
-						.addComponent(this.cmbTipoCompra, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(45, Short.MAX_VALUE))
+						.addComponent(this.cmbTipoCompra, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.formattedTextFieldFechaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.formattedTextFieldFechaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(13, Short.MAX_VALUE))
 		);
 		this.panelFiltros.setLayout(glPanelFiltros);
 		this.panelPrincipalContenedor.setLayout(glPanelPrincipalContenedor);
