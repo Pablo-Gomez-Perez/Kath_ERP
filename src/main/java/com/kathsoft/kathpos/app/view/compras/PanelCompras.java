@@ -6,7 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -23,9 +25,14 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
+import com.kathsoft.kathpos.app.model.compra.CompraFiltro;
+import com.kathsoft.kathpos.app.model.compra.CompraListado;
 import com.kathsoft.kathpos.app.model.compra.TipoCompraFiltro;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
+import com.kathsoft.kathpos.tools.DataTools;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class PanelCompras extends JPanel {
 
@@ -110,6 +117,7 @@ public class PanelCompras extends JPanel {
 		this.tablaCompras.setModel(this.modelTablaCompras);
 		this.scrollPaneTablaCompras.setViewportView(this.tablaCompras);
 		this.setDefaultTableModel();
+		DataTools.removerEditorDeTabla(this.tablaCompras, this.modelTablaCompras);
 
 		this.panelFiltros = new JPanel();
 		this.panelFiltros.setBackground(new Color(0, 153, 255));
@@ -154,12 +162,18 @@ public class PanelCompras extends JPanel {
 		this.btnBuscar.setBackground(new Color(184, 134, 11));
 		this.btnBuscar.setIcon(
 				new ImageIcon(PanelCompras.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				llenarTablaCompras();
+			}
+		});
 
 		this.btnLimpiar = new JButton("Limpiar");
 		this.btnLimpiar.setBackground(new Color(176, 196, 222));
 		this.btnLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				limpiarFiltros();
+				llenarTablaCompras();
 			}
 		});
 		
@@ -227,6 +241,7 @@ public class PanelCompras extends JPanel {
 		);
 		this.panelFiltros.setLayout(glPanelFiltros);
 		this.panelPrincipalContenedor.setLayout(glPanelPrincipalContenedor);
+		this.llenarTablaCompras();
 	}
 
 	private void setDefaultTableModel() {
@@ -241,6 +256,78 @@ public class PanelCompras extends JPanel {
 		this.modelTablaCompras.addColumn("IVA");
 		this.modelTablaCompras.addColumn("Total");
 		this.modelTablaCompras.addColumn("Activo");
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaComprasColumnsWidth, this.tablaCompras);
+	}
+
+	private void borrarElementosDeLaTablaCompras() {
+		this.modelTablaCompras.getDataVector().removeAllElements();
+		this.tablaCompras.updateUI();
+	}
+
+	public void llenarTablaCompras() {
+		this.borrarElementosDeLaTablaCompras();
+		try {
+			CompraFiltro filtro = this.buildCompraFiltro();
+			AppContext.compraController.listCompras(filtro).forEach(this::addCompraListadoToTable);
+		} catch (ParseException er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Formato de fecha inválido. Usa dd/MM/yyyy");
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
+	}
+
+	private void addCompraListadoToTable(CompraListado compra) {
+		if (compra == null) {
+			return;
+		}
+
+		this.modelTablaCompras.addRow(new Object[] {
+				compra.getIdCompra(),
+				compra.getIdEmpleado(),
+				compra.getIdProveedor(),
+				compra.getFolioFactura(),
+				compra.getFechaFactura(),
+				compra.getFechaCompra(),
+				compra.getTipoCompraDescripcion(),
+				compra.getSubtotal(),
+				compra.getIva(),
+				compra.getImporteTotal(),
+				compra.isActivo() ? "Activo" : "Inactivo"
+		});
+	}
+
+	private CompraFiltro buildCompraFiltro() throws ParseException {
+		JComboboxDataViewModel proveedorSeleccionado = (JComboboxDataViewModel) this.cmbProveedor.getSelectedItem();
+		TipoCompraFiltro tipoCompraFiltro = this.getTipoCompraFiltroSeleccionado();
+
+		return new CompraFiltro(
+				proveedorSeleccionado == null ? 0 : proveedorSeleccionado.id(),
+				this.parseFechaFiltro(this.formattedTextFieldFechaInicio),
+				this.parseFechaFiltro(this.formattedTextFieldFechaFin),
+				this.txfFolioFactura.getText().trim(),
+				tipoCompraFiltro == null ? null : tipoCompraFiltro.getValor()
+		);
+	}
+
+	private Date parseFechaFiltro(JFormattedTextField fechaField) throws ParseException {
+		String fecha = fechaField.getText() == null ? "" : fechaField.getText().trim();
+		if (this.isFechaVacia(fecha)) {
+			return null;
+		}
+
+		if (fecha.contains("_")) {
+			throw new ParseException("Fecha incompleta", 0);
+		}
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		return new Date(dateFormat.parse(fecha).getTime());
+	}
+
+	private boolean isFechaVacia(String fecha) {
+		return fecha == null || fecha.trim().isEmpty() || "__/__/____".equals(fecha.trim());
 	}
 
 	private void llenarCmbProveedor() {
