@@ -27,6 +27,7 @@ import javax.swing.table.TableColumnModel;
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 
@@ -41,7 +42,17 @@ public class Fr_ListaArticulos extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private String nombreArticulo;
 	private int idSucursal;
-	private Fr_PuntoDeVentas puntoVenta;
+	
+	/**
+	 * Referencia al formulario invocador que recibirá el artículo seleccionado.
+	 * <p>
+	 * El objeto debe implementar {@link IListadoArticulosAcciones}, lo que permite
+	 * que {@code Fr_ListaArticulos} notifique la selección sin conocer el tipo
+	 * concreto del formulario ni la forma en que será actualizado.
+	 * </p>
+	 */
+	private IListadoArticulosAcciones frame;
+	
 	private JPanel contentPane;
 	private JTextField txfNombreArticulo;
 	private JTable tablaArticulos;
@@ -67,13 +78,31 @@ public class Fr_ListaArticulos extends JFrame {
 	 */
 
 	/**
-	 * Create the frame.
+	 * Crea el formulario auxiliar para consultar y seleccionar artículos.
+	 * <p>
+	 * Este formulario se utiliza como una ventana de apoyo para buscar artículos
+	 * por nombre y permitir que el usuario seleccione uno de los resultados.
+	 * Al seleccionar un artículo, el resultado se devuelve al formulario invocador
+	 * mediante la interfaz {@link IListadoArticulosAcciones}.
+	 * </p>
+	 * <p>
+	 * El uso de la interfaz permite que este mismo formulario auxiliar sea
+	 * reutilizado por distintos módulos, como punto de venta y compras, sin crear
+	 * formularios duplicados ni constructores específicos para cada caso.
+	 * </p>
+	 *
+	 * @param nombreArticulo texto inicial de búsqueda para filtrar artículos.
+	 * @param idSucursal identificador de la sucursal sobre la cual se consulta
+	 *                   la disponibilidad o información del artículo.
+	 * @param frame formulario invocador que implementa
+	 *              {@link IListadoArticulosAcciones} y recibirá el artículo
+	 *              seleccionado.
 	 */
-	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, Fr_PuntoDeVentas frame) {
+	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, IListadoArticulosAcciones frame) {
 
 		this.nombreArticulo = nombreArticulo;
 		this.idSucursal = idSucursal;
-		this.puntoVenta = frame;
+		this.frame = frame;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 730, 450);
@@ -235,7 +264,7 @@ public class Fr_ListaArticulos extends JFrame {
 			vendidos.setCantidad(cantidad);
 			vendidos.setSubtotal(subtotal);
 			
-			this.puntoVenta.listarArticuloDesdeConsulta(fila, vendidos);
+			this.frame.listarArticuloDesdeConsulta(fila, vendidos);
 
 		} catch (Exception er) {
 			er.printStackTrace();
