@@ -51,8 +51,8 @@ import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.cliente.Clientes;
 import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
-import com.kathsoft.kathpos.app.view.articulo.Fr_ListaArticulos;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
+import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
 
 public class Fr_PuntoDeVentas extends JFrame {
 

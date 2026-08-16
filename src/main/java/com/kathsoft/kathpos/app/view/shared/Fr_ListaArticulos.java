@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view.articulo;
+package com.kathsoft.kathpos.app.view.shared;
 
 
 import java.awt.BorderLayout;
@@ -28,6 +28,7 @@ import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
 
 public class Fr_ListaArticulos extends JFrame {
 
@@ -50,18 +51,7 @@ public class Fr_ListaArticulos extends JFrame {
 	private Component horizontalStrut_1;
 	private JButton btnBusquedaArticulo;
 	private JPanel panelCentralTabla;
-	private JScrollPane scrollPaneTablaArticulo;
-	private int[] tablaArticulosColumnsWidth = { 40, /* id */
-			150, /* codigo */
-			200, /* proveedor */
-			180, /* categoría */
-			100, /* codigo sat */
-			300, /* Nombre */
-			450, /* descripcion */
-			100, /* Existencia */
-			100, /* Precio g */
-			100 /* Precio m */
-	};
+	private JScrollPane scrollPaneTablaArticulo;	
 	private JPanel panelInferiorBotones;
 	private JButton btnCancelar;
 	private Component horizontalStrut_2;
@@ -189,9 +179,9 @@ public class Fr_ListaArticulos extends JFrame {
 		 */
 		TableColumnModel articulosColumnModel = tablaArticulos.getColumnModel();
 
-		for (int i = 0; i < tablaArticulosColumnsWidth.length; i++) {
-			articulosColumnModel.getColumn(i).setPreferredWidth(tablaArticulosColumnsWidth[i]);
-			articulosColumnModel.getColumn(i).setMinWidth(tablaArticulosColumnsWidth[i]);
+		for (int i = 0; i < ConstantsConllections.tablaArticulosListadoColumnsWidth.length; i++) {
+			articulosColumnModel.getColumn(i).setPreferredWidth(ConstantsConllections.tablaArticulosListadoColumnsWidth[i]);
+			articulosColumnModel.getColumn(i).setMinWidth(ConstantsConllections.tablaArticulosListadoColumnsWidth[i]);
 		}
 
 		this.llenarTablaArticulos(this.nombreArticulo);
