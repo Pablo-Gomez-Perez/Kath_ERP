@@ -25,6 +25,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
+import javax.swing.border.BevelBorder;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones{
 
@@ -35,8 +38,6 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private JPanel panelInferiorBotones;
 	private JLabel lblNewLabel;
 	private JPanel panelDatosCompra;
-	private JButton btnGuardar;
-	private JButton btnCancelar;
 	private JPanel panelDatosFactura;
 	private JPanel panelDatosControlInterno;
 	private JLabel lblFolioFactura;
@@ -49,12 +50,30 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private JComboBox comboBoxProveedor;
 	private JLabel lblIdCompra;
 	private JTextField txfIdCompra;
-	private JButton btnBuscar;
+	private JButton btnBuscarCompra;
 	private JLabel lblRecibe;
 	private JComboBox comboBoxEmpleado;
 	private JPanel panelTipoDeCompra;
 	private JRadioButton rdbtnCredito;
 	private JRadioButton rdbtnContado;
+	private JPanel panelInferiorConsultaArticulos;
+	private JButton btnCancelar;
+	private JButton btnGuardarCompra;
+	private JLabel lblArticulo;
+	private JButton btnAgregarArticulo;
+	private JTextField txfNombreCodigoArticulo;
+	private JButton btnBuscarArticulo;
+	private JPanel panelCentralContenedorTabla;
+	private JPanel panelContenedorDatos;
+	private JScrollPane scrollPaneTablaArticulos;
+	private JTable tableArticulosListados;
+	private JButton btnEliminarArticuloSeleccionado;
+	private JLabel lblSubTotal;
+	private JTextField txfSubTotal;
+	private JLabel lblIva;
+	private JTextField txfIva;
+	private JLabel lblTotales;
+	private JLabel lblTotalCompra;
 
 	/**
 	 * Launch the application.
@@ -77,7 +96,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 */
 	public Fr_DatosCompras() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 823, 600);
+		setBounds(100, 100, 836, 600);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
@@ -97,17 +116,140 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		
 		this.panelDatosCompra = new JPanel();
 		this.panelDatosCompra.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Datos de la compra", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		
+		this.panelInferiorConsultaArticulos = new JPanel();
+		this.panelInferiorConsultaArticulos.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		
+		this.panelCentralContenedorTabla = new JPanel();
+		this.panelCentralContenedorTabla.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		
+		this.panelContenedorDatos = new JPanel();
+		this.panelContenedorDatos.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		GroupLayout gl_panelCentralContenedor = new GroupLayout(this.panelCentralContenedor);
 		gl_panelCentralContenedor.setHorizontalGroup(
-			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
+			gl_panelCentralContenedor.createParallelGroup(Alignment.TRAILING)
 				.addComponent(this.panelDatosCompra, GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
+				.addComponent(this.panelInferiorConsultaArticulos, GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
+				.addGroup(gl_panelCentralContenedor.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.panelCentralContenedorTabla, GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.panelContenedorDatos, GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
 		);
 		gl_panelCentralContenedor.setVerticalGroup(
 			gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelCentralContenedor.createSequentialGroup()
 					.addComponent(this.panelDatosCompra, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(360, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelCentralContenedor.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.panelCentralContenedorTabla, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+						.addComponent(this.panelContenedorDatos, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.panelInferiorConsultaArticulos, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 		);
+		
+		this.btnEliminarArticuloSeleccionado = new JButton("Quitar Articulo");
+		
+		this.lblSubTotal = new JLabel("Sub Total");
+		
+		this.txfSubTotal = new JTextField();
+		this.txfSubTotal.setEditable(false);
+		this.txfSubTotal.setEnabled(false);
+		this.txfSubTotal.setColumns(10);
+		
+		this.lblIva = new JLabel("IVA pagado");
+		
+		this.txfIva = new JTextField();
+		this.txfIva.setEditable(false);
+		this.txfIva.setEnabled(false);
+		this.txfIva.setColumns(10);
+		
+		this.lblTotales = new JLabel("Totales");
+		
+		this.lblTotalCompra = new JLabel("$0.00");
+		this.lblTotalCompra.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 36));
+		this.lblTotalCompra.setForeground(new Color(0, 153, 0));
+		GroupLayout gl_panelContenedorDatos = new GroupLayout(this.panelContenedorDatos);
+		gl_panelContenedorDatos.setHorizontalGroup(
+			gl_panelContenedorDatos.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelContenedorDatos.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelContenedorDatos.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelContenedorDatos.createSequentialGroup()
+							.addGap(12)
+							.addComponent(this.lblTotalCompra, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(this.btnEliminarArticuloSeleccionado, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+						.addComponent(this.lblSubTotal)
+						.addComponent(this.txfSubTotal, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+						.addComponent(this.lblIva)
+						.addComponent(this.txfIva, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+						.addComponent(this.lblTotales))
+					.addContainerGap())
+		);
+		gl_panelContenedorDatos.setVerticalGroup(
+			gl_panelContenedorDatos.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelContenedorDatos.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.btnEliminarArticuloSeleccionado)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblSubTotal)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfSubTotal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblIva)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfIva, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblTotales)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblTotalCompra, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(79))
+		);
+		this.panelContenedorDatos.setLayout(gl_panelContenedorDatos);
+		this.panelCentralContenedorTabla.setLayout(new BorderLayout(0, 0));
+		
+		this.scrollPaneTablaArticulos = new JScrollPane();
+		this.panelCentralContenedorTabla.add(this.scrollPaneTablaArticulos, BorderLayout.CENTER);
+		
+		this.tableArticulosListados = new JTable();
+		this.scrollPaneTablaArticulos.setViewportView(this.tableArticulosListados);
+		
+		this.lblArticulo = new JLabel("Articulo");
+		
+		this.btnAgregarArticulo = new JButton("Agregar");
+		
+		this.txfNombreCodigoArticulo = new JTextField();
+		this.lblArticulo.setLabelFor(this.txfNombreCodigoArticulo);
+		this.txfNombreCodigoArticulo.setToolTipText("Ingresa el código del artículo para registrarlo o el nombre para consultar");
+		this.txfNombreCodigoArticulo.setColumns(10);
+		
+		this.btnBuscarArticulo = new JButton("Buscar");
+		GroupLayout gl_panelInferiorConsultaArticulos = new GroupLayout(this.panelInferiorConsultaArticulos);
+		gl_panelInferiorConsultaArticulos.setHorizontalGroup(
+			gl_panelInferiorConsultaArticulos.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelInferiorConsultaArticulos.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.lblArticulo)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfNombreCodigoArticulo, GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.btnBuscarArticulo)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(this.btnAgregarArticulo)
+					.addContainerGap())
+		);
+		gl_panelInferiorConsultaArticulos.setVerticalGroup(
+			gl_panelInferiorConsultaArticulos.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panelInferiorConsultaArticulos.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_panelInferiorConsultaArticulos.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.btnAgregarArticulo)
+						.addComponent(this.txfNombreCodigoArticulo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblArticulo)
+						.addComponent(this.btnBuscarArticulo))
+					.addContainerGap())
+		);
+		this.panelInferiorConsultaArticulos.setLayout(gl_panelInferiorConsultaArticulos);
 		this.panelDatosCompra.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		this.panelDatosFactura = new JPanel();
@@ -187,7 +329,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.txfIdCompra = new JTextField();
 		this.txfIdCompra.setColumns(10);
 		
-		this.btnBuscar = new JButton("Buscar");
+		this.btnBuscarCompra = new JButton("Buscar");
 		
 		this.lblRecibe = new JLabel("Recibe");
 		
@@ -211,7 +353,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(this.txfIdCompra)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.btnBuscar)
+							.addComponent(this.btnBuscarCompra)
 							.addGap(97))
 						.addGroup(gl_panelDatosControlInterno.createSequentialGroup()
 							.addComponent(this.lblRecibe)
@@ -225,7 +367,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 					.addGroup(gl_panelDatosControlInterno.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.lblIdCompra)
 						.addComponent(this.txfIdCompra, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.btnBuscar))
+						.addComponent(this.btnBuscarCompra))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panelDatosControlInterno.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.lblRecibe)
@@ -248,10 +390,12 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.contentPane.add(this.panelInferiorBotones, BorderLayout.SOUTH);
 		
 		this.btnCancelar = new JButton("Cancelar");
+		this.btnCancelar.setToolTipText("Cerrar form y cancelar operacion");
 		this.panelInferiorBotones.add(this.btnCancelar);
 		
-		this.btnGuardar = new JButton("Guardar");
-		this.panelInferiorBotones.add(this.btnGuardar);
+		this.btnGuardarCompra = new JButton("Guardar");
+		this.btnGuardarCompra.setToolTipText("Guardar compra");
+		this.panelInferiorBotones.add(this.btnGuardarCompra);
 
 	}
 
