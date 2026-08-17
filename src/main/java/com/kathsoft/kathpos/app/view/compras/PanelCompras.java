@@ -65,6 +65,16 @@ public class PanelCompras extends JPanel {
 	private JFormattedTextField formattedTextFieldFechaFin;
 	private int idSucursal;
 
+	/**
+	 * Constructor conservado únicamente para compatibilidad con WindowBuilder y
+	 * referencias existentes. Para listar compras debe utilizarse
+	 * {@link #PanelCompras(int)}.
+	 */
+	@Deprecated
+	public PanelCompras() {
+		this(0);
+	}
+
 	public PanelCompras(int idSucursal) {
 		this.idSucursal = idSucursal;
 		this.setLayout(new BorderLayout(0, 0));
@@ -243,7 +253,10 @@ public class PanelCompras extends JPanel {
 		);
 		this.panelFiltros.setLayout(glPanelFiltros);
 		this.panelPrincipalContenedor.setLayout(glPanelPrincipalContenedor);
-		this.llenarTablaCompras();
+
+		if (this.idSucursal > 0) {
+			this.llenarTablaCompras();
+		}
 	}
 
 	private void setDefaultTableModel() {
@@ -267,6 +280,10 @@ public class PanelCompras extends JPanel {
 	}
 
 	public void llenarTablaCompras() {
+		if (this.idSucursal <= 0) {
+			return;
+		}
+
 		this.borrarElementosDeLaTablaCompras();
 		try {
 			CompraFiltro filtro = this.buildCompraFiltro();
