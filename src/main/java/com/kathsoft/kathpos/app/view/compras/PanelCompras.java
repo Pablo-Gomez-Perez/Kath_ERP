@@ -9,19 +9,23 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
@@ -99,6 +103,11 @@ public class PanelCompras extends JPanel {
 		this.flowLayoutPanelBotones.setAlignment(FlowLayout.RIGHT);
 
 		this.btnAgregar = new JButton("Agregar");
+		this.btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				abrirFormCompras(idSucursal);
+			}
+		});
 		this.btnAgregar.setIcon(
 				new ImageIcon(PanelCompras.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		this.btnAgregar.setBackground(new Color(144, 238, 144));
@@ -390,5 +399,35 @@ public class PanelCompras extends JPanel {
 
 	public TipoCompraFiltro getTipoCompraFiltroSeleccionado() {
 		return (TipoCompraFiltro) this.cmbTipoCompra.getSelectedItem();
+	}
+	
+	private void abrirFormCompras(int idSucursal) {
+		JComponent cmp = this;
+		try {
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					
+					try {
+						
+						Fr_DatosCompras form = new Fr_DatosCompras(idSucursal);
+						form.setLocationRelativeTo(cmp);
+						form.setVisible(true);
+						form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+						
+					}catch (Exception e) {
+						e.printStackTrace();
+						MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, "Error al abrir form");
+						
+					}
+					
+				}
+			});
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 }

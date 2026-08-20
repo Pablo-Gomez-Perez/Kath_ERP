@@ -84,21 +84,6 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private JLabel lblTotales;
 	private JLabel lblTotalCompra;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Fr_DatosCompras frame = new Fr_DatosCompras();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.

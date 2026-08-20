@@ -163,7 +163,7 @@ public class Fr_principal extends JFrame {
 	public Fr_principal(Sucursal sucursal) {
 		this(sucursal, null);
 	}
-
+   
 	public Fr_principal(Sucursal sucursal, EmpleadoLogin empleadoSesion) {
 
 		this.sucursal = sucursal;
@@ -547,7 +547,7 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 
-		panelCompras = new PanelCompras();
+		panelCompras = new PanelCompras(this.sucursal.getIdSucursal());
 		panelPrincipalContenedor.add(panelCompras, "panelCompras");
 
 		// =======================================================================================================================================
