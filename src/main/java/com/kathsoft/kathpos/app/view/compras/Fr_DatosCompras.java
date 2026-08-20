@@ -18,20 +18,28 @@ import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.tools.AppContext;
+
 import javax.swing.border.TitledBorder;
 import java.awt.GridLayout;
+import java.text.ParseException;
+
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 import javax.swing.border.BevelBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.text.MaskFormatter;
 
 public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones{
 
 	private static final long serialVersionUID = 1L;
+	private int idSucursal;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelCentralContenedor;
@@ -47,15 +55,16 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private JLabel lblFechaDeCompra;
 	private JFormattedTextField formattedTextFieldFechaDeCompra;
 	private JLabel lblProveedor;
-	private JComboBox comboBoxProveedor;
+	private JComboBox<JComboboxDataViewModel> comboBoxProveedor;
 	private JLabel lblIdCompra;
 	private JTextField txfIdCompra;
 	private JButton btnBuscarCompra;
 	private JLabel lblRecibe;
-	private JComboBox comboBoxEmpleado;
+	private JComboBox<JComboboxDataViewModel> comboBoxEmpleado;
 	private JPanel panelTipoDeCompra;
 	private JRadioButton rdbtnCredito;
 	private JRadioButton rdbtnContado;
+	private ButtonGroup buttonGroupTipoCompra;
 	private JPanel panelInferiorConsultaArticulos;
 	private JButton btnCancelar;
 	private JButton btnGuardarCompra;
@@ -264,17 +273,20 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		
 		this.lblFechaFactura = new JLabel("Fecha Factura");
 		
-		this.formattedTextFieldFechaFactura = new JFormattedTextField();
+		this.formattedTextFieldFechaFactura = new JFormattedTextField(this.buildDateFormatter());
+		this.formattedTextFieldFechaFactura.setToolTipText("dd/MM/yyyy");
 		this.lblFechaFactura.setLabelFor(this.formattedTextFieldFechaFactura);
 		
 		this.lblFechaDeCompra = new JLabel("Fecha de Compra");
 		
-		this.formattedTextFieldFechaDeCompra = new JFormattedTextField();
+		this.formattedTextFieldFechaDeCompra = new JFormattedTextField(this.buildDateFormatter());
+		this.formattedTextFieldFechaDeCompra.setToolTipText("dd/MM/yyyy");
 		this.lblFechaDeCompra.setLabelFor(this.formattedTextFieldFechaDeCompra);
 		
 		this.lblProveedor = new JLabel("Proveedor");
 		
-		this.comboBoxProveedor = new JComboBox();
+		this.comboBoxProveedor = new JComboBox<JComboboxDataViewModel>();
+		this.llenarComboBoxProveedor();
 		GroupLayout gl_panelDatosFactura = new GroupLayout(this.panelDatosFactura);
 		gl_panelDatosFactura.setHorizontalGroup(
 			gl_panelDatosFactura.createParallelGroup(Alignment.LEADING)
@@ -333,7 +345,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		
 		this.lblRecibe = new JLabel("Recibe");
 		
-		this.comboBoxEmpleado = new JComboBox();
+		this.comboBoxEmpleado = new JComboBox<JComboboxDataViewModel>();
 		
 		this.panelTipoDeCompra = new JPanel();
 		FlowLayout flowLayoutPanelTipoCompra = (FlowLayout) this.panelTipoDeCompra.getLayout();
@@ -376,10 +388,14 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 					.addComponent(this.panelTipoDeCompra, GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE))
 		);
 		
+		this.buttonGroupTipoCompra = new ButtonGroup();
+		
 		this.rdbtnContado = new JRadioButton("Contado");
+		this.buttonGroupTipoCompra.add(this.rdbtnContado);
 		this.panelTipoDeCompra.add(this.rdbtnContado);
 		
 		this.rdbtnCredito = new JRadioButton("Credito");
+		this.buttonGroupTipoCompra.add(this.rdbtnCredito);
 		this.panelTipoDeCompra.add(this.rdbtnCredito);
 		this.panelDatosControlInterno.setLayout(gl_panelDatosControlInterno);
 		this.panelCentralContenedor.setLayout(gl_panelCentralContenedor);
@@ -397,6 +413,61 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.btnGuardarCompra.setToolTipText("Guardar compra");
 		this.panelInferiorBotones.add(this.btnGuardarCompra);
 
+	}
+
+	/**
+	 * Crea el formulario con el contexto de la sucursal desde la cual se registra
+	 * la compra. Este identificador se utiliza para cargar únicamente los empleados
+	 * pertenecientes a la sucursal actual.
+	 *
+	 * @param idSucursal identificador de la sucursal de trabajo actual
+	 */
+	public Fr_DatosCompras(int idSucursal) {
+		this();
+		this.idSucursal = idSucursal;
+		this.llenarComboBoxEmpleado();
+	}
+
+	private void llenarComboBoxProveedor() {
+		this.comboBoxProveedor.removeAllItems();
+		AppContext.proveedorController.consultarNombresProveedor().forEach(this.comboBoxProveedor::addItem);
+	}
+
+	private void llenarComboBoxEmpleado() {
+		this.comboBoxEmpleado.removeAllItems();
+		if (this.idSucursal <= 0) {
+			return;
+		}
+		AppContext.empleadoController.consultaNombresCortosEmpleados(this.idSucursal)
+				.forEach(this.comboBoxEmpleado::addItem);
+	}
+
+	private MaskFormatter buildDateFormatter() {
+		try {
+			MaskFormatter formatter = new MaskFormatter("##/##/####");
+			formatter.setPlaceholderCharacter('_');
+			formatter.setValidCharacters("0123456789");
+			return formatter;
+		} catch (ParseException er) {
+			er.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	/**
+	 * Obtiene el tipo de compra seleccionado en los radio buttons.
+	 *
+	 * @return {@link Boolean#TRUE} para crédito, {@link Boolean#FALSE} para contado
+	 *         o {@code null} cuando no existe una selección
+	 */
+	public Boolean getTipoCompraSeleccionado() {
+		if (this.rdbtnCredito.isSelected()) {
+			return Boolean.TRUE;
+		}
+		if (this.rdbtnContado.isSelected()) {
+			return Boolean.FALSE;
+		}
+		return null;
 	}
 
 	@Override
