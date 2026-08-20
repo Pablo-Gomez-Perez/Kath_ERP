@@ -24,11 +24,11 @@ public class CompraController implements java.io.Serializable {
 	private static final long serialVersionUID = -4974480297011718553L;
 	private static Connection cn = null;
 
-	public List<CompraListado> listCompras() {
-		return this.listCompras(new CompraFiltro());
+	public List<CompraListado> listCompras(int idSucursal) {
+		return this.listCompras(idSucursal, new CompraFiltro());
 	}
 
-	public List<CompraListado> listCompras(CompraFiltro filtro) {
+	public List<CompraListado> listCompras(int idSucursal, CompraFiltro filtro) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
 		List<CompraListado> compras = new ArrayList<>();
@@ -36,12 +36,13 @@ public class CompraController implements java.io.Serializable {
 		try {
 			CompraFiltro filtroCompras = filtro == null ? new CompraFiltro() : filtro;
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL listCompras(?,?,?,?,?)");
-			setNullableInt(stm, 1, filtroCompras.getIdProveedor());
-			stm.setDate(2, filtroCompras.getFechaFacturaInicio());
-			stm.setDate(3, filtroCompras.getFechaFacturaFin());
-			stm.setString(4, filtroCompras.getFolioFactura());
-			setNullableBoolean(stm, 5, filtroCompras.getTipoCompra());
+			stm = cn.prepareCall("CALL listCompras(?,?,?,?,?,?)");
+			stm.setLong(1, idSucursal);
+			setNullableInt(stm, 2, filtroCompras.getIdProveedor());
+			stm.setDate(3, filtroCompras.getFechaFacturaInicio());
+			stm.setDate(4, filtroCompras.getFechaFacturaFin());
+			stm.setString(5, filtroCompras.getFolioFactura());
+			setNullableBoolean(stm, 6, filtroCompras.getTipoCompra());
 			rset = stm.executeQuery();
 
 			while (rset.next()) {
@@ -155,9 +156,9 @@ public class CompraController implements java.io.Serializable {
 		return new CompraConDetalle(compra, articulosPorCompra);
 	}
 
-	public SpResponseModel insertCompra(Compra compra) {
+	public SpResponseModel insertCompra(int idSucursal, Compra compra) {
 		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
-			return this.insertCompra(connection, compra);
+			return this.insertCompra(connection, idSucursal, compra);
 		} catch (SQLException er) {
 			er.printStackTrace();
 			return new SpResponseModel(500, er.getMessage());
@@ -167,7 +168,7 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
-	public SpResponseModel insertCompra(CompraConDetalle compraConDetalle) {
+	public SpResponseModel insertCompra(int idSucursal, CompraConDetalle compraConDetalle) {
 		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
 			return new SpResponseModel(500, "La compra es obligatoria");
 		}
@@ -180,7 +181,7 @@ public class CompraController implements java.io.Serializable {
 			connection.setAutoCommit(false);
 
 			try {
-				SpResponseModel respuestaCompra = this.insertCompra(connection, compraConDetalle.getCompra());
+				SpResponseModel respuestaCompra = this.insertCompra(connection, idSucursal, compraConDetalle.getCompra());
 				if (!isSuccess(respuestaCompra)) {
 					connection.rollback();
 					return respuestaCompra;
@@ -250,9 +251,9 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
-	public SpResponseModel updateCompra(Compra compra) {
+	public SpResponseModel updateCompra(int idSucursal, Compra compra) {
 		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
-			return this.updateCompra(connection, compra);
+			return this.updateCompra(connection, idSucursal, compra);
 		} catch (SQLException er) {
 			er.printStackTrace();
 			return new SpResponseModel(500, er.getMessage());
@@ -274,7 +275,7 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
-	public SpResponseModel updateCompra(CompraConDetalle compraConDetalle) {
+	public SpResponseModel updateCompra(int idSucursal, CompraConDetalle compraConDetalle) {
 		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
 			return new SpResponseModel(500, "La compra es obligatoria");
 		}
@@ -287,7 +288,7 @@ public class CompraController implements java.io.Serializable {
 			connection.setAutoCommit(false);
 
 			try {
-				SpResponseModel respuestaCompra = this.updateCompra(connection, compraConDetalle.getCompra());
+				SpResponseModel respuestaCompra = this.updateCompra(connection, idSucursal, compraConDetalle.getCompra());
 				if (!isSuccess(respuestaCompra)) {
 					connection.rollback();
 					return respuestaCompra;
@@ -352,20 +353,21 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
-	private SpResponseModel insertCompra(Connection connection, Compra compra) throws SQLException {
+	private SpResponseModel insertCompra(Connection connection, int idSucursal, Compra compra) throws SQLException {
 		if (compra == null) {
 			return new SpResponseModel(500, "La compra es obligatoria");
 		}
 
-		try (CallableStatement stm = connection.prepareCall("CALL insertCompra(?,?,?,?,?,?,?,?)")) {
+		try (CallableStatement stm = connection.prepareCall("CALL insertCompra(?,?,?,?,?,?,?,?,?)")) {
 			stm.setInt(1, compra.getIdEmpleado());
 			stm.setInt(2, compra.getIdProveedor());
-			stm.setString(3, compra.getFolioFactura());
-			stm.setDate(4, compra.getFechaFactura());
-			stm.setDate(5, compra.getFechaCompra());
-			stm.setBoolean(6, compra.isTipoCompra());
-			stm.setDouble(7, compra.getSubtotal());
-			stm.setDouble(8, compra.getIva());
+			stm.setLong(3, idSucursal);
+			stm.setString(4, compra.getFolioFactura());
+			stm.setDate(5, compra.getFechaFactura());
+			stm.setDate(6, compra.getFechaCompra());
+			stm.setBoolean(7, compra.isTipoCompra());
+			stm.setDouble(8, compra.getSubtotal());
+			stm.setDouble(9, compra.getIva());
 
 			try (ResultSet rset = stm.executeQuery()) {
 				return buildSpResponse(rset);
@@ -404,21 +406,22 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
-	private SpResponseModel updateCompra(Connection connection, Compra compra) throws SQLException {
+	private SpResponseModel updateCompra(Connection connection, int idSucursal, Compra compra) throws SQLException {
 		if (compra == null) {
 			return new SpResponseModel(500, "La compra es obligatoria");
 		}
 
-		try (CallableStatement stm = connection.prepareCall("CALL updateCompra(?,?,?,?,?,?,?,?,?)")) {
+		try (CallableStatement stm = connection.prepareCall("CALL updateCompra(?,?,?,?,?,?,?,?,?,?)")) {
 			stm.setInt(1, compra.getIdCompra());
 			stm.setInt(2, compra.getIdEmpleado());
 			stm.setInt(3, compra.getIdProveedor());
-			stm.setString(4, compra.getFolioFactura());
-			stm.setDate(5, compra.getFechaFactura());
-			stm.setDate(6, compra.getFechaCompra());
-			stm.setBoolean(7, compra.isTipoCompra());
-			stm.setDouble(8, compra.getSubtotal());
-			stm.setDouble(9, compra.getIva());
+			stm.setLong(4, idSucursal);
+			stm.setString(5, compra.getFolioFactura());
+			stm.setDate(6, compra.getFechaFactura());
+			stm.setDate(7, compra.getFechaCompra());
+			stm.setBoolean(8, compra.isTipoCompra());
+			stm.setDouble(9, compra.getSubtotal());
+			stm.setDouble(10, compra.getIva());
 
 			try (ResultSet rset = stm.executeQuery()) {
 				return buildSpResponse(rset);
@@ -473,7 +476,7 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	private boolean isSuccess(SpResponseModel response) {
-		return response != null && response.id() == 200;
+		return response != null && response.id() > 0 && response.id() != 500;
 	}
 
 	private void setNullableInt(CallableStatement stm, int index, int value) throws SQLException {

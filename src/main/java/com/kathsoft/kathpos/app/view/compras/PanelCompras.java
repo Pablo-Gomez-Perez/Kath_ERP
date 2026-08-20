@@ -63,8 +63,20 @@ public class PanelCompras extends JPanel {
 	private FlowLayout flowLayoutPanelBotones;
 	private JFormattedTextField formattedTextFieldFechaInicio;
 	private JFormattedTextField formattedTextFieldFechaFin;
+	private int idSucursal;
 
+	/**
+	 * Constructor conservado únicamente para compatibilidad con WindowBuilder y
+	 * referencias existentes. Para listar compras debe utilizarse
+	 * {@link #PanelCompras(int)}.
+	 */
+	@Deprecated
 	public PanelCompras() {
+		this(0);
+	}
+
+	public PanelCompras(int idSucursal) {
+		this.idSucursal = idSucursal;
 		this.setLayout(new BorderLayout(0, 0));
 		this.setBackground(new Color(255, 215, 0));
 
@@ -241,7 +253,10 @@ public class PanelCompras extends JPanel {
 		);
 		this.panelFiltros.setLayout(glPanelFiltros);
 		this.panelPrincipalContenedor.setLayout(glPanelPrincipalContenedor);
-		this.llenarTablaCompras();
+
+		if (this.idSucursal > 0) {
+			this.llenarTablaCompras();
+		}
 	}
 
 	private void setDefaultTableModel() {
@@ -265,10 +280,14 @@ public class PanelCompras extends JPanel {
 	}
 
 	public void llenarTablaCompras() {
+		if (this.idSucursal <= 0) {
+			return;
+		}
+
 		this.borrarElementosDeLaTablaCompras();
 		try {
 			CompraFiltro filtro = this.buildCompraFiltro();
-			AppContext.compraController.listCompras(filtro).forEach(this::addCompraListadoToTable);
+			AppContext.compraController.listCompras(this.idSucursal, filtro).forEach(this::addCompraListadoToTable);
 		} catch (ParseException er) {
 			er.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Formato de fecha inválido. Usa dd/MM/yyyy");
