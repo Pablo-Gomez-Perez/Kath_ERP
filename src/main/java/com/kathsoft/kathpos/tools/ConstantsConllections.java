@@ -115,6 +115,13 @@ public class ConstantsConllections implements java.io.Serializable{
 			100 // activo o inactivo
 	};
 	
+	public static final int[] tablaArticulosCompraColumnsWidth = { 120, // codigo articulo
+			260, // descripcion
+			80, // cantidad
+			120, // costo unitario
+			120 // subtotal
+	};
+	
 	public static final int[] tablaSucursalesColumnWidth = { 40, // indice
 			150, // nombre
 			300, // descripcion
