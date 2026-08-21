@@ -72,7 +72,23 @@ public final class PasswordHashService {
 	}
 
 	public static boolean isHash(String value) {
-		return value != null && value.startsWith(PREFIX + "$");
+		if (value == null) {
+			return false;
+		}
+
+		String[] parts = value.split("\\$", -1);
+		if (parts.length != 4 || !PREFIX.equals(parts[0])) {
+			return false;
+		}
+
+		try {
+			int iterations = Integer.parseInt(parts[1]);
+			byte[] salt = Base64.getDecoder().decode(parts[2]);
+			byte[] hash = Base64.getDecoder().decode(parts[3]);
+			return iterations > 0 && salt.length > 0 && hash.length > 0;
+		} catch (IllegalArgumentException er) {
+			return false;
+		}
 	}
 
 	private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int keyLengthBits) {
