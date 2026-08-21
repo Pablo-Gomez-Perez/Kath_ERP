@@ -20,6 +20,8 @@ import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
+import com.kathsoft.kathpos.tools.DataTools;
 
 import javax.swing.border.TitledBorder;
 import java.awt.GridLayout;
@@ -34,11 +36,13 @@ import javax.swing.ButtonGroup;
 import javax.swing.border.BevelBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones{
 
 	private static final long serialVersionUID = 1L;
+	private static final int COLUMNA_CANTIDAD = 2;
 	private int idSucursal;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
@@ -75,6 +79,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private JPanel panelCentralContenedorTabla;
 	private JPanel panelContenedorDatos;
 	private JScrollPane scrollPaneTablaArticulos;
+	private DefaultTableModel modelTablaArticulosListados;
 	private JTable tableArticulosListados;
 	private JButton btnEliminarArticuloSeleccionado;
 	private JLabel lblSubTotal;
@@ -205,8 +210,26 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.scrollPaneTablaArticulos = new JScrollPane();
 		this.panelCentralContenedorTabla.add(this.scrollPaneTablaArticulos, BorderLayout.CENTER);
 		
+		this.modelTablaArticulosListados = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return column == COLUMNA_CANTIDAD;
+			}
+		};
+		this.modelTablaArticulosListados.addColumn("Código");
+		this.modelTablaArticulosListados.addColumn("Descripción");
+		this.modelTablaArticulosListados.addColumn("Cantidad");
+		this.modelTablaArticulosListados.addColumn("Costo Unitario");
+		this.modelTablaArticulosListados.addColumn("Subtotal");
+		
 		this.tableArticulosListados = new JTable();
+		this.tableArticulosListados.setModel(this.modelTablaArticulosListados);
+		this.tableArticulosListados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.scrollPaneTablaArticulos.setViewportView(this.tableArticulosListados);
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaArticulosCompraColumnsWidth,
+				this.tableArticulosListados);
 		
 		this.lblArticulo = new JLabel("Articulo");
 		
