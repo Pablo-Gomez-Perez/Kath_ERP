@@ -17,8 +17,10 @@ import java.awt.FlowLayout;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
+import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
@@ -31,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.border.BevelBorder;
@@ -44,6 +47,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private static final long serialVersionUID = 1L;
 	private static final int COLUMNA_CANTIDAD = 2;
 	private int idSucursal;
+	private ArticuloByCodigo articuloConsultado;
 	private JPanel contentPane;
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelCentralContenedor;
@@ -95,7 +99,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 */
 	public Fr_DatosCompras() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 836, 600);
+		setBounds(100, 100, 836, 630);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
@@ -234,13 +238,16 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.lblArticulo = new JLabel("Articulo");
 		
 		this.btnAgregarArticulo = new JButton("Agregar");
+		this.btnAgregarArticulo.addActionListener(e -> this.agregarArticuloConsultado());
 		
 		this.txfNombreCodigoArticulo = new JTextField();
 		this.lblArticulo.setLabelFor(this.txfNombreCodigoArticulo);
 		this.txfNombreCodigoArticulo.setToolTipText("Ingresa el código del artículo para registrarlo o el nombre para consultar");
 		this.txfNombreCodigoArticulo.setColumns(10);
+		this.txfNombreCodigoArticulo.addActionListener(e -> this.buscarArticulo());
 		
 		this.btnBuscarArticulo = new JButton("Buscar");
+		this.btnBuscarArticulo.addActionListener(e -> this.buscarArticulo());
 		GroupLayout gl_panelInferiorConsultaArticulos = new GroupLayout(this.panelInferiorConsultaArticulos);
 		gl_panelInferiorConsultaArticulos.setHorizontalGroup(
 			gl_panelInferiorConsultaArticulos.createParallelGroup(Alignment.LEADING)
@@ -462,6 +469,82 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		}
 	}
 
+	private void buscarArticulo() {
+		String textoBusqueda = this.txfNombreCodigoArticulo.getText().trim();
+		this.articuloConsultado = null;
+
+		if (textoBusqueda.isEmpty()) {
+			this.abrirFormListaArticulos("");
+			return;
+		}
+
+		try {
+			ArticuloByCodigo articulo = AppContext.articuloController.consultarArticuloPorCodigo(textoBusqueda,
+					this.idSucursal);
+
+			if (articulo == null) {
+				return;
+			}
+
+			if (articulo.getIdArticulo() <= 0) {
+				this.abrirFormListaArticulos(textoBusqueda);
+				return;
+			}
+
+			this.articuloConsultado = articulo;
+			this.txfNombreCodigoArticulo.setText(articulo.getCodigoArticulo());
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error al consultar el artículo: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void agregarArticuloConsultado() {
+		if (this.articuloConsultado == null || this.articuloConsultado.getIdArticulo() <= 0) {
+			JOptionPane.showMessageDialog(this, "Primero debe buscar un artículo por código", "Atención",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		String cantidadIngresada = JOptionPane.showInputDialog(this, "Ingrese la cantidad de artículos");
+		if (cantidadIngresada == null) {
+			return;
+		}
+
+		try {
+			int cantidad = Integer.parseInt(cantidadIngresada.trim());
+			if (cantidad <= 0) {
+				throw new NumberFormatException("La cantidad debe ser mayor a cero");
+			}
+
+			double subtotal = this.articuloConsultado.getCostoUnitario() * cantidad;
+			this.modelTablaArticulosListados.addRow(new Object[] {
+					this.articuloConsultado.getCodigoArticulo(),
+					this.articuloConsultado.getDescripcion(),
+					cantidad,
+					this.articuloConsultado.getCostoUnitario(),
+					subtotal
+			});
+
+			this.articuloConsultado = null;
+			this.txfNombreCodigoArticulo.setText("");
+			this.txfNombreCodigoArticulo.requestFocusInWindow();
+		} catch (NumberFormatException er) {
+			JOptionPane.showMessageDialog(this, "Ingrese una cantidad entera mayor a cero", "Cantidad inválida",
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	private void abrirFormListaArticulos(String nombreArticulo) {
+		EventQueue.invokeLater(() -> {
+			Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, this.idSucursal, this);
+			frame.setLocationRelativeTo(this);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			frame.setVisible(true);
+		});
+	}
+
 	/**
 	 * Obtiene el tipo de compra seleccionado en los radio buttons.
 	 *
@@ -480,7 +563,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 	@Override
 	public void listarArticuloDesdeConsulta(Object[] articulo, ArticulosPorVentas art) {
-		// TODO Auto-generated method stub
+		// TODO Se implementará en la siguiente etapa del flujo de selección.
 		
 	}
 }
