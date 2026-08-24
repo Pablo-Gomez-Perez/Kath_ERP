@@ -1,12 +1,12 @@
 package com.kathsoft.kathpos.app.view.shared;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
-import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
@@ -34,25 +33,17 @@ public class Fr_ListaArticulos extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private static final int ID_TIPO_CLIENTE_GENERAL = 1;
-	/**
-	 * 
-	 * 
-	 */
+
 	private DefaultTableModel modelTablaArticulos;
 	private ArticuloController articuloController = new ArticuloController();
 	private String nombreArticulo;
 	private int idSucursal;
-	
+
 	/**
 	 * Referencia al formulario invocador que recibirá el artículo seleccionado.
-	 * <p>
-	 * El objeto debe implementar {@link IListadoArticulosAcciones}, lo que permite
-	 * que {@code Fr_ListaArticulos} notifique la selección sin conocer el tipo
-	 * concreto del formulario ni la forma en que será actualizado.
-	 * </p>
 	 */
 	private IListadoArticulosAcciones frame;
-	
+
 	private JPanel contentPane;
 	private JTextField txfNombreArticulo;
 	private JTable tablaArticulos;
@@ -62,41 +53,19 @@ public class Fr_ListaArticulos extends JFrame {
 	private Component horizontalStrut_1;
 	private JButton btnBusquedaArticulo;
 	private JPanel panelCentralTabla;
-	private JScrollPane scrollPaneTablaArticulo;	
+	private JScrollPane scrollPaneTablaArticulo;
 	private JPanel panelInferiorBotones;
 	private JButton btnCancelar;
 	private Component horizontalStrut_2;
 	private JButton btnSeleccionarArticulo;
 
 	/**
-	 * Launch the application.
-	 *
-	 * public static void main(String[] args) { EventQueue.invokeLater(new
-	 * Runnable() { public void run() { try { Fr_ListaArticulos frame = new
-	 * Fr_ListaArticulos(); frame.setVisible(true); } catch (Exception e) {
-	 * e.printStackTrace(); } } }); }
-	 */
-
-	/**
 	 * Crea el formulario auxiliar para consultar y seleccionar artículos.
-	 * <p>
-	 * Este formulario se utiliza como una ventana de apoyo para buscar artículos
-	 * por nombre y permitir que el usuario seleccione uno de los resultados.
-	 * Al seleccionar un artículo, el resultado se devuelve al formulario invocador
-	 * mediante la interfaz {@link IListadoArticulosAcciones}.
-	 * </p>
-	 * <p>
-	 * El uso de la interfaz permite que este mismo formulario auxiliar sea
-	 * reutilizado por distintos módulos, como punto de venta y compras, sin crear
-	 * formularios duplicados ni constructores específicos para cada caso.
-	 * </p>
 	 *
 	 * @param nombreArticulo texto inicial de búsqueda para filtrar artículos.
 	 * @param idSucursal identificador de la sucursal sobre la cual se consulta
 	 *                   la disponibilidad o información del artículo.
-	 * @param frame formulario invocador que implementa
-	 *              {@link IListadoArticulosAcciones} y recibirá el artículo
-	 *              seleccionado.
+	 * @param frame formulario invocador que recibirá el artículo seleccionado.
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, IListadoArticulosAcciones frame) {
 
@@ -151,15 +120,13 @@ public class Fr_ListaArticulos extends JFrame {
 		panelCentralTabla.setLayout(new BorderLayout(0, 0));
 
 		scrollPaneTablaArticulo = new JScrollPane();
+		panelCentralTabla.add(scrollPaneTablaArticulo);
 
-		panelCentralTabla.add(scrollPaneTablaArticulo);		
-		
 		this.setModelTablaArticulos();
-		
+
 		tablaArticulos = new JTable();
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
 		tablaArticulos.setModel(this.modelTablaArticulos);
-
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		panelInferiorBotones = new JPanel();
@@ -193,19 +160,13 @@ public class Fr_ListaArticulos extends JFrame {
 			tablaArticulos.setDefaultEditor(colClass, null);
 		}
 
-		/**
-		 * se establecen los tamaños preestablecidos para cada columna de la tabla de
-		 * los articulos
-		 */
 		TableColumnModel articulosColumnModel = tablaArticulos.getColumnModel();
-
 		for (int i = 0; i < ConstantsConllections.tablaArticulosListadoColumnsWidth.length; i++) {
 			articulosColumnModel.getColumn(i).setPreferredWidth(ConstantsConllections.tablaArticulosListadoColumnsWidth[i]);
 			articulosColumnModel.getColumn(i).setMinWidth(ConstantsConllections.tablaArticulosListadoColumnsWidth[i]);
 		}
 
 		this.llenarTablaArticulos(this.nombreArticulo);
-
 	}
 
 	private void llenarTablaArticulos(String nombreArticulo) {
@@ -213,70 +174,68 @@ public class Fr_ListaArticulos extends JFrame {
 		this.articuloController.verArticulosEnTabla(this.idSucursal, nombreArticulo, ID_TIPO_CLIENTE_GENERAL)
 				.forEach(this.modelTablaArticulos::addRow);
 	}
-	
-	
-	
-	public void setModelTablaArticulos() {
-		
-		this.modelTablaArticulos = new DefaultTableModel();
 
+	public void setModelTablaArticulos() {
+		this.modelTablaArticulos = new DefaultTableModel();
 		this.modelTablaArticulos.addColumn("Id");
 		this.modelTablaArticulos.addColumn("Codigo");
 		this.modelTablaArticulos.addColumn("Nombre");
 		this.modelTablaArticulos.addColumn("Costo");
 		this.modelTablaArticulos.addColumn("Precio");
 		this.modelTablaArticulos.addColumn("Existencia");
-		
 	}
 
-	/**
-	 * inserta los articulos seleccionados en la tabla principal del formulario y calcula los totales de compra
-	 */
 	private void listarArticulo() {
-
 		int articuloSeleccionado = this.tablaArticulos.getSelectedRow();
-		ArticuloByCodigo articulo = new ArticuloByCodigo();
-		int cantidad = 0;
-		double subtotal = 0;
-		
+
+		if (articuloSeleccionado == -1) {
+			JOptionPane.showMessageDialog(this, "Debe seleccionar un articulo", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
 		try {
-
-			if (articuloSeleccionado == -1) {
-				JOptionPane.showMessageDialog(this, "Debe seleccionar un articulo", "Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			articulo = this.articuloController.consultarArticuloPorCodigo(
-					(String) this.tablaArticulos.getValueAt(articuloSeleccionado, 1), this.idSucursal,
-					ID_TIPO_CLIENTE_GENERAL);
+			String codigoArticulo = String.valueOf(this.tablaArticulos.getValueAt(articuloSeleccionado, 1));
+			ArticuloByCodigo articulo = this.articuloController.consultarArticuloPorCodigo(codigoArticulo,
+					this.idSucursal, ID_TIPO_CLIENTE_GENERAL);
 
 			if (articulo == null || articulo.getIdArticulo() <= 0) {
 				return;
 			}
 
-			System.out.println(articulo.toString());
+			String cantidadIngresada = JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos");
+			if (cantidadIngresada == null) {
+				return;
+			}
 
-			cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos"));
-						
-			Object[] fila = {
-				articulo.getCodigoArticulo(),
-				articulo.getDescripcion(),
-				cantidad,
-				0,
-				subtotal
-			};
-			
-			var vendidos = new ArticulosPorVentas();
-			vendidos.setId_articulo(articulo.getIdArticulo());
-			vendidos.setCantidad(cantidad);
-			vendidos.setSubtotal(subtotal);
-			
-			this.frame.listarArticuloDesdeConsulta(fila, vendidos);
+			int cantidad = Integer.parseInt(cantidadIngresada.trim());
+			if (cantidad <= 0) {
+				throw new NumberFormatException("La cantidad debe ser mayor a cero");
+			}
 
+			BigDecimal precio = this.obtenerPrecioSeleccionado(articuloSeleccionado);
+			this.frame.listarArticuloDesdeConsulta(articulo, cantidad, precio);
+			this.dispose();
+		} catch (NumberFormatException er) {
+			JOptionPane.showMessageDialog(this, "Ingrese una cantidad entera mayor a cero", "Cantidad inválida",
+					JOptionPane.WARNING_MESSAGE);
 		} catch (Exception er) {
-			er.printStackTrace();
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No se pudo seleccionar el artículo: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
-
 	}
 
+	private BigDecimal obtenerPrecioSeleccionado(int fila) {
+		Object valor = this.tablaArticulos.getValueAt(fila, 4);
+		if (valor == null) {
+			return BigDecimal.ZERO;
+		}
+		if (valor instanceof BigDecimal precio) {
+			return precio;
+		}
+		if (valor instanceof Number numero) {
+			return BigDecimal.valueOf(numero.doubleValue());
+		}
+		return new BigDecimal(valor.toString());
+	}
 }
