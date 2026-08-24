@@ -28,6 +28,13 @@ public class CompraController implements java.io.Serializable {
 		return this.listCompras(idSucursal, new CompraFiltro());
 	}
 
+	public int getSiguienteIdCompra(int idSucursal) {
+		return this.listCompras(idSucursal).stream()
+				.mapToInt(CompraListado::getIdCompra)
+				.max()
+				.orElse(0) + 1;
+	}
+
 	public List<CompraListado> listCompras(int idSucursal, CompraFiltro filtro) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
