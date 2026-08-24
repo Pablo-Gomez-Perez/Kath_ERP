@@ -6,11 +6,16 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -25,8 +31,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
+import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
+import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 
 public class Fr_ListaArticulos extends JFrame {
@@ -128,6 +136,7 @@ public class Fr_ListaArticulos extends JFrame {
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
 		tablaArticulos.setModel(this.modelTablaArticulos);
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		this.configurarEnterTablaArticulos();
 
 		panelInferiorBotones = new JPanel();
 		panelInferiorBotones.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
@@ -169,6 +178,20 @@ public class Fr_ListaArticulos extends JFrame {
 		this.llenarTablaArticulos(this.nombreArticulo);
 	}
 
+	private void configurarEnterTablaArticulos() {
+		String accionSeleccionar = "seleccionarArticulo";
+		this.tablaArticulos.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), accionSeleccionar);
+		this.tablaArticulos.getActionMap().put(accionSeleccionar, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listarArticulo();
+			}
+		});
+	}
+
 	private void llenarTablaArticulos(String nombreArticulo) {
 		this.modelTablaArticulos.setRowCount(0);
 		this.articuloController.verArticulosEnTabla(this.idSucursal, nombreArticulo, ID_TIPO_CLIENTE_GENERAL)
@@ -194,11 +217,14 @@ public class Fr_ListaArticulos extends JFrame {
 		}
 
 		try {
-			String codigoArticulo = String.valueOf(this.tablaArticulos.getValueAt(articuloSeleccionado, 1));
+			int filaModelo = this.tablaArticulos.convertRowIndexToModel(articuloSeleccionado);
+			int idArticulo = this.obtenerIdArticuloSeleccionado(filaModelo);
+			String codigoArticulo = String.valueOf(this.modelTablaArticulos.getValueAt(filaModelo, 1));
 			ArticuloByCodigo articulo = this.articuloController.consultarArticuloPorCodigo(codigoArticulo,
 					this.idSucursal, ID_TIPO_CLIENTE_GENERAL);
 
 			if (articulo == null || articulo.getIdArticulo() <= 0) {
+				this.manejarArticuloNoDisponible(idArticulo);
 				return;
 			}
 
@@ -212,7 +238,7 @@ public class Fr_ListaArticulos extends JFrame {
 				throw new NumberFormatException("La cantidad debe ser mayor a cero");
 			}
 
-			BigDecimal precio = this.obtenerPrecioSeleccionado(articuloSeleccionado);
+			BigDecimal precio = this.obtenerPrecioSeleccionado(filaModelo);
 			this.frame.listarArticuloDesdeConsulta(articulo, cantidad, precio);
 			this.dispose();
 		} catch (NumberFormatException er) {
@@ -225,8 +251,54 @@ public class Fr_ListaArticulos extends JFrame {
 		}
 	}
 
+	private int obtenerIdArticuloSeleccionado(int filaModelo) {
+		Object valor = this.modelTablaArticulos.getValueAt(filaModelo, 0);
+		if (valor instanceof Number numero) {
+			return numero.intValue();
+		}
+		try {
+			return Integer.parseInt(String.valueOf(valor));
+		} catch (NumberFormatException er) {
+			return 0;
+		}
+	}
+
+	private void manejarArticuloNoDisponible(int idArticulo) throws Exception {
+		if (idArticulo <= 0) {
+			return;
+		}
+
+		Articulo articulo = this.articuloController.consultarArticuloPorId(idArticulo, this.idSucursal);
+		if (articulo == null || articulo.getIdArticulo() <= 0 || articulo.isActivo()) {
+			return;
+		}
+
+		int opcion = JOptionPane.showConfirmDialog(this,
+				"Articulo seleccionado está inactivo o dado de baja.\n¿Habilitar nuevamente?", "Articulo inactivo",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (opcion != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		this.abrirFormularioArticuloInactivo(idArticulo);
+	}
+
+	private void abrirFormularioArticuloInactivo(int idArticulo) {
+		Fr_DatosArticulo form = new Fr_DatosArticulo(1, idArticulo, this.idSucursal);
+		form.setLocationRelativeTo(this);
+		form.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if (form.isOperacionEjecutada()) {
+					llenarTablaArticulos(txfNombreArticulo.getText());
+				}
+			}
+		});
+		form.setVisible(true);
+	}
+
 	private BigDecimal obtenerPrecioSeleccionado(int fila) {
-		Object valor = this.tablaArticulos.getValueAt(fila, 4);
+		Object valor = this.modelTablaArticulos.getValueAt(fila, 4);
 		if (valor == null) {
 			return BigDecimal.ZERO;
 		}
