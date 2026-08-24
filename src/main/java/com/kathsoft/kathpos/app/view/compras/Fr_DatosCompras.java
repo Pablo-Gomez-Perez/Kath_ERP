@@ -95,7 +95,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 */
 	public Fr_DatosCompras() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 836, 600);
+		setBounds(100, 100, 836, 630);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
