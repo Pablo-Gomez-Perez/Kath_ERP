@@ -14,16 +14,45 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.articulo.PrecioTipoCliente;
 import com.kathsoft.kathpos.tools.Conexion;
 
 public class ArticuloController implements java.io.Serializable {
 
 	private static final long serialVersionUID = 8759492279100460054L;
+	private static final int ID_TIPO_CLIENTE_GENERAL = 1;
 	private static Connection cn = null;
 
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, int idTipoCliente) {
-		return this.verArticulosEnTabla(idSucursal, "TODOS", "NOMBRE", "", idTipoCliente);
+		return this.verArticulosEnTabla(idSucursal, "", idTipoCliente);
+	}
+
+	/**
+	 * Retorna una vista reducida del listado de artículos para formularios de
+	 * selección.
+	 *
+	 * @param idSucursal identificador de la sucursal donde se realiza la consulta
+	 * @param nombreArticulo texto utilizado para filtrar por nombre
+	 * @param idTipoCliente identificador del tipo de cliente para determinar precio
+	 * @return filas con id, código, nombre, costo, precio y existencia
+	 */
+	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String nombreArticulo, int idTipoCliente) {
+		var articulos = new Vector<Object[]>();
+		String textoBusqueda = nombreArticulo == null ? "" : nombreArticulo.trim();
+
+		this.verArticulosEnTabla(idSucursal, "NOMBRE", "NOMBRE", textoBusqueda, idTipoCliente).forEach(articulo -> {
+			articulos.add(new Object[] {
+					articulo[0], // id
+					articulo[3], // código
+					articulo[4], // nombre
+					articulo[6], // costo
+					articulo[7], // precio
+					articulo[8] // existencia
+			});
+		});
+
+		return articulos;
 	}
 
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String tipoBusqueda, String ordenarPor,
@@ -290,27 +319,36 @@ public class ArticuloController implements java.io.Serializable {
 	    throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
 	}
 
-	public Articulo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
+	public ArticuloByCodigo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
+		return this.consultarArticuloPorCodigo(codigo, idSucursal, ID_TIPO_CLIENTE_GENERAL);
+	}
 
-		Articulo art = new Articulo();
-		CallableStatement stm = null;
-		ResultSet rset = null;
+	public ArticuloByCodigo consultarArticuloPorCodigo(String codigo, int idSucursal, int idTipoCliente)
+			throws SQLException, Exception {
 
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL buscar_articulo_por_codigo(?,?);");
+		ArticuloByCodigo art = new ArticuloByCodigo();
+
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = cn.prepareCall("CALL getArticuloByCodigo(?,?,?);")) {
+
 			stm.setString(1, codigo);
 			stm.setInt(2, idSucursal);
-			rset = stm.executeQuery();
+			stm.setInt(3, idTipoCliente);
 
-			if (rset.next()) {
-				art.setIdArticulo(rset.getInt(1));
-				art.setCodigoArticulo(rset.getString(2));
-				art.setNombre(rset.getString(5));
-				art.setCodigoSat(rset.getString(6));
-				art.setDescripcion(rset.getString(7));
-				art.setExento(rset.getInt(9) == 1);
-				art.setCostoUnitario(rset.getDouble(10));
+			try (ResultSet rset = stm.executeQuery()) {
+				if (rset.next()) {
+					art.setIdArticulo(rset.getInt("id_articulo"));
+					art.setIdProveedor(rset.getInt("id_proveedor"));
+					art.setIdCategoria(rset.getInt("id_categoria"));
+					art.setCodigoArticulo(rset.getString("codigo_articulo"));
+					art.setCodigoSat(rset.getString("codigo_sat"));
+					art.setNombre(rset.getString("nombre"));
+					art.setDescripcion(rset.getString("descripcion"));
+					art.setExento(rset.getBoolean("exento"));
+					art.setCostoUnitario(rset.getDouble("costo_unitario"));
+					art.setActivo(rset.getBoolean("activo"));
+					art.setExistencia(rset.getInt("existencia"));
+				}
 			}
 
 			return art;
@@ -324,14 +362,6 @@ public class ArticuloController implements java.io.Serializable {
 			JOptionPane.showMessageDialog(null, "Ha ocurrido un error: [Generic] -> " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return null;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			} catch (Exception er) {
-				er.printStackTrace();
-			}
 		}
 	}
 
