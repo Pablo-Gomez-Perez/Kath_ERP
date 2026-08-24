@@ -26,14 +26,14 @@ import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
-import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
-import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 
 public class Fr_ListaArticulos extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private static final int ID_TIPO_CLIENTE_GENERAL = 1;
 	/**
 	 * 
 	 * 
@@ -129,6 +129,7 @@ public class Fr_ListaArticulos extends JFrame {
 		panelSuperiorBusqueda.add(txfNombreArticulo);
 		txfNombreArticulo.setColumns(40);
 		this.txfNombreArticulo.setMaximumSize(this.txfNombreArticulo.getPreferredSize());
+		this.txfNombreArticulo.setText(this.nombreArticulo);
 
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		panelSuperiorBusqueda.add(horizontalStrut_1);
@@ -156,14 +157,10 @@ public class Fr_ListaArticulos extends JFrame {
 
 		this.modelTablaArticulos.addColumn("Id");
 		this.modelTablaArticulos.addColumn("Codigo");
-		this.modelTablaArticulos.addColumn("Proveedor");
-		this.modelTablaArticulos.addColumn("Categoría");
-		this.modelTablaArticulos.addColumn("Codigo Sat");
 		this.modelTablaArticulos.addColumn("Nombre");
-		this.modelTablaArticulos.addColumn("Descripción");
+		this.modelTablaArticulos.addColumn("Costo");
+		this.modelTablaArticulos.addColumn("Precio");
 		this.modelTablaArticulos.addColumn("Existencia");
-		this.modelTablaArticulos.addColumn("Precio G.");
-		this.modelTablaArticulos.addColumn("Precio M");
 
 		tablaArticulos = new JTable();
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
@@ -218,11 +215,9 @@ public class Fr_ListaArticulos extends JFrame {
 	}
 
 	private void llenarTablaArticulos(String nombreArticulo) {
-		System.out.println(this.nombreArticulo);
-		this.modelTablaArticulos.getDataVector().removeAllElements();
-		this.tablaArticulos.updateUI();
-		/*this.articuloController.consultarArticulosPorNombre(nombreArticulo, this.modelTablaArticulos, 1,
-				this.idSucursal);*/
+		this.modelTablaArticulos.setRowCount(0);
+		this.articuloController.verArticulosEnTabla(this.idSucursal, nombreArticulo, ID_TIPO_CLIENTE_GENERAL)
+				.forEach(this.modelTablaArticulos::addRow);
 	}
 	
 	/**
@@ -231,7 +226,7 @@ public class Fr_ListaArticulos extends JFrame {
 	private void listarArticulo() {
 
 		int articuloSeleccionado = this.tablaArticulos.getSelectedRow();
-		Articulo articulo = new Articulo();
+		ArticuloByCodigo articulo = new ArticuloByCodigo();
 		int cantidad = 0;
 		double subtotal = 0;
 		
@@ -242,18 +237,21 @@ public class Fr_ListaArticulos extends JFrame {
 				return;
 			}
 
-			// var m = (DefaultTableModel) this.tablaArticulos.getModel();
 			articulo = this.articuloController.consultarArticuloPorCodigo(
-					(String) this.tablaArticulos.getValueAt(articuloSeleccionado, 1), this.idSucursal);
+					(String) this.tablaArticulos.getValueAt(articuloSeleccionado, 1), this.idSucursal,
+					ID_TIPO_CLIENTE_GENERAL);
+
+			if (articulo == null || articulo.getIdArticulo() <= 0) {
+				return;
+			}
+
 			System.out.println(articulo.toString());
 
 			cantidad = Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos"));
-			//subtotal = articulo.getPrecioGeneral() * cantidad;
 						
 			Object[] fila = {
 				articulo.getCodigoArticulo(),
 				articulo.getDescripcion(),
-				//articulo.getPrecioGeneral(),
 				cantidad,
 				0,
 				subtotal
