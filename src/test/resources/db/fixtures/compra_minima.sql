@@ -74,18 +74,31 @@ INSERT INTO sucursal (
     direccion,
     codigo_postal,
     activo
-) VALUES (
-    1,
-    'Sucursal de pruebas',
-    'Sucursal ficticia para pruebas de integración',
-    '9610000000',
-    'sucursal@kath.test',
-    'Chiapas',
-    'Tuxtla Gutiérrez',
-    'Dirección ficticia 1',
-    '29000',
-    TRUE
-);
+) VALUES
+    (
+        1,
+        'Sucursal de pruebas',
+        'Sucursal ficticia para pruebas de integración',
+        '9610000000',
+        'sucursal@kath.test',
+        'Chiapas',
+        'Tuxtla Gutiérrez',
+        'Dirección ficticia 1',
+        '29000',
+        TRUE
+    ),
+    (
+        2,
+        'Sucursal de control',
+        'Sucursal usada para comprobar aislamiento de existencias',
+        '9610000001',
+        'sucursal-control@kath.test',
+        'Chiapas',
+        'Tuxtla Gutiérrez',
+        'Dirección ficticia 4',
+        '29000',
+        TRUE
+    );
 
 INSERT INTO empleados (
     id_empleado,
@@ -171,16 +184,30 @@ INSERT INTO articulo (
     es_exento,
     costo_unitario,
     activo
-) VALUES (
-    100,
-    1,
-    1,
-    'ART-IT-001',
-    '01010101',
-    'H87',
-    'Artículo de integración',
-    'Artículo ficticio para pruebas de integración',
-    FALSE,
-    100.00,
-    TRUE
-);
+) VALUES
+    (
+        100,
+        1,
+        1,
+        'ART-IT-001',
+        '01010101',
+        'H87',
+        'Artículo de integración',
+        'Artículo ficticio para pruebas de integración',
+        FALSE,
+        100.00,
+        TRUE
+    ),
+    (
+        101,
+        1,
+        1,
+        'ART-IT-002',
+        '01010101',
+        'H87',
+        'Segundo artículo de integración',
+        'Artículo ficticio para probar compras con varios detalles',
+        FALSE,
+        50.00,
+        TRUE
+    );
