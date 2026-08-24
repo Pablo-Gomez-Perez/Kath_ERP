@@ -41,9 +41,9 @@ public class Conexion {
 	/**
 	 * Establece la conexion al servidor de base de datos usando configuracion externa.
 	 * <p>
-	 * La configuracion puede venir de variables de entorno o del archivo local
-	 * {@code config/database.properties}. Las variables de entorno tienen prioridad
-	 * sobre el archivo de propiedades.
+	 * La configuracion puede venir de variables de entorno, propiedades de la JVM o
+	 * del archivo local {@code config/database.properties}. Las propiedades de la JVM
+	 * tienen prioridad, seguidas por las variables de entorno y el archivo local.
 	 *
 	 * @param nombreBBDD nombre de la base de datos a utilizar; si viene vacio se usa
 	 *                   la base configurada por defecto
@@ -85,6 +85,12 @@ public class Conexion {
 	}
 
 	private static String obtenerValorConfiguracion(String envName, String propertyName, String defaultValue) {
+		String systemValue = System.getProperty(propertyName);
+
+		if (systemValue != null && !systemValue.isBlank()) {
+			return systemValue.trim();
+		}
+
 		String envValue = System.getenv(envName);
 
 		if (envValue != null && !envValue.isBlank()) {
