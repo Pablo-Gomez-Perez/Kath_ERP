@@ -6,11 +6,14 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -128,6 +132,7 @@ public class Fr_ListaArticulos extends JFrame {
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
 		tablaArticulos.setModel(this.modelTablaArticulos);
 		tablaArticulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		this.configurarEnterTablaArticulos();
 
 		panelInferiorBotones = new JPanel();
 		panelInferiorBotones.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null),
@@ -167,6 +172,20 @@ public class Fr_ListaArticulos extends JFrame {
 		}
 
 		this.llenarTablaArticulos(this.nombreArticulo);
+	}
+
+	private void configurarEnterTablaArticulos() {
+		String accionSeleccionar = "seleccionarArticulo";
+		this.tablaArticulos.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), accionSeleccionar);
+		this.tablaArticulos.getActionMap().put(accionSeleccionar, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listarArticulo();
+			}
+		});
 	}
 
 	private void llenarTablaArticulos(String nombreArticulo) {
