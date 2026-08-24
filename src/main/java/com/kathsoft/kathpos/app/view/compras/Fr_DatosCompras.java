@@ -6,14 +6,20 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.GroupLayout;
@@ -25,11 +31,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
@@ -45,10 +53,15 @@ import com.kathsoft.kathpos.tools.DataTools;
 public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones{
 
 	private static final long serialVersionUID = 1L;
+	private static final int COLUMNA_CODIGO = 0;
 	private static final int COLUMNA_CANTIDAD = 2;
-	private static final double TASA_IVA = 0.16;
+	private static final int COLUMNA_COSTO_UNITARIO = 3;
+	private static final int COLUMNA_SUBTOTAL = 4;
+	private static final double FACTOR_IVA = 1.16;
 	private int idSucursal;
 	private ArticuloByCodigo articuloConsultado;
+	private Map<String, ArticuloByCodigo> articulosPorCodigo;
+	private boolean actualizandoImportes;
 	private double subtotalCompra;
 	private double ivaCompra;
 	private JPanel contentPane;
@@ -100,6 +113,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 * Create the frame.
 	 */
 	public Fr_DatosCompras() {
+		this.articulosPorCodigo = new HashMap<>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 836, 630);
 		this.contentPane = new JPanel();
@@ -154,6 +168,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		);
 		
 		this.btnEliminarArticuloSeleccionado = new JButton("Quitar Articulo");
+		this.btnEliminarArticuloSeleccionado.addActionListener(e -> this.eliminarArticuloSeleccionado());
 		
 		this.lblSubTotal = new JLabel("Sub Total");
 		
@@ -237,6 +252,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaArticulosCompraColumnsWidth,
 				this.tableArticulosListados);
 		this.configurarEditoresTablaArticulos();
+		this.configurarEventosTablaArticulos();
 		
 		this.lblArticulo = new JLabel("Articulo");
 		
@@ -247,7 +263,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.lblArticulo.setLabelFor(this.txfNombreCodigoArticulo);
 		this.txfNombreCodigoArticulo.setToolTipText("Ingresa el código del artículo para registrarlo o el nombre para consultar");
 		this.txfNombreCodigoArticulo.setColumns(10);
-		this.txfNombreCodigoArticulo.addActionListener(e -> this.buscarArticulo());
+		this.txfNombreCodigoArticulo.addActionListener(e -> this.procesarEnterArticulo());
 		
 		this.btnBuscarArticulo = new JButton("Buscar");
 		this.btnBuscarArticulo.addActionListener(e -> this.buscarArticulo());
@@ -444,6 +460,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this();
 		this.idSucursal = idSucursal;
 		this.llenarComboBoxEmpleado();
+		this.cargarSiguienteIdCompra();
 	}
 
 	private void llenarComboBoxProveedor() {
@@ -458,6 +475,13 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		}
 		AppContext.empleadoController.consultaNombresCortosEmpleados(this.idSucursal)
 				.forEach(this.comboBoxEmpleado::addItem);
+	}
+
+	private void cargarSiguienteIdCompra() {
+		if (this.idSucursal <= 0) {
+			return;
+		}
+		this.txfIdCompra.setText(String.valueOf(AppContext.compraController.getSiguienteIdCompra(this.idSucursal)));
 	}
 
 	private MaskFormatter buildDateFormatter() {
@@ -476,6 +500,39 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		DefaultCellEditor editorCantidad = new DefaultCellEditor(new JTextField());
 		this.tableArticulosListados.setDefaultEditor(Object.class, null);
 		this.tableArticulosListados.getColumnModel().getColumn(COLUMNA_CANTIDAD).setCellEditor(editorCantidad);
+	}
+
+	private void configurarEventosTablaArticulos() {
+		this.modelTablaArticulosListados.addTableModelListener(event -> {
+			if (this.actualizandoImportes || event.getType() != TableModelEvent.UPDATE
+					|| event.getColumn() != COLUMNA_CANTIDAD) {
+				return;
+			}
+			this.recalcularImportesDesdeTabla(true);
+		});
+
+		String accionEliminar = "eliminarArticuloCompra";
+		this.tableArticulosListados.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), accionEliminar);
+		this.tableArticulosListados.getActionMap().put(accionEliminar, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (tableArticulosListados.getSelectedRow() >= 0
+						&& tableArticulosListados.getSelectedColumn() == COLUMNA_CODIGO) {
+					eliminarArticuloSeleccionado();
+				}
+			}
+		});
+	}
+
+	private void procesarEnterArticulo() {
+		if (this.articuloConsultado != null && this.articuloConsultado.getIdArticulo() > 0) {
+			this.agregarArticuloConsultado();
+			return;
+		}
+		this.buscarArticulo();
 	}
 
 	private void buscarArticulo() {
@@ -549,20 +606,103 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			return;
 		}
 
-		double subtotalArticulo = articulo.getCostoUnitario() * cantidad;
+		double importeArticulo = articulo.getCostoUnitario() * cantidad;
+		this.articulosPorCodigo.put(articulo.getCodigoArticulo(), articulo);
 		this.modelTablaArticulosListados.addRow(new Object[] {
 				articulo.getCodigoArticulo(),
 				articulo.getDescripcion(),
 				cantidad,
 				articulo.getCostoUnitario(),
-				subtotalArticulo
+				importeArticulo
 		});
+		this.recalcularImportesDesdeTabla(false);
+	}
 
-		this.subtotalCompra += subtotalArticulo;
-		if (!articulo.isExento()) {
-			this.ivaCompra += subtotalArticulo * TASA_IVA;
+	private void eliminarArticuloSeleccionado() {
+		int filaSeleccionada = this.tableArticulosListados.getSelectedRow();
+		if (filaSeleccionada < 0) {
+			JOptionPane.showMessageDialog(this, "Seleccione un artículo para eliminar", "Atención",
+					JOptionPane.WARNING_MESSAGE);
+			return;
 		}
-		this.actualizarTotalesCompra();
+
+		if (this.tableArticulosListados.isEditing() && this.tableArticulosListados.getCellEditor() != null) {
+			this.tableArticulosListados.getCellEditor().stopCellEditing();
+		}
+
+		int filaModelo = this.tableArticulosListados.convertRowIndexToModel(filaSeleccionada);
+		this.modelTablaArticulosListados.removeRow(filaModelo);
+		this.recalcularImportesDesdeTabla(false);
+	}
+
+	private void recalcularImportesDesdeTabla(boolean mostrarErrorCantidad) {
+		if (this.actualizandoImportes) {
+			return;
+		}
+
+		this.actualizandoImportes = true;
+		try {
+			int totalFilas = this.modelTablaArticulosListados.getRowCount();
+			double[] importes = new double[totalFilas];
+			double nuevoSubtotal = 0;
+			double nuevoIva = 0;
+
+			for (int fila = 0; fila < totalFilas; fila++) {
+				int cantidad = this.obtenerCantidadFila(fila);
+				double costoUnitario = this.obtenerDoubleFila(fila, COLUMNA_COSTO_UNITARIO);
+				double importeConIva = costoUnitario * cantidad;
+				importes[fila] = importeConIva;
+
+				String codigo = String.valueOf(this.modelTablaArticulosListados.getValueAt(fila, COLUMNA_CODIGO));
+				ArticuloByCodigo articulo = this.articulosPorCodigo.get(codigo);
+				boolean exento = articulo != null && articulo.isExento();
+
+				if (exento) {
+					nuevoSubtotal += importeConIva;
+				} else {
+					double baseGravada = importeConIva / FACTOR_IVA;
+					nuevoSubtotal += baseGravada;
+					nuevoIva += importeConIva - baseGravada;
+				}
+			}
+
+			for (int fila = 0; fila < totalFilas; fila++) {
+				this.modelTablaArticulosListados.setValueAt(importes[fila], fila, COLUMNA_SUBTOTAL);
+			}
+
+			this.subtotalCompra = nuevoSubtotal;
+			this.ivaCompra = nuevoIva;
+			this.actualizarTotalesCompra();
+		} catch (NumberFormatException er) {
+			if (mostrarErrorCantidad) {
+				JOptionPane.showMessageDialog(this, "La cantidad debe ser un número entero mayor a cero",
+						"Cantidad inválida", JOptionPane.WARNING_MESSAGE);
+			}
+		} finally {
+			this.actualizandoImportes = false;
+		}
+	}
+
+	private int obtenerCantidadFila(int fila) {
+		Object valor = this.modelTablaArticulosListados.getValueAt(fila, COLUMNA_CANTIDAD);
+		int cantidad;
+		if (valor instanceof Number numero) {
+			cantidad = numero.intValue();
+		} else {
+			cantidad = Integer.parseInt(String.valueOf(valor).trim());
+		}
+		if (cantidad <= 0) {
+			throw new NumberFormatException("La cantidad debe ser mayor a cero");
+		}
+		return cantidad;
+	}
+
+	private double obtenerDoubleFila(int fila, int columna) {
+		Object valor = this.modelTablaArticulosListados.getValueAt(fila, columna);
+		if (valor instanceof Number numero) {
+			return numero.doubleValue();
+		}
+		return Double.parseDouble(String.valueOf(valor).trim());
 	}
 
 	private void actualizarTotalesCompra() {
