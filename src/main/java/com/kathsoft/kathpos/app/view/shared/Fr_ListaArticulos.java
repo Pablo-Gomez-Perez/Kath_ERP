@@ -150,20 +150,7 @@ public class Fr_ListaArticulos extends JFrame {
 		panelCentralTabla.setLayout(new BorderLayout(0, 0));
 
 		scrollPaneTablaArticulo = new JScrollPane();
-		panelCentralTabla.add(scrollPaneTablaArticulo);
-
-		this.modelTablaArticulos = new DefaultTableModel();
-
-		this.modelTablaArticulos.addColumn("Id");
-		this.modelTablaArticulos.addColumn("Codigo");
-		this.modelTablaArticulos.addColumn("Proveedor");
-		this.modelTablaArticulos.addColumn("Categoría");
-		this.modelTablaArticulos.addColumn("Codigo Sat");
-		this.modelTablaArticulos.addColumn("Nombre");
-		this.modelTablaArticulos.addColumn("Descripción");
-		this.modelTablaArticulos.addColumn("Existencia");
-		this.modelTablaArticulos.addColumn("Precio G.");
-		this.modelTablaArticulos.addColumn("Precio M");
+		panelCentralTabla.add(scrollPaneTablaArticulo);		
 
 		tablaArticulos = new JTable();
 		scrollPaneTablaArticulo.setViewportView(tablaArticulos);
@@ -225,6 +212,14 @@ public class Fr_ListaArticulos extends JFrame {
 				this.idSucursal);*/
 	}
 	
+	
+	
+	public void setModelTablaArticulos() {
+		
+		this.modelTablaArticulos = new DefaultTableModel();
+		
+	}
+
 	/**
 	 * inserta los articulos seleccionados en la tabla principal del formulario y calcula los totales de compra
 	 */
