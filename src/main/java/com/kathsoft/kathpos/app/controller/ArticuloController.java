@@ -54,10 +54,6 @@ public class ArticuloController implements java.io.Serializable {
 
 		return articulos;
 	}
-		
-	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String textoBusqueda, int idTipoCliente){
-		return this.verArticulosEnTabla(idSucursal, "TODOS", "NOMBRE", textoBusqueda, idTipoCliente);
-	}
 
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String tipoBusqueda, String ordenarPor,
 			String textoBusqueda, int idTipoCliente) {
