@@ -79,16 +79,12 @@ public class ConstantsConllections implements java.io.Serializable{
 	/**
 	 * define el ancho de columnas de la tabla en el formulario de selección de articulos
 	 */
-	public static int[] tablaArticulosListadoColumnsWidth = { 40, /* id */
+	public static int[] tablaArticulosListadoColumnsWidth = { 50, /* id */
 			150, /* codigo */
-			200, /* proveedor */
-			180, /* categoría */
-			100, /* codigo sat */
-			300, /* Nombre */
-			450, /* descripcion */
-			100, /* Existencia */
-			100, /* Precio g */
-			100 /* Precio m */
+			300, /* nombre */
+			120, /* costo */
+			120, /* precio */
+			100 /* existencia */
 	};
 	
 	public static final int[] tablaVentasColumnsWidth = { 50, // i venta
