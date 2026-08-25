@@ -29,10 +29,7 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	public int getSiguienteIdCompra(int idSucursal) {
-		return this.listCompras(idSucursal).stream()
-				.mapToInt(CompraListado::getIdCompra)
-				.max()
-				.orElse(0) + 1;
+		return this.listCompras(idSucursal).stream().mapToInt(CompraListado::getIdCompra).max().orElse(0) + 1;
 	}
 
 	public List<CompraListado> listCompras(int idSucursal, CompraFiltro filtro) {
@@ -136,28 +133,17 @@ public class CompraController implements java.io.Serializable {
 			return null;
 		}
 
-		Compra compra = new Compra.CompraBuilder()
-				.idCompra(compraById.getIdCompra())
-				.idEmpleado(compraById.getIdEmpleado())
-				.idProveedor(compraById.getIdProveedor())
-				.folioFactura(compraById.getFolioFactura())
-				.fechaFactura(compraById.getFechaFactura())
-				.fechaCompra(compraById.getFechaCompra())
-				.tipoCompra(compraById.isTipoCompra())
-				.subtotal(compraById.getSubtotal())
-				.iva(compraById.getIva())
-				.activo(compraById.isActivo())
-				.build();
+		Compra compra = new Compra.CompraBuilder().idCompra(compraById.getIdCompra())
+				.idEmpleado(compraById.getIdEmpleado()).idProveedor(compraById.getIdProveedor())
+				.folioFactura(compraById.getFolioFactura()).fechaFactura(compraById.getFechaFactura())
+				.fechaCompra(compraById.getFechaCompra()).tipoCompra(compraById.isTipoCompra())
+				.subtotal(compraById.getSubtotal()).iva(compraById.getIva()).activo(compraById.isActivo()).build();
 
 		List<ArticuloPorCompra> articulosPorCompra = new ArrayList<>();
 		for (ArticuloCompraListado articulo : this.listArticulosCompraById(idCompra)) {
-			articulosPorCompra.add(new ArticuloPorCompra.ArticuloPorCompraBuilder()
-					.id(articulo.getId())
-					.idCompra(articulo.getIdCompra())
-					.idArticulo(articulo.getIdArticulo())
-					.cantidad(articulo.getCantidad())
-					.subtotal(articulo.getSubtotal())
-					.build());
+			articulosPorCompra.add(new ArticuloPorCompra.ArticuloPorCompraBuilder().id(articulo.getId())
+					.idCompra(articulo.getIdCompra()).idArticulo(articulo.getIdArticulo())
+					.cantidad(articulo.getCantidad()).subtotal(articulo.getSubtotal()).build());
 		}
 
 		return new CompraConDetalle(compra, articulosPorCompra);
@@ -188,7 +174,8 @@ public class CompraController implements java.io.Serializable {
 			connection.setAutoCommit(false);
 
 			try {
-				SpResponseModel respuestaCompra = this.insertCompra(connection, idSucursal, compraConDetalle.getCompra());
+				SpResponseModel respuestaCompra = this.insertCompra(connection, idSucursal,
+						compraConDetalle.getCompra());
 				if (!isSuccess(respuestaCompra)) {
 					connection.rollback();
 					return respuestaCompra;
@@ -295,7 +282,8 @@ public class CompraController implements java.io.Serializable {
 			connection.setAutoCommit(false);
 
 			try {
-				SpResponseModel respuestaCompra = this.updateCompra(connection, idSucursal, compraConDetalle.getCompra());
+				SpResponseModel respuestaCompra = this.updateCompra(connection, idSucursal,
+						compraConDetalle.getCompra());
 				if (!isSuccess(respuestaCompra)) {
 					connection.rollback();
 					return respuestaCompra;
@@ -400,8 +388,8 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
-	private SpResponseModel sumarExistenciaSucursalCompra(Connection connection, int idCompra, int idArticulo, int cantidad)
-			throws SQLException {
+	private SpResponseModel sumarExistenciaSucursalCompra(Connection connection, int idCompra, int idArticulo,
+			int cantidad) throws SQLException {
 		try (CallableStatement stm = connection.prepareCall("CALL sumarExistenciaSucursalCompra(?,?,?)")) {
 			stm.setInt(1, idCompra);
 			stm.setInt(2, idArticulo);
@@ -461,12 +449,11 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	private CompraById mapCompraById(ResultSet rset) throws SQLException {
-		return new CompraById(rset.getInt("id_compra"), rset.getInt("id_empleado"),
-				rset.getString("nombre_empleado"), rset.getString("nombre_corto_empleado"), rset.getInt("id_sucursal"),
-				rset.getInt("id_proveedor"), rset.getString("folio_factura"), rset.getDate("fecha_factura"),
-				rset.getDate("fecha_compra"), rset.getBoolean("tipo_compra"),
-				rset.getString("tipo_compra_descripcion"), rset.getDouble("subtotal"), rset.getDouble("iva"),
-				rset.getDouble("importe_total"), rset.getBoolean("activo"));
+		return new CompraById(rset.getInt("id_compra"), rset.getInt("id_empleado"), rset.getString("nombre_empleado"),
+				rset.getString("nombre_corto_empleado"), rset.getInt("id_sucursal"), rset.getInt("id_proveedor"),
+				rset.getString("folio_factura"), rset.getDate("fecha_factura"), rset.getDate("fecha_compra"),
+				rset.getBoolean("tipo_compra"), rset.getString("tipo_compra_descripcion"), rset.getDouble("subtotal"),
+				rset.getDouble("iva"), rset.getDouble("importe_total"), rset.getBoolean("activo"));
 	}
 
 	private ArticuloCompraListado mapArticuloCompraListado(ResultSet rset) throws SQLException {
