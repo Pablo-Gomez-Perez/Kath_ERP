@@ -144,24 +144,20 @@ public class PanelCompras extends JPanel {
 		this.panelFiltros.setBackground(new Color(0, 153, 255));
 
 		GroupLayout glPanelPrincipalContenedor = new GroupLayout(this.panelPrincipalContenedor);
-		glPanelPrincipalContenedor.setHorizontalGroup(
-			glPanelPrincipalContenedor.createParallelGroup(Alignment.LEADING)
+		glPanelPrincipalContenedor.setHorizontalGroup(glPanelPrincipalContenedor.createParallelGroup(Alignment.LEADING)
 				.addComponent(this.panelBotones, GroupLayout.DEFAULT_SIZE, 824, Short.MAX_VALUE)
 				.addComponent(this.panelFiltros, GroupLayout.DEFAULT_SIZE, 824, Short.MAX_VALUE)
+				.addGroup(glPanelPrincipalContenedor.createSequentialGroup().addContainerGap()
+						.addComponent(this.scrollPaneTablaCompras, GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+						.addContainerGap()));
+		glPanelPrincipalContenedor.setVerticalGroup(glPanelPrincipalContenedor.createParallelGroup(Alignment.LEADING)
 				.addGroup(glPanelPrincipalContenedor.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(this.scrollPaneTablaCompras, GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		glPanelPrincipalContenedor.setVerticalGroup(
-			glPanelPrincipalContenedor.createParallelGroup(Alignment.LEADING)
-				.addGroup(glPanelPrincipalContenedor.createSequentialGroup()
-					.addComponent(this.panelBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.scrollPaneTablaCompras, GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelFiltros, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE))
-		);
+						.addComponent(this.panelBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.scrollPaneTablaCompras, GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.panelFiltros, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)));
 
 		this.lblProveedor = new JLabel("Proveedor");
 		this.cmbProveedor = new JComboBox<JComboboxDataViewModel>();
@@ -197,69 +193,60 @@ public class PanelCompras extends JPanel {
 				llenarTablaCompras();
 			}
 		});
-		
+
 		this.formattedTextFieldFechaInicio = new JFormattedTextField(buildDateFormatter());
 		this.formattedTextFieldFechaInicio.setColumns(10);
 		this.formattedTextFieldFechaInicio.setToolTipText("dd/MM/yyyy");
-		
+
 		this.formattedTextFieldFechaFin = new JFormattedTextField(buildDateFormatter());
 		this.formattedTextFieldFechaFin.setColumns(10);
 		this.formattedTextFieldFechaFin.setToolTipText("dd/MM/yyyy");
 
 		GroupLayout glPanelFiltros = new GroupLayout(this.panelFiltros);
-		glPanelFiltros.setHorizontalGroup(
-			glPanelFiltros.createParallelGroup(Alignment.LEADING)
-				.addGroup(glPanelFiltros.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(glPanelFiltros.createParallelGroup(Alignment.LEADING)
-						.addGroup(glPanelFiltros.createSequentialGroup()
-							.addComponent(this.lblProveedor)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.cmbProveedor, 0, 231, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblFolioFactura)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.txfFolioFactura, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(this.btnBuscar)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.btnLimpiar)
-							.addGap(6))
-						.addGroup(glPanelFiltros.createSequentialGroup()
-							.addComponent(this.lblFechaFacturaInicio)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.formattedTextFieldFechaInicio, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblFechaFacturaFin)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.formattedTextFieldFechaFin, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-							.addGap(4)
-							.addComponent(this.lblTipoCompra)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.cmbTipoCompra, 0, 148, Short.MAX_VALUE)))
-					.addContainerGap())
-		);
-		glPanelFiltros.setVerticalGroup(
-			glPanelFiltros.createParallelGroup(Alignment.LEADING)
-				.addGroup(glPanelFiltros.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(glPanelFiltros.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblProveedor)
-						.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblFolioFactura)
-						.addComponent(this.txfFolioFactura, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.btnLimpiar)
-						.addComponent(this.btnBuscar))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(glPanelFiltros.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.lblFechaFacturaInicio)
-						.addComponent(this.lblFechaFacturaFin)
-						.addComponent(this.lblTipoCompra)
-						.addComponent(this.cmbTipoCompra, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.formattedTextFieldFechaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.formattedTextFieldFechaFin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(13, Short.MAX_VALUE))
-		);
+		glPanelFiltros.setHorizontalGroup(glPanelFiltros.createParallelGroup(Alignment.LEADING).addGroup(glPanelFiltros
+				.createSequentialGroup().addContainerGap()
+				.addGroup(glPanelFiltros.createParallelGroup(Alignment.LEADING)
+						.addGroup(glPanelFiltros.createSequentialGroup().addComponent(this.lblProveedor)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(this.cmbProveedor, 0, 231, Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblFolioFactura)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(this.txfFolioFactura, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(this.btnBuscar)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.btnLimpiar).addGap(6))
+						.addGroup(glPanelFiltros.createSequentialGroup().addComponent(this.lblFechaFacturaInicio)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(this.formattedTextFieldFechaInicio, GroupLayout.DEFAULT_SIZE, 149,
+										Short.MAX_VALUE)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblFechaFacturaFin)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(this.formattedTextFieldFechaFin, GroupLayout.DEFAULT_SIZE, 159,
+										Short.MAX_VALUE)
+								.addGap(4).addComponent(this.lblTipoCompra).addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(this.cmbTipoCompra, 0, 148, Short.MAX_VALUE)))
+				.addContainerGap()));
+		glPanelFiltros
+				.setVerticalGroup(glPanelFiltros.createParallelGroup(Alignment.LEADING)
+						.addGroup(glPanelFiltros.createSequentialGroup().addContainerGap()
+								.addGroup(glPanelFiltros.createParallelGroup(Alignment.BASELINE)
+										.addComponent(this.lblProveedor)
+										.addComponent(this.cmbProveedor, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.lblFolioFactura)
+										.addComponent(this.txfFolioFactura, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.btnLimpiar).addComponent(this.btnBuscar))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(glPanelFiltros.createParallelGroup(Alignment.BASELINE)
+										.addComponent(this.lblFechaFacturaInicio).addComponent(this.lblFechaFacturaFin)
+										.addComponent(this.lblTipoCompra)
+										.addComponent(this.cmbTipoCompra, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.formattedTextFieldFechaInicio, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(this.formattedTextFieldFechaFin, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addContainerGap(13, Short.MAX_VALUE)));
 		this.panelFiltros.setLayout(glPanelFiltros);
 		this.panelPrincipalContenedor.setLayout(glPanelPrincipalContenedor);
 
@@ -299,7 +286,8 @@ public class PanelCompras extends JPanel {
 			AppContext.compraController.listCompras(this.idSucursal, filtro).forEach(this::addCompraListadoToTable);
 		} catch (ParseException er) {
 			er.printStackTrace(System.err);
-			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, "Formato de fecha inválido. Usa dd/MM/yyyy");
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Formato de fecha inválido. Usa dd/MM/yyyy");
 		} catch (Exception er) {
 			er.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
@@ -311,32 +299,20 @@ public class PanelCompras extends JPanel {
 			return;
 		}
 
-		this.modelTablaCompras.addRow(new Object[] {
-				compra.getIdCompra(),
-				compra.getIdEmpleado(),
-				compra.getIdProveedor(),
-				compra.getFolioFactura(),
-				compra.getFechaFactura(),
-				compra.getFechaCompra(),
-				compra.getTipoCompraDescripcion(),
-				compra.getSubtotal(),
-				compra.getIva(),
-				compra.getImporteTotal(),
-				compra.isActivo() ? "Activo" : "Inactivo"
-		});
+		this.modelTablaCompras.addRow(new Object[] { compra.getIdCompra(), compra.getIdEmpleado(),
+				compra.getIdProveedor(), compra.getFolioFactura(), compra.getFechaFactura(), compra.getFechaCompra(),
+				compra.getTipoCompraDescripcion(), compra.getSubtotal(), compra.getIva(), compra.getImporteTotal(),
+				compra.isActivo() ? "Activo" : "Inactivo" });
 	}
 
 	private CompraFiltro buildCompraFiltro() throws ParseException {
 		JComboboxDataViewModel proveedorSeleccionado = (JComboboxDataViewModel) this.cmbProveedor.getSelectedItem();
 		TipoCompraFiltro tipoCompraFiltro = this.getTipoCompraFiltroSeleccionado();
 
-		return new CompraFiltro(
-				proveedorSeleccionado == null ? 0 : proveedorSeleccionado.id(),
+		return new CompraFiltro(proveedorSeleccionado == null ? 0 : proveedorSeleccionado.id(),
 				this.parseFechaFiltro(this.formattedTextFieldFechaInicio),
-				this.parseFechaFiltro(this.formattedTextFieldFechaFin),
-				this.txfFolioFactura.getText().trim(),
-				tipoCompraFiltro == null ? null : tipoCompraFiltro.getValor()
-		);
+				this.parseFechaFiltro(this.formattedTextFieldFechaFin), this.txfFolioFactura.getText().trim(),
+				tipoCompraFiltro == null ? null : tipoCompraFiltro.getValor());
 	}
 
 	private Date parseFechaFiltro(JFormattedTextField fechaField) throws ParseException {
@@ -400,34 +376,34 @@ public class PanelCompras extends JPanel {
 	public TipoCompraFiltro getTipoCompraFiltroSeleccionado() {
 		return (TipoCompraFiltro) this.cmbTipoCompra.getSelectedItem();
 	}
-	
+
 	private void abrirFormCompras(int idSucursal) {
 		JComponent cmp = this;
 		try {
-			
+
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					
+
 					try {
-						
+
 						Fr_DatosCompras form = new Fr_DatosCompras(idSucursal);
 						form.setLocationRelativeTo(cmp);
 						form.setVisible(true);
 						form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-						
-					}catch (Exception e) {
+
+					} catch (Exception e) {
 						e.printStackTrace();
 						MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, "Error al abrir form");
-						
+
 					}
-					
+
 				}
 			});
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }

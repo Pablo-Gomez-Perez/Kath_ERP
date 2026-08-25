@@ -32,9 +32,11 @@ public class ArticuloController implements java.io.Serializable {
 	 * Retorna una vista reducida del listado de artículos para formularios de
 	 * selección.
 	 *
-	 * @param idSucursal identificador de la sucursal donde se realiza la consulta
+	 * @param idSucursal     identificador de la sucursal donde se realiza la
+	 *                       consulta
 	 * @param nombreArticulo texto utilizado para filtrar por nombre
-	 * @param idTipoCliente identificador del tipo de cliente para determinar precio
+	 * @param idTipoCliente  identificador del tipo de cliente para determinar
+	 *                       precio
 	 * @return filas con id, código, nombre, costo, precio y existencia
 	 */
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, String nombreArticulo, int idTipoCliente) {
@@ -42,8 +44,7 @@ public class ArticuloController implements java.io.Serializable {
 		String textoBusqueda = nombreArticulo == null ? "" : nombreArticulo.trim();
 
 		this.verArticulosEnTabla(idSucursal, "NOMBRE", "NOMBRE", textoBusqueda, idTipoCliente).forEach(articulo -> {
-			articulos.add(new Object[] {
-					articulo[0], // id
+			articulos.add(new Object[] { articulo[0], // id
 					articulo[3], // código
 					articulo[4], // nombre
 					articulo[6], // costo
@@ -211,112 +212,112 @@ public class ArticuloController implements java.io.Serializable {
 			stm.execute();
 		}
 	}
-	
+
 	public void actualizarArticulo(Articulo art) throws SQLException, Exception {
-	    this.actualizarArticulo(art, Collections.emptyList());
+		this.actualizarArticulo(art, Collections.emptyList());
 	}
 
 	public void actualizarArticulo(Articulo art, List<PrecioTipoCliente> preciosTipoCliente)
-	        throws SQLException, Exception {
+			throws SQLException, Exception {
 
-	    List<PrecioTipoCliente> precios = preciosTipoCliente == null ? Collections.emptyList() : preciosTipoCliente;
+		List<PrecioTipoCliente> precios = preciosTipoCliente == null ? Collections.emptyList() : preciosTipoCliente;
 
-	    try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
-	        boolean autoCommitOriginal = cn.getAutoCommit();
-	        cn.setAutoCommit(false);
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+			boolean autoCommitOriginal = cn.getAutoCommit();
+			cn.setAutoCommit(false);
 
-	        try {
-	            this.actualizarArticulo(cn, art);
+			try {
+				this.actualizarArticulo(cn, art);
 
-	            for (PrecioTipoCliente precioTipoCliente : precios) {
-	                this.actualizarPrecioPorTipoCliente(cn, art.getIdArticulo(), precioTipoCliente);
-	            }
+				for (PrecioTipoCliente precioTipoCliente : precios) {
+					this.actualizarPrecioPorTipoCliente(cn, art.getIdArticulo(), precioTipoCliente);
+				}
 
-	            cn.commit();
-	        } catch (SQLException er) {
-	            cn.rollback();
-	            throw er;
-	        } catch (Exception er) {
-	            cn.rollback();
-	            throw er;
-	        } finally {
-	            cn.setAutoCommit(autoCommitOriginal);
-	        }
-	    }
+				cn.commit();
+			} catch (SQLException er) {
+				cn.rollback();
+				throw er;
+			} catch (Exception er) {
+				cn.rollback();
+				throw er;
+			} finally {
+				cn.setAutoCommit(autoCommitOriginal);
+			}
+		}
 	}
 
 	public void actualizarPrecioPorTipoCliente(int idArticulo, PrecioTipoCliente precioTipoCliente)
-	        throws SQLException, Exception {
-	    try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
-	        this.actualizarPrecioPorTipoCliente(cn, idArticulo, precioTipoCliente);
-	    }
+			throws SQLException, Exception {
+		try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+			this.actualizarPrecioPorTipoCliente(cn, idArticulo, precioTipoCliente);
+		}
 	}
 
 	private void actualizarArticulo(Connection cn, Articulo art) throws SQLException {
-	    try (CallableStatement stm = cn.prepareCall("CALL updateArticulo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
-	        stm.setInt(1, art.getIdArticulo());
-	        stm.setInt(2, art.getIdProvedor());
-	        stm.setInt(3, art.getIdCategoria());
-	        stm.setString(4, art.getCodigoArticulo());
-	        stm.setString(5, art.getCodigoSat());
-	        stm.setString(6, art.getUnidadSat());
-	        stm.setString(7, art.getNombre());
-	        stm.setString(8, art.getDescripcion());
-	        stm.setInt(9, art.isExento() ? 1 : 0);
-	        stm.setDouble(10, art.getCostoUnitario());
-	        stm.setInt(11, art.isActivo() ? 1 : 0);
+		try (CallableStatement stm = cn.prepareCall("CALL updateArticulo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
+			stm.setInt(1, art.getIdArticulo());
+			stm.setInt(2, art.getIdProvedor());
+			stm.setInt(3, art.getIdCategoria());
+			stm.setString(4, art.getCodigoArticulo());
+			stm.setString(5, art.getCodigoSat());
+			stm.setString(6, art.getUnidadSat());
+			stm.setString(7, art.getNombre());
+			stm.setString(8, art.getDescripcion());
+			stm.setInt(9, art.isExento() ? 1 : 0);
+			stm.setDouble(10, art.getCostoUnitario());
+			stm.setInt(11, art.isActivo() ? 1 : 0);
 
-	        validarRespuestaProcedimiento(stm, "actualizar artículo");
-	    }
+			validarRespuestaProcedimiento(stm, "actualizar artículo");
+		}
 	}
 
 	private void actualizarPrecioPorTipoCliente(Connection cn, int idArticulo, PrecioTipoCliente precioTipoCliente)
-	        throws SQLException {
+			throws SQLException {
 
-	    if (precioTipoCliente.getPrecio() == null) {
-	        throw new SQLException("El precio por tipo de cliente es obligatorio");
-	    }
+		if (precioTipoCliente.getPrecio() == null) {
+			throw new SQLException("El precio por tipo de cliente es obligatorio");
+		}
 
-	    try (CallableStatement stm = cn.prepareCall("CALL updatePrecioPorTipoCliente(?, ?, ?, ?, ?);")) {
-	        stm.setInt(1, idArticulo);
-	        stm.setInt(2, precioTipoCliente.getIdTipoCliente());
-	        stm.setBigDecimal(3, precioTipoCliente.getPrecio());
+		try (CallableStatement stm = cn.prepareCall("CALL updatePrecioPorTipoCliente(?, ?, ?, ?, ?);")) {
+			stm.setInt(1, idArticulo);
+			stm.setInt(2, precioTipoCliente.getIdTipoCliente());
+			stm.setBigDecimal(3, precioTipoCliente.getPrecio());
 
-	        if (precioTipoCliente.getPrecioEspecial() == null) {
-	            stm.setNull(4, Types.DECIMAL);
-	        } else {
-	            stm.setBigDecimal(4, precioTipoCliente.getPrecioEspecial());
-	        }
+			if (precioTipoCliente.getPrecioEspecial() == null) {
+				stm.setNull(4, Types.DECIMAL);
+			} else {
+				stm.setBigDecimal(4, precioTipoCliente.getPrecioEspecial());
+			}
 
-	        if (precioTipoCliente.getCantidadPrecioEspecial() == null) {
-	            stm.setNull(5, Types.INTEGER);
-	        } else {
-	            stm.setInt(5, precioTipoCliente.getCantidadPrecioEspecial().intValue());
-	        }
+			if (precioTipoCliente.getCantidadPrecioEspecial() == null) {
+				stm.setNull(5, Types.INTEGER);
+			} else {
+				stm.setInt(5, precioTipoCliente.getCantidadPrecioEspecial().intValue());
+			}
 
-	        validarRespuestaProcedimiento(stm, "actualizar precio por tipo de cliente");
-	    }
+			validarRespuestaProcedimiento(stm, "actualizar precio por tipo de cliente");
+		}
 	}
 
 	private void validarRespuestaProcedimiento(CallableStatement stm, String operacion) throws SQLException {
-	    if (!stm.execute()) {
-	        throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
-	    }
+		if (!stm.execute()) {
+			throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
+		}
 
-	    try (ResultSet rset = stm.getResultSet()) {
-	        if (rset != null && rset.next()) {
-	            int id = rset.getInt("id");
-	            String message = rset.getString("message");
+		try (ResultSet rset = stm.getResultSet()) {
+			if (rset != null && rset.next()) {
+				int id = rset.getInt("id");
+				String message = rset.getString("message");
 
-	            if (id != 200) {
-	                throw new SQLException(message);
-	            }
+				if (id != 200) {
+					throw new SQLException(message);
+				}
 
-	            return;
-	        }
-	    }
+				return;
+			}
+		}
 
-	    throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
+		throw new SQLException("El procedimiento para " + operacion + " no devolvió respuesta");
 	}
 
 	public ArticuloByCodigo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {

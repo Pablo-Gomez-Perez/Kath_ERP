@@ -1,9 +1,7 @@
 package com.kathsoft.kathpos.app.model.compra;
 
 public enum TipoCompraFiltro {
-	TODOS(null, "Todos"),
-	CONTADO(Boolean.FALSE, "Contado"),
-	CREDITO(Boolean.TRUE, "Crédito");
+	TODOS(null, "Todos"), CONTADO(Boolean.FALSE, "Contado"), CREDITO(Boolean.TRUE, "Crédito");
 
 	private final Boolean valor;
 	private final String descripcion;

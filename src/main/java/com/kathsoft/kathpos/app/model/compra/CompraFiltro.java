@@ -71,8 +71,7 @@ public class CompraFiltro implements java.io.Serializable {
 		StringBuilder builder = new StringBuilder();
 		builder.append("CompraFiltro [idProveedor=").append(idProveedor).append(", fechaFacturaInicio=")
 				.append(fechaFacturaInicio).append(", fechaFacturaFin=").append(fechaFacturaFin)
-				.append(", folioFactura=").append(folioFactura).append(", tipoCompra=").append(tipoCompra)
-				.append("]");
+				.append(", folioFactura=").append(folioFactura).append(", tipoCompra=").append(tipoCompra).append("]");
 		return builder.toString();
 	}
 }
