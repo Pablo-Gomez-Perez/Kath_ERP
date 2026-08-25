@@ -51,6 +51,7 @@ public class ArticuloController implements java.io.Serializable {
 					articulo[8] // existencia
 			});
 		});
+				
 
 		return articulos;
 	}
