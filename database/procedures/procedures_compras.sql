@@ -1,3 +1,7 @@
+SET NAMES utf8mb4;
+
+DELIMITER $$
+
 CREATE  PROCEDURE `kath_erp`.`deleteArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED
 )
@@ -119,7 +123,7 @@ BEGIN
     SELECT
         p_id_detalle_compra AS id,
         'Artículo eliminado de la compra correctamente' AS message;
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`getCompraById`(
     IN p_id_compra INT UNSIGNED
@@ -156,7 +160,7 @@ BEGIN
         ON c.id_empleado = emp.id_empleado
     WHERE c.id_compra = p_id_compra
     LIMIT 1;
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`getIdUltimaCompra`()
     READS SQL DATA
@@ -170,7 +174,7 @@ BEGIN
 	ORDER BY
 		c.id_compra DESC LIMIT 1;
 	
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`insertArticuloCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -273,7 +277,7 @@ BEGIN
     SELECT
         v_id_detalle AS id,
         'Artículo agregado a la compra correctamente' AS message;
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`insertCompra`(
     IN p_id_empleado INT UNSIGNED,
@@ -463,7 +467,7 @@ BEGIN
         v_id_compra AS id,
         'Compra registrada correctamente' AS message;
 
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`listArticulosCompraById`(
     IN p_id_compra INT UNSIGNED
@@ -489,7 +493,7 @@ BEGIN
         ON axc.id_articulo = a.id_articulo
     WHERE axc.id_compra = p_id_compra
     ORDER BY axc.id ASC;
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`listCompras`(
     IN p_id_sucursal BIGINT UNSIGNED,
@@ -562,7 +566,7 @@ BEGIN
         c.fecha_compra DESC,
         c.id_compra DESC;
 
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`sumarExistenciaSucursalCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -684,7 +688,7 @@ BEGIN
         200 AS id,
         'Existencia actualizada correctamente' AS message;
 
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`updateArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED,
@@ -893,7 +897,7 @@ BEGIN
         p_id_detalle_compra AS id,
         'Artículo de compra actualizado correctamente' AS message;
 
-END;
+END $$
 
 CREATE  PROCEDURE `kath_erp`.`updateCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -1168,4 +1172,6 @@ BEGIN
         p_id_compra AS id,
         'Compra actualizada correctamente' AS message;
 
-END;
+END $$
+
+DELIMITER ;

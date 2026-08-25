@@ -1,125 +1,6 @@
-CREATE PROCEDURE `kath_erp`.`deleteArticuloCompra`(
-    IN p_id_detalle_compra INT UNSIGNED
-)
-    MODIFIES SQL DATA
-    COMMENT 'Elimina un artículo del detalle de compra y descuenta su existencia si es válido'
-BEGIN
-    DECLARE v_id_compra INT UNSIGNED DEFAULT 0;
-    DECLARE v_id_articulo INT UNSIGNED DEFAULT 0;
-    DECLARE v_cantidad_actual INT DEFAULT 0;
-    DECLARE v_existencia_actual INT DEFAULT 0;
-    DECLARE v_id_existencia INT DEFAULT 0;
-    DECLARE v_id_sucursal BIGINT UNSIGNED DEFAULT 0;
-    DECLARE v_fecha_compra DATE;
-    DECLARE v_ventas_posteriores INT DEFAULT 0;
-    DECLARE v_registros_existencia INT DEFAULT 0;
+SET NAMES utf8mb4;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
-
-    IF p_id_detalle_compra IS NULL OR p_id_detalle_compra <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El detalle de compra es obligatorio';
-    END IF;
-
-    SELECT
-        axc.id_compra,
-        axc.id_articulo,
-        axc.cantidad,
-        c.fecha_compra,
-        emp.id_sucursal
-    INTO
-        v_id_compra,
-        v_id_articulo,
-        v_cantidad_actual,
-        v_fecha_compra,
-        v_id_sucursal
-    FROM kath_erp.articulo_x_compra AS axc
-    INNER JOIN kath_erp.compras AS c
-        ON axc.id_compra = c.id_compra
-    INNER JOIN kath_erp.empleados AS emp
-        ON c.id_empleado = emp.id_empleado
-    WHERE axc.id = p_id_detalle_compra
-      AND c.activo = TRUE
-    LIMIT 1
-    FOR UPDATE;
-
-    IF v_id_compra IS NULL OR v_id_compra <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El detalle de compra no existe o la compra está inactiva';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_ventas_posteriores
-    FROM kath_erp.articulo_x_venta AS axv
-    INNER JOIN kath_erp.ventas AS v
-        ON axv.id_venta = v.id_venta
-    INNER JOIN kath_erp.empleados AS emp_venta
-        ON v.id_empleado = emp_venta.id_empleado
-    WHERE axv.id_articulo = v_id_articulo
-      AND emp_venta.id_sucursal = v_id_sucursal
-      AND v.fecha > v_fecha_compra
-      AND v.status_venta = TRUE;
-
-    IF v_ventas_posteriores > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede eliminar el artículo porque ya tiene ventas posteriores a la compra';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_registros_existencia
-    FROM kath_erp.existencia_x_sucursal
-    WHERE id_articulo = v_id_articulo
-      AND id_sucursal = v_id_sucursal;
-
-    IF v_registros_existencia = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No existe registro de existencia para el artículo y sucursal';
-    END IF;
-
-    IF v_registros_existencia > 1 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Existe más de un registro de existencia para el artículo y sucursal';
-    END IF;
-
-    SELECT id, COALESCE(existencia, 0)
-    INTO v_id_existencia, v_existencia_actual
-    FROM kath_erp.existencia_x_sucursal
-    WHERE id_articulo = v_id_articulo
-      AND id_sucursal = v_id_sucursal
-    LIMIT 1
-    FOR UPDATE;
-
-    IF v_existencia_actual - v_cantidad_actual < 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede eliminar el artículo porque la existencia quedaría negativa';
-    END IF;
-
-    DELETE FROM kath_erp.articulo_x_compra
-    WHERE id = p_id_detalle_compra;
-
-    UPDATE kath_erp.existencia_x_sucursal
-    SET existencia = v_existencia_actual - v_cantidad_actual
-    WHERE id = v_id_existencia;
-
-    SELECT
-        p_id_detalle_compra AS id,
-        'Artículo eliminado de la compra correctamente' AS message;
-END;
+DELIMITER $$
 
 CREATE PROCEDURE `kath_erp`.`eliminar_articulo`(
 	IN id INT
@@ -136,7 +17,7 @@ BEGIN
 		activo = 0
 	WHERE articulo.id_articulo = id;
     
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`getArticuloByCodigo`(
 	IN codigo_a VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -172,7 +53,7 @@ BEGIN
     	AND exs.id_sucursal = `idSucursal`
     	AND pxt.id_tipoCliente = `idTipoCliente`;
     
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`getArticuloById`(
 	IN p_id_articulo INT UNSIGNED
@@ -201,7 +82,7 @@ BEGIN
 	FROM kath_erp.articulo AS art	
 	WHERE art.id_articulo = p_id_articulo;
 	
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`insertArticulo`(
 	IN p_id_proveedor INT UNSIGNED,
@@ -326,110 +207,7 @@ BEGIN
 		'Articulo registrado correctamente' AS message;
 
 	
-END;
-
-CREATE PROCEDURE `kath_erp`.`insertArticuloCompra`(
-    IN p_id_compra INT UNSIGNED,
-    IN p_id_articulo INT UNSIGNED,
-    IN p_cantidad INT,
-    IN p_subtotal DOUBLE
-)
-    MODIFIES SQL DATA
-    COMMENT 'Inserta un artículo en el detalle de compra. La existencia se actualiza con otro SP'
-BEGIN
-    DECLARE v_existe_compra INT DEFAULT 0;
-    DECLARE v_existe_articulo INT DEFAULT 0;
-    DECLARE v_existe_detalle INT DEFAULT 0;
-    DECLARE v_id_detalle INT UNSIGNED DEFAULT 0;
-
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
-
-    IF p_id_compra IS NULL OR p_id_compra <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La compra es obligatoria';
-    END IF;
-
-    IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El artículo es obligatorio';
-    END IF;
-
-    IF p_cantidad IS NULL OR p_cantidad <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cantidad debe ser mayor a cero';
-    END IF;
-
-    IF p_subtotal IS NULL OR p_subtotal < 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El subtotal del artículo no puede ser negativo';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_existe_compra
-    FROM kath_erp.compras
-    WHERE id_compra = p_id_compra
-      AND activo = TRUE;
-
-    IF v_existe_compra = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La compra indicada no existe o está inactiva';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_existe_articulo
-    FROM kath_erp.articulo
-    WHERE id_articulo = p_id_articulo
-      AND activo = TRUE;
-
-    IF v_existe_articulo = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El artículo indicado no existe o está inactivo';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_existe_detalle
-    FROM kath_erp.articulo_x_compra
-    WHERE id_compra = p_id_compra
-      AND id_articulo = p_id_articulo;
-
-    IF v_existe_detalle > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El artículo ya está registrado en esta compra';
-    END IF;
-
-    INSERT INTO kath_erp.articulo_x_compra (
-        id_compra,
-        id_articulo,
-        cantidad,
-        subtotal
-    ) VALUES (
-        p_id_compra,
-        p_id_articulo,
-        p_cantidad,
-        p_subtotal
-    );
-
-    SET v_id_detalle = LAST_INSERT_ID();
-
-    SELECT
-        v_id_detalle AS id,
-        'Artículo agregado a la compra correctamente' AS message;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`insertExistenciaArticuloSucursal`(
 	IN p_id_articulo INT UNSIGNED,
@@ -502,7 +280,7 @@ BEGIN
 	SELECT
 		LAST_INSERT_ID() AS id,
 		'Existencia registrada correctamente' AS message;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
 	IN p_id_articulo INT UNSIGNED,
@@ -602,7 +380,7 @@ BEGIN
 	SELECT
 		LAST_INSERT_ID() AS id,
 		'Precio registrado correctamente' AS message;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`listArticulos`(
 	IN p_id_sucursal BIGINT UNSIGNED,
@@ -704,33 +482,7 @@ BEGIN
 		CASE WHEN v_ordenar_por = 'CATEGORIA' THEN cat.nombre END ASC,
 		art.nombre ASC;
     
-END;
-
-CREATE PROCEDURE `kath_erp`.`listArticulosCompraById`(
-    IN p_id_compra INT UNSIGNED
-)
-    READS SQL DATA
-    COMMENT 'Lista los artículos registrados en una compra'
-BEGIN
-    IF p_id_compra IS NULL OR p_id_compra <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La compra es obligatoria';
-    END IF;
-
-    SELECT
-        axc.id,
-        axc.id_compra,
-        axc.id_articulo,
-        a.codigo_articulo,
-        a.nombre AS nombre_articulo,
-        axc.cantidad,
-        axc.subtotal
-    FROM kath_erp.articulo_x_compra AS axc
-    INNER JOIN kath_erp.articulo AS a
-        ON axc.id_articulo = a.id_articulo
-    WHERE axc.id_compra = p_id_compra
-    ORDER BY axc.id ASC;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`listExistenciaGlobalArticulo`(
 	IN p_id_articulo INT UNSIGNED
@@ -748,7 +500,7 @@ BEGIN
 	INNER JOIN kath_erp.sucursal AS s on exs.id_sucursal = s.id_sucursar 
 	WHERE exs.id_articulo = p_id_articulo;
 		
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
@@ -769,7 +521,7 @@ BEGIN
       AND tc.activo = 1
     ORDER BY tc.nombre ASC;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`updateArticulo`(
 	IN p_id_articulo INT UNSIGNED,
@@ -831,216 +583,7 @@ BEGIN
 
     END IF;
     
-END;
-
-CREATE PROCEDURE `kath_erp`.`updateArticuloCompra`(
-    IN p_id_detalle_compra INT UNSIGNED,
-    IN p_cantidad INT,
-    IN p_subtotal DOUBLE
-)
-    MODIFIES SQL DATA
-    COMMENT 'Actualiza un artículo comprado y ajusta existencia en la sucursal registrada en la compra'
-BEGIN
-    DECLARE v_id_compra INT UNSIGNED DEFAULT 0;
-    DECLARE v_id_articulo INT UNSIGNED DEFAULT 0;
-    DECLARE v_cantidad_actual INT DEFAULT 0;
-
-    DECLARE v_delta INT DEFAULT 0;
-
-    DECLARE v_existencia_actual INT DEFAULT 0;
-    DECLARE v_id_existencia INT DEFAULT 0;
-
-    DECLARE v_id_sucursal BIGINT UNSIGNED DEFAULT 0;
-
-    DECLARE v_fecha_compra DATE;
-
-    DECLARE v_ventas_posteriores INT DEFAULT 0;
-    DECLARE v_registros_existencia INT DEFAULT 0;
-
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT(
-                'Error ',
-                v_errno,
-                ' (',
-                v_sqlstate,
-                '): ',
-                v_text
-            ) AS message;
-    END;
-
-
-    IF p_id_detalle_compra IS NULL
-       OR p_id_detalle_compra <= 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El detalle de compra es obligatorio';
-
-    END IF;
-
-
-    IF p_cantidad IS NULL OR p_cantidad <= 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cantidad debe ser mayor a cero';
-
-    END IF;
-
-
-    IF p_subtotal IS NULL OR p_subtotal < 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El subtotal no puede ser negativo';
-
-    END IF;
-
-
-    /*
-     * Se obtiene directamente c.id_sucursal.
-     * Ya no necesitamos JOIN empleados.
-     */
-
-    SELECT
-        axc.id_compra,
-        axc.id_articulo,
-        axc.cantidad,
-        c.fecha_compra,
-        c.id_sucursal
-    INTO
-        v_id_compra,
-        v_id_articulo,
-        v_cantidad_actual,
-        v_fecha_compra,
-        v_id_sucursal
-    FROM kath_erp.articulo_x_compra AS axc
-    INNER JOIN kath_erp.compras AS c
-        ON axc.id_compra = c.id_compra
-    WHERE axc.id = p_id_detalle_compra
-      AND c.activo = TRUE
-    LIMIT 1
-    FOR UPDATE;
-
-
-    IF v_id_compra IS NULL OR v_id_compra <= 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT =
-                'El detalle de compra no existe o la compra está inactiva';
-
-    END IF;
-
-
-    /*
-     * Esta parte sigue dependiendo de cómo ventas determina su sucursal.
-     *
-     * Por ahora se mantiene porque no me compartiste una relación directa
-     * ventas -> sucursal.
-     */
-
-    SELECT COUNT(*)
-    INTO v_ventas_posteriores
-    FROM kath_erp.articulo_x_venta AS axv
-    INNER JOIN kath_erp.ventas AS v
-        ON axv.id_venta = v.id_venta
-    INNER JOIN kath_erp.empleados AS emp_venta
-        ON v.id_empleado = emp_venta.id_empleado
-    WHERE axv.id_articulo = v_id_articulo
-      AND emp_venta.id_sucursal = v_id_sucursal
-      AND v.fecha > v_fecha_compra
-      AND v.status_venta = TRUE;
-
-
-    IF v_ventas_posteriores > 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT =
-                'No se puede modificar el artículo porque ya tiene ventas posteriores a la compra';
-
-    END IF;
-
-
-    SELECT COUNT(*)
-    INTO v_registros_existencia
-    FROM kath_erp.existencia_x_sucursal
-    WHERE id_articulo = v_id_articulo
-      AND id_sucursal = v_id_sucursal;
-
-
-    IF v_registros_existencia = 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT =
-                'No existe registro de existencia para el artículo y sucursal';
-
-    END IF;
-
-
-    IF v_registros_existencia > 1 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT =
-                'Existe más de un registro de existencia para el artículo y sucursal';
-
-    END IF;
-
-
-    SELECT
-        id,
-        COALESCE(existencia, 0)
-    INTO
-        v_id_existencia,
-        v_existencia_actual
-    FROM kath_erp.existencia_x_sucursal
-    WHERE id_articulo = v_id_articulo
-      AND id_sucursal = v_id_sucursal
-    LIMIT 1
-    FOR UPDATE;
-
-
-    SET v_delta =
-        p_cantidad - v_cantidad_actual;
-
-
-    IF v_existencia_actual + v_delta < 0 THEN
-
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT =
-                'No se puede modificar la compra porque la existencia quedaría negativa';
-
-    END IF;
-
-
-    UPDATE kath_erp.articulo_x_compra
-    SET
-        cantidad = p_cantidad,
-        subtotal = p_subtotal
-    WHERE id = p_id_detalle_compra;
-
-
-    UPDATE kath_erp.existencia_x_sucursal
-    SET existencia =
-        v_existencia_actual + v_delta
-    WHERE id = v_id_existencia;
-
-
-    SELECT
-        p_id_detalle_compra AS id,
-        'Artículo de compra actualizado correctamente' AS message;
-
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`ver_articulos`(
 	IN `id_sucursal` INT,
@@ -1068,7 +611,7 @@ WHERE existencia_x_sucursal.id_sucursal = id_sucursal
   AND precios_x_tipoCliente.id_tipoCliente = id_tipoCliente_a
 ORDER BY id_articulo;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`ver_codigos_articulos`()
 BEGIN
@@ -1076,4 +619,6 @@ BEGIN
     SELECT articulo.codigo_articulo
     FROM articulo;
     
-END;
+END $$
+
+DELIMITER ;

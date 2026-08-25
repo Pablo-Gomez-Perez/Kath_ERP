@@ -290,6 +290,10 @@ public class CompraController implements java.io.Serializable {
 				}
 
 				for (ArticuloPorCompra articuloPorCompra : articulos) {
+					if (articuloPorCompra.getId() <= 0) {
+						articuloPorCompra.setIdCompra(compraConDetalle.getCompra().getIdCompra());
+					}
+
 					SpResponseModel respuestaDetalle = articuloPorCompra.getId() > 0
 							? this.updateArticuloCompra(connection, articuloPorCompra)
 							: this.insertArticuloCompra(connection, articuloPorCompra);
