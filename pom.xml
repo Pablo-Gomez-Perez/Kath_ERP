@@ -57,7 +57,8 @@
         <targetPath>db/init</targetPath>
         <includes>
           <include>schema.sql</include>
-          <include>procedures.sql</include>
+          <include>procedures/procedures_articulos.sql</include>
+          <include>procedures/procedures_compras.sql</include>
         </includes>
       </testResource>
     </testResources>

@@ -40,11 +40,14 @@ class CompraStoredProcedureIT {
                     MountableFile.forClasspathResource("db/init/schema.sql"),
                     "/docker-entrypoint-initdb.d/01-schema.sql")
             .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/procedures.sql"),
-                    "/docker-entrypoint-initdb.d/02-procedures.sql")
+                    MountableFile.forClasspathResource("db/init/procedures/procedures_articulos.sql"),
+                    "/docker-entrypoint-initdb.d/02-procedures-articulos.sql")
+            .withCopyFileToContainer(
+                    MountableFile.forClasspathResource("db/init/procedures/procedures_compras.sql"),
+                    "/docker-entrypoint-initdb.d/03-procedures-compras.sql")
             .withCopyFileToContainer(
                     MountableFile.forClasspathResource("db/fixtures/compra_minima.sql"),
-                    "/docker-entrypoint-initdb.d/03-compra-minima.sql");
+                    "/docker-entrypoint-initdb.d/04-compra-minima.sql");
 
     @BeforeEach
     void limpiarOperacionesDeCompra() throws SQLException {
@@ -56,13 +59,21 @@ class CompraStoredProcedureIT {
     }
 
     @Test
-    void cargaLosProcedimientosVigentesDeCompra() throws SQLException {
+    void cargaLosProcedimientosModularesDeArticulosYCompras() throws SQLException {
         Set<String> esperados = Set.of(
+                "deleteArticuloCompra",
+                "getArticuloById",
+                "getIdUltimaCompra",
                 "insertCompra",
                 "insertArticuloCompra",
+                "insertArticulo",
                 "sumarExistenciaSucursalCompra",
                 "listCompras",
-                "getCompraById");
+                "listArticulosCompraById",
+                "getCompraById",
+                "updateArticulo",
+                "updateArticuloCompra",
+                "updateCompra");
 
         Set<String> encontrados = new HashSet<>();
         String sql = """
@@ -70,15 +81,10 @@ class CompraStoredProcedureIT {
                 FROM information_schema.ROUTINES
                 WHERE ROUTINE_SCHEMA = ?
                   AND ROUTINE_TYPE = 'PROCEDURE'
-                  AND ROUTINE_NAME IN (?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = nuevaConexion(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, DATABASE_NAME);
-            int index = 2;
-            for (String nombre : esperados) {
-                statement.setString(index++, nombre);
-            }
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -87,7 +93,11 @@ class CompraStoredProcedureIT {
             }
         }
 
-        assertEquals(esperados, encontrados);
+        assertTrue(encontrados.containsAll(esperados),
+                () -> "Faltan procedimientos: " + esperados.stream()
+                        .filter(nombre -> !encontrados.contains(nombre))
+                        .sorted()
+                        .toList());
     }
 
     @Test

@@ -48,11 +48,14 @@ class CompraControllerIT {
                     MountableFile.forClasspathResource("db/init/schema.sql"),
                     "/docker-entrypoint-initdb.d/01-schema.sql")
             .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/procedures.sql"),
-                    "/docker-entrypoint-initdb.d/02-procedures.sql")
+                    MountableFile.forClasspathResource("db/init/procedures/procedures_articulos.sql"),
+                    "/docker-entrypoint-initdb.d/02-procedures-articulos.sql")
+            .withCopyFileToContainer(
+                    MountableFile.forClasspathResource("db/init/procedures/procedures_compras.sql"),
+                    "/docker-entrypoint-initdb.d/03-procedures-compras.sql")
             .withCopyFileToContainer(
                     MountableFile.forClasspathResource("db/fixtures/compra_minima.sql"),
-                    "/docker-entrypoint-initdb.d/03-compra-minima.sql");
+                    "/docker-entrypoint-initdb.d/04-compra-minima.sql");
 
     @BeforeAll
     static void configurarConexionDelControlador() {
@@ -157,6 +160,138 @@ class CompraControllerIT {
                 () -> assertEquals(40, consultarExistencia(ID_ARTICULO_EXISTENTE, ID_SUCURSAL_CONTROL)));
     }
 
+    @Test
+    void editaCabeceraPartidaExistenteYAgregaUnaPartidaNueva() throws SQLException {
+        CompraController controller = new CompraController();
+        int idCompra = registrarCompraInicial(controller, "FAC-EDIT-001");
+        int idDetalleExistente = consultarIdDetalle(idCompra, ID_ARTICULO_EXISTENTE);
+
+        ArticuloPorCompra detalleActualizado = new ArticuloPorCompra.ArticuloPorCompraBuilder()
+                .id(idDetalleExistente)
+                .idCompra(idCompra)
+                .idArticulo(ID_ARTICULO_EXISTENTE)
+                .cantidad(1)
+                .subtotal(100.00)
+                .build();
+        ArticuloPorCompra detalleNuevo = crearDetalle(ID_ARTICULO_NUEVO, 3, 150.00);
+        CompraConDetalle compraEditada = new CompraConDetalle(
+                crearCompraEditada(idCompra, "FAC-EDIT-002", 250.00, 40.00),
+                List.of(detalleActualizado, detalleNuevo));
+
+        SpResponseModel respuesta = controller.updateCompra(ID_SUCURSAL_COMPRA, compraEditada);
+
+        assertAll(
+                () -> assertEquals(idCompra, respuesta.id(), respuesta.message()),
+                () -> assertEquals("Compra actualizada correctamente", respuesta.message()),
+                () -> assertEquals(idCompra, detalleNuevo.getIdCompra()));
+
+        CompraById compraConsultada = controller.getCompraById(idCompra);
+        assertNotNull(compraConsultada);
+        assertAll(
+                () -> assertEquals("FAC-EDIT-002", compraConsultada.getFolioFactura()),
+                () -> assertTrue(compraConsultada.isTipoCompra()),
+                () -> assertEquals(250.00, compraConsultada.getSubtotal(), 0.001),
+                () -> assertEquals(40.00, compraConsultada.getIva(), 0.001),
+                () -> assertEquals(290.00, compraConsultada.getImporteTotal(), 0.001));
+
+        assertAll(
+                () -> assertEquals(2, consultarEntero(
+                        "SELECT COUNT(*) FROM articulo_x_compra WHERE id_compra = ?", idCompra)),
+                () -> assertEquals(1, consultarEntero(
+                        "SELECT cantidad FROM articulo_x_compra WHERE id_compra = ? AND id_articulo = ?",
+                        idCompra, ID_ARTICULO_EXISTENTE)),
+                () -> assertEquals(3, consultarEntero(
+                        "SELECT cantidad FROM articulo_x_compra WHERE id_compra = ? AND id_articulo = ?",
+                        idCompra, ID_ARTICULO_NUEVO)),
+                () -> assertEquals(250.00, consultarDouble(
+                        "SELECT SUM(subtotal) FROM articulo_x_compra WHERE id_compra = ?", idCompra), 0.001));
+
+        assertAll(
+                () -> assertEquals(6, consultarExistencia(ID_ARTICULO_EXISTENTE, ID_SUCURSAL_COMPRA)),
+                () -> assertEquals(3, consultarExistencia(ID_ARTICULO_NUEVO, ID_SUCURSAL_COMPRA)),
+                () -> assertEquals(40, consultarExistencia(ID_ARTICULO_EXISTENTE, ID_SUCURSAL_CONTROL)),
+                () -> assertEquals(25, consultarExistencia(ID_ARTICULO_NUEVO, ID_SUCURSAL_CONTROL)));
+    }
+
+    @Test
+    void revierteLaEdicionCompletaCuandoFallaUnaPartidaNueva() throws SQLException {
+        CompraController controller = new CompraController();
+        int idCompra = registrarCompraInicial(controller, "FAC-EDIT-003");
+        int idDetalleExistente = consultarIdDetalle(idCompra, ID_ARTICULO_EXISTENTE);
+
+        ArticuloPorCompra detalleActualizado = new ArticuloPorCompra.ArticuloPorCompraBuilder()
+                .id(idDetalleExistente)
+                .idCompra(idCompra)
+                .idArticulo(ID_ARTICULO_EXISTENTE)
+                .cantidad(4)
+                .subtotal(400.00)
+                .build();
+        CompraConDetalle compraEditada = new CompraConDetalle(
+                crearCompraEditada(idCompra, "FAC-EDIT-004", 500.00, 80.00),
+                List.of(detalleActualizado, crearDetalle(999_999, 1, 100.00)));
+
+        SpResponseModel respuesta = controller.updateCompra(ID_SUCURSAL_COMPRA, compraEditada);
+
+        assertAll(
+                () -> assertEquals(500, respuesta.id()),
+                () -> assertTrue(respuesta.message().contains("no existe o está inactivo")));
+
+        CompraById compraConsultada = controller.getCompraById(idCompra);
+        assertNotNull(compraConsultada);
+        assertAll(
+                () -> assertEquals("FAC-EDIT-003", compraConsultada.getFolioFactura()),
+                () -> assertEquals(200.00, compraConsultada.getSubtotal(), 0.001),
+                () -> assertEquals(32.00, compraConsultada.getIva(), 0.001),
+                () -> assertEquals(2, consultarEntero(
+                        "SELECT cantidad FROM articulo_x_compra WHERE id = ?", idDetalleExistente)),
+                () -> assertEquals(1, consultarEntero(
+                        "SELECT COUNT(*) FROM articulo_x_compra WHERE id_compra = ?", idCompra)),
+                () -> assertEquals(7, consultarExistencia(ID_ARTICULO_EXISTENTE, ID_SUCURSAL_COMPRA)));
+    }
+
+    @Test
+    void rechazaEditarUnaCompraDesdeOtraSucursal() throws SQLException {
+        CompraController controller = new CompraController();
+        int idCompra = registrarCompraInicial(controller, "FAC-EDIT-005");
+        CompraConDetalle compraEditada = new CompraConDetalle(
+                crearCompraEditada(idCompra, "FAC-EDIT-006", 200.00, 32.00),
+                List.of());
+
+        SpResponseModel respuesta = controller.updateCompra(ID_SUCURSAL_CONTROL, compraEditada);
+
+        assertAll(
+                () -> assertEquals(500, respuesta.id()),
+                () -> assertTrue(respuesta.message().contains("no pertenece a la sucursal actual")),
+                () -> assertEquals(1, consultarEntero(
+                        "SELECT COUNT(*) FROM compras WHERE id_compra = ? AND folio_factura = ? AND id_sucursal = ?",
+                        idCompra, "FAC-EDIT-005", ID_SUCURSAL_COMPRA)),
+                () -> assertEquals(7, consultarExistencia(ID_ARTICULO_EXISTENTE, ID_SUCURSAL_COMPRA)));
+    }
+
+    private int registrarCompraInicial(CompraController controller, String folio) {
+        SpResponseModel respuesta = controller.insertCompra(
+                ID_SUCURSAL_COMPRA,
+                new CompraConDetalle(
+                        crearCompra(folio, 200.00, 32.00),
+                        List.of(crearDetalle(ID_ARTICULO_EXISTENTE, 2, 200.00))));
+        assertTrue(respuesta.id() > 0, respuesta.message());
+        return respuesta.id();
+    }
+
+    private Compra crearCompraEditada(int idCompra, String folio, double subtotal, double iva) {
+        return new Compra.CompraBuilder()
+                .idCompra(idCompra)
+                .idEmpleado(1)
+                .idProveedor(1)
+                .folioFactura(folio)
+                .fechaFactura(Date.valueOf("2026-08-22"))
+                .fechaCompra(Date.valueOf("2026-08-23"))
+                .tipoCompra(true)
+                .subtotal(subtotal)
+                .iva(iva)
+                .build();
+    }
+
     private Compra crearCompra(String folio, double subtotal, double iva) {
         return new Compra.CompraBuilder()
                 .idEmpleado(1)
@@ -186,6 +321,12 @@ class CompraControllerIT {
         return consultarEntero(
                 "SELECT existencia FROM existencia_x_sucursal WHERE id_articulo = ? AND id_sucursal = ?",
                 idArticulo, idSucursal);
+    }
+
+    private int consultarIdDetalle(int idCompra, int idArticulo) throws SQLException {
+        return consultarEntero(
+                "SELECT id FROM articulo_x_compra WHERE id_compra = ? AND id_articulo = ?",
+                idCompra, idArticulo);
     }
 
     private int consultarEntero(String sql, Object... parametros) throws SQLException {
