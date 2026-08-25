@@ -197,9 +197,9 @@ public class CompraById implements java.io.Serializable {
 				.append(nombreCortoEmpleado).append(", idSucursal=").append(idSucursal).append(", idProveedor=")
 				.append(idProveedor).append(", folioFactura=").append(folioFactura).append(", fechaFactura=")
 				.append(fechaFactura).append(", fechaCompra=").append(fechaCompra).append(", tipoCompra=")
-				.append(tipoCompra).append(", tipoCompraDescripcion=").append(tipoCompraDescripcion).append(", subtotal=")
-				.append(subtotal).append(", iva=").append(iva).append(", importeTotal=").append(importeTotal)
-				.append(", activo=").append(activo).append("]");
+				.append(tipoCompra).append(", tipoCompraDescripcion=").append(tipoCompraDescripcion)
+				.append(", subtotal=").append(subtotal).append(", iva=").append(iva).append(", importeTotal=")
+				.append(importeTotal).append(", activo=").append(activo).append("]");
 		return builder.toString();
 	}
 }

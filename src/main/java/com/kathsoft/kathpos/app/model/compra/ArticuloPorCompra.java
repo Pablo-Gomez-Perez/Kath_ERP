@@ -89,8 +89,8 @@ public class ArticuloPorCompra implements java.io.Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ArticuloPorCompra [id=").append(id).append(", idCompra=").append(idCompra)
-				.append(", idArticulo=").append(idArticulo).append(", cantidad=").append(cantidad)
-				.append(", subtotal=").append(subtotal).append("]");
+				.append(", idArticulo=").append(idArticulo).append(", cantidad=").append(cantidad).append(", subtotal=")
+				.append(subtotal).append("]");
 		return builder.toString();
 	}
 
