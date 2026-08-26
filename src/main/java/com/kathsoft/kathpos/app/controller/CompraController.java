@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.kathsoft.kathpos.app.model.compra.ArticuloCompraListado;
 import com.kathsoft.kathpos.app.model.compra.ArticuloPorCompra;
@@ -22,6 +24,8 @@ import com.kathsoft.kathpos.tools.Conexion;
 public class CompraController implements java.io.Serializable {
 
 	private static final long serialVersionUID = -4974480297011718553L;
+	private static final int ERROR_VALIDACION = 500;
+	private static final double TOLERANCIA_IMPORTE = 0.01;
 	private static Connection cn = null;
 
 	public List<CompraListado> listCompras(int idSucursal) {
@@ -150,20 +154,26 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	public SpResponseModel insertCompra(int idSucursal, Compra compra) {
+		SpResponseModel validacion = this.validarCabeceraNuevaCompra(idSucursal, compra);
+		if (validacion != null) {
+			return validacion;
+		}
+
 		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
 			return this.insertCompra(connection, idSucursal, compra);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
 	public SpResponseModel insertCompra(int idSucursal, CompraConDetalle compraConDetalle) {
-		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
-			return new SpResponseModel(500, "La compra es obligatoria");
+		SpResponseModel validacion = this.validarNuevaCompra(idSucursal, compraConDetalle);
+		if (validacion != null) {
+			return validacion;
 		}
 
 		List<ArticuloPorCompra> articulos = compraConDetalle.getArticulosPorCompra() == null ? Collections.emptyList()
@@ -204,20 +214,20 @@ public class CompraController implements java.io.Serializable {
 			} catch (SQLException er) {
 				connection.rollback();
 				er.printStackTrace();
-				return new SpResponseModel(500, er.getMessage());
+				return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 			} catch (Exception er) {
 				connection.rollback();
 				er.printStackTrace();
-				return new SpResponseModel(500, er.getMessage());
+				return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 			} finally {
 				connection.setAutoCommit(autoCommitOriginal);
 			}
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
@@ -226,10 +236,10 @@ public class CompraController implements java.io.Serializable {
 			return this.insertArticuloCompra(connection, articuloPorCompra);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
@@ -238,10 +248,10 @@ public class CompraController implements java.io.Serializable {
 			return this.sumarExistenciaSucursalCompra(connection, idCompra, idArticulo, cantidad);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
@@ -250,10 +260,10 @@ public class CompraController implements java.io.Serializable {
 			return this.updateCompra(connection, idSucursal, compra);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
@@ -262,16 +272,16 @@ public class CompraController implements java.io.Serializable {
 			return this.updateArticuloCompra(connection, articuloPorCompra);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
 	public SpResponseModel updateCompra(int idSucursal, CompraConDetalle compraConDetalle) {
 		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
-			return new SpResponseModel(500, "La compra es obligatoria");
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
 		}
 
 		List<ArticuloPorCompra> articulos = compraConDetalle.getArticulosPorCompra() == null ? Collections.emptyList()
@@ -319,20 +329,20 @@ public class CompraController implements java.io.Serializable {
 			} catch (SQLException er) {
 				connection.rollback();
 				er.printStackTrace();
-				return new SpResponseModel(500, er.getMessage());
+				return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 			} catch (Exception er) {
 				connection.rollback();
 				er.printStackTrace();
-				return new SpResponseModel(500, er.getMessage());
+				return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 			} finally {
 				connection.setAutoCommit(autoCommitOriginal);
 			}
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
 	}
 
@@ -345,16 +355,95 @@ public class CompraController implements java.io.Serializable {
 			}
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		} catch (Exception er) {
 			er.printStackTrace();
-			return new SpResponseModel(500, er.getMessage());
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
+	}
+
+	private SpResponseModel validarNuevaCompra(int idSucursal, CompraConDetalle compraConDetalle) {
+		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
+		}
+
+		SpResponseModel validacionCabecera = this.validarCabeceraNuevaCompra(idSucursal, compraConDetalle.getCompra());
+		if (validacionCabecera != null) {
+			return validacionCabecera;
+		}
+
+		List<ArticuloPorCompra> articulos = compraConDetalle.getArticulosPorCompra();
+		if (articulos == null || articulos.isEmpty()) {
+			return new SpResponseModel(ERROR_VALIDACION, "La compra debe contener al menos un artículo");
+		}
+
+		Set<Integer> articulosProcesados = new HashSet<>();
+		double subtotalDetalle = 0;
+		for (ArticuloPorCompra articulo : articulos) {
+			if (articulo == null) {
+				return new SpResponseModel(ERROR_VALIDACION, "El detalle de la compra contiene un artículo inválido");
+			}
+			if (articulo.getIdArticulo() <= 0) {
+				return new SpResponseModel(ERROR_VALIDACION, "El artículo de compra es obligatorio");
+			}
+			if (!articulosProcesados.add(articulo.getIdArticulo())) {
+				return new SpResponseModel(ERROR_VALIDACION, "No se puede registrar el mismo artículo más de una vez");
+			}
+			if (articulo.getCantidad() <= 0) {
+				return new SpResponseModel(ERROR_VALIDACION, "La cantidad de cada artículo debe ser mayor a cero");
+			}
+			if (!Double.isFinite(articulo.getSubtotal()) || articulo.getSubtotal() < 0) {
+				return new SpResponseModel(ERROR_VALIDACION, "El subtotal de cada artículo debe ser válido y no negativo");
+			}
+			subtotalDetalle += articulo.getSubtotal();
+		}
+
+		double tolerancia = TOLERANCIA_IMPORTE * Math.max(1, articulos.size());
+		if (Math.abs(subtotalDetalle - compraConDetalle.getCompra().getSubtotal()) > tolerancia) {
+			return new SpResponseModel(ERROR_VALIDACION,
+					"El subtotal de la compra no coincide con la suma de los artículos");
+		}
+
+		return null;
+	}
+
+	private SpResponseModel validarCabeceraNuevaCompra(int idSucursal, Compra compra) {
+		if (compra == null) {
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
+		}
+		if (idSucursal <= 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "La sucursal es obligatoria");
+		}
+		if (compra.getIdEmpleado() <= 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "El empleado que recibe la compra es obligatorio");
+		}
+		if (compra.getIdProveedor() <= 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "El proveedor es obligatorio");
+		}
+		if (compra.getFolioFactura() == null || compra.getFolioFactura().isBlank()) {
+			return new SpResponseModel(ERROR_VALIDACION, "El folio de factura es obligatorio");
+		}
+		if (compra.getFolioFactura().trim().length() > 13) {
+			return new SpResponseModel(ERROR_VALIDACION, "El folio de factura no puede exceder 13 caracteres");
+		}
+		if (compra.getFechaFactura() == null) {
+			return new SpResponseModel(ERROR_VALIDACION, "La fecha de factura es obligatoria");
+		}
+		if (compra.getFechaCompra() == null) {
+			return new SpResponseModel(ERROR_VALIDACION, "La fecha de compra es obligatoria");
+		}
+		if (!Double.isFinite(compra.getSubtotal()) || compra.getSubtotal() < 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "El subtotal de la compra debe ser válido y no negativo");
+		}
+		if (!Double.isFinite(compra.getIva()) || compra.getIva() < 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "El IVA de la compra debe ser válido y no negativo");
+		}
+		return null;
 	}
 
 	private SpResponseModel insertCompra(Connection connection, int idSucursal, Compra compra) throws SQLException {
 		if (compra == null) {
-			return new SpResponseModel(500, "La compra es obligatoria");
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
 		}
 
 		try (CallableStatement stm = connection.prepareCall("CALL insertCompra(?,?,?,?,?,?,?,?,?)")) {
@@ -377,7 +466,7 @@ public class CompraController implements java.io.Serializable {
 	private SpResponseModel insertArticuloCompra(Connection connection, ArticuloPorCompra articuloPorCompra)
 			throws SQLException {
 		if (articuloPorCompra == null) {
-			return new SpResponseModel(500, "El artículo de compra es obligatorio");
+			return new SpResponseModel(ERROR_VALIDACION, "El artículo de compra es obligatorio");
 		}
 
 		try (CallableStatement stm = connection.prepareCall("CALL insertArticuloCompra(?,?,?,?)")) {
@@ -407,7 +496,7 @@ public class CompraController implements java.io.Serializable {
 
 	private SpResponseModel updateCompra(Connection connection, int idSucursal, Compra compra) throws SQLException {
 		if (compra == null) {
-			return new SpResponseModel(500, "La compra es obligatoria");
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
 		}
 
 		try (CallableStatement stm = connection.prepareCall("CALL updateCompra(?,?,?,?,?,?,?,?,?,?)")) {
@@ -431,7 +520,7 @@ public class CompraController implements java.io.Serializable {
 	private SpResponseModel updateArticuloCompra(Connection connection, ArticuloPorCompra articuloPorCompra)
 			throws SQLException {
 		if (articuloPorCompra == null) {
-			return new SpResponseModel(500, "El artículo de compra es obligatorio");
+			return new SpResponseModel(ERROR_VALIDACION, "El artículo de compra es obligatorio");
 		}
 
 		try (CallableStatement stm = connection.prepareCall("CALL updateArticuloCompra(?,?,?)")) {
@@ -470,11 +559,11 @@ public class CompraController implements java.io.Serializable {
 		if (rset != null && rset.next()) {
 			return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
 		}
-		return new SpResponseModel(500, "Sin respuesta del procedimiento almacenado");
+		return new SpResponseModel(ERROR_VALIDACION, "Sin respuesta del procedimiento almacenado");
 	}
 
 	private boolean isSuccess(SpResponseModel response) {
-		return response != null && response.id() > 0 && response.id() != 500;
+		return response != null && response.id() > 0 && response.id() != ERROR_VALIDACION;
 	}
 
 	private void setNullableInt(CallableStatement stm, int index, int value) throws SQLException {
