@@ -1,528 +1,208 @@
-# Kath ERP — Codex Instructions
+# Kath ERP — instrucciones para agentes
 
-Este archivo define las reglas operativas obligatorias para trabajar en Kath ERP con Codex.
-Aplica a todo el repositorio salvo que exista un `AGENTS.md` más específico en un subdirectorio o que el usuario dé una instrucción explícita para una tarea concreta.
+Estas instrucciones aplican a todo el repositorio. Una petición explícita del usuario
+puede cambiar el alcance de una tarea concreta, pero no autoriza implícitamente cambios
+destructivos, rediseños de interfaz, publicación en GitHub ni reescritura de historial.
 
-## 1. Proyecto
+## Contexto del proyecto
 
-Kath ERP es una aplicación de escritorio para pequeñas y medianas empresas, principalmente PYMES mexicanas. Integra inventarios, compras, ventas, gastos, empleados, flujos de efectivo y procesos administrativos/contables.
+Kath ERP es una aplicación de escritorio para pequeños negocios que debe poder operar
+en una red local sin depender de Internet. El stack vigente es:
 
-Repositorio: `Pablo-Gomez-Perez/Kath_ERP`
+- Java 21, Java Swing y JDBC;
+- Maven Wrapper;
+- MySQL 8 para los scripts y pruebas de integración actuales;
+- procedimientos almacenados;
+- JUnit 5 y Testcontainers.
 
-Stack principal:
+La aplicación está en modernización gradual. Conserva la arquitectura y el estilo
+existentes; no introduzcas frameworks, ORM, servicios en la nube, nuevas dependencias o
+una reescritura general sin que formen parte expresa de la tarea.
 
-- Java 21
-- Java Swing
-- JDBC
-- Maven
-- JUnit 5
-- MySQL / MariaDB
-- Stored Procedures
-- POO
-- MVC clásico
-- Git / GitHub
+## Mapa del repositorio
 
-No introduzcas frameworks, ORMs o arquitecturas nuevas sin autorización explícita del usuario.
+- `src/main/java/com/kathsoft/kathpos/app/model`: modelos y ViewModels.
+- `src/main/java/com/kathsoft/kathpos/app/controller`: acceso JDBC, llamadas a
+  procedimientos y coordinación de transacciones.
+- `src/main/java/com/kathsoft/kathpos/app/view`: formularios Swing.
+- `src/main/java/com/kathsoft/kathpos/tools`: utilidades compartidas y conexión.
+- `database/schema.sql`: esquema usado para construir la base de pruebas.
+- `database/procedures/`: procedimientos separados por módulo.
+- `database/procedures.sql`: volcado general histórico; no es la fuente modular de las
+  pruebas.
+- `src/test/java`: pruebas unitarias (`*Test`) y de integración (`*IT`).
+- `src/test/resources/db/fixtures`: datos artificiales deterministas.
+- `.github/workflows`: validaciones de CI; el proyecto no tiene flujo de despliegue.
 
-## 2. Principio arquitectónico obligatorio
+Consulta también `database/README.md` antes de modificar scripts SQL.
 
-Toda operación de negocio que acceda o modifique datos debe ejecutarse mediante procedimientos almacenados.
+## Dirección arquitectónica
 
-El flujo obligatorio para implementar una operación de negocio es:
-
-1. Verificar la estructura de la tabla principal.
-2. Verificar tablas relacionadas, claves foráneas, índices y restricciones relevantes.
-3. Inspeccionar los procedimientos almacenados existentes relacionados.
-4. Crear o modificar primero el procedimiento almacenado.
-5. Aplicar y validar el procedimiento en la base de datos local autorizada.
-6. Actualizar los archivos SQL correspondientes dentro de `database/`.
-7. Crear o modificar modelos, entidades, Java Records o ViewModels necesarios para mapear la respuesta.
-8. Crear o modificar el controlador.
-9. Consumir el controlador desde la vista.
-10. Ejecutar las pruebas correspondientes.
-
-No empieces implementando la operación directamente en Java si el procedimiento almacenado requerido todavía no existe.
-
-## 3. Acceso a base de datos desde Java
-
-Para operaciones de negocio:
-
-- Usa `CallableStatement`.
-- Usa `CALL nombreProcedimiento(...)`.
-- Mapea explícitamente parámetros de entrada y resultados.
-- Cierra `Connection`, `CallableStatement` y `ResultSet` correctamente, preferiblemente con try-with-resources en código nuevo o refactorizado.
-
-Está prohibido introducir SQL de negocio directo dentro de controladores o vistas, incluyendo:
-
-```sql
-SELECT ...
-INSERT ...
-UPDATE ...
-DELETE ...
-```
-
-La consulta o mutación debe encapsularse en un procedimiento almacenado.
-
-Si encuentras SQL directo legado, no lo amplíes. Si la tarea requiere tocar esa operación, migra primero la operación a Stored Procedure cuando el alcance lo permita.
-
-## 4. Reglas de procedimientos almacenados
-
-Respeta el estilo y contratos ya utilizados por el proyecto.
-
-### Errores SQL
-
-Para handlers de errores usa `GET DIAGNOSTICS CONDITION 1` cuando sea necesario obtener información del error.
-
-No uses funciones inexistentes como:
-
-```sql
-SQLEXCEPTION_MESSAGE()
-```
-
-### Transacciones
-
-Usa transacciones solamente cuando una operación necesite atomicidad entre dos o más escrituras relacionadas.
-
-No agregues `START TRANSACTION`, `COMMIT` o `ROLLBACK` a procedimientos que solamente ejecutan lecturas.
-
-Ante errores dentro de una operación transaccional, realiza `ROLLBACK` antes de devolver el error.
-
-### Respuestas de procedimientos
-
-Cuando el procedimiento forme parte de un flujo que ya devuelve una respuesta estándar, conserva el contrato existente, normalmente:
-
-```sql
-SELECT id, message;
-```
-
-No cambies unilateralmente ese contrato si existen controladores que lo consumen.
-
-### Eliminación lógica
-
-Kath ERP utiliza eliminación lógica en entidades que disponen de la columna `activo`.
-
-Regla general:
-
-- INSERT: nuevo registro activo.
-- DELETE lógico: `activo = FALSE`.
-- UPDATE de un registro previamente dado de baja: debe rehabilitarse con `activo = TRUE` cuando corresponda al flujo existente.
-
-No sustituyas eliminación lógica por `DELETE FROM` salvo que el usuario lo solicite explícitamente o se trate de datos temporales/de prueba.
-
-### Sucursal
-
-Cuando una operación tenga contexto de sucursal, respeta la sucursal explícitamente proporcionada por la sesión, formulario o controlador.
-
-No infieras silenciosamente la sucursal a partir de empleado, proveedor u otra entidad cuando el flujo ya recibe `idSucursal` explícitamente.
-
-## 5. Estructura SQL del repositorio
-
-Actualmente el repositorio contiene:
-
-- `database/schema.sql`: snapshot/esquema de la base de datos.
-- `database/procedures.sql`: dump agregado de procedimientos.
-- `database/procedures/procedures_articulos.sql`: procedimientos del módulo de artículos.
-- `database/procedures/procedures_compras.sql`: procedimientos del módulo de compras.
-
-Antes de crear un nuevo archivo de procedimientos, verifica si el módulo ya dispone de uno.
-
-Cuando modifiques o crees un procedimiento:
-
-1. Actualiza el archivo modular correspondiente dentro de `database/procedures/`.
-2. Aplica la misma definición en la base local autorizada.
-3. Valida su firma y comportamiento.
-4. Mantén `database/procedures.sql` sincronizado cuando la tarea incluya actualizar el dump agregado o cuando pueda regenerarse de forma segura desde la base local.
-
-No reemplaces ciegamente `database/procedures.sql` con un dump proveniente de una base desconocida.
-
-Para procedimientos ya existentes, inspecciona primero la definición actual con `SHOW CREATE PROCEDURE` y compara con la versión versionada antes de sobrescribirla.
-
-## 6. Base de datos local para Codex
-
-Nunca guardes credenciales dentro de este repositorio ni dentro de `AGENTS.md`.
-
-Codex debe obtener la conexión mediante variables de entorno o mediante un login-path de MySQL.
-
-Variables soportadas/recomendadas:
+Mantén el flujo existente:
 
 ```text
-KATH_DB_HOST
-KATH_DB_PORT
-KATH_DB_NAME
-KATH_DB_USER
-KATH_DB_PASSWORD
-KATH_DB_LOGIN_PATH
+Stored Procedure -> Model/ViewModel -> Controller -> View
 ```
 
-Valores típicos de host/puerto pueden ser `127.0.0.1` y `3306`, pero no los asumas si existen variables configuradas.
+- Las vistas capturan interacción, validan datos de presentación, llaman al controlador
+  y actualizan componentes. No agregues JDBC ni SQL a una vista.
+- Los modelos transportan datos. No agregues componentes Swing, conexiones ni lógica de
+  persistencia a los modelos.
+- Los controladores conservan las llamadas a procedimientos almacenados, el mapeo de
+  resultados y la transacción JDBC cuando una operación coordina varias escrituras.
+- Para código JDBC nuevo o modificado, usa `CallableStatement`, parámetros explícitos y
+  try-with-resources. Si una transacción falla, ejecuta `rollback` y restaura el estado de
+  la conexión.
+- No conviertas automáticamente varias operaciones por tabla en un procedimiento
+  monolítico. Cuando el flujo existente usa varios procedimientos, coordínalos en una
+  única transacción desde el controlador salvo que la tarea defina otro contrato.
+- Extrae la lógica incrustada de forma incremental y sólo dentro del alcance solicitado.
+  No uses una tarea puntual como pretexto para refactorizar todo un formulario o módulo.
 
-### Opción preferida: mysql_config_editor
+El código legado puede incumplir estas reglas. No lo tomes como ejemplo para código
+nuevo, pero tampoco lo modernices fuera del alcance de la tarea.
 
-Si existe `KATH_DB_LOGIN_PATH`, usa:
+## Procedimientos almacenados y esquema
+
+- Inspecciona `database/schema.sql`, las claves y el archivo modular antes de asumir
+  tablas, columnas, tipos, relaciones o nombres.
+- Cada procedimiento debe tener un único archivo propietario. Los procedimientos de
+  partidas, totales o existencias del flujo de compras pertenecen a
+  `database/procedures/procedures_compras.sql`, aunque usen tablas de artículos.
+- `database/procedures/procedures_articulos.sql` contiene las operaciones propias del
+  módulo de artículos.
+- No cargues `database/procedures.sql` junto con los archivos modulares: contiene nombres
+  duplicados. No lo sincronices ni regeneres salvo que el usuario solicite actualizar el
+  volcado histórico.
+- Todo cambio de esquema o procedimiento debe quedar versionado en el archivo canónico
+  correspondiente; no dejes la única copia en una base local.
+- Conserva las firmas, aliases y contratos consumidos por Java. Antes de cambiarlos,
+  localiza todos sus consumidores y las pruebas relacionadas.
+- Evita `DEFINER`, credenciales, datos de clientes y órdenes repetidas como
+  `ALTER DATABASE` en scripts versionados. Mantén UTF-8/`utf8mb4`.
+- No inventes reglas contables o fiscales. Para lógica monetaria nueva usa
+  preferentemente `BigDecimal` y redondeo explícito; no migres usos legados de `double`
+  si no forman parte del cambio.
+- Respeta siempre la sucursal recibida por el flujo. No la infieras de otra entidad si el
+  controlador ya recibe `idSucursal`.
+
+La aplicación usa una base local en operación normal, pero las pruebas automatizadas no
+deben depender de ella. No apliques cambios ni datos de prueba a la base del usuario sin
+autorización explícita y sin comprobar primero la base seleccionada. Nunca guardes ni
+muestres credenciales.
+
+## Swing y WindowBuilder
+
+No cambies la presentación visual si el usuario no lo solicita explícitamente. Esto
+incluye layouts, posiciones, tamaños, colores, fuentes, iconos, bordes y reorganización
+de paneles.
+
+Cuando el alcance sí incluya un formulario:
+
+- conserva la compatibilidad con Eclipse WindowBuilder;
+- evita reformatear masivamente clases generadas o reescribir `GroupLayout`;
+- declara como campos de clase los componentes que WindowBuilder necesite reconocer;
+- limita listeners, validaciones y modelos de tabla a la funcionalidad solicitada;
+- recalcula importes desde el estado actual en vez de mantener acumuladores frágiles.
+
+`Fr_principal` es especialmente sensible: modifícalo sólo cuando el usuario pida esa
+integración. Las pruebas automatizadas no sustituyen la validación manual de apariencia e
+interacción de un formulario Swing.
+
+## Estrategia de pruebas
+
+### Pruebas unitarias
+
+- Prueba con JUnit 5 la lógica determinista que no requiere JDBC, Swing ni una base de
+  datos.
+- Nombra estas clases `*Test`; Maven Surefire las ejecuta con `./mvnw test`.
+- No simules una base completa con mocks si el comportamiento depende realmente de SQL,
+  restricciones o procedimientos: en ese caso escribe una prueba de integración.
+
+### Pruebas de integración
+
+- Nombra las clases `*IT`; Maven Failsafe las ejecuta durante `./mvnw verify`.
+- Usa Testcontainers con la versión de MySQL establecida en las pruebas, actualmente
+  `mysql:8.0.46`.
+- Construye el contenedor desde `database/schema.sql`, los procedimientos modulares
+  necesarios y fixtures artificiales. Nunca uses datos reales ni el estado arbitrario de
+  la base de desarrollo.
+- Las pruebas directas de procedimientos validan firma, respuesta, restricciones y
+  efectos en tablas.
+- Las pruebas de controlador validan llamadas, mapeo, orden de operaciones, transacción,
+  `commit`/`rollback` y efectos completos del caso de negocio.
+- Para compras, comprueba como mínimo cabecera, partidas, total, existencias de la
+  sucursal correcta, aislamiento de otras sucursales y rollback ante un detalle inválido,
+  tanto al registrar como al editar cuando el cambio afecte esos flujos.
+
+Si cambia intencionalmente el contrato o comportamiento de un procedimiento, actualiza
+las pruebas para reflejar la nueva regla aceptada. Si sólo cambia su implementación, las
+pruebas de comportamiento deberían seguir pasando sin relajarlas.
+
+## Comandos de verificación
+
+Usa el Maven Wrapper del repositorio:
 
 ```bash
-mysql --login-path="$KATH_DB_LOGIN_PATH" "$KATH_DB_NAME"
+# Cambios Java sin JDBC
+./mvnw --batch-mode --no-transfer-progress test
+
+# Cambios JDBC, schema, procedimientos o pruebas de integración; requiere Docker
+./mvnw --batch-mode --no-transfer-progress verify
 ```
 
-### Opción por variables de entorno
-
-Si no existe login-path, usa las variables `KATH_DB_HOST`, `KATH_DB_PORT`, `KATH_DB_USER`, `KATH_DB_PASSWORD` y `KATH_DB_NAME`.
-
-No imprimas ni incluyas `KATH_DB_PASSWORD` en logs, commits, PRs o respuestas.
-
-Antes de aplicar cambios SQL, verifica como mínimo:
-
-```sql
-SELECT DATABASE();
-SELECT VERSION();
-```
-
-y confirma que la base activa corresponde a `KATH_DB_NAME`.
-
-### Seguridad de la base local
-
-Está prohibido, salvo autorización explícita del usuario:
-
-- `DROP DATABASE`.
-- Eliminar una base completa.
-- Vaciar tablas de desarrollo con `TRUNCATE`.
-- Borrar masivamente datos reales para preparar tests.
-- Modificar bases diferentes de `KATH_DB_NAME`.
-- Usar credenciales de `root` si existe un usuario específico de desarrollo/pruebas.
-
-Si una migración o cambio de esquema puede provocar pérdida de datos, detente y solicita autorización antes de ejecutarlo sobre la base de desarrollo.
-
-Las operaciones destructivas necesarias para pruebas deben ejecutarse únicamente sobre una base desechable/de test.
-
-## 7. Flujo para crear o modificar un Stored Procedure local
-
-Antes de editar Java, sigue este proceso:
-
-```text
-schema/tablas relacionadas
-        -> SP actual
-        -> definición nueva del SP
-        -> archivo SQL del módulo
-        -> aplicar SP en BD local
-        -> ejecutar consulta/prueba del SP
-        -> modelos Java
-        -> controlador
-        -> vista
-        -> tests
-```
-
-Para reemplazar un procedimiento existente, utiliza el patrón compatible con el archivo SQL del módulo, por ejemplo `DROP PROCEDURE IF EXISTS` + `CREATE PROCEDURE` cuando corresponda.
-
-Después de aplicar el procedimiento, verifica:
-
-- firma y número de parámetros;
-- tipos de parámetros;
-- columnas y aliases del ResultSet;
-- comportamiento con datos existentes;
-- errores esperados;
-- efectos sobre tablas relacionadas;
-- transacción y rollback si existen múltiples escrituras.
-
-No inventes columnas, nombres de tablas ni relaciones. Inspecciona el esquema real.
-
-## 8. MVC
-
-Respeta MVC clásico.
-
-### Model
-
-Los modelos representan datos y respuestas. No introduzcas lógica de UI dentro del modelo.
-
-### Controller
-
-Los controladores coordinan acceso a Stored Procedures y mapeo de resultados.
-
-No pongas componentes Swing dentro de nuevos controladores.
-
-Evita introducir lógica visual en controladores nuevos. Si el código legado ya contiene `JOptionPane` dentro de un controlador, no uses ese hecho como patrón para código nuevo.
-
-### View
-
-La vista:
-
-- captura interacción del usuario;
-- valida datos de presentación;
-- llama al controlador;
-- actualiza componentes visuales.
-
-No implementes SQL en la vista.
-
-## 9. Reglas estrictas de Swing/UI
-
-NO modifiques la UI salvo que el usuario lo solicite de forma tácita y explícita para componentes concretos.
-
-Sin autorización expresa está prohibido:
-
-- cambiar la distribución de componentes;
-- mover componentes;
-- cambiar `GroupLayout`;
-- cambiar layouts existentes;
-- cambiar tamaños;
-- cambiar colores;
-- cambiar fuentes;
-- cambiar iconos;
-- cambiar bordes;
-- rediseñar formularios;
-- crear una nueva distribución visual;
-- reorganizar paneles;
-- modificar componentes no relacionados con la tarea.
-
-Sí puedes, cuando la tarea lo requiere:
-
-- agregar `ActionListener`;
-- agregar `KeyListener`, InputMap/ActionMap o listeners de modelos;
-- agregar validaciones;
-- cambiar texto dinámicamente;
-- cargar modelos de tabla o combo;
-- habilitar/deshabilitar componentes;
-- agregar comportamiento funcional sin alterar su posición/distribución.
-
-Si una funcionalidad solicitada exige inevitablemente una modificación de layout, informa al usuario antes de hacerla.
-
-## 10. Compatibilidad con Eclipse WindowBuilder
-
-Los formularios Swing deben permanecer editables con Eclipse WindowBuilder.
-
-Cuando agregues componentes Swing que pertenezcan al formulario:
-
-- decláralos como campos de clase antes del constructor;
-- inicialízalos dentro del constructor o métodos de construcción ya existentes;
-- conserva el patrón estructural del formulario;
-- evita convertir componentes existentes en variables locales si WindowBuilder espera campos;
-- no reescribas el `GroupLayout` si no es necesario.
-
-No reformatees masivamente clases Swing generadas o mantenidas por WindowBuilder.
-
-## 11. `Fr_principal`
-
-`Fr_principal` es un archivo sensible por su alcance y tamaño.
-
-No lo modifiques salvo que:
-
-- el usuario lo pida explícitamente; o
-- una tarea requiera necesariamente registrar/mostrar un nuevo módulo y el usuario haya autorizado esa integración.
-
-Si el usuario indica que hará la integración manualmente en `Fr_principal`, no lo toques.
-
-## 12. Tablas Swing
-
-Cuando una tabla tenga columnas no editables, no habilites edición global.
-
-Si solo una columna debe ser editable, implementa esa regla explícitamente mediante el `TableModel` y/o editores por columna.
-
-No uses utilidades que deshabiliten todos los editores si la tarea requiere conservar una columna editable.
-
-Al modificar cantidades, precios o importes, evita acumuladores incrementales frágiles cuando sea posible. Prefiere recalcular los totales desde el estado actual de la tabla para evitar inconsistencias.
-
-## 13. Reglas Git
-
-### Rama base
-
-Por defecto, todo trabajo nuevo parte de `dev`.
-
-No trabajes directamente sobre `main`.
-No trabajes directamente sobre `dev`.
-
-Antes de crear una rama, verifica que `dev` exista y utiliza su HEAD actual.
-
-### Nueva rama
-
-Cada trabajo nuevo debe realizarse en una rama nueva, usando nomenclatura Git convencional, por ejemplo:
-
-```text
-feat/modulo-descripcion
-fix/modulo-descripcion
-refactor/modulo-descripcion
-test/modulo-descripcion
-chore/descripcion
-docs/descripcion
-```
-
-Excepción: si el usuario dice explícitamente que continúes sobre una rama existente, trabaja sobre esa misma rama.
-
-### Commits
-
-Usa Conventional Commits:
-
-```text
-feat(...): ...
-fix(...): ...
-refactor(...): ...
-test(...): ...
-chore(...): ...
-docs(...): ...
-```
-
-Mantén los commits cohesionados. No mezcles cambios no relacionados.
-
-### Pull Requests
-
-Por defecto, abre la PR contra `dev`.
-
-No abras una PR duplicada si ya existe una PR con la misma rama head/base. Actualiza la existente.
-
-No cambies la base de una PR existente sin una razón explícita.
-
-No hagas merge automáticamente salvo que el usuario lo solicite.
-
-### Historial
-
-No uses force-push, reset destructivo ni reescritura de historial remoto salvo autorización explícita del usuario.
-
-No introduzcas commits temporales/no-op en `main` o `dev` para crear ramas.
-
-## 14. Alcance de los cambios
-
-Modifica únicamente los archivos necesarios para la tarea.
-
-No hagas refactors oportunistas.
-No renombres clases, métodos, variables, tablas o procedimientos sin que sea necesario.
-No corrijas estilo general del proyecto durante una tarea funcional.
-No agregues dependencias porque "serían mejores" si el problema puede resolverse con el stack actual.
-
-Si detectas deuda técnica fuera del alcance, repórtala por separado; no la mezcles silenciosamente con la implementación.
-
-## 15. Código Java
-
-Usa Java 21, pero conserva compatibilidad con el estilo existente del proyecto.
-
-Reglas generales:
-
-- nombres descriptivos;
-- evita `null` ambiguos cuando exista un contrato más claro;
-- usa tipos numéricos adecuados para dinero cuando se implemente lógica nueva; preferir `BigDecimal` para cálculos monetarios nuevos;
-- no cambies automáticamente código existente basado en `double` si no forma parte del alcance;
-- no introduzcas APIs obsoletas;
-- no captures `Exception` genérica en código nuevo si puede manejarse un tipo específico razonablemente;
-- no suprimas errores silenciosamente.
-
-Cuando mapees un ResultSet, usa los aliases/nombres reales retornados por el SP.
-
-## 16. Dinero e impuestos
-
-No inventes reglas contables o fiscales.
-
-Para cálculos monetarios nuevos, preferir `BigDecimal` y redondeo explícito.
-
-Si el costo/precio ya incluye IVA y debe separarse, el cálculo general para una tasa del 16% es:
-
-```text
-base = importeConIVA / 1.16
-iva = importeConIVA - base
-```
-
-Los artículos marcados como exentos no generan IVA.
-
-Esta regla solo debe aplicarse donde el flujo de negocio indique que el importe incluye IVA; no la generalices a todos los módulos sin verificar el contexto.
-
-## 17. Tests
-
-Después de cambios Java ejecuta como mínimo:
-
-```bash
-./mvnw test
-```
-
-Cuando existan cambios en Stored Procedures, schema o integración JDBC, ejecuta además las pruebas de integración correspondientes y preferiblemente:
-
-```bash
-./mvnw verify
-```
-
-En Windows puede utilizarse `mvnw.cmd`.
-
-No afirmes que las pruebas pasaron si no fueron ejecutadas.
-
-Si una prueba falla:
-
-1. determina si el fallo proviene del cambio;
-2. corrige el problema si está dentro del alcance;
-3. vuelve a ejecutar la prueba;
-4. si no puede resolverse, reporta exactamente qué falló y por qué.
-
-## 18. Tests con base de datos
-
-Las pruebas de integración deben utilizar una base desechable/de test siempre que puedan modificar datos destructivamente.
-
-No adaptes una prueba para que dependa del estado arbitrario de la base de desarrollo del usuario.
-
-Los fixtures deben ser deterministas.
-
-Cuando una prueba valida una operación de negocio con Stored Procedures, comprueba también los efectos relevantes, por ejemplo:
-
-- registro principal;
-- detalle;
-- existencias;
-- estado activo/inactivo;
-- sucursal correcta;
-- totales/importes cuando corresponda.
-
-## 19. Sincronización entre BD local y repositorio
-
-Cuando Codex cree o modifique un Stored Procedure en la base local, la tarea no está terminada hasta que la definición versionada correspondiente también se actualice.
-
-Antes de finalizar:
-
-1. compara el SP local con el archivo SQL versionado;
-2. confirma que las firmas coinciden;
-3. confirma que los aliases/columnas retornados coinciden con el controlador Java;
-4. asegura que no queden cambios SQL únicamente en la base local;
-5. incluye el SQL correspondiente en el commit/PR.
-
-Nunca dejes como única fuente de verdad una modificación realizada manualmente en MySQL.
-
-## 20. Schema
-
-Antes de modificar tablas:
-
-- inspecciona `database/schema.sql`;
-- inspecciona el schema real local;
-- revisa claves foráneas;
-- revisa tipos signed/unsigned;
-- revisa UNIQUE e índices;
-- revisa `AUTO_INCREMENT`;
-- revisa nombres reales de columnas, incluso si contienen errores históricos de nomenclatura.
-
-No "corrijas" nombres históricos de columnas solamente por estética, porque puede romper procedimientos y Java existentes.
-
-Si se modifica el schema local autorizado, actualiza `database/schema.sql` dentro del mismo trabajo cuando ese archivo represente el schema vigente del proyecto.
-
-## 21. Revisión antes de terminar
-
-Antes de declarar una tarea completa:
-
-1. revisa `git diff`;
-2. verifica que no haya cambios ajenos al alcance;
-3. ejecuta `git diff --check` cuando sea posible;
-4. ejecuta tests relevantes;
-5. verifica Stored Procedures locales si fueron modificados;
-6. verifica sincronización SQL repositorio/BD;
-7. confirma rama y base de PR;
-8. confirma que no se modificó UI/layout sin autorización;
-9. confirma que no se introdujo SQL de negocio directo en Java;
-10. resume claramente lo implementado y las pruebas ejecutadas.
-
-## 22. Definition of Done
-
-Una tarea se considera terminada solamente cuando:
-
-- respeta la arquitectura Stored Procedure -> Model -> Controller -> View;
-- el procedimiento existe y ha sido validado cuando la tarea lo requiere;
-- el SQL queda versionado;
-- Java compila;
-- las pruebas relevantes pasan o los fallos están documentados;
-- no existen cambios de UI no autorizados;
-- no existen cambios ajenos al alcance;
-- los commits siguen Conventional Commits;
-- la PR apunta a la rama solicitada, por defecto `dev`.
-
-## 23. Regla de prioridad
-
-Si el usuario da una instrucción explícita que contradice una regla operativa de este archivo para una tarea concreta, sigue la instrucción del usuario siempre que sea técnicamente segura.
-
-No interpretes una petición funcional como permiso implícito para rediseñar UI, cambiar arquitectura, eliminar datos o reescribir historial Git.
+En Windows usa `mvnw.cmd`. No afirmes que una comprobación pasó si no la ejecutaste;
+indica el comando omitido y el motivo. Para cambios sólo de documentación ejecuta al
+menos `git diff --check` y revisa el diff.
+
+## GitHub Actions
+
+- GitHub Actions se usa únicamente para CI, no para desplegar ni publicar Kath ERP.
+- El workflow actual se ejecuta en PR hacia `dev` y corre `./mvnw ... verify` sobre Linux
+  con Java 21 y Docker disponible.
+- Mantén permisos mínimos y fija acciones de terceros a un SHA completo.
+- Un resultado verde de CI confirma las comprobaciones automatizadas incluidas; no
+  garantiza por sí solo la apariencia o interacción de Swing ni casos no cubiertos.
+
+## Git y límites de autorización
+
+- Parte del HEAD actual de `dev` y trabaja en una rama nueva, salvo que el usuario pida
+  continuar una rama existente. No trabajes directamente en `main` ni `dev`.
+- Usa nombres de rama convencionales (`feat/`, `fix/`, `refactor/`, `test/`, `chore/` o
+  `docs/`) y Conventional Commits.
+- No mezcles cambios no relacionados ni hagas refactors oportunistas.
+- Stage, commit, push, creación o modificación de PR y merge requieren autorización
+  explícita del usuario. Una autorización para una acción no implica las posteriores.
+- Por defecto, una PR autorizada se crea como draft hacia `dev`, salvo que el usuario
+  indique otra base o estado.
+- No uses force-push, rebase de una rama publicada, reset destructivo ni reescritura de
+  historial remoto sin autorización explícita.
+
+## Code Review Rules
+
+Al revisar cambios, señala como defectos de alta prioridad:
+
+- SQL o acceso JDBC nuevo dentro de vistas o modelos;
+- transacciones parciales, sin rollback o que actualizan la sucursal incorrecta;
+- cambios de contrato SQL no reflejados en controladores y pruebas;
+- un procedimiento duplicado entre archivos modulares o cargado desde el dump histórico;
+- pruebas de integración dependientes de una base real, datos no deterministas o Internet;
+- cálculos de importes inconsistentes entre cabecera y partidas;
+- cambios visuales o refactors amplios que no forman parte de la petición.
+
+No conviertas preferencias de formato en bloqueos de revisión si Maven y el código no
+tienen una regla automática equivalente.
+
+## Definition of Done
+
+Antes de declarar una tarea terminada:
+
+1. Revisa `git diff` y confirma que sólo contiene cambios del alcance solicitado.
+2. Ejecuta `git diff --check` y las pruebas aplicables.
+3. Si cambió SQL, confirma que está en su archivo modular canónico y que las pruebas
+   construyen una base desechable desde cero.
+4. Si cambió un controlador, verifica firma, mapeo, transacción y manejo de errores.
+5. Si cambió Swing, conserva WindowBuilder y documenta la validación manual pendiente o
+   realizada.
+6. Resume archivos modificados, comportamiento cubierto, comandos ejecutados y cualquier
+   limitación real.
