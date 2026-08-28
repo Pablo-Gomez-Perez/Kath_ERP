@@ -1,4 +1,4 @@
-name: Database integration tests
+name: Purchase database integration tests
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Maven verify with MySQL 8
+    name: Validate purchase create and update flows
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -26,5 +26,5 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Run unit and integration tests
+      - name: Run stored procedure and controller validations
         run: ./mvnw --batch-mode --no-transfer-progress verify

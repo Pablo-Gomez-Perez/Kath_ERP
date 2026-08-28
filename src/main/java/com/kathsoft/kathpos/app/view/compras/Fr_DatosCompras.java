@@ -9,9 +9,18 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
@@ -43,8 +52,12 @@ import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
+import com.kathsoft.kathpos.app.model.compra.ArticuloPorCompra;
+import com.kathsoft.kathpos.app.model.compra.Compra;
+import com.kathsoft.kathpos.app.model.compra.CompraConDetalle;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
@@ -58,6 +71,8 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private static final int COLUMNA_COSTO_UNITARIO = 3;
 	private static final int COLUMNA_SUBTOTAL = 4;
 	private static final double FACTOR_IVA = 1.16;
+	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+			.withResolverStyle(ResolverStyle.STRICT);
 	private int idSucursal;
 	private ArticuloByCodigo articuloConsultado;
 	private Map<String, ArticuloByCodigo> articulosPorCodigo;
@@ -423,10 +438,12 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 		this.btnCancelar = new JButton("Cancelar");
 		this.btnCancelar.setToolTipText("Cerrar form y cancelar operacion");
+		this.btnCancelar.addActionListener(e -> this.dispose());
 		this.panelInferiorBotones.add(this.btnCancelar);
 
 		this.btnGuardarCompra = new JButton("Guardar");
 		this.btnGuardarCompra.setToolTipText("Guardar compra");
+		this.btnGuardarCompra.addActionListener(e -> this.guardarNuevaCompra());
 		this.panelInferiorBotones.add(this.btnGuardarCompra);
 
 	}
@@ -687,6 +704,132 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.txfSubTotal.setText(String.format("%.2f", this.subtotalCompra));
 		this.txfIva.setText(String.format("%.2f", this.ivaCompra));
 		this.lblTotalCompra.setText(String.format("$%.2f", totalCompra));
+	}
+
+	private void guardarNuevaCompra() {
+		if (this.tableArticulosListados.isEditing() && this.tableArticulosListados.getCellEditor() != null
+				&& !this.tableArticulosListados.getCellEditor().stopCellEditing()) {
+			JOptionPane.showMessageDialog(this, "No fue posible confirmar la edición de la cantidad del artículo",
+					"Cantidad inválida", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		try {
+			CompraConDetalle compraConDetalle = this.construirNuevaCompraDesdeFormulario();
+			SpResponseModel respuesta = AppContext.compraController.insertCompra(this.idSucursal, compraConDetalle);
+
+			if (respuesta == null || respuesta.id() <= 0 || respuesta.id() == 500) {
+				String mensaje = respuesta == null ? "No se recibió respuesta al registrar la compra" : respuesta.message();
+				JOptionPane.showMessageDialog(this, mensaje, "No fue posible registrar la compra",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			this.txfIdCompra.setText(String.valueOf(respuesta.id()));
+			JOptionPane.showMessageDialog(this,
+					respuesta.message() + "\nID de compra: " + respuesta.id(), "Compra registrada",
+					JOptionPane.INFORMATION_MESSAGE);
+			this.dispose();
+		} catch (IllegalArgumentException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos incompletos", JOptionPane.WARNING_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error al registrar la compra: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private CompraConDetalle construirNuevaCompraDesdeFormulario() {
+		if (this.idSucursal <= 0) {
+			throw new IllegalArgumentException("No existe una sucursal válida para registrar la compra");
+		}
+
+		String folioFactura = this.txfFolioFactura.getText() == null ? "" : this.txfFolioFactura.getText().trim();
+		if (folioFactura.isEmpty()) {
+			throw new IllegalArgumentException("El folio de factura es obligatorio");
+		}
+		if (folioFactura.length() > 13) {
+			throw new IllegalArgumentException("El folio de factura no puede exceder 13 caracteres");
+		}
+
+		JComboboxDataViewModel proveedor = (JComboboxDataViewModel) this.comboBoxProveedor.getSelectedItem();
+		if (proveedor == null || proveedor.id() <= 0) {
+			throw new IllegalArgumentException("Debe seleccionar un proveedor");
+		}
+
+		JComboboxDataViewModel empleado = (JComboboxDataViewModel) this.comboBoxEmpleado.getSelectedItem();
+		if (empleado == null || empleado.id() <= 0) {
+			throw new IllegalArgumentException("Debe seleccionar el empleado que recibe la compra");
+		}
+
+		Boolean tipoCompra = this.getTipoCompraSeleccionado();
+		if (tipoCompra == null) {
+			throw new IllegalArgumentException("Debe indicar si la compra es de contado o a crédito");
+		}
+
+		Date fechaFactura = this.obtenerFecha(this.formattedTextFieldFechaFactura, "La fecha de factura");
+		Date fechaCompra = this.obtenerFecha(this.formattedTextFieldFechaDeCompra, "La fecha de compra");
+
+		this.recalcularImportesDesdeTabla(false);
+		List<ArticuloPorCompra> articulos = this.construirArticulosPorCompra();
+
+		Compra compra = new Compra.CompraBuilder().idEmpleado(empleado.id()).idProveedor(proveedor.id())
+				.folioFactura(folioFactura).fechaFactura(fechaFactura).fechaCompra(fechaCompra)
+				.tipoCompra(tipoCompra.booleanValue()).subtotal(this.subtotalCompra).iva(this.ivaCompra).activo(true)
+				.build();
+
+		return new CompraConDetalle(compra, articulos);
+	}
+
+	private List<ArticuloPorCompra> construirArticulosPorCompra() {
+		if (this.modelTablaArticulosListados.getRowCount() <= 0) {
+			throw new IllegalArgumentException("Debe agregar al menos un artículo a la compra");
+		}
+
+		List<ArticuloPorCompra> articulos = new ArrayList<>();
+		Set<Integer> idsArticulos = new HashSet<>();
+
+		for (int fila = 0; fila < this.modelTablaArticulosListados.getRowCount(); fila++) {
+			String codigo = String.valueOf(this.modelTablaArticulosListados.getValueAt(fila, COLUMNA_CODIGO)).trim();
+			ArticuloByCodigo articulo = this.articulosPorCodigo.get(codigo);
+			if (articulo == null || articulo.getIdArticulo() <= 0) {
+				throw new IllegalArgumentException("No fue posible identificar el artículo de la fila " + (fila + 1));
+			}
+			if (!idsArticulos.add(articulo.getIdArticulo())) {
+				throw new IllegalArgumentException("El artículo " + codigo + " está repetido en la compra");
+			}
+
+			int cantidad;
+			try {
+				cantidad = this.obtenerCantidadFila(fila);
+			} catch (NumberFormatException er) {
+				throw new IllegalArgumentException("La cantidad del artículo " + codigo + " debe ser un entero mayor a cero");
+			}
+
+			double importeConIva = this.obtenerDoubleFila(fila, COLUMNA_SUBTOTAL);
+			if (!Double.isFinite(importeConIva) || importeConIva < 0) {
+				throw new IllegalArgumentException("El importe del artículo " + codigo + " no es válido");
+			}
+
+			double subtotalDetalle = articulo.isExento() ? importeConIva : importeConIva / FACTOR_IVA;
+			articulos.add(new ArticuloPorCompra.ArticuloPorCompraBuilder().idArticulo(articulo.getIdArticulo())
+					.cantidad(cantidad).subtotal(subtotalDetalle).build());
+		}
+
+		return articulos;
+	}
+
+	private Date obtenerFecha(JFormattedTextField campo, String nombreCampo) {
+		String texto = campo.getText() == null ? "" : campo.getText().trim();
+		if (texto.isEmpty() || texto.indexOf('_') >= 0) {
+			throw new IllegalArgumentException(nombreCampo + " es obligatoria");
+		}
+
+		try {
+			return Date.valueOf(LocalDate.parse(texto, FORMATO_FECHA));
+		} catch (DateTimeParseException er) {
+			throw new IllegalArgumentException(nombreCampo + " debe tener una fecha válida con formato dd/MM/yyyy");
+		}
 	}
 
 	private void limpiarArticuloConsultado() {
