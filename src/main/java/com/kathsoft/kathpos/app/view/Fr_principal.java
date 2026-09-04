@@ -363,7 +363,7 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelVentas");
 				panelPrincipalContenedor.updateUI();
 
-				panelVentas.llenarTablaVentas(1);
+				//panelVentas.llenarTablaVentas(1);
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
