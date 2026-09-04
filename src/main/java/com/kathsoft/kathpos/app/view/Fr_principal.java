@@ -121,7 +121,7 @@ public class Fr_principal extends JFrame {
 	private PanelMarcas panelMarcas;
 	private JButton btnCalculadora;
 	private PanelVentas panelVentas;
-	private JPanel panelCompras;
+	private PanelCompras panelCompras;
 	private JButton btn_irAVentas;
 	private JSeparator separator;
 	private JMenuItem opcionCerrarSesion;
@@ -372,6 +372,13 @@ public class Fr_principal extends JFrame {
 		this.menuOperaciones.add(this.subMenuCompras);
 		
 		this.opcionRegistrarCompra = new JMenuItem("Registrar");
+		this.opcionRegistrarCompra.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				panelCompras.abrirFormCompras(sucursal.getIdSucursal());
+				
+			}
+		});
 		this.subMenuCompras.add(this.opcionRegistrarCompra);
 		
 		this.opcionConsultarCompra = new JMenuItem("Consultar");

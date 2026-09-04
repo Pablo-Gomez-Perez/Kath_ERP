@@ -377,7 +377,7 @@ public class PanelCompras extends JPanel {
 		return (TipoCompraFiltro) this.cmbTipoCompra.getSelectedItem();
 	}
 
-	private void abrirFormCompras(int idSucursal) {
+	public void abrirFormCompras(int idSucursal) {
 		JComponent cmp = this;
 		try {
 
