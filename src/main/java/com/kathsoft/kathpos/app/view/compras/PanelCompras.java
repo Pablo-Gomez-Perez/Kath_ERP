@@ -114,6 +114,7 @@ public class PanelCompras extends JPanel {
 		this.panelBotones.add(this.btnAgregar);
 
 		this.btnActualizar = new JButton("Actualizar");
+		this.btnActualizar.addActionListener(e -> this.abrirCompraSeleccionada());
 		this.btnActualizar.setIcon(
 				new ImageIcon(PanelCompras.class.getResource("/com/kathsoft/kathpos/app/assets/actualizar_ico.png")));
 		this.btnActualizar.setBackground(new Color(144, 238, 144));
@@ -377,7 +378,42 @@ public class PanelCompras extends JPanel {
 		return (TipoCompraFiltro) this.cmbTipoCompra.getSelectedItem();
 	}
 
+	private void abrirCompraSeleccionada() {
+		int filaSeleccionada = this.tablaCompras.getSelectedRow();
+		if (filaSeleccionada < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione una compra para actualizar");
+			return;
+		}
+
+		int filaModelo = this.tablaCompras.convertRowIndexToModel(filaSeleccionada);
+		int idCompra = this.obtenerIdCompraSeleccionada(filaModelo);
+		if (idCompra <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"No fue posible identificar la compra seleccionada");
+			return;
+		}
+
+		this.abrirFormCompras(this.idSucursal, idCompra);
+	}
+
+	private int obtenerIdCompraSeleccionada(int filaModelo) {
+		Object valor = this.modelTablaCompras.getValueAt(filaModelo, 0);
+		if (valor instanceof Number numero) {
+			return numero.intValue();
+		}
+
+		try {
+			return Integer.parseInt(String.valueOf(valor).trim());
+		} catch (NumberFormatException er) {
+			return 0;
+		}
+	}
+
 	public void abrirFormCompras(int idSucursal) {
+		this.abrirFormCompras(idSucursal, 0);
+	}
+
+	public void abrirFormCompras(int idSucursal, int idCompra) {
 		JComponent cmp = this;
 		try {
 
@@ -387,7 +423,8 @@ public class PanelCompras extends JPanel {
 
 					try {
 
-						Fr_DatosCompras form = new Fr_DatosCompras(idSucursal);
+						Fr_DatosCompras form = idCompra > 0 ? new Fr_DatosCompras(idSucursal, idCompra)
+								: new Fr_DatosCompras(idSucursal);
 						form.setLocationRelativeTo(cmp);
 						form.setVisible(true);
 						form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

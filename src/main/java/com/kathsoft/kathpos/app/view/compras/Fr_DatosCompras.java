@@ -51,9 +51,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
+import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
+import com.kathsoft.kathpos.app.model.compra.ArticuloCompraListado;
 import com.kathsoft.kathpos.app.model.compra.ArticuloPorCompra;
 import com.kathsoft.kathpos.app.model.compra.Compra;
+import com.kathsoft.kathpos.app.model.compra.CompraById;
 import com.kathsoft.kathpos.app.model.compra.CompraConDetalle;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
@@ -74,6 +77,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/uuuu")
 			.withResolverStyle(ResolverStyle.STRICT);
 	private int idSucursal;
+	private int idCompraCargada;
 	private ArticuloByCodigo articuloConsultado;
 	private Map<String, ArticuloByCodigo> articulosPorCodigo;
 	private boolean actualizandoImportes;
@@ -443,7 +447,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 		this.btnGuardarCompra = new JButton("Guardar");
 		this.btnGuardarCompra.setToolTipText("Guardar compra");
-		this.btnGuardarCompra.addActionListener(e -> this.guardarNuevaCompra());
+		this.btnGuardarCompra.addActionListener(e -> this.guardarCompra());
 		this.panelInferiorBotones.add(this.btnGuardarCompra);
 
 	}
@@ -460,6 +464,148 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.idSucursal = idSucursal;
 		this.llenarComboBoxEmpleado();
 		this.cargarSiguienteIdCompra();
+	}
+
+	/**
+	 * Crea el formulario con una compra existente para consulta desde el módulo de
+	 * compras.
+	 *
+	 * @param idSucursal sucursal desde la que se abrió el módulo
+	 * @param idCompra identificador de la compra seleccionada
+	 */
+	public Fr_DatosCompras(int idSucursal, int idCompra) {
+		this();
+		this.idSucursal = idSucursal;
+		this.llenarComboBoxEmpleado();
+		this.cargarCompraSeleccionada(idCompra);
+	}
+
+	private void cargarCompraSeleccionada(int idCompra) {
+		if (this.idSucursal <= 0) {
+			throw new IllegalArgumentException("No existe una sucursal válida para consultar la compra");
+		}
+		if (idCompra <= 0) {
+			throw new IllegalArgumentException("La compra seleccionada no es válida");
+		}
+
+		CompraById compra = AppContext.compraController.getCompraById(idCompra);
+		if (compra == null || compra.getIdCompra() <= 0) {
+			throw new IllegalArgumentException("No se encontró la compra seleccionada");
+		}
+		if (compra.getIdSucursal() != this.idSucursal) {
+			throw new IllegalArgumentException("La compra seleccionada no pertenece a la sucursal actual");
+		}
+
+		List<ArticuloCompraListado> detalles = AppContext.compraController.listArticulosCompraById(idCompra);
+
+		this.idCompraCargada = compra.getIdCompra();
+		this.txfIdCompra.setText(String.valueOf(compra.getIdCompra()));
+		this.txfFolioFactura.setText(compra.getFolioFactura());
+		this.formattedTextFieldFechaFactura.setText(this.formatearFecha(compra.getFechaFactura()));
+		this.formattedTextFieldFechaDeCompra.setText(this.formatearFecha(compra.getFechaCompra()));
+		this.seleccionarProveedorCompra(compra.getIdProveedor());
+		this.seleccionarEmpleadoCompra(compra);
+
+		if (compra.isTipoCompra()) {
+			this.rdbtnCredito.setSelected(true);
+		} else {
+			this.rdbtnContado.setSelected(true);
+		}
+
+		this.articuloConsultado = null;
+		this.articulosPorCodigo.clear();
+		this.modelTablaArticulosListados.setRowCount(0);
+		for (ArticuloCompraListado detalle : detalles) {
+			this.cargarDetalleCompra(detalle);
+		}
+
+		this.subtotalCompra = compra.getSubtotal();
+		this.ivaCompra = compra.getIva();
+		this.actualizarTotalesCompra();
+	}
+
+	private void seleccionarProveedorCompra(int idProveedor) {
+		if (this.seleccionarComboPorId(this.comboBoxProveedor, idProveedor)) {
+			return;
+		}
+
+		var proveedor = AppContext.proveedorController.buscarProveedorPorId(idProveedor);
+		if (proveedor == null || proveedor.getIdProveedor() <= 0) {
+			throw new IllegalArgumentException("No fue posible cargar el proveedor de la compra");
+		}
+
+		JComboboxDataViewModel item = new JComboboxDataViewModel(proveedor.getIdProveedor(), proveedor.getNombre());
+		this.comboBoxProveedor.addItem(item);
+		this.comboBoxProveedor.setSelectedItem(item);
+	}
+
+	private void seleccionarEmpleadoCompra(CompraById compra) {
+		if (this.seleccionarComboPorId(this.comboBoxEmpleado, compra.getIdEmpleado())) {
+			return;
+		}
+
+		String nombreEmpleado = compra.getNombreCortoEmpleado();
+		if (nombreEmpleado == null || nombreEmpleado.isBlank()) {
+			nombreEmpleado = compra.getNombreEmpleado();
+		}
+		if (nombreEmpleado == null || nombreEmpleado.isBlank()) {
+			throw new IllegalArgumentException("No fue posible cargar el empleado que recibió la compra");
+		}
+
+		JComboboxDataViewModel item = new JComboboxDataViewModel(compra.getIdEmpleado(), nombreEmpleado);
+		this.comboBoxEmpleado.addItem(item);
+		this.comboBoxEmpleado.setSelectedItem(item);
+	}
+
+	private boolean seleccionarComboPorId(JComboBox<JComboboxDataViewModel> combo, int id) {
+		for (int i = 0; i < combo.getItemCount(); i++) {
+			JComboboxDataViewModel item = combo.getItemAt(i);
+			if (item != null && item.id() == id) {
+				combo.setSelectedIndex(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String formatearFecha(Date fecha) {
+		return fecha == null ? "" : fecha.toLocalDate().format(FORMATO_FECHA);
+	}
+
+	private void cargarDetalleCompra(ArticuloCompraListado detalle) {
+		if (detalle == null || detalle.getIdArticulo() <= 0 || detalle.getCantidad() <= 0) {
+			throw new IllegalArgumentException("La compra contiene un detalle de artículo inválido");
+		}
+
+		try {
+			Articulo articuloBase = AppContext.articuloController.consultarArticuloPorId(detalle.getIdArticulo(),
+					this.idSucursal);
+			if (articuloBase == null || articuloBase.getIdArticulo() <= 0) {
+				throw new IllegalArgumentException(
+						"No fue posible cargar el artículo " + detalle.getCodigoArticulo() + " de la compra");
+			}
+
+			double importeConIva = articuloBase.isExento() ? detalle.getSubtotal() : detalle.getSubtotal() * FACTOR_IVA;
+			double costoUnitario = importeConIva / detalle.getCantidad();
+			ArticuloByCodigo articulo = new ArticuloByCodigo(articuloBase.getIdArticulo(), articuloBase.getIdProvedor(),
+					articuloBase.getIdCategoria(), detalle.getCodigoArticulo(), articuloBase.getCodigoSat(),
+					articuloBase.getUnidadSat(), articuloBase.getNombre(), articuloBase.getDescripcion(),
+					articuloBase.isExento(), costoUnitario, articuloBase.isActivo(), 0);
+
+			String descripcion = articuloBase.getDescripcion();
+			if (descripcion == null || descripcion.isBlank()) {
+				descripcion = detalle.getNombreArticulo();
+			}
+
+			this.articulosPorCodigo.put(detalle.getCodigoArticulo(), articulo);
+			this.modelTablaArticulosListados.addRow(new Object[] { detalle.getCodigoArticulo(), descripcion,
+					detalle.getCantidad(), costoUnitario, importeConIva });
+		} catch (IllegalArgumentException er) {
+			throw er;
+		} catch (Exception er) {
+			throw new IllegalArgumentException(
+					"No fue posible cargar el artículo " + detalle.getCodigoArticulo() + ": " + er.getMessage(), er);
+		}
 	}
 
 	private void llenarComboBoxProveedor() {
@@ -704,6 +850,16 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.txfSubTotal.setText(String.format("%.2f", this.subtotalCompra));
 		this.txfIva.setText(String.format("%.2f", this.ivaCompra));
 		this.lblTotalCompra.setText(String.format("$%.2f", totalCompra));
+	}
+
+	private void guardarCompra() {
+		if (this.idCompraCargada > 0) {
+			JOptionPane.showMessageDialog(this,
+					"La actualización de compras existentes todavía no está habilitada en este flujo.",
+					"Compra cargada", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		this.guardarNuevaCompra();
 	}
 
 	private void guardarNuevaCompra() {
