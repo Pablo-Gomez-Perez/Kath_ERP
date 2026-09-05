@@ -31,6 +31,12 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
+import javax.swing.DropMode;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JFormattedTextField;
+import javax.swing.JComboBox;
 
 public class PanelVentas extends JPanel {
 
@@ -39,15 +45,7 @@ public class PanelVentas extends JPanel {
 	private JLabel lblNewLabel_22;
 	private JPanel panelVentasCentral;
 	private JPanel panelVentasCentralBotones;
-	private Container lblNewLabel_23;
-	private Component horizontalStrut_23;
-	private JRadioButton rdbOrdenarVtPorId;
-	private JRadioButton rdbOrdenarVtPorEmpleado;
-	private JRadioButton rdbOrdenarVtPorCliente;
-	private JRadioButton rdbOrdenarVtPorVigente;
-	private JRadioButton rdbOrdenarVtPorTipo;
 	private ButtonGroup btnRadioGroupOrdernarVentas;
-	private Component horizontalStrut_24;
 	private JButton btNuevaVenta;
 	private Sucursal sucursal;
 	private JButton btnExportarVentasExcel;
@@ -55,25 +53,17 @@ public class PanelVentas extends JPanel {
 	private DefaultTableModel modelTablaVentas;
 	private JTable tablaVentas;
 	private JPanel panelVentasCentralBuscar;
-	private Box verticalBox_2;
-	private Box horizontalBox_18;
-	private JLabel lblNewLabel_24;
-	private Component horizontalStrut_25;
-	private JTextField txfBuscarVenta;
-	private Box horizontalBox_19;
-	private JLabel lblNewLabel_25;
-	private Component horizontalStrut_26;
-	private JRadioButton rdbBuscarVtPorId;
-	private Component horizontalStrut_27;
-	private JRadioButton rdbBuscarVtPorEmpleado;
-	private Component horizontalStrut_28;
-	private JRadioButton rdbBuscarVtPorCliente;
-	private Component horizontalStrut_29;
-	private JRadioButton rdbBuscarVtPorFecha;
 	private ButtonGroup btnRadioGroupBuscarVentas;
-	private Component horizontalStrut_30;
-	private JComponent verticalBox_3;
+	private JTextField textField;
 	private JButton btnBuscarVenta;
+	private JLabel lblFInicial;
+	private JFormattedTextField formattedTextFieldFechaInicial;
+	private JLabel lblFfinal;
+	private JFormattedTextField formattedTextFieldFechaFinal;
+	private JLabel lblBuscarPor;
+	private JComboBox comboBoxBuscarPor;
+	private JLabel lblOrdernarPor;
+	private JComboBox comboBoxBuscarPor_1;
 
 	/**
 	 * Create the panel.
@@ -95,85 +85,16 @@ public class PanelVentas extends JPanel {
 		this.panelEtiquetaVentas.add(lblNewLabel_22);
 
 		this.panelVentasCentral = new JPanel();
-		this.panelVentasCentral.setBorder(new EmptyBorder(30, 30, 30, 30));
+		this.panelVentasCentral.setBorder(null);
 		this.panelVentasCentral.setBackground(new Color(255, 215, 0));
 		this.add(panelVentasCentral, BorderLayout.CENTER);
-		this.panelVentasCentral.setLayout(new BorderLayout(0, 0));
 
 		this.panelVentasCentralBotones = new JPanel();
 		this.panelVentasCentralBotones.setBackground(new Color(255, 215, 0));
 		FlowLayout flowLayout_5 = (FlowLayout) panelVentasCentralBotones.getLayout();
 		flowLayout_5.setAlignment(FlowLayout.RIGHT);
-		this.panelVentasCentral.add(panelVentasCentralBotones, BorderLayout.NORTH);
-
-		lblNewLabel_23 = new JLabel("Ordenar por");
-		this.lblNewLabel_23.setFont(new Font("Tahoma", Font.BOLD, 13));
-		this.panelVentasCentralBotones.add(lblNewLabel_23);
-
-		this.horizontalStrut_23 = Box.createHorizontalStrut(5);
-		this.panelVentasCentralBotones.add(horizontalStrut_23);
-
-		this.rdbOrdenarVtPorId = new JRadioButton("Folio");
-		this.rdbOrdenarVtPorId.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(1);
-			}
-		});
-		this.rdbOrdenarVtPorId.setFont(new Font("Tahoma", Font.BOLD, 11));
-		this.rdbOrdenarVtPorId.setSelected(true);
-		this.rdbOrdenarVtPorId.setBackground(new Color(255, 215, 0));
-		this.panelVentasCentralBotones.add(rdbOrdenarVtPorId);
-
-		this.rdbOrdenarVtPorEmpleado = new JRadioButton("Empleado");
-		this.rdbOrdenarVtPorEmpleado.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(2);
-			}
-		});
-		this.rdbOrdenarVtPorEmpleado.setFont(new Font("Tahoma", Font.BOLD, 11));
-		this.rdbOrdenarVtPorEmpleado.setBackground(new Color(255, 215, 0));
-		this.panelVentasCentralBotones.add(rdbOrdenarVtPorEmpleado);
-
-		this.rdbOrdenarVtPorCliente = new JRadioButton("Cliente");
-		this.rdbOrdenarVtPorCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(3);
-			}
-		});
-		this.rdbOrdenarVtPorCliente.setFont(new Font("Tahoma", Font.BOLD, 11));
-		this.rdbOrdenarVtPorCliente.setBackground(new Color(255, 215, 0));
-		this.panelVentasCentralBotones.add(rdbOrdenarVtPorCliente);
-
-		this.rdbOrdenarVtPorVigente = new JRadioButton("Vigente");
-		this.rdbOrdenarVtPorVigente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(4);
-			}
-		});
-		this.rdbOrdenarVtPorVigente.setFont(new Font("Tahoma", Font.BOLD, 11));
-		this.rdbOrdenarVtPorVigente.setBackground(new Color(255, 215, 0));
-		this.panelVentasCentralBotones.add(rdbOrdenarVtPorVigente);
-
-		this.rdbOrdenarVtPorTipo = new JRadioButton("Tipo");
-		this.rdbOrdenarVtPorTipo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				llenarTablaVentas(5);
-			}
-		});
-		this.rdbOrdenarVtPorTipo.setFont(new Font("Tahoma", Font.BOLD, 11));
-		this.rdbOrdenarVtPorTipo.setBackground(new Color(255, 215, 0));
-		this.panelVentasCentralBotones.add(rdbOrdenarVtPorTipo);
 
 		this.btnRadioGroupOrdernarVentas = new ButtonGroup();
-
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorId);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorEmpleado);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorCliente);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorVigente);
-		btnRadioGroupOrdernarVentas.add(this.rdbOrdenarVtPorTipo);
-
-		horizontalStrut_24 = Box.createHorizontalStrut(320);
-		panelVentasCentralBotones.add(horizontalStrut_24);
 
 		btNuevaVenta = new JButton("Punto de venta");
 		btNuevaVenta.addActionListener(new ActionListener() {
@@ -198,7 +119,6 @@ public class PanelVentas extends JPanel {
 		panelVentasCentralBotones.add(btnExportarVentasExcel);
 
 		scrollPaneTablaVentas = new JScrollPane();
-		panelVentasCentral.add(scrollPaneTablaVentas, BorderLayout.CENTER);
 
 		modelTablaVentas = new DefaultTableModel();
 		tablaVentas = new JTable();
@@ -224,94 +144,102 @@ public class PanelVentas extends JPanel {
 
 		panelVentasCentralBuscar = new JPanel();
 		panelVentasCentralBuscar.setBackground(new Color(255, 215, 0));
-		FlowLayout flowLayout_6 = (FlowLayout) panelVentasCentralBuscar.getLayout();
-		flowLayout_6.setAlignment(FlowLayout.LEFT);
-		panelVentasCentral.add(panelVentasCentralBuscar, BorderLayout.SOUTH);
-
-		verticalBox_2 = Box.createVerticalBox();
-		panelVentasCentralBuscar.add(verticalBox_2);
-
-		horizontalBox_18 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_18);
-
-		lblNewLabel_24 = new JLabel("Buscar Venta");
-		lblNewLabel_24.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_18.add(lblNewLabel_24);
-
-		horizontalStrut_25 = Box.createHorizontalStrut(20);
-		horizontalBox_18.add(horizontalStrut_25);
-
-		txfBuscarVenta = new JTextField();
-		txfBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_18.add(txfBuscarVenta);
-		txfBuscarVenta.setColumns(70);
-
-		horizontalBox_19 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_19);
-
-		lblNewLabel_25 = new JLabel("Buscar por:");
-		lblNewLabel_25.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(lblNewLabel_25);
-
-		horizontalStrut_26 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_26);
-
-		rdbBuscarVtPorId = new JRadioButton("Folio");
-		rdbBuscarVtPorId.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorId.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorId);
-
-		horizontalStrut_27 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_27);
-
-		rdbBuscarVtPorEmpleado = new JRadioButton("Empleado");
-		rdbBuscarVtPorEmpleado.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorEmpleado.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorEmpleado);
-
-		horizontalStrut_28 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_28);
-
-		rdbBuscarVtPorCliente = new JRadioButton("Cliente");
-		rdbBuscarVtPorCliente.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorCliente.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorCliente);
-
-		horizontalStrut_29 = Box.createHorizontalStrut(20);
-		horizontalBox_19.add(horizontalStrut_29);
-
-		rdbBuscarVtPorFecha = new JRadioButton("Fecha");
-		rdbBuscarVtPorFecha.setBackground(new Color(255, 215, 0));
-		rdbBuscarVtPorFecha.setFont(new Font("Tahoma", Font.BOLD, 13));
-		horizontalBox_19.add(rdbBuscarVtPorFecha);
+		
+		this.textField = new JTextField();
+		this.textField.setColumns(10);
+		
+		this.btnBuscarVenta = new JButton("Buscar");
+		this.btnBuscarVenta.setIcon(new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscarVenta.setFont(new Font("Dialog", Font.BOLD, 13));
+		this.btnBuscarVenta.setBackground(new Color(184, 134, 11));
+		
+		this.lblFInicial = new JLabel("F. inicial");
+		
+		this.formattedTextFieldFechaInicial = new JFormattedTextField();
+		
+		this.lblFfinal = new JLabel("F.Final");
+		
+		this.formattedTextFieldFechaFinal = new JFormattedTextField();
+		
+		this.lblBuscarPor = new JLabel("Buscar por");
+		
+		this.comboBoxBuscarPor = new JComboBox();
+		
+		this.lblOrdernarPor = new JLabel("Ordernar por");
+		
+		this.comboBoxBuscarPor_1 = new JComboBox();
+		GroupLayout gl_panelVentasCentralBuscar = new GroupLayout(this.panelVentasCentralBuscar);
+		gl_panelVentasCentralBuscar.setHorizontalGroup(
+			gl_panelVentasCentralBuscar.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
+							.addComponent(this.textField, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblFInicial)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.formattedTextFieldFechaInicial, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblFfinal)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.formattedTextFieldFechaFinal, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+						.addGroup(Alignment.TRAILING, gl_panelVentasCentralBuscar.createSequentialGroup()
+							.addComponent(this.lblBuscarPor)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.comboBoxBuscarPor, 0, 186, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.lblOrdernarPor)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.comboBoxBuscarPor_1, 0, 186, Short.MAX_VALUE)
+							.addGap(89)
+							.addComponent(this.btnBuscarVenta, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
+		);
+		gl_panelVentasCentralBuscar.setVerticalGroup(
+			gl_panelVentasCentralBuscar.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.formattedTextFieldFechaFinal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblFfinal)
+						.addComponent(this.formattedTextFieldFechaInicial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblFInicial))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.btnBuscarVenta, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblBuscarPor)
+						.addComponent(this.comboBoxBuscarPor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblOrdernarPor)
+						.addComponent(this.comboBoxBuscarPor_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		this.panelVentasCentralBuscar.setLayout(gl_panelVentasCentralBuscar);
 
 		btnRadioGroupBuscarVentas = new ButtonGroup();
 
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorId);
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorEmpleado);
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorCliente);
-		btnRadioGroupBuscarVentas.add(this.rdbBuscarVtPorFecha);
-
-		horizontalStrut_30 = Box.createHorizontalStrut(460);
-		horizontalBox_19.add(horizontalStrut_30);
-
-		verticalBox_3 = Box.createVerticalBox();
-		verticalBox_3.setBorder(new EmptyBorder(10, 30, 10, 10));
-		panelVentasCentralBuscar.add(verticalBox_3);
-
-		btnBuscarVenta = new JButton("Buscar");
-		btnBuscarVenta.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buscarVentasPor();
-			}
-		});
-		btnBuscarVenta.setIcon(
-				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		btnBuscarVenta.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnBuscarVenta.setBackground(new Color(184, 134, 11));
-		verticalBox_3.add(btnBuscarVenta);
-
 		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaVentasColumnsWidth, tablaVentas);
+		GroupLayout gl_panelVentasCentral = new GroupLayout(this.panelVentasCentral);
+		gl_panelVentasCentral.setHorizontalGroup(
+			gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelVentasCentral.createSequentialGroup()
+					.addGroup(gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.panelVentasCentralBotones, GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+						.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+						.addComponent(this.panelVentasCentralBuscar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addGap(0))
+		);
+		gl_panelVentasCentral.setVerticalGroup(
+			gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelVentasCentral.createSequentialGroup()
+					.addComponent(this.panelVentasCentralBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.panelVentasCentralBuscar, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
+		);
+		this.panelVentasCentral.setLayout(gl_panelVentasCentral);
 	}
 
 	/**
@@ -336,26 +264,6 @@ public class PanelVentas extends JPanel {
 		this.tablaVentas.updateUI();
 	}
 
-	/**
-	 * busca las ventas en la db de acuerdo al RadioButton seleccionado
-	 */
-	private void buscarVentasPor() {
-		this.borrarElementosDeLaTablaVentas();
-		AppContext.ventasController.buscarVentasPor(this.txfBuscarVenta.getText(), this.opcionDeBusquedaDeVenta())
-				.forEach(data -> {
-					this.modelTablaVentas.addRow(data);
-				});
-		;
-	}
-
-	public void llenarTablaVentas(int opcion) {
-		this.borrarElementosDeLaTablaVentas();
-		AppContext.ventasController.verVentasEnTabla(opcion, this.sucursal.getIdSucursal()).forEach(data -> {
-			this.modelTablaVentas.addRow(data);
-		});
-		;
-	}
-
 	public void exportarVentaExcel() {
 		try {
 			DataTools.exportarTablaExcel(modelTablaVentas, this);
@@ -365,27 +273,5 @@ public class PanelVentas extends JPanel {
 					"Error de escritura en fichero CSV: " + er.getMessage());
 			er.printStackTrace();
 		}
-	}
-
-	/**
-	 * en función del RadioButton seleccionado retorna el criterio de busqueda de
-	 * las ventas registradas en la base de datos
-	 * 
-	 * @return el criterio de busqueda
-	 */
-	private int opcionDeBusquedaDeVenta() {
-
-		if (this.rdbBuscarVtPorId.isSelected()) {
-			return 1;
-		}
-		if (this.rdbBuscarVtPorEmpleado.isSelected()) {
-			return 2;
-		}
-		if (this.rdbBuscarVtPorCliente.isSelected()) {
-			return 3;
-		}
-
-		return 4;
-
 	}
 }
