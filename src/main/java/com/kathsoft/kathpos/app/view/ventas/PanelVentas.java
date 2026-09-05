@@ -144,101 +144,99 @@ public class PanelVentas extends JPanel {
 
 		panelVentasCentralBuscar = new JPanel();
 		panelVentasCentralBuscar.setBackground(new Color(255, 215, 0));
-		
+
 		this.textField = new JTextField();
 		this.textField.setColumns(10);
-		
+
 		this.btnBuscarVenta = new JButton("Buscar");
-		this.btnBuscarVenta.setIcon(new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscarVenta.setIcon(
+				new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		this.btnBuscarVenta.setFont(new Font("Dialog", Font.BOLD, 13));
 		this.btnBuscarVenta.setBackground(new Color(184, 134, 11));
-		
+
 		this.lblFInicial = new JLabel("F. inicial");
-		
+
 		this.formattedTextFieldFechaInicial = new JFormattedTextField();
-		
+
 		this.lblFfinal = new JLabel("F.Final");
-		
+
 		this.formattedTextFieldFechaFinal = new JFormattedTextField();
-		
+
 		this.lblBuscarPor = new JLabel("Buscar por");
-		
+
 		this.comboBoxBuscarPor = new JComboBox();
-		
+
 		this.lblOrdernarPor = new JLabel("Ordernar por");
-		
+
 		this.comboBoxBuscarPor_1 = new JComboBox();
 		GroupLayout gl_panelVentasCentralBuscar = new GroupLayout(this.panelVentasCentralBuscar);
-		gl_panelVentasCentralBuscar.setHorizontalGroup(
-			gl_panelVentasCentralBuscar.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
-							.addComponent(this.textField, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblFInicial)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.formattedTextFieldFechaInicial, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblFfinal)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.formattedTextFieldFechaFinal, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-						.addGroup(Alignment.TRAILING, gl_panelVentasCentralBuscar.createSequentialGroup()
-							.addComponent(this.lblBuscarPor)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.comboBoxBuscarPor, 0, 186, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.lblOrdernarPor)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.comboBoxBuscarPor_1, 0, 186, Short.MAX_VALUE)
-							.addGap(89)
-							.addComponent(this.btnBuscarVenta, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-		);
-		gl_panelVentasCentralBuscar.setVerticalGroup(
-			gl_panelVentasCentralBuscar.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.formattedTextFieldFechaFinal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblFfinal)
-						.addComponent(this.formattedTextFieldFechaInicial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblFInicial))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.btnBuscarVenta, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblBuscarPor)
-						.addComponent(this.comboBoxBuscarPor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.lblOrdernarPor)
-						.addComponent(this.comboBoxBuscarPor_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
+		gl_panelVentasCentralBuscar.setHorizontalGroup(gl_panelVentasCentralBuscar
+				.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup().addContainerGap()
+						.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup()
+										.addComponent(this.textField, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblFInicial)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.formattedTextFieldFechaInicial, GroupLayout.DEFAULT_SIZE,
+												100, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblFfinal)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.formattedTextFieldFechaFinal, GroupLayout.DEFAULT_SIZE, 100,
+												Short.MAX_VALUE))
+								.addGroup(Alignment.TRAILING, gl_panelVentasCentralBuscar.createSequentialGroup()
+										.addComponent(this.lblBuscarPor).addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.comboBoxBuscarPor, 0, 186, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.lblOrdernarPor)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(this.comboBoxBuscarPor_1, 0, 186, Short.MAX_VALUE).addGap(89)
+										.addComponent(this.btnBuscarVenta, GroupLayout.PREFERRED_SIZE, 103,
+												GroupLayout.PREFERRED_SIZE)))
+						.addContainerGap()));
+		gl_panelVentasCentralBuscar.setVerticalGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelVentasCentralBuscar.createSequentialGroup().addContainerGap()
+						.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.BASELINE)
+								.addComponent(this.textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(this.formattedTextFieldFechaFinal, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(this.lblFfinal)
+								.addComponent(this.formattedTextFieldFechaInicial, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(this.lblFInicial))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(gl_panelVentasCentralBuscar.createParallelGroup(Alignment.BASELINE)
+								.addComponent(this.btnBuscarVenta, GroupLayout.PREFERRED_SIZE, 30,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(this.lblBuscarPor)
+								.addComponent(this.comboBoxBuscarPor, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(this.lblOrdernarPor).addComponent(this.comboBoxBuscarPor_1,
+										GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		this.panelVentasCentralBuscar.setLayout(gl_panelVentasCentralBuscar);
 
 		btnRadioGroupBuscarVentas = new ButtonGroup();
 
 		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaVentasColumnsWidth, tablaVentas);
 		GroupLayout gl_panelVentasCentral = new GroupLayout(this.panelVentasCentral);
-		gl_panelVentasCentral.setHorizontalGroup(
-			gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelVentasCentral.createSequentialGroup()
-					.addGroup(gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
+		gl_panelVentasCentral.setHorizontalGroup(gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelVentasCentral.createSequentialGroup().addGroup(gl_panelVentasCentral
+						.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.panelVentasCentralBotones, GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
 						.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
-						.addComponent(this.panelVentasCentralBuscar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addGap(0))
-		);
-		gl_panelVentasCentral.setVerticalGroup(
-			gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.panelVentasCentralBuscar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE))
+						.addGap(0)));
+		gl_panelVentasCentral.setVerticalGroup(gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelVentasCentral.createSequentialGroup()
-					.addComponent(this.panelVentasCentralBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelVentasCentralBuscar, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
-		);
+						.addComponent(this.panelVentasCentralBotones, GroupLayout.PREFERRED_SIZE,
+								GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelVentasCentralBuscar,
+								GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)));
 		this.panelVentasCentral.setLayout(gl_panelVentasCentral);
 	}
 

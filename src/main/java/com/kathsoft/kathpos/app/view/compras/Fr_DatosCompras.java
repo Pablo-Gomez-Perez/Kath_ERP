@@ -473,7 +473,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 * compras.
 	 *
 	 * @param idSucursal sucursal desde la que se abrió el módulo
-	 * @param idCompra identificador de la compra seleccionada
+	 * @param idCompra   identificador de la compra seleccionada
 	 */
 	public Fr_DatosCompras(int idSucursal, int idCompra) {
 		this();
@@ -888,16 +888,16 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			SpResponseModel respuesta = AppContext.compraController.insertCompra(this.idSucursal, compraConDetalle);
 
 			if (respuesta == null || respuesta.id() <= 0 || respuesta.id() == 500) {
-				String mensaje = respuesta == null ? "No se recibió respuesta al registrar la compra" : respuesta.message();
+				String mensaje = respuesta == null ? "No se recibió respuesta al registrar la compra"
+						: respuesta.message();
 				JOptionPane.showMessageDialog(this, mensaje, "No fue posible registrar la compra",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			this.txfIdCompra.setText(String.valueOf(respuesta.id()));
-			JOptionPane.showMessageDialog(this,
-					respuesta.message() + "\nID de compra: " + respuesta.id(), "Compra registrada",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, respuesta.message() + "\nID de compra: " + respuesta.id(),
+					"Compra registrada", JOptionPane.INFORMATION_MESSAGE);
 			this.dispose();
 		} catch (IllegalArgumentException er) {
 			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos incompletos", JOptionPane.WARNING_MESSAGE);
@@ -918,7 +918,8 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			SpResponseModel respuesta = AppContext.compraController.updateCompra(this.idSucursal, compraConDetalle);
 
 			if (respuesta == null || respuesta.id() <= 0 || respuesta.id() == 500) {
-				String mensaje = respuesta == null ? "No se recibió respuesta al actualizar la compra" : respuesta.message();
+				String mensaje = respuesta == null ? "No se recibió respuesta al actualizar la compra"
+						: respuesta.message();
 				JOptionPane.showMessageDialog(this, mensaje, "No fue posible actualizar la compra",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -971,9 +972,9 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		List<ArticuloPorCompra> articulos = this.construirArticulosPorCompra();
 
 		Compra compra = new Compra.CompraBuilder().idCompra(this.idCompraCargada).idEmpleado(empleado.id())
-				.idProveedor(proveedor.id()).folioFactura(folioFactura).fechaFactura(fechaFactura).fechaCompra(fechaCompra)
-				.tipoCompra(tipoCompra.booleanValue()).subtotal(this.subtotalCompra).iva(this.ivaCompra).activo(true)
-				.build();
+				.idProveedor(proveedor.id()).folioFactura(folioFactura).fechaFactura(fechaFactura)
+				.fechaCompra(fechaCompra).tipoCompra(tipoCompra.booleanValue()).subtotal(this.subtotalCompra)
+				.iva(this.ivaCompra).activo(true).build();
 
 		return new CompraConDetalle(compra, articulos);
 	}
@@ -1000,7 +1001,8 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			try {
 				cantidad = this.obtenerCantidadFila(fila);
 			} catch (NumberFormatException er) {
-				throw new IllegalArgumentException("La cantidad del artículo " + codigo + " debe ser un entero mayor a cero");
+				throw new IllegalArgumentException(
+						"La cantidad del artículo " + codigo + " debe ser un entero mayor a cero");
 			}
 
 			double importeConIva = this.obtenerDoubleFila(fila, COLUMNA_SUBTOTAL);
