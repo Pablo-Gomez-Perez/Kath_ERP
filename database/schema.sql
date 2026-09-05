@@ -384,6 +384,7 @@ CREATE TABLE `ventas` (
   `id_venta` int unsigned NOT NULL AUTO_INCREMENT,
   `id_empleado` int unsigned NOT NULL,
   `id_cliente` int unsigned NOT NULL,
+  `id_sucursal` bigint unsigned NOT NULL,
   `fecha` date NOT NULL,
   `tipo_venta` tinyint(1) NOT NULL,
   `subtotal` double NOT NULL,
@@ -393,12 +394,18 @@ CREATE TABLE `ventas` (
   PRIMARY KEY (`id_venta`),
   KEY `id_empleado` (`id_empleado`),
   KEY `id_cliente` (`id_cliente`),
+  KEY `ventas_sucursal_FK` (`id_sucursal`),
   CONSTRAINT `Fk_Cliente_x_Venta` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON
 UPDATE
     CASCADE,
     CONSTRAINT `Fk_Empleado_x_Venta` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON
     UPDATE
-        CASCADE
+        CASCADE,
+        CONSTRAINT `ventas_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON
+        DELETE
+            RESTRICT ON
+            UPDATE
+                CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 616 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 -- kath_erp.articulo_x_compra definition
 
