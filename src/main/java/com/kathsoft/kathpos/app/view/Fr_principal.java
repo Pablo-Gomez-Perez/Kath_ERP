@@ -50,19 +50,12 @@ public class Fr_principal extends JFrame {
 	 * Launch the application.
 	 *
 	 *
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Fr_principal frame = new Fr_principal(
-							new Sucursal(9, null, null, null, null, null, null, null, null));
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
+	 * public static void main(String[] args) { EventQueue.invokeLater(new
+	 * Runnable() { public void run() { try { Fr_principal frame = new Fr_principal(
+	 * new Sucursal(9, null, null, null, null, null, null, null, null));
+	 * frame.setVisible(true); } catch (Exception e) { e.printStackTrace(); } } });
+	 * }
+	 */
 
 	/**
 	 * 
@@ -116,7 +109,7 @@ public class Fr_principal extends JFrame {
 	private JButton btn_irAInicio;
 	private PanelClientes panelClientes;
 	private PanelEmpleados panelEmpleados;
-	private PanelProveedor panelProveedor;	
+	private PanelProveedor panelProveedor;
 	private JMenuItem opcionMarcas;
 	private PanelMarcas panelMarcas;
 	private JButton btnCalculadora;
@@ -158,12 +151,13 @@ public class Fr_principal extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * 
 	 * @wbp.parser.constructor
 	 */
 	public Fr_principal(Sucursal sucursal) {
 		this(sucursal, null);
 	}
-   
+
 	public Fr_principal(Sucursal sucursal, EmpleadoLogin empleadoSesion) {
 
 		this.sucursal = sucursal;
@@ -260,7 +254,7 @@ public class Fr_principal extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
-				cr.show(panelPrincipalContenedor, "panelProveedor");				
+				cr.show(panelPrincipalContenedor, "panelProveedor");
 			}
 		});
 		opcionProveedores.setIcon(
@@ -275,7 +269,7 @@ public class Fr_principal extends JFrame {
 
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelMarcas");
-				panelPrincipalContenedor.updateUI();				
+				panelPrincipalContenedor.updateUI();
 			}
 		});
 		menuConsultar.add(opcionMarcas);
@@ -363,32 +357,32 @@ public class Fr_principal extends JFrame {
 				cr.show(panelPrincipalContenedor, "panelVentas");
 				panelPrincipalContenedor.updateUI();
 
-				//panelVentas.llenarTablaVentas(1);
+				// panelVentas.llenarTablaVentas(1);
 			}
 		});
 		subMenuVentas.add(opcionConsultarVenta);
-		
+
 		this.subMenuCompras = new JMenu("Compras");
 		this.menuOperaciones.add(this.subMenuCompras);
-		
+
 		this.opcionRegistrarCompra = new JMenuItem("Registrar");
 		this.opcionRegistrarCompra.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				panelCompras.abrirFormCompras(sucursal.getIdSucursal());
-				
+
 			}
 		});
 		this.subMenuCompras.add(this.opcionRegistrarCompra);
-		
+
 		this.opcionConsultarCompra = new JMenuItem("Consultar");
 		this.opcionConsultarCompra.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
 				cr.show(panelPrincipalContenedor, "panelCompras");
 				panelPrincipalContenedor.updateUI();
-				
+
 			}
 		});
 		this.subMenuCompras.add(this.opcionConsultarCompra);
@@ -436,7 +430,7 @@ public class Fr_principal extends JFrame {
 		opcionReporteExcelProveedores = new JMenuItem("Proveedores");
 		opcionReporteExcelProveedores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 			}
 		});
 		opcionReporteExcelProveedores.setIcon(
@@ -643,29 +637,29 @@ public class Fr_principal extends JFrame {
 
 		panelConta = new PanelCuentasContables();
 		panelPrincipalContenedor.add(panelConta, "panelConta");
-		
+
 		this.panelDatosDeSesion = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) this.panelDatosDeSesion.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		this.contentPane.add(this.panelDatosDeSesion, BorderLayout.SOUTH);
-		
+
 		this.lblSucursal = new JLabel("Sucursal");
 		this.panelDatosDeSesion.add(this.lblSucursal);
-		
+
 		this.lblNombreSucursal = new JLabel("_");
 		this.lblNombreSucursal.setForeground(new Color(51, 0, 255));
 		this.panelDatosDeSesion.add(this.lblNombreSucursal);
-		
+
 		this.lblEmpleado = new JLabel("Empleado:");
 		this.panelDatosDeSesion.add(this.lblEmpleado);
-		
+
 		this.lblNombreCompletoEmpleado = new JLabel("_");
 		this.lblNombreCompletoEmpleado.setForeground(new Color(51, 0, 255));
 		this.panelDatosDeSesion.add(this.lblNombreCompletoEmpleado);
-		
+
 		this.lblFechaHoy = new JLabel("Hoy es:");
 		this.panelDatosDeSesion.add(this.lblFechaHoy);
-		
+
 		this.lblConsultaFechaDeHoy = new JLabel("_");
 		this.lblConsultaFechaDeHoy.setForeground(new Color(51, 0, 255));
 		this.panelDatosDeSesion.add(this.lblConsultaFechaDeHoy);
@@ -743,4 +737,3 @@ public class Fr_principal extends JFrame {
 	}
 
 }
-

@@ -80,6 +80,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	private int idCompraCargada;
 	private ArticuloByCodigo articuloConsultado;
 	private Map<String, ArticuloByCodigo> articulosPorCodigo;
+	private Map<String, Integer> idsDetallePorCodigo;
 	private boolean actualizandoImportes;
 	private double subtotalCompra;
 	private double ivaCompra;
@@ -133,6 +134,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 */
 	public Fr_DatosCompras() {
 		this.articulosPorCodigo = new HashMap<>();
+		this.idsDetallePorCodigo = new HashMap<>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 836, 630);
 		this.contentPane = new JPanel();
@@ -471,7 +473,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 	 * compras.
 	 *
 	 * @param idSucursal sucursal desde la que se abrió el módulo
-	 * @param idCompra identificador de la compra seleccionada
+	 * @param idCompra   identificador de la compra seleccionada
 	 */
 	public Fr_DatosCompras(int idSucursal, int idCompra) {
 		this();
@@ -514,6 +516,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 		this.articuloConsultado = null;
 		this.articulosPorCodigo.clear();
+		this.idsDetallePorCodigo.clear();
 		this.modelTablaArticulosListados.setRowCount(0);
 		for (ArticuloCompraListado detalle : detalles) {
 			this.cargarDetalleCompra(detalle);
@@ -598,6 +601,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			}
 
 			this.articulosPorCodigo.put(detalle.getCodigoArticulo(), articulo);
+			this.idsDetallePorCodigo.put(detalle.getCodigoArticulo(), detalle.getId());
 			this.modelTablaArticulosListados.addRow(new Object[] { detalle.getCodigoArticulo(), descripcion,
 					detalle.getCantidad(), costoUnitario, importeConIva });
 		} catch (IllegalArgumentException er) {
@@ -753,6 +757,7 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 		double importeArticulo = articulo.getCostoUnitario() * cantidad;
 		this.articulosPorCodigo.put(articulo.getCodigoArticulo(), articulo);
+		this.idsDetallePorCodigo.putIfAbsent(articulo.getCodigoArticulo(), Integer.valueOf(0));
 		this.modelTablaArticulosListados.addRow(new Object[] { articulo.getCodigoArticulo(), articulo.getDescripcion(),
 				cantidad, articulo.getCostoUnitario(), importeArticulo });
 		this.recalcularImportesDesdeTabla(false);
@@ -771,7 +776,10 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		}
 
 		int filaModelo = this.tableArticulosListados.convertRowIndexToModel(filaSeleccionada);
+		String codigo = String.valueOf(this.modelTablaArticulosListados.getValueAt(filaModelo, COLUMNA_CODIGO)).trim();
 		this.modelTablaArticulosListados.removeRow(filaModelo);
+		this.articulosPorCodigo.remove(codigo);
+		this.idsDetallePorCodigo.remove(codigo);
 		this.recalcularImportesDesdeTabla(false);
 	}
 
@@ -854,37 +862,42 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 	private void guardarCompra() {
 		if (this.idCompraCargada > 0) {
-			JOptionPane.showMessageDialog(this,
-					"La actualización de compras existentes todavía no está habilitada en este flujo.",
-					"Compra cargada", JOptionPane.WARNING_MESSAGE);
+			this.actualizarCompraExistente();
 			return;
 		}
 		this.guardarNuevaCompra();
 	}
 
-	private void guardarNuevaCompra() {
+	private boolean detenerEdicionCantidad() {
 		if (this.tableArticulosListados.isEditing() && this.tableArticulosListados.getCellEditor() != null
 				&& !this.tableArticulosListados.getCellEditor().stopCellEditing()) {
 			JOptionPane.showMessageDialog(this, "No fue posible confirmar la edición de la cantidad del artículo",
 					"Cantidad inválida", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
+	private void guardarNuevaCompra() {
+		if (!this.detenerEdicionCantidad()) {
 			return;
 		}
 
 		try {
-			CompraConDetalle compraConDetalle = this.construirNuevaCompraDesdeFormulario();
+			CompraConDetalle compraConDetalle = this.construirCompraDesdeFormulario();
 			SpResponseModel respuesta = AppContext.compraController.insertCompra(this.idSucursal, compraConDetalle);
 
 			if (respuesta == null || respuesta.id() <= 0 || respuesta.id() == 500) {
-				String mensaje = respuesta == null ? "No se recibió respuesta al registrar la compra" : respuesta.message();
+				String mensaje = respuesta == null ? "No se recibió respuesta al registrar la compra"
+						: respuesta.message();
 				JOptionPane.showMessageDialog(this, mensaje, "No fue posible registrar la compra",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			this.txfIdCompra.setText(String.valueOf(respuesta.id()));
-			JOptionPane.showMessageDialog(this,
-					respuesta.message() + "\nID de compra: " + respuesta.id(), "Compra registrada",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, respuesta.message() + "\nID de compra: " + respuesta.id(),
+					"Compra registrada", JOptionPane.INFORMATION_MESSAGE);
 			this.dispose();
 		} catch (IllegalArgumentException er) {
 			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos incompletos", JOptionPane.WARNING_MESSAGE);
@@ -895,7 +908,36 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		}
 	}
 
-	private CompraConDetalle construirNuevaCompraDesdeFormulario() {
+	private void actualizarCompraExistente() {
+		if (!this.detenerEdicionCantidad()) {
+			return;
+		}
+
+		try {
+			CompraConDetalle compraConDetalle = this.construirCompraDesdeFormulario();
+			SpResponseModel respuesta = AppContext.compraController.updateCompra(this.idSucursal, compraConDetalle);
+
+			if (respuesta == null || respuesta.id() <= 0 || respuesta.id() == 500) {
+				String mensaje = respuesta == null ? "No se recibió respuesta al actualizar la compra"
+						: respuesta.message();
+				JOptionPane.showMessageDialog(this, mensaje, "No fue posible actualizar la compra",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			JOptionPane.showMessageDialog(this, respuesta.message(), "Compra actualizada",
+					JOptionPane.INFORMATION_MESSAGE);
+			this.dispose();
+		} catch (IllegalArgumentException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos incompletos", JOptionPane.WARNING_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error al actualizar la compra: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private CompraConDetalle construirCompraDesdeFormulario() {
 		if (this.idSucursal <= 0) {
 			throw new IllegalArgumentException("No existe una sucursal válida para registrar la compra");
 		}
@@ -929,10 +971,10 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 		this.recalcularImportesDesdeTabla(false);
 		List<ArticuloPorCompra> articulos = this.construirArticulosPorCompra();
 
-		Compra compra = new Compra.CompraBuilder().idEmpleado(empleado.id()).idProveedor(proveedor.id())
-				.folioFactura(folioFactura).fechaFactura(fechaFactura).fechaCompra(fechaCompra)
-				.tipoCompra(tipoCompra.booleanValue()).subtotal(this.subtotalCompra).iva(this.ivaCompra).activo(true)
-				.build();
+		Compra compra = new Compra.CompraBuilder().idCompra(this.idCompraCargada).idEmpleado(empleado.id())
+				.idProveedor(proveedor.id()).folioFactura(folioFactura).fechaFactura(fechaFactura)
+				.fechaCompra(fechaCompra).tipoCompra(tipoCompra.booleanValue()).subtotal(this.subtotalCompra)
+				.iva(this.ivaCompra).activo(true).build();
 
 		return new CompraConDetalle(compra, articulos);
 	}
@@ -959,7 +1001,8 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			try {
 				cantidad = this.obtenerCantidadFila(fila);
 			} catch (NumberFormatException er) {
-				throw new IllegalArgumentException("La cantidad del artículo " + codigo + " debe ser un entero mayor a cero");
+				throw new IllegalArgumentException(
+						"La cantidad del artículo " + codigo + " debe ser un entero mayor a cero");
 			}
 
 			double importeConIva = this.obtenerDoubleFila(fila, COLUMNA_SUBTOTAL);
@@ -968,8 +1011,9 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 			}
 
 			double subtotalDetalle = articulo.isExento() ? importeConIva : importeConIva / FACTOR_IVA;
-			articulos.add(new ArticuloPorCompra.ArticuloPorCompraBuilder().idArticulo(articulo.getIdArticulo())
-					.cantidad(cantidad).subtotal(subtotalDetalle).build());
+			int idDetalle = this.idsDetallePorCodigo.getOrDefault(codigo, Integer.valueOf(0)).intValue();
+			articulos.add(new ArticuloPorCompra.ArticuloPorCompraBuilder().id(idDetalle).idCompra(this.idCompraCargada)
+					.idArticulo(articulo.getIdArticulo()).cantidad(cantidad).subtotal(subtotalDetalle).build());
 		}
 
 		return articulos;
