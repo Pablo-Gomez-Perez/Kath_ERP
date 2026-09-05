@@ -253,9 +253,18 @@ class CompraControllerIT {
     void rechazaEditarUnaCompraDesdeOtraSucursal() throws SQLException {
         CompraController controller = new CompraController();
         int idCompra = registrarCompraInicial(controller, "FAC-EDIT-005");
+        int idDetalleExistente = consultarIdDetalle(idCompra, ID_ARTICULO_EXISTENTE);
+
+        ArticuloPorCompra detalleExistente = new ArticuloPorCompra.ArticuloPorCompraBuilder()
+                .id(idDetalleExistente)
+                .idCompra(idCompra)
+                .idArticulo(ID_ARTICULO_EXISTENTE)
+                .cantidad(2)
+                .subtotal(200.00)
+                .build();
         CompraConDetalle compraEditada = new CompraConDetalle(
                 crearCompraEditada(idCompra, "FAC-EDIT-006", 200.00, 32.00),
-                List.of());
+                List.of(detalleExistente));
 
         SpResponseModel respuesta = controller.updateCompra(ID_SUCURSAL_CONTROL, compraEditada);
 
