@@ -370,6 +370,52 @@ public class CompraController implements java.io.Serializable {
 		}
 	}
 
+	/**
+	 * Cancela lógicamente una compra y revierte las existencias mediante el
+	 * procedimiento almacenado deleteCompra. La transacción se controla desde Java
+	 * porque el procedimiento devuelve errores de negocio como un result set.
+	 */
+	public SpResponseModel deleteCompra(int idSucursal, int idCompra) {
+		if (idSucursal <= 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "La sucursal es obligatoria");
+		}
+		if (idCompra <= 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
+		}
+
+		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+			boolean autoCommitOriginal = connection.getAutoCommit();
+			connection.setAutoCommit(false);
+
+			try {
+				SpResponseModel respuesta = this.deleteCompra(connection, idSucursal, idCompra);
+				if (!isDeleteCompraSuccess(respuesta, idCompra)) {
+					connection.rollback();
+					return respuesta;
+				}
+
+				connection.commit();
+				return respuesta;
+			} catch (SQLException er) {
+				connection.rollback();
+				er.printStackTrace();
+				return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
+			} catch (Exception er) {
+				connection.rollback();
+				er.printStackTrace();
+				return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
+			} finally {
+				connection.setAutoCommit(autoCommitOriginal);
+			}
+		} catch (SQLException er) {
+			er.printStackTrace();
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
+		} catch (Exception er) {
+			er.printStackTrace();
+			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
+		}
+	}
+
 	private SpResponseModel validarCompraActualizada(int idSucursal, CompraConDetalle compraConDetalle) {
 		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
 			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
@@ -591,6 +637,20 @@ public class CompraController implements java.io.Serializable {
 				return buildSpResponse(rset);
 			}
 		}
+	}
+
+	private SpResponseModel deleteCompra(Connection connection, int idSucursal, int idCompra) throws SQLException {
+		try (CallableStatement stm = connection.prepareCall("CALL deleteCompra(?,?)")) {
+			stm.setInt(1, idCompra);
+			stm.setLong(2, idSucursal);
+			try (ResultSet rset = stm.executeQuery()) {
+				return buildSpResponse(rset);
+			}
+		}
+	}
+
+	private boolean isDeleteCompraSuccess(SpResponseModel response, int idCompra) {
+		return response != null && response.id() == idCompra && "Compra cancelada correctamente".equals(response.message());
 	}
 
 	private List<ArticuloCompraListado> listArticulosCompraById(Connection connection, int idCompra) throws SQLException {
