@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.kathsoft.kathpos.app.model.compra.ArticuloCompraListado;
@@ -102,32 +104,14 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	public List<ArticuloCompraListado> listArticulosCompraById(int idCompra) {
-		CallableStatement stm = null;
-		ResultSet rset = null;
-		List<ArticuloCompraListado> articulos = new ArrayList<>();
-
-		try {
-			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL listArticulosCompraById(?)");
-			stm.setInt(1, idCompra);
-			rset = stm.executeQuery();
-
-			while (rset.next()) {
-				articulos.add(mapArticuloCompraListado(rset));
-			}
-			return articulos;
+		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+			return this.listArticulosCompraById(connection, idCompra);
 		} catch (SQLException er) {
 			er.printStackTrace();
-			return articulos;
+			return new ArrayList<>();
 		} catch (Exception er) {
 			er.printStackTrace();
-			return articulos;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
+			return new ArrayList<>();
 		}
 	}
 
@@ -280,10 +264,12 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	public SpResponseModel updateCompra(int idSucursal, CompraConDetalle compraConDetalle) {
-		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
-			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
+		SpResponseModel validacion = this.validarCompraActualizada(idSucursal, compraConDetalle);
+		if (validacion != null) {
+			return validacion;
 		}
 
+		Compra compra = compraConDetalle.getCompra();
 		List<ArticuloPorCompra> articulos = compraConDetalle.getArticulosPorCompra() == null ? Collections.emptyList()
 				: compraConDetalle.getArticulosPorCompra();
 
@@ -292,35 +278,61 @@ public class CompraController implements java.io.Serializable {
 			connection.setAutoCommit(false);
 
 			try {
-				SpResponseModel respuestaCompra = this.updateCompra(connection, idSucursal,
-						compraConDetalle.getCompra());
+				List<ArticuloCompraListado> detallesActuales = this.listArticulosCompraById(connection,
+						compra.getIdCompra());
+				SpResponseModel validacionDetalles = this.validarDetallesActualizacion(compra.getIdCompra(), articulos,
+						detallesActuales);
+				if (validacionDetalles != null) {
+					connection.rollback();
+					return validacionDetalles;
+				}
+
+				SpResponseModel respuestaCompra = this.updateCompra(connection, idSucursal, compra);
 				if (!isSuccess(respuestaCompra)) {
 					connection.rollback();
 					return respuestaCompra;
 				}
 
+				Set<Integer> idsDetallesConservados = new HashSet<>();
 				for (ArticuloPorCompra articuloPorCompra : articulos) {
-					if (articuloPorCompra.getId() <= 0) {
-						articuloPorCompra.setIdCompra(compraConDetalle.getCompra().getIdCompra());
+					if (articuloPorCompra.getId() > 0) {
+						idsDetallesConservados.add(articuloPorCompra.getId());
+					}
+				}
+
+				for (ArticuloCompraListado detalleActual : detallesActuales) {
+					if (!idsDetallesConservados.contains(detalleActual.getId())) {
+						SpResponseModel respuestaEliminar = this.deleteArticuloCompra(connection, detalleActual.getId());
+						if (!isSuccess(respuestaEliminar)) {
+							connection.rollback();
+							return respuestaEliminar;
+						}
+					}
+				}
+
+				for (ArticuloPorCompra articuloPorCompra : articulos) {
+					articuloPorCompra.setIdCompra(compra.getIdCompra());
+
+					if (articuloPorCompra.getId() > 0) {
+						SpResponseModel respuestaDetalle = this.updateArticuloCompra(connection, articuloPorCompra);
+						if (!isSuccess(respuestaDetalle)) {
+							connection.rollback();
+							return respuestaDetalle;
+						}
+						continue;
 					}
 
-					SpResponseModel respuestaDetalle = articuloPorCompra.getId() > 0
-							? this.updateArticuloCompra(connection, articuloPorCompra)
-							: this.insertArticuloCompra(connection, articuloPorCompra);
-
+					SpResponseModel respuestaDetalle = this.insertArticuloCompra(connection, articuloPorCompra);
 					if (!isSuccess(respuestaDetalle)) {
 						connection.rollback();
 						return respuestaDetalle;
 					}
 
-					if (articuloPorCompra.getId() <= 0) {
-						SpResponseModel respuestaExistencia = this.sumarExistenciaSucursalCompra(connection,
-								compraConDetalle.getCompra().getIdCompra(), articuloPorCompra.getIdArticulo(),
-								articuloPorCompra.getCantidad());
-						if (!isSuccess(respuestaExistencia)) {
-							connection.rollback();
-							return respuestaExistencia;
-						}
+					SpResponseModel respuestaExistencia = this.sumarExistenciaSucursalCompra(connection, compra.getIdCompra(),
+							articuloPorCompra.getIdArticulo(), articuloPorCompra.getCantidad());
+					if (!isSuccess(respuestaExistencia)) {
+						connection.rollback();
+						return respuestaExistencia;
 					}
 				}
 
@@ -347,12 +359,8 @@ public class CompraController implements java.io.Serializable {
 	}
 
 	public SpResponseModel deleteArticuloCompra(int idDetalleCompra) {
-		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = connection.prepareCall("CALL deleteArticuloCompra(?)")) {
-			stm.setInt(1, idDetalleCompra);
-			try (ResultSet rset = stm.executeQuery()) {
-				return buildSpResponse(rset);
-			}
+		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
+			return this.deleteArticuloCompra(connection, idDetalleCompra);
 		} catch (SQLException er) {
 			er.printStackTrace();
 			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
@@ -360,6 +368,48 @@ public class CompraController implements java.io.Serializable {
 			er.printStackTrace();
 			return new SpResponseModel(ERROR_VALIDACION, er.getMessage());
 		}
+	}
+
+	private SpResponseModel validarCompraActualizada(int idSucursal, CompraConDetalle compraConDetalle) {
+		if (compraConDetalle == null || compraConDetalle.getCompra() == null) {
+			return new SpResponseModel(ERROR_VALIDACION, "La compra es obligatoria");
+		}
+		if (compraConDetalle.getCompra().getIdCompra() <= 0) {
+			return new SpResponseModel(ERROR_VALIDACION, "El ID de la compra es obligatorio para actualizar");
+		}
+		return this.validarNuevaCompra(idSucursal, compraConDetalle);
+	}
+
+	private SpResponseModel validarDetallesActualizacion(int idCompra, List<ArticuloPorCompra> articulos,
+			List<ArticuloCompraListado> detallesActuales) {
+		Map<Integer, ArticuloCompraListado> existentesPorId = new HashMap<>();
+		for (ArticuloCompraListado detalle : detallesActuales) {
+			existentesPorId.put(detalle.getId(), detalle);
+		}
+
+		Set<Integer> idsDetalleRecibidos = new HashSet<>();
+		for (ArticuloPorCompra articulo : articulos) {
+			if (articulo.getIdCompra() > 0 && articulo.getIdCompra() != idCompra) {
+				return new SpResponseModel(ERROR_VALIDACION, "Existe una partida asociada a otra compra");
+			}
+			if (articulo.getId() <= 0) {
+				continue;
+			}
+			if (!idsDetalleRecibidos.add(articulo.getId())) {
+				return new SpResponseModel(ERROR_VALIDACION, "Existe un detalle de compra repetido");
+			}
+
+			ArticuloCompraListado detalleActual = existentesPorId.get(articulo.getId());
+			if (detalleActual == null || detalleActual.getIdCompra() != idCompra) {
+				return new SpResponseModel(ERROR_VALIDACION,
+						"Uno de los detalles no pertenece a la compra que se intenta actualizar");
+			}
+			if (detalleActual.getIdArticulo() != articulo.getIdArticulo()) {
+				return new SpResponseModel(ERROR_VALIDACION,
+						"No se puede sustituir el artículo de una partida existente");
+			}
+		}
+		return null;
 	}
 
 	private SpResponseModel validarNuevaCompra(int idSucursal, CompraConDetalle compraConDetalle) {
@@ -532,6 +582,28 @@ public class CompraController implements java.io.Serializable {
 				return buildSpResponse(rset);
 			}
 		}
+	}
+
+	private SpResponseModel deleteArticuloCompra(Connection connection, int idDetalleCompra) throws SQLException {
+		try (CallableStatement stm = connection.prepareCall("CALL deleteArticuloCompra(?)")) {
+			stm.setInt(1, idDetalleCompra);
+			try (ResultSet rset = stm.executeQuery()) {
+				return buildSpResponse(rset);
+			}
+		}
+	}
+
+	private List<ArticuloCompraListado> listArticulosCompraById(Connection connection, int idCompra) throws SQLException {
+		List<ArticuloCompraListado> articulos = new ArrayList<>();
+		try (CallableStatement stm = connection.prepareCall("CALL listArticulosCompraById(?)")) {
+			stm.setInt(1, idCompra);
+			try (ResultSet rset = stm.executeQuery()) {
+				while (rset.next()) {
+					articulos.add(mapArticuloCompraListado(rset));
+				}
+			}
+		}
+		return articulos;
 	}
 
 	private CompraListado mapCompraListado(ResultSet rset) throws SQLException {
