@@ -1,107 +1,67 @@
 package com.kathsoft.kathpos.app.model;
 
+/**
+ * Modelo legado utilizado por las vistas actuales.
+ *
+ * @deprecated El nuevo flujo utiliza
+ *             {@code com.kathsoft.kathpos.app.model.venta.ArticuloPorVenta}.
+ */
+@Deprecated
 public class ArticulosPorVentas {
 
-	private int id;
-	private int id_venta;
-	private int id_articulo;
-	private int cantidad;
-	private double subtotal;
+    private int id;
+    private int id_venta;
+    private int id_articulo;
+    private int cantidad;
+    private double subtotal;
 
-	/**
-	 * @param id
-	 * @param id_venta
-	 * @param id_articulo
-	 * @param cantidad
-	 * @param subtotal
-	 */
-	public ArticulosPorVentas(int id, int id_venta, int id_articulo, int cantidad, double subtotal) {
-		super();
-		this.id = id;
-		this.id_venta = id_venta;
-		this.id_articulo = id_articulo;
-		this.cantidad = cantidad;
-		this.subtotal = subtotal;
-	}
+    public ArticulosPorVentas(int id, int id_venta, int id_articulo, int cantidad, double subtotal) {
+        this.id = id;
+        this.id_venta = id_venta;
+        this.id_articulo = id_articulo;
+        this.cantidad = cantidad;
+        this.subtotal = subtotal;
+    }
 
-	public ArticulosPorVentas() {
+    public ArticulosPorVentas() {
+        super();
+    }
 
-	}
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public int getId_venta() { return id_venta; }
+    public void setId_venta(int id_venta) { this.id_venta = id_venta; }
+    public int getId_articulo() { return id_articulo; }
+    public void setId_articulo(int id_articulo) { this.id_articulo = id_articulo; }
+    public int getCantidad() { return cantidad; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
+    public double getSubtotal() { return subtotal; }
+    public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
 
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
+    @Override
+    public String toString() {
+        return "ArticulosPorVentas [id=" + id + ", id_venta=" + id_venta + ", id_articulo=" + id_articulo
+                + ", cantidad=" + cantidad + ", subtotal=" + subtotal + "]";
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
+    public static ArticuloVentaBuilder builder() {
+        return new ArticuloVentaBuilder();
+    }
 
-	/**
-	 * @return the id_venta
-	 */
-	public int getId_venta() {
-		return id_venta;
-	}
+    public static class ArticuloVentaBuilder {
 
-	/**
-	 * @param id_venta the id_venta to set
-	 */
-	public void setId_venta(int id_venta) {
-		this.id_venta = id_venta;
-	}
+        private final ArticulosPorVentas articulo;
 
-	/**
-	 * @return the id_articulo
-	 */
-	public int getId_articulo() {
-		return id_articulo;
-	}
+        public ArticuloVentaBuilder() {
+            this.articulo = new ArticulosPorVentas();
+        }
 
-	/**
-	 * @param id_articulo the id_articulo to set
-	 */
-	public void setId_articulo(int id_articulo) {
-		this.id_articulo = id_articulo;
-	}
+        public ArticuloVentaBuilder id(int value) { articulo.id = value; return this; }
+        public ArticuloVentaBuilder idVenta(int value) { articulo.id_venta = value; return this; }
+        public ArticuloVentaBuilder idArticulo(int value) { articulo.id_articulo = value; return this; }
+        public ArticuloVentaBuilder cantidad(int value) { articulo.cantidad = value; return this; }
+        public ArticuloVentaBuilder subtotal(double value) { articulo.subtotal = value; return this; }
 
-	/**
-	 * @return the cantidad
-	 */
-	public int getCantidad() {
-		return cantidad;
-	}
-
-	/**
-	 * @param cantidad the cantidad to set
-	 */
-	public void setCantidad(int cantidad) {
-		this.cantidad = cantidad;
-	}
-
-	/**
-	 * @return the subtotal
-	 */
-	public double getSubtotal() {
-		return subtotal;
-	}
-
-	/**
-	 * @param subtotal the subtotal to set
-	 */
-	public void setSubtotal(double subtotal) {
-		this.subtotal = subtotal;
-	}
-
-	@Override
-	public String toString() {
-		return "ArticulosPorVentas [id=" + id + ", id_venta=" + id_venta + ", id_articulo=" + id_articulo
-				+ ", cantidad=" + cantidad + ", subtotal=" + subtotal + "]";
-	}
-
+        public ArticulosPorVentas build() { return articulo; }
+    }
 }
