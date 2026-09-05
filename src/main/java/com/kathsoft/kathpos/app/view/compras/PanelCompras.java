@@ -121,6 +121,7 @@ public class PanelCompras extends JPanel {
 		this.panelBotones.add(this.btnActualizar);
 
 		this.btnEliminar = new JButton("Eliminar");
+		this.btnEliminar.addActionListener(e -> this.eliminarCompraSeleccionada());
 		this.btnEliminar.setIcon(
 				new ImageIcon(PanelCompras.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
 		this.btnEliminar.setBackground(new Color(255, 51, 0));
@@ -394,6 +395,38 @@ public class PanelCompras extends JPanel {
 		}
 
 		this.abrirFormCompras(this.idSucursal, idCompra);
+	}
+
+	private void eliminarCompraSeleccionada() {
+		int filaSeleccionada = this.tablaCompras.getSelectedRow();
+		if (filaSeleccionada < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione una compra para eliminar");
+			return;
+		}
+
+		int filaModelo = this.tablaCompras.convertRowIndexToModel(filaSeleccionada);
+		int idCompra = this.obtenerIdCompraSeleccionada(filaModelo);
+		if (idCompra <= 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"No fue posible identificar la compra seleccionada");
+			return;
+		}
+
+		int opcion = MessageHandler.displayMessage(MessageHandler.DELETE_DATA_QUESTION_MESSAGE, this, " seleccionada?");
+		if (opcion != 0) {
+			return;
+		}
+
+		var respuesta = AppContext.compraController.deleteCompra(this.idSucursal, idCompra);
+		if (respuesta != null && respuesta.id() == idCompra
+				&& "Compra cancelada correctamente".equals(respuesta.message())) {
+			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, respuesta.message());
+			this.llenarTablaCompras();
+			return;
+		}
+
+		String mensaje = respuesta == null ? "No se recibió respuesta al cancelar la compra" : respuesta.message();
+		MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, mensaje);
 	}
 
 	private int obtenerIdCompraSeleccionada(int filaModelo) {
