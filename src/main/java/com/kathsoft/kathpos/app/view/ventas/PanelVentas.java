@@ -233,11 +233,11 @@ public class PanelVentas extends JPanel {
 		gl_panelVentasCentral.setVerticalGroup(
 			gl_panelVentasCentral.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelVentasCentral.createSequentialGroup()
-					.addComponent(this.panelVentasCentralBotones, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(this.panelVentasCentralBotones, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+					.addComponent(this.scrollPaneTablaVentas, GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelVentasCentralBuscar, GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE))
+					.addComponent(this.panelVentasCentralBuscar, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
 		);
 		this.panelVentasCentral.setLayout(gl_panelVentasCentral);
 	}
