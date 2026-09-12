@@ -106,6 +106,14 @@ public class PanelVentas extends JPanel {
 
 		btNuevaVenta = new JButton("Punto de venta");
 		btNuevaVenta.addActionListener(new ActionListener() {
+			/**
+			 * Atiende el evento generado al presionar el botón "Punto de venta".
+			 * Su responsabilidad es delegar la apertura del formulario de captura de ventas
+			 * utilizando la sucursal actualmente asociada al panel, de forma que la nueva
+			 * operación conserve el contexto de sucursal desde el que fue iniciada.
+			 *
+			 * @param e evento de acción emitido por el botón
+			 */
 			public void actionPerformed(ActionEvent e) {
 				abrirFormVentas(sucursal.getIdSucursal());
 			}
@@ -117,6 +125,14 @@ public class PanelVentas extends JPanel {
 
 		btnExportarVentasExcel = new JButton("Exportar a Excel");
 		btnExportarVentasExcel.addActionListener(new ActionListener() {
+			/**
+			 * Atiende el evento generado al presionar el botón "Exportar a Excel".
+			 * Delega la exportación del contenido actualmente visible en el modelo de la
+			 * tabla, por lo que el archivo generado refleja el resultado vigente de los
+			 * filtros y criterios de búsqueda aplicados por el usuario.
+			 *
+			 * @param e evento de acción emitido por el botón
+			 */
 			public void actionPerformed(ActionEvent e) {
 				exportarVentaExcel();
 			}
@@ -259,7 +275,14 @@ public class PanelVentas extends JPanel {
 	}
 
 	/**
-	 * abre el formulario del punto de ventas
+	 * Abre el formulario principal del punto de venta para la sucursal indicada.
+	 * La creación y visualización del formulario se delega al Event Dispatch Thread
+	 * mediante {@link EventQueue#invokeLater(Runnable)} para mantener las operaciones
+	 * de Swing dentro del hilo correspondiente. El formulario se centra respecto a este
+	 * panel y se configura para liberar únicamente su propia ventana al cerrarse.
+	 *
+	 * @param idSucursal identificador de la sucursal que debe conservarse como contexto
+	 *                   de la nueva operación de venta
 	 */
 	public void abrirFormVentas(int idSucursal) {
 		Component cm = this;
@@ -275,11 +298,29 @@ public class PanelVentas extends JPanel {
 		});
 	}
 
+	/**
+	 * Elimina todas las filas actualmente cargadas en el modelo de la tabla de ventas
+	 * y solicita la actualización visual del componente. Se utiliza antes de poblar un
+	 * nuevo resultado para evitar que una búsqueda o recarga mezcle registros anteriores
+	 * con los obtenidos por el filtro vigente.
+	 */
 	private void borrarElementosDeLaTablaVentas() {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
 	}
 
+	/**
+	 * Consulta y vuelve a poblar la tabla de ventas utilizando el estado actual de los
+	 * controles de búsqueda del panel. Primero valida que exista una sucursal válida,
+	 * después construye un {@link VentaFiltro}, invoca
+	 * {@code VentasController.listVentas(...)} a través de {@link AppContext}, limpia el
+	 * resultado anterior y agrega cada {@link VentaListado} al modelo de tabla.
+	 * <p>
+	 * El método centraliza también la respuesta ante errores de entrada: informa fechas
+	 * con formato inválido, muestra advertencias para reglas de filtro no válidas y evita
+	 * reemplazar silenciosamente el contenido de la tabla cuando la consulta no puede
+	 * construirse correctamente.
+	 */
 	public void llenarTablaVentas() {
 		if (this.sucursal == null || this.sucursal.getIdSucursal() <= 0) {
 			return;
@@ -303,6 +344,22 @@ public class PanelVentas extends JPanel {
 		}
 	}
 
+	/**
+	 * Construye el objeto de criterios enviado al listado de ventas a partir de los
+	 * controles visibles del panel. Recupera el tipo de búsqueda, el texto ingresado,
+	 * el criterio de ordenamiento y las fechas opcionales. Cuando los combos no tienen
+	 * una selección válida utiliza los valores seguros {@code TODOS} y {@code FECHA}.
+	 * <p>
+	 * Las fechas son convertidas con validación estricta y, si ambas fueron indicadas,
+	 * se comprueba que la fecha inicial no sea posterior a la final. Para el criterio
+	 * {@code TODOS} el texto de búsqueda se descarta porque no participa en la consulta.
+	 *
+	 * @return filtro normalizado y listo para enviarse a {@code listVentas}
+	 * @throws ParseException si alguno de los campos de fecha contiene una fecha
+	 *                        incompleta o inválida
+	 * @throws IllegalArgumentException si el intervalo de fechas es cronológicamente
+	 *                                  inválido
+	 */
 	private VentaFiltro buildVentaFiltro() throws ParseException {
 		VentaCriterioBusqueda criterio = (VentaCriterioBusqueda) this.comboBoxBuscarPor.getSelectedItem();
 		VentaOrdenamiento ordenamiento = (VentaOrdenamiento) this.comboBoxBuscarPor_1.getSelectedItem();
@@ -325,6 +382,14 @@ public class PanelVentas extends JPanel {
 				ordenamiento.getValor(), fechaInicial, fechaFinal);
 	}
 
+	/**
+	 * Agrega al modelo de la tabla una representación de una venta ya mapeada por el
+	 * controlador. Conserva el mismo orden de columnas definido por la UI: folio, fecha,
+	 * tipo, empleado que atendió, cliente, subtotal, IVA, total y estado de vigencia.
+	 * Las referencias nulas se ignoran para no insertar filas inconsistentes.
+	 *
+	 * @param venta registro de venta que será representado como una fila de la tabla
+	 */
 	private void addVentaListadoToTable(VentaListado venta) {
 		if (venta == null) {
 			return;
@@ -335,6 +400,11 @@ public class PanelVentas extends JPanel {
 				venta.getVigente() });
 	}
 
+	/**
+	 * Inicializa el combo de criterios de búsqueda con todos los valores declarados en
+	 * {@link VentaCriterioBusqueda}. El combo se limpia antes de cargar los elementos para
+	 * que una reinicialización del panel no produzca criterios duplicados.
+	 */
 	private void llenarComboBuscarPor() {
 		this.comboBoxBuscarPor.removeAllItems();
 		for (VentaCriterioBusqueda criterio : VentaCriterioBusqueda.values()) {
@@ -342,6 +412,12 @@ public class PanelVentas extends JPanel {
 		}
 	}
 
+	/**
+	 * Inicializa el combo de ordenamiento con los criterios soportados por
+	 * {@link VentaOrdenamiento}. Después de cargar las opciones establece
+	 * {@link VentaOrdenamiento#FECHA} como selección predeterminada para que el listado
+	 * inicial tenga un criterio de ordenamiento explícito.
+	 */
 	private void llenarComboOrdenarPor() {
 		this.comboBoxBuscarPor_1.removeAllItems();
 		for (VentaOrdenamiento ordenamiento : VentaOrdenamiento.values()) {
@@ -350,6 +426,16 @@ public class PanelVentas extends JPanel {
 		this.comboBoxBuscarPor_1.setSelectedItem(VentaOrdenamiento.FECHA);
 	}
 
+	/**
+	 * Construye el formateador utilizado por los campos de fecha del panel. La máscara
+	 * obliga a capturar ocho dígitos con la estructura {@code dd/MM/yyyy}, muestra
+	 * guiones bajos en las posiciones pendientes y restringe la entrada a caracteres
+	 * numéricos. La validez calendárica de la fecha se comprueba posteriormente al
+	 * convertir el valor mediante {@link #parseFechaFiltro(JFormattedTextField)}.
+	 *
+	 * @return formateador de máscara para fechas, o {@code null} si la máscara no puede
+	 *         construirse
+	 */
 	private MaskFormatter buildDateFormatter() {
 		try {
 			MaskFormatter formatter = new MaskFormatter("##/##/####");
@@ -362,6 +448,19 @@ public class PanelVentas extends JPanel {
 		}
 	}
 
+	/**
+	 * Convierte el contenido de un campo de fecha a {@link Date} para enviarlo como
+	 * parámetro del filtro de ventas. Un campo sin valor se representa como
+	 * {@code null}, permitiendo que el procedimiento almacenado omita ese límite del
+	 * rango. Si la máscara todavía contiene posiciones pendientes o la fecha no existe
+	 * en el calendario, la conversión se rechaza.
+	 *
+	 * @param field campo formateado del que se obtendrá la fecha
+	 * @return fecha SQL equivalente al valor capturado, o {@code null} cuando el campo
+	 *         se encuentra vacío
+	 * @throws ParseException si la fecha está incompleta, no cumple {@code dd/MM/yyyy}
+	 *                        o representa una fecha calendárica inválida
+	 */
 	private Date parseFechaFiltro(JFormattedTextField field) throws ParseException {
 		String fecha = field.getText() == null ? "" : field.getText().trim();
 		if (this.isFechaVacia(fecha)) {
@@ -376,10 +475,26 @@ public class PanelVentas extends JPanel {
 		return new Date(dateFormat.parse(fecha).getTime());
 	}
 
+	/**
+	 * Determina si el texto de un campo de fecha representa ausencia de filtro. Se
+	 * consideran vacíos tanto una referencia nula o una cadena sin contenido como la
+	 * máscara sin capturar {@code __/__/____} generada por {@link MaskFormatter}.
+	 *
+	 * @param fecha texto que será evaluado
+	 * @return {@code true} cuando no existe una fecha capturada; {@code false} en caso
+	 *         contrario
+	 */
 	private boolean isFechaVacia(String fecha) {
 		return fecha == null || fecha.trim().isEmpty() || "__/__/____".equals(fecha.trim());
 	}
 
+	/**
+	 * Exporta el contenido actual de la tabla de ventas mediante la utilidad compartida
+	 * de exportación. El método trabaja sobre {@code modelTablaVentas}, por lo que exporta
+	 * exactamente las filas resultantes de la última consulta o filtro aplicado. Si la
+	 * escritura falla, conserva la vista y comunica el error al usuario mediante
+	 * {@link MessageHandler}.
+	 */
 	public void exportarVentaExcel() {
 		try {
 			DataTools.exportarTablaExcel(modelTablaVentas, this);
