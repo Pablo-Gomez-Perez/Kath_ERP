@@ -9,6 +9,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -24,8 +27,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.venta.VentaCriterioBusqueda;
+import com.kathsoft.kathpos.app.model.venta.VentaFiltro;
+import com.kathsoft.kathpos.app.model.venta.VentaListado;
+import com.kathsoft.kathpos.app.model.venta.VentaOrdenamiento;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
@@ -61,9 +69,9 @@ public class PanelVentas extends JPanel {
 	private JLabel lblFfinal;
 	private JFormattedTextField formattedTextFieldFechaFinal;
 	private JLabel lblBuscarPor;
-	private JComboBox comboBoxBuscarPor;
+	private JComboBox<VentaCriterioBusqueda> comboBoxBuscarPor;
 	private JLabel lblOrdernarPor;
-	private JComboBox comboBoxBuscarPor_1;
+	private JComboBox<VentaOrdenamiento> comboBoxBuscarPor_1;
 
 	/**
 	 * Create the panel.
@@ -147,28 +155,34 @@ public class PanelVentas extends JPanel {
 
 		this.textField = new JTextField();
 		this.textField.setColumns(10);
+		this.textField.addActionListener(e -> this.llenarTablaVentas());
 
 		this.btnBuscarVenta = new JButton("Buscar");
 		this.btnBuscarVenta.setIcon(
 				new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		this.btnBuscarVenta.setFont(new Font("Dialog", Font.BOLD, 13));
 		this.btnBuscarVenta.setBackground(new Color(184, 134, 11));
+		this.btnBuscarVenta.addActionListener(e -> this.llenarTablaVentas());
 
 		this.lblFInicial = new JLabel("F. inicial");
 
-		this.formattedTextFieldFechaInicial = new JFormattedTextField();
+		this.formattedTextFieldFechaInicial = new JFormattedTextField(this.buildDateFormatter());
+		this.formattedTextFieldFechaInicial.setToolTipText("dd/MM/yyyy");
 
 		this.lblFfinal = new JLabel("F.Final");
 
-		this.formattedTextFieldFechaFinal = new JFormattedTextField();
+		this.formattedTextFieldFechaFinal = new JFormattedTextField(this.buildDateFormatter());
+		this.formattedTextFieldFechaFinal.setToolTipText("dd/MM/yyyy");
 
 		this.lblBuscarPor = new JLabel("Buscar por");
 
-		this.comboBoxBuscarPor = new JComboBox();
+		this.comboBoxBuscarPor = new JComboBox<VentaCriterioBusqueda>();
+		this.llenarComboBuscarPor();
 
 		this.lblOrdernarPor = new JLabel("Ordernar por");
 
-		this.comboBoxBuscarPor_1 = new JComboBox();
+		this.comboBoxBuscarPor_1 = new JComboBox<VentaOrdenamiento>();
+		this.llenarComboOrdenarPor();
 		GroupLayout gl_panelVentasCentralBuscar = new GroupLayout(this.panelVentasCentralBuscar);
 		gl_panelVentasCentralBuscar.setHorizontalGroup(gl_panelVentasCentralBuscar
 				.createParallelGroup(Alignment.TRAILING)
@@ -238,6 +252,10 @@ public class PanelVentas extends JPanel {
 						.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelVentasCentralBuscar,
 								GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)));
 		this.panelVentasCentral.setLayout(gl_panelVentasCentral);
+
+		if (this.sucursal != null && this.sucursal.getIdSucursal() > 0) {
+			this.llenarTablaVentas();
+		}
 	}
 
 	/**
@@ -260,6 +278,106 @@ public class PanelVentas extends JPanel {
 	private void borrarElementosDeLaTablaVentas() {
 		this.modelTablaVentas.getDataVector().removeAllElements();
 		this.tablaVentas.updateUI();
+	}
+
+	public void llenarTablaVentas() {
+		if (this.sucursal == null || this.sucursal.getIdSucursal() <= 0) {
+			return;
+		}
+
+		try {
+			VentaFiltro filtro = this.buildVentaFiltro();
+			var ventas = AppContext.ventasController.listVentas(this.sucursal.getIdSucursal(), filtro);
+
+			this.borrarElementosDeLaTablaVentas();
+			ventas.forEach(this::addVentaListadoToTable);
+		} catch (ParseException er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"Formato de fecha inválido. Usa dd/MM/yyyy");
+		} catch (IllegalArgumentException er) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, er.getMessage());
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
+	}
+
+	private VentaFiltro buildVentaFiltro() throws ParseException {
+		VentaCriterioBusqueda criterio = (VentaCriterioBusqueda) this.comboBoxBuscarPor.getSelectedItem();
+		VentaOrdenamiento ordenamiento = (VentaOrdenamiento) this.comboBoxBuscarPor_1.getSelectedItem();
+		String textoBusqueda = this.textField.getText() == null ? "" : this.textField.getText().trim();
+
+		if (criterio == null) {
+			criterio = VentaCriterioBusqueda.TODOS;
+		}
+		if (ordenamiento == null) {
+			ordenamiento = VentaOrdenamiento.FECHA;
+		}
+
+		Date fechaInicial = this.parseFechaFiltro(this.formattedTextFieldFechaInicial);
+		Date fechaFinal = this.parseFechaFiltro(this.formattedTextFieldFechaFinal);
+		if (fechaInicial != null && fechaFinal != null && fechaInicial.after(fechaFinal)) {
+			throw new IllegalArgumentException("La fecha inicial no puede ser posterior a la fecha final");
+		}
+
+		return new VentaFiltro(criterio.getValor(), criterio == VentaCriterioBusqueda.TODOS ? "" : textoBusqueda,
+				ordenamiento.getValor(), fechaInicial, fechaFinal);
+	}
+
+	private void addVentaListadoToTable(VentaListado venta) {
+		if (venta == null) {
+			return;
+		}
+
+		this.modelTablaVentas.addRow(new Object[] { venta.getFolio(), venta.getFecha(), venta.getTipo(),
+				venta.getAtendio(), venta.getCliente(), venta.getSubtotal(), venta.getIva(), venta.getTotal(),
+				venta.getVigente() });
+	}
+
+	private void llenarComboBuscarPor() {
+		this.comboBoxBuscarPor.removeAllItems();
+		for (VentaCriterioBusqueda criterio : VentaCriterioBusqueda.values()) {
+			this.comboBoxBuscarPor.addItem(criterio);
+		}
+	}
+
+	private void llenarComboOrdenarPor() {
+		this.comboBoxBuscarPor_1.removeAllItems();
+		for (VentaOrdenamiento ordenamiento : VentaOrdenamiento.values()) {
+			this.comboBoxBuscarPor_1.addItem(ordenamiento);
+		}
+		this.comboBoxBuscarPor_1.setSelectedItem(VentaOrdenamiento.FECHA);
+	}
+
+	private MaskFormatter buildDateFormatter() {
+		try {
+			MaskFormatter formatter = new MaskFormatter("##/##/####");
+			formatter.setPlaceholderCharacter('_');
+			formatter.setValidCharacters("0123456789");
+			return formatter;
+		} catch (ParseException er) {
+			er.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	private Date parseFechaFiltro(JFormattedTextField field) throws ParseException {
+		String fecha = field.getText() == null ? "" : field.getText().trim();
+		if (this.isFechaVacia(fecha)) {
+			return null;
+		}
+		if (fecha.contains("_")) {
+			throw new ParseException("Fecha incompleta", 0);
+		}
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		return new Date(dateFormat.parse(fecha).getTime());
+	}
+
+	private boolean isFechaVacia(String fecha) {
+		return fecha == null || fecha.trim().isEmpty() || "__/__/____".equals(fecha.trim());
 	}
 
 	public void exportarVentaExcel() {
