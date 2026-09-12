@@ -314,9 +314,6 @@ public class PanelVentas extends JPanel {
 		if (ordenamiento == null) {
 			ordenamiento = VentaOrdenamiento.FECHA;
 		}
-		if (criterio != VentaCriterioBusqueda.TODOS && textoBusqueda.isBlank()) {
-			throw new IllegalArgumentException("Debe indicar un texto para realizar la búsqueda");
-		}
 
 		Date fechaInicial = this.parseFechaFiltro(this.formattedTextFieldFechaInicial);
 		Date fechaFinal = this.parseFechaFiltro(this.formattedTextFieldFechaFinal);
@@ -324,8 +321,7 @@ public class PanelVentas extends JPanel {
 			throw new IllegalArgumentException("La fecha inicial no puede ser posterior a la fecha final");
 		}
 
-		return new VentaFiltro(criterio.getValor(),
-				criterio == VentaCriterioBusqueda.TODOS ? "" : textoBusqueda,
+		return new VentaFiltro(criterio.getValor(), criterio == VentaCriterioBusqueda.TODOS ? "" : textoBusqueda,
 				ordenamiento.getValor(), fechaInicial, fechaFinal);
 	}
 
