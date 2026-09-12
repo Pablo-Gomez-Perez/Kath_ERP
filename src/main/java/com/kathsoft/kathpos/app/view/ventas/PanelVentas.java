@@ -3,7 +3,6 @@ package com.kathsoft.kathpos.app.view.ventas;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,19 +13,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
@@ -40,7 +35,6 @@ import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
-import javax.swing.DropMode;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -54,7 +48,6 @@ public class PanelVentas extends JPanel {
 	private JLabel lblNewLabel_22;
 	private JPanel panelVentasCentral;
 	private JPanel panelVentasCentralBotones;
-	private ButtonGroup btnRadioGroupOrdernarVentas;
 	private JButton btNuevaVenta;
 	private Sucursal sucursal;
 	private JButton btnExportarVentasExcel;
@@ -62,7 +55,6 @@ public class PanelVentas extends JPanel {
 	private DefaultTableModel modelTablaVentas;
 	private JTable tablaVentas;
 	private JPanel panelVentasCentralBuscar;
-	private ButtonGroup btnRadioGroupBuscarVentas;
 	private JTextField textField;
 	private JButton btnBuscarVenta;
 	private JLabel lblFInicial;
@@ -103,7 +95,7 @@ public class PanelVentas extends JPanel {
 		FlowLayout flowLayout_5 = (FlowLayout) panelVentasCentralBotones.getLayout();
 		flowLayout_5.setAlignment(FlowLayout.RIGHT);
 
-		this.btnRadioGroupOrdernarVentas = new ButtonGroup();
+		new ButtonGroup();
 
 		btNuevaVenta = new JButton("Punto de venta");
 		btNuevaVenta.addActionListener(new ActionListener() {
@@ -248,7 +240,7 @@ public class PanelVentas extends JPanel {
 						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		this.panelVentasCentralBuscar.setLayout(gl_panelVentasCentralBuscar);
 
-		btnRadioGroupBuscarVentas = new ButtonGroup();
+		new ButtonGroup();
 
 		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaVentasColumnsWidth, tablaVentas);
 		GroupLayout gl_panelVentasCentral = new GroupLayout(this.panelVentasCentral);
