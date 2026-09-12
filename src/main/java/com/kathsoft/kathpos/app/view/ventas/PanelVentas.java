@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -287,10 +288,12 @@ public class PanelVentas extends JPanel {
 
 		try {
 			VentaFiltro filtro = this.buildVentaFiltro();
-			var ventas = AppContext.ventasController.listVentas(this.sucursal.getIdSucursal(), filtro);
+			
+			List<VentaListado> ventas = AppContext.ventasController.listVentas(this.sucursal.getIdSucursal(), filtro);
 
 			this.borrarElementosDeLaTablaVentas();
 			ventas.forEach(this::addVentaListadoToTable);
+			
 		} catch (ParseException er) {
 			er.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
