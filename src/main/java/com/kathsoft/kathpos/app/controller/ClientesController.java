@@ -5,12 +5,15 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
 
 import com.kathsoft.kathpos.app.model.cliente.ClienteById;
 import com.kathsoft.kathpos.app.model.cliente.Clientes;
+import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
@@ -172,6 +175,31 @@ public class ClientesController implements Serializable {
 				er.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Listado simple para Combobox de clientes
+	 * @return
+	 * @throws SQLException
+	 * @throws Exception
+	 */
+	public List<JComboboxDataViewModel> listCmbClientes() throws SQLException, Exception{
+		
+		List<JComboboxDataViewModel> result = new ArrayList<>();
+		
+		Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+		CallableStatement stm = cn.prepareCall("CALL listCmbClientes()");
+		
+		ResultSet rset = stm.executeQuery();
+		
+		while (rset.next()) {
+			
+			result.add(new JComboboxDataViewModel(rset.getInt("id"), rset.getString("nombre")));
+			
+		}
+		
+		return result;
+		
 	}
 
 	public ClienteById buscarClientePorId(int idCliente) {
