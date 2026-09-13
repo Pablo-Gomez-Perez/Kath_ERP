@@ -48,8 +48,8 @@ import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Ventas;
 import com.kathsoft.kathpos.app.model.articulo.Articulo;
-import com.kathsoft.kathpos.app.model.cliente.Clientes;
-import com.kathsoft.kathpos.app.model.empleado.Empleado;
+import com.kathsoft.kathpos.app.model.cliente.ClienteById;
+import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
@@ -63,19 +63,11 @@ import javax.swing.JFormattedTextField;
 
 public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAcciones{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8197295139603781983L;
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	private int idSucursal;
 	private Articulo articulo;
-	private Empleado empleado;
-	private Clientes cliente;
+	private EmpleadoById empleado;
+	private ClienteById cliente;
 	private List<ArticulosPorVentas> articulosVendidos;
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ClientesController clienteController = new ClientesController();
@@ -423,6 +415,11 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.lblCliente = new JLabel("Cliente");
 		
 		this.cmbAliasCliente = new JComboBox<JComboboxDataViewModel>();
+		this.cmbAliasCliente.addItemListener(e -> {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				this.consultarClienteSeleccionado();
+			}
+		});
 		
 		this.lblNombre_1 = new JLabel("Nombre");
 		
@@ -485,6 +482,11 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.lblCajero = new JLabel("Cajero");
 		
 		this.cmbAliasEmpleado = new JComboBox<JComboboxDataViewModel>();
+		this.cmbAliasEmpleado.addItemListener(e -> {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				this.consultarEmpleadoSeleccionado();
+			}
+		});
 		
 		this.txfRfcEmpleado = new JTextField();
 		this.txfRfcEmpleado.setColumns(10);
@@ -564,7 +566,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.panelSuperiorDatosVenta.setLayout(gl_panelSuperiorDatosVenta);
 		this.contentPane.setLayout(gl_contentPane);
 		this.llenarCmbEmpleados();
-		this.llenarCmbRfcCliente();
+		this.llenarCmbClientes();
 
 		modelTablaArticulo = new DefaultTableModel();
 
@@ -579,50 +581,92 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 
 		this.modelTablaExistencias.addColumn("Sucursal");
 		this.modelTablaExistencias.addColumn("Existencias");
+		this.cargarSiguienteIdVenta();
 		this.asignarFecha();
 	}
 
 	/**
-	 * consulta la fecha actual del ordenador para la venta
+	 * Consulta la fecha actual del ordenador para la venta.
 	 */
 	private void asignarFecha() {
-		String fecha = LocalDate.now().toString();
+		this.formattedTextFieldFechaVenta.setText(LocalDate.now().toString());
+	}
+
+	private void cargarSiguienteIdVenta() {
+		this.txfIdVenta.setText(String.valueOf(this.ventasController.buscarUltimaVenta() + 1));
 	}
 
 	/**
-	 * consulta el listado completo de empleados en la bd de la sucursal de trabajo
-	 * actual en la que se inició sesión y llena un {@code JCombobox} con los
-	 * nombres de los empleados que pertenecen a esa sucursal
+	 * Consulta el listado completo de empleados de la sucursal actual y llena el
+	 * combo de alias con pares id/nombre.
 	 */
 	private void llenarCmbEmpleados() {
-
-		AppContext.empleadoController.consultaNombresCortosEmpleados(idSucursal).forEach(e -> {
-			
-			cmbAliasEmpleado.addItem(e);
-			
-		});
-		
+		this.cmbAliasEmpleado.removeAllItems();
+		AppContext.empleadoController.consultaNombresCortosEmpleados(this.idSucursal)
+				.forEach(this.cmbAliasEmpleado::addItem);
 	}
 
-	private void llenarCmbRfcCliente() {
+	private void llenarCmbClientes() {
+		this.cmbAliasCliente.removeAllItems();
+		try {
+			this.clienteController.listCmbClientes().forEach(this.cmbAliasCliente::addItem);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No fue posible consultar los clientes: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
-		
+	private void consultarEmpleadoSeleccionado() {
+		Object seleccionado = this.cmbAliasEmpleado.getSelectedItem();
+		if (!(seleccionado instanceof JComboboxDataViewModel item) || item.id() <= 0) {
+			this.empleado = null;
+			this.txfRfcEmpleado.setText("");
+			return;
+		}
 
+		this.empleado = this.empleadoController.consultarEmpleadoPorId(item.id());
+		if (this.empleado == null || this.empleado.getIdEmpleado() <= 0) {
+			this.txfRfcEmpleado.setText("");
+			return;
+		}
+		this.txfRfcEmpleado.setText(this.empleado.getNombreCompleto());
+	}
+
+	private void consultarClienteSeleccionado() {
+		Object seleccionado = this.cmbAliasCliente.getSelectedItem();
+		if (!(seleccionado instanceof JComboboxDataViewModel item) || item.id() <= 0) {
+			this.cliente = null;
+			this.limpiarDatosCliente();
+			return;
+		}
+
+		this.cliente = this.clienteController.buscarClientePorId(item.id());
+		if (this.cliente == null || this.cliente.getIdCliente() <= 0) {
+			this.limpiarDatosCliente();
+			return;
+		}
+
+		this.txfNombreCompletoCliente.setText(this.cliente.getNombreCompleto());
+		this.txfRfcCliente.setText(this.cliente.getRfc());
+		this.txfCuentaContableCliente.setText(this.cliente.getClaveCuentaContable());
+	}
+
+	private void limpiarDatosCliente() {
+		this.txfNombreCompletoCliente.setText("");
+		this.txfRfcCliente.setText("");
+		this.txfCuentaContableCliente.setText("");
 	}
 
 	/**
-	 * al momento de realizar la respectiva consulta en la base de datos mediante el
-	 * código indicado la tabla {@code JTable tablaExistenciaPorSucursal} consulta
-	 * las existencias de ese artículo en las demas sucursales listadas
-	 * 
-	 * @param id -> indice del articulo a consultar su existencia en las demás
-	 *           sucursales
+	 * Al momento de realizar la consulta de un artículo, la tabla consulta las
+	 * existencias de ese artículo en las demás sucursales listadas.
+	 *
+	 * @param id identificador del artículo a consultar
 	 */
 	private void llenarTablaExistencias(int id) {
-		
 		this.modelTablaExistencias.getDataVector().removeAllElements();		
 		this.articuloController.consultarExistenciasPorSucursal(id, modelTablaExistencias);
-		
 	}
 
 	private void abrirFormListaArticulos(String nombreArticulo, int idSucursal) {
@@ -646,9 +690,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 
 	/**
 	 * Método invocado desde el JFrame de consulta. Agrega un nuevo registro al
-	 * jTable de productos para la compra
-	 * 
-	 * @param articulo
+	 * jTable de productos para la venta.
 	 */
 	@Override
 	public void listarArticuloDesdeConsulta(Object[] articulo, ArticulosPorVentas art) {		
@@ -656,42 +698,31 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		if(this.articulosVendidos == null) {
 			this.articulosVendidos = new ArrayList<ArticulosPorVentas>();
 		}
-		
-		//art.setId_venta(Integer.parseInt(this.txfFolioVenta.getText()));
 		this.articulosVendidos.add(art);
 		calculoDeTotales();
 	}
 
 	private void calculoDeTotales() {
-
-		//var model = (DefaultTableModel) this.tablaArticulos.getModel();
 		double total = 0;
 		double subtotal = 0;
 		double iva = 0;
 		int totalArticulos = 0;
 
 		try {
-
-			
-
 			subtotal = total / 1.16;
 			iva = total - subtotal;
-
-			
-
 		} catch (Exception er) {
 			er.printStackTrace();
 			return;
 		}
-
 	}
 	
 	public void refreshAll() {
-		
+		this.cargarSiguienteIdVenta();
+		this.asignarFecha();
 	}
 	
 	private void abrirFormFormaDePago(Ventas venta){		
-		
 		if (venta == null) {
 			JOptionPane.showMessageDialog(this, "No existe una venta válida para cobrar", "Error",
 					JOptionPane.ERROR_MESSAGE);
