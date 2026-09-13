@@ -54,6 +54,8 @@ import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
+import com.kathsoft.kathpos.tools.AppContext;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -91,12 +93,12 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private JFormattedTextField formattedTextFieldFechaVenta;
 	private JPanel panelSuperiorDetalleEmpleado;
 	private JLabel lblCajero;
-	private JComboBox cmbAliasEmpleado;
+	private JComboBox<JComboboxDataViewModel> cmbAliasEmpleado;
 	private JTextField txfRfcEmpleado;
 	private JLabel lblNombre;
 	private JPanel panelSuperiorDetallesCliente;
 	private JLabel lblCliente;
-	private JComboBox cmbAliasCliente;
+	private JComboBox<JComboboxDataViewModel> cmbAliasCliente;
 	private JLabel lblNombre_1;
 	private JTextField txfNombreCompletoCliente;
 	private JLabel lblRfc;
@@ -420,7 +422,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		
 		this.lblCliente = new JLabel("Cliente");
 		
-		this.cmbAliasCliente = new JComboBox();
+		this.cmbAliasCliente = new JComboBox<JComboboxDataViewModel>();
 		
 		this.lblNombre_1 = new JLabel("Nombre");
 		
@@ -482,7 +484,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		
 		this.lblCajero = new JLabel("Cajero");
 		
-		this.cmbAliasEmpleado = new JComboBox();
+		this.cmbAliasEmpleado = new JComboBox<JComboboxDataViewModel>();
 		
 		this.txfRfcEmpleado = new JTextField();
 		this.txfRfcEmpleado.setColumns(10);
@@ -594,6 +596,11 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	 */
 	private void llenarCmbEmpleados() {
 
+		AppContext.empleadoController.consultaNombresCortosEmpleados(idSucursal).forEach(e -> {
+			
+			cmbAliasEmpleado.addItem(e);
+			
+		});
 		
 	}
 
