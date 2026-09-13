@@ -38,9 +38,10 @@ public class ClienteEnVentaById {
 		this.codigoPostal = codigoPostal;
 		this.activo = activo;
 	}
-	
-	public ClienteEnVentaById() {}
-	
+
+	public ClienteEnVentaById() {
+	}
+
 	public int getIdCliente() {
 		return idCliente;
 	}

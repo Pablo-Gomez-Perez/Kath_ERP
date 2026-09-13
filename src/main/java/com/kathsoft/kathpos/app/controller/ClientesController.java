@@ -38,10 +38,9 @@ public class ClientesController implements Serializable {
 
 			while (rset.next()) {
 
-				data.add(new Object[] { rset.getInt("id_cliente"), rset.getString("rfc"),
-						rset.getString("nombre"), rset.getString("clave"), rset.getString("nombre_completo"),
-						rset.getString("nombre_corto"), rset.getString("correo_electronico"),
-						rset.getShort("activo") == 1 ? "Activo" : "Inactivo" });
+				data.add(new Object[] { rset.getInt("id_cliente"), rset.getString("rfc"), rset.getString("nombre"),
+						rset.getString("clave"), rset.getString("nombre_completo"), rset.getString("nombre_corto"),
+						rset.getString("correo_electronico"), rset.getShort("activo") == 1 ? "Activo" : "Inactivo" });
 
 			}
 
@@ -177,34 +176,35 @@ public class ClientesController implements Serializable {
 			}
 		}
 	}
-	
+
 	/**
 	 * Listado simple para Combobox de clientes
+	 * 
 	 * @return
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public List<JComboboxDataViewModel> listCmbClientes() throws SQLException, Exception{
-		
+	public List<JComboboxDataViewModel> listCmbClientes() throws SQLException, Exception {
+
 		List<JComboboxDataViewModel> result = new ArrayList<>();
-		
+
 		Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 		CallableStatement stm = cn.prepareCall("CALL listCmbClientes()");
-		
+
 		ResultSet rset = stm.executeQuery();
-		
+
 		while (rset.next()) {
-			
+
 			result.add(new JComboboxDataViewModel(rset.getInt("id"), rset.getString("nombre")));
-			
+
 		}
-		
-		if(!cn.isClosed()) {
+
+		if (!cn.isClosed()) {
 			Conexion.cerrarConexion(cn, rset, stm);
 		}
-		
+
 		return result;
-		
+
 	}
 
 	public ClienteById buscarClientePorId(int idCliente) {
@@ -255,48 +255,39 @@ public class ClientesController implements Serializable {
 			}
 		}
 	}
-	
+
 	/**
-	 * Consulta los detalles de un cliente mediante su ID.
-	 * este método mapea el resultado del procedimiento almacenado <code> kath_erp.getClienteParaVentaById(IN id_cliente INT)</code>
+	 * Consulta los detalles de un cliente mediante su ID. este método mapea el
+	 * resultado del procedimiento almacenado
+	 * <code> kath_erp.getClienteParaVentaById(IN id_cliente INT)</code>
+	 * 
 	 * @param idCliente
 	 * @return
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public ClienteEnVentaById getClienteEnVentaById(int idCliente) throws SQLException, Exception{
-		
+	public ClienteEnVentaById getClienteEnVentaById(int idCliente) throws SQLException, Exception {
+
 		Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-		
-		
+
 		CallableStatement stm = cn.prepareCall("CALL getClienteParaVentaById(?)");
 		stm.setInt("id_cliente", idCliente);
-		
+
 		ResultSet rset = stm.executeQuery();
-		
-		if(rset.next()) {
-			return new ClienteEnVentaById(
-					rset.getInt("id_cliente"),
-					rset.getInt("id_tipoCliente"),
-					rset.getInt("id_cuenta_contable"),
-					rset.getString("tipo_cliente"),
-					rset.getString("rfc"),
-					rset.getString("nombre_completo"),
-					rset.getString("nombre_corto"),
-					rset.getDate("fecha_nac"),
-					rset.getString("correo_electronico"),
-					rset.getString("estado"),
-					rset.getString("ciudad"),
-					rset.getString("direccion"),
-					rset.getString("codigo_postal"),
-					rset.getBoolean("activo")
-					);
+
+		if (rset.next()) {
+			return new ClienteEnVentaById(rset.getInt("id_cliente"), rset.getInt("id_tipoCliente"),
+					rset.getInt("id_cuenta_contable"), rset.getString("tipo_cliente"), rset.getString("rfc"),
+					rset.getString("nombre_completo"), rset.getString("nombre_corto"), rset.getDate("fecha_nac"),
+					rset.getString("correo_electronico"), rset.getString("estado"), rset.getString("ciudad"),
+					rset.getString("direccion"), rset.getString("codigo_postal"), rset.getBoolean("activo"));
 		}
-		
-		if(!cn.isClosed()) Conexion.cerrarConexion(cn, rset, stm);
-		
+
+		if (!cn.isClosed())
+			Conexion.cerrarConexion(cn, rset, stm);
+
 		return new ClienteEnVentaById();
-		
+
 	}
 
 	/** Inserta cliente y devuelve `SpResponseModel`. */

@@ -92,12 +92,14 @@ public class EmpleadoController implements Serializable {
 			rset = stm.executeQuery();
 			if (rset.next()) {
 				return new EmpleadoById.EmpleadoBuilder().idEmpleado(rset.getInt("id_empleado"))
-						.idCuentaContable(rset.getInt("id_cuenta_contable")).claveCuentaContable(rset.getString("clave"))
-						.idSucursal(rset.getInt("id_sucursal")).rfc(rset.getString("rfc")).curp(rset.getString("curp"))
+						.idCuentaContable(rset.getInt("id_cuenta_contable"))
+						.claveCuentaContable(rset.getString("clave")).idSucursal(rset.getInt("id_sucursal"))
+						.rfc(rset.getString("rfc")).curp(rset.getString("curp"))
 						.nombreCompleto(rset.getString("nombre_completo")).nombreCorto(rset.getString("nombre_corto"))
 						.fechaNac(rset.getDate("fecha_nac")).correoElectronico(rset.getString("correo_electronico"))
-						.estado(rset.getString("estado")).ciudad(rset.getString("ciudad")).direccion(rset.getString("direccion"))
-						.codigoPostal(rset.getString("codigo_postal")).activo(rset.getBoolean("activo")).build();
+						.estado(rset.getString("estado")).ciudad(rset.getString("ciudad"))
+						.direccion(rset.getString("direccion")).codigoPostal(rset.getString("codigo_postal"))
+						.activo(rset.getBoolean("activo")).build();
 			}
 			return new EmpleadoById();
 		} catch (SQLException er) {
@@ -127,12 +129,14 @@ public class EmpleadoController implements Serializable {
 			rset = stm.executeQuery();
 			if (rset.next()) {
 				return new EmpleadoById.EmpleadoBuilder().idEmpleado(rset.getInt("id_empleado"))
-						.idCuentaContable(rset.getInt("id_cuenta_contable")).claveCuentaContable(rset.getString("clave"))
-						.idSucursal(rset.getInt("id_sucursal")).rfc(rset.getString("rfc")).curp(rset.getString("curp"))
+						.idCuentaContable(rset.getInt("id_cuenta_contable"))
+						.claveCuentaContable(rset.getString("clave")).idSucursal(rset.getInt("id_sucursal"))
+						.rfc(rset.getString("rfc")).curp(rset.getString("curp"))
 						.nombreCompleto(rset.getString("nombre_completo")).nombreCorto(rset.getString("nombre_corto"))
 						.fechaNac(rset.getDate("fecha_nac")).correoElectronico(rset.getString("correo_electronico"))
-						.estado(rset.getString("estado")).ciudad(rset.getString("ciudad")).direccion(rset.getString("direccion"))
-						.codigoPostal(rset.getString("codigo_postal")).activo(rset.getBoolean("activo")).build();
+						.estado(rset.getString("estado")).ciudad(rset.getString("ciudad"))
+						.direccion(rset.getString("direccion")).codigoPostal(rset.getString("codigo_postal"))
+						.activo(rset.getBoolean("activo")).build();
 			}
 			return new EmpleadoById();
 		} catch (SQLException er) {
