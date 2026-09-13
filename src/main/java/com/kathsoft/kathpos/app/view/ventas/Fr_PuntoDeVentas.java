@@ -417,7 +417,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.panelSuperiorDetallesCliente.setBackground(new Color(85, 223, 255));
 		GroupLayout gl_panelSuperiorDatosVenta = new GroupLayout(this.panelSuperiorDatosVenta);
 		gl_panelSuperiorDatosVenta.setHorizontalGroup(
-			gl_panelSuperiorDatosVenta.createParallelGroup(Alignment.TRAILING)
+			gl_panelSuperiorDatosVenta.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelSuperiorDatosVenta.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(this.panelSuperiorDetallesVenta, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
@@ -462,7 +462,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfCuentaContableCliente.setColumns(10);
 		GroupLayout gl_panelSuperiorDetallesCliente = new GroupLayout(this.panelSuperiorDetallesCliente);
 		gl_panelSuperiorDetallesCliente.setHorizontalGroup(
-			gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
+			gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING, false)
 				.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING, false)
@@ -792,6 +792,8 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		}
 
 		try {
+			// Se consulta nuevamente para que la cantidad mínima de mayoreo utilizada al
+			// agregar corresponda al valor vigente del tipo de cliente seleccionado.
 			PrecioTipoCliente precio = this.consultarPrecioArticulo(this.articulo.getIdArticulo());
 			if (precio == null || precio.getPrecio() == null) {
 				JOptionPane.showMessageDialog(this, "No existe precio configurado para el tipo de cliente seleccionado",
