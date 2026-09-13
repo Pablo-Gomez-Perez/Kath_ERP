@@ -1,17 +1,13 @@
 package com.kathsoft.kathpos.app.model.cliente;
 
-import java.io.Serializable;
 import java.sql.Date;
-import java.util.Objects;
 
-public class ClienteById implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class ClienteEnVentaById {
 
 	private int idCliente;
 	private int idTipoCliente;
 	private int idCuentaContable;
-	private String claveCuentaContable;
+	private String tipoCliente;
 	private String rfc;
 	private String nombreCompleto;
 	private String nombreCorto;
@@ -23,16 +19,14 @@ public class ClienteById implements Serializable {
 	private String codigoPostal;
 	private boolean activo;
 
-	
-	
-	public ClienteById(int idCliente, int idTipoCliente, int idCuentaContable, String claveCuentaContable, String rfc,
+	public ClienteEnVentaById(int idCliente, int idTipoCliente, int idCuentaContable, String tipoCliente, String rfc,
 			String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico, String estado,
 			String ciudad, String direccion, String codigoPostal, boolean activo) {
 		super();
 		this.idCliente = idCliente;
 		this.idTipoCliente = idTipoCliente;
 		this.idCuentaContable = idCuentaContable;
-		this.claveCuentaContable = claveCuentaContable;
+		this.tipoCliente = tipoCliente;
 		this.rfc = rfc;
 		this.nombreCompleto = nombreCompleto;
 		this.nombreCorto = nombreCorto;
@@ -44,8 +38,9 @@ public class ClienteById implements Serializable {
 		this.codigoPostal = codigoPostal;
 		this.activo = activo;
 	}
-	
-	public ClienteById() {}
+
+	public ClienteEnVentaById() {
+	}
 
 	public int getIdCliente() {
 		return idCliente;
@@ -71,12 +66,12 @@ public class ClienteById implements Serializable {
 		this.idCuentaContable = idCuentaContable;
 	}
 
-	public String getClaveCuentaContable() {
-		return claveCuentaContable;
+	public String getTipoCliente() {
+		return tipoCliente;
 	}
 
-	public void setClaveCuentaContable(String claveCuentaContable) {
-		this.claveCuentaContable = claveCuentaContable;
+	public void setTipoCliente(String tipoCliente) {
+		this.tipoCliente = tipoCliente;
 	}
 
 	public String getRfc() {
@@ -160,27 +155,12 @@ public class ClienteById implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(Boolean.valueOf(activo), ciudad, codigoPostal, correoElectronico, direccion, estado,
-				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idCuentaContable), Integer.valueOf(idTipoCliente),
-				claveCuentaContable, nombreCompleto, nombreCorto, rfc);
+	public String toString() {
+		return "ClienteEnVentaById [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente + ", idCuentaContable="
+				+ idCuentaContable + ", tipoCliente=" + tipoCliente + ", rfc=" + rfc + ", nombreCompleto="
+				+ nombreCompleto + ", nombreCorto=" + nombreCorto + ", fechaNac=" + fechaNac + ", correoElectronico="
+				+ correoElectronico + ", estado=" + estado + ", ciudad=" + ciudad + ", direccion=" + direccion
+				+ ", codigoPostal=" + codigoPostal + ", activo=" + activo + "]";
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof ClienteById)) {
-			return false;
-		}
-		ClienteById other = (ClienteById) obj;
-		return activo == other.activo && idCliente == other.idCliente && idTipoCliente == other.idTipoCliente
-				&& idCuentaContable == other.idCuentaContable && Objects.equals(claveCuentaContable, other.claveCuentaContable)
-				&& Objects.equals(rfc, other.rfc) && Objects.equals(nombreCompleto, other.nombreCompleto)
-				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(fechaNac, other.fechaNac)
-				&& Objects.equals(correoElectronico, other.correoElectronico) && Objects.equals(estado, other.estado)
-				&& Objects.equals(ciudad, other.ciudad) && Objects.equals(direccion, other.direccion)
-				&& Objects.equals(codigoPostal, other.codigoPostal);
-	}
 }

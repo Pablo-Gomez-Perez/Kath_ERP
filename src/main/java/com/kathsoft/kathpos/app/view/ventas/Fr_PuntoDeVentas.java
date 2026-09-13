@@ -1,17 +1,12 @@
 package com.kathsoft.kathpos.app.view.ventas;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -20,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,17 +24,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
@@ -54,13 +40,14 @@ import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Ventas;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.articulo.PrecioTipoCliente;
-import com.kathsoft.kathpos.app.model.cliente.ClienteById;
+import com.kathsoft.kathpos.app.model.cliente.ClienteEnVentaById;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -70,8 +57,7 @@ import javax.swing.JFormattedTextField;
 public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAcciones {
 
 	private static final long serialVersionUID = 8197295139603781983L;
-	private static final int COLUMNA_CODIGO = 0;
-	private static final int COLUMNA_DESCRIPCION = 1;
+	private static final int COLUMNA_CODIGO = 0;	
 	private static final int COLUMNA_PRECIO = 2;
 	private static final int COLUMNA_CANTIDAD = 3;
 	private static final int COLUMNA_DESCUENTO = 4;
@@ -83,7 +69,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private ArticuloByCodigo articulo;
 	private PrecioTipoCliente precioArticuloConsultado;
 	private EmpleadoById empleado;
-	private ClienteById cliente;
+	private ClienteEnVentaById cliente;
 	private List<ArticulosPorVentas> articulosVendidos;
 	private final Map<String, ArticuloByCodigo> articulosPorCodigo = new HashMap<>();
 	private final Map<String, PrecioTipoCliente> preciosPorCodigo = new HashMap<>();
@@ -117,7 +103,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private JLabel lblRfc;
 	private JTextField txfRfcCliente;
 	private JLabel lblCtaContbale;
-	private JTextField txfCuentaContableCliente;
+	private JTextField txfNombreTipoCliente;
 	private JPanel panelInferiorDatosArticulos;
 	private JLabel lblArticulo;
 	private JTextField txfCodigoNombreArticulo;
@@ -191,15 +177,15 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 								.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 775,
 										Short.MAX_VALUE)
 								.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelDetallesSubtotales,
-										GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)))
+										GroupLayout.PREFERRED_SIZE, 226, GroupLayout.PREFERRED_SIZE)))
 				.addContainerGap()));
 		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
 				.createSequentialGroup().addContainerGap()
 				.addComponent(this.panelSuperiorDatosVenta, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-						.addComponent(this.panelDetallesSubtotales, GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
+						.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+						.addComponent(this.panelDetallesSubtotales, GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE))
 				.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelInferiorDatosArticulos,
 						GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
 				.addContainerGap()));
@@ -456,10 +442,10 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfRfcCliente = new JTextField();
 		this.txfRfcCliente.setColumns(10);
 
-		this.lblCtaContbale = new JLabel("Cta. Contable");
+		this.lblCtaContbale = new JLabel("T. Cliente");
 
-		this.txfCuentaContableCliente = new JTextField();
-		this.txfCuentaContableCliente.setColumns(10);
+		this.txfNombreTipoCliente = new JTextField();
+		this.txfNombreTipoCliente.setColumns(10);
 		GroupLayout gl_panelSuperiorDetallesCliente = new GroupLayout(this.panelSuperiorDetallesCliente);
 		gl_panelSuperiorDetallesCliente.setHorizontalGroup(gl_panelSuperiorDetallesCliente
 				.createParallelGroup(Alignment.LEADING)
@@ -476,11 +462,11 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 						.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
 										.addComponent(this.lblNombre_1).addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(this.txfNombreCompletoCliente, GroupLayout.DEFAULT_SIZE, 162,
+										.addComponent(this.txfNombreCompletoCliente, GroupLayout.DEFAULT_SIZE, 152,
 												Short.MAX_VALUE))
 								.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
 										.addComponent(this.lblCtaContbale).addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(this.txfCuentaContableCliente, GroupLayout.DEFAULT_SIZE, 131,
+										.addComponent(this.txfNombreTipoCliente, GroupLayout.DEFAULT_SIZE, 145,
 												Short.MAX_VALUE)))
 						.addContainerGap()));
 		gl_panelSuperiorDetallesCliente
@@ -497,10 +483,10 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 										.addComponent(this.lblRfc)
 										.addComponent(this.txfRfcCliente, GroupLayout.PREFERRED_SIZE,
 												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(this.lblCtaContbale).addComponent(this.txfCuentaContableCliente,
+										.addComponent(this.lblCtaContbale).addComponent(this.txfNombreTipoCliente,
 												GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 												GroupLayout.PREFERRED_SIZE))
-								.addContainerGap(37, Short.MAX_VALUE)));
+								.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		this.panelSuperiorDetallesCliente.setLayout(gl_panelSuperiorDetallesCliente);
 
 		this.lblCajero = new JLabel("Cajero");
@@ -609,6 +595,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.tableListadoArticulos.setModel(this.modelTablaArticulo);
 		this.configurarEditoresTablaArticulos();
 		this.configurarEventosTablaArticulos();
+		this.configurarAtajoEliminarArticulo();
 
 		this.modelTablaExistencias = new DefaultTableModel() {
 			private static final long serialVersionUID = 1L;
@@ -675,14 +662,25 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	}
 
 	private void consultarClienteSeleccionado() {
+
 		Object seleccionado = this.cmbAliasCliente.getSelectedItem();
+
 		if (!(seleccionado instanceof JComboboxDataViewModel item) || item.id() <= 0) {
 			this.cliente = null;
 			this.limpiarDatosCliente();
 			return;
 		}
 
-		this.cliente = this.clienteController.buscarClientePorId(item.id());
+		try {
+
+			this.cliente = this.clienteController.getClienteEnVentaById(item.id());
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
+		}
+
 		if (this.cliente == null || this.cliente.getIdCliente() <= 0) {
 			this.limpiarDatosCliente();
 			return;
@@ -690,7 +688,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 
 		this.txfNombreCompletoCliente.setText(this.cliente.getNombreCompleto());
 		this.txfRfcCliente.setText(this.cliente.getRfc());
-		this.txfCuentaContableCliente.setText(this.cliente.getClaveCuentaContable());
+		this.txfNombreTipoCliente.setText(this.cliente.getTipoCliente());
 
 		if (this.modelTablaArticulo != null && this.modelTablaArticulo.getRowCount() > 0) {
 			this.actualizarPreciosPorClienteSeleccionado();
@@ -700,7 +698,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private void limpiarDatosCliente() {
 		this.txfNombreCompletoCliente.setText("");
 		this.txfRfcCliente.setText("");
-		this.txfCuentaContableCliente.setText("");
+		this.txfNombreTipoCliente.setText("");
 	}
 
 	private void procesarEnterArticulo() {
@@ -903,6 +901,20 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 			} catch (IllegalArgumentException er) {
 				this.restaurarValoresValidos(fila);
 				JOptionPane.showMessageDialog(this, er.getMessage(), "Dato inválido", JOptionPane.WARNING_MESSAGE);
+			}
+		});
+	}
+
+	private void configurarAtajoEliminarArticulo() {
+		String accionEliminar = "eliminarArticuloSeleccionado";
+		this.tableListadoArticulos.getInputMap(javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0), accionEliminar);
+		this.tableListadoArticulos.getActionMap().put(accionEliminar, new javax.swing.AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				eliminarArticuloSeleccionado();
 			}
 		});
 	}
