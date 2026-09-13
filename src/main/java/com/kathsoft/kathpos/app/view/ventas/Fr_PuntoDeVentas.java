@@ -210,6 +210,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		
 		this.btnEliminarArticuloSeleccionado = new JButton("Eliminar Articulo");
 		this.btnEliminarArticuloSeleccionado.setBackground(new Color(237, 51, 59));
+		this.btnEliminarArticuloSeleccionado.addActionListener(e -> this.eliminarArticuloSeleccionado());
 		
 		this.lblPartidas = new JLabel("Partidas");
 		
@@ -416,7 +417,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.panelSuperiorDetallesCliente.setBackground(new Color(85, 223, 255));
 		GroupLayout gl_panelSuperiorDatosVenta = new GroupLayout(this.panelSuperiorDatosVenta);
 		gl_panelSuperiorDatosVenta.setHorizontalGroup(
-			gl_panelSuperiorDatosVenta.createParallelGroup(Alignment.LEADING)
+			gl_panelSuperiorDatosVenta.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelSuperiorDatosVenta.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(this.panelSuperiorDetallesVenta, GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
@@ -791,8 +792,6 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		}
 
 		try {
-			// Se consulta nuevamente para que la cantidad mínima de mayoreo utilizada al
-			// agregar corresponda al valor vigente del tipo de cliente seleccionado.
 			PrecioTipoCliente precio = this.consultarPrecioArticulo(this.articulo.getIdArticulo());
 			if (precio == null || precio.getPrecio() == null) {
 				JOptionPane.showMessageDialog(this, "No existe precio configurado para el tipo de cliente seleccionado",
@@ -904,6 +903,30 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 				JOptionPane.showMessageDialog(this, er.getMessage(), "Dato inválido", JOptionPane.WARNING_MESSAGE);
 			}
 		});
+	}
+
+	private void eliminarArticuloSeleccionado() {
+		int filaVista = this.tableListadoArticulos.getSelectedRow();
+		if (filaVista < 0) {
+			JOptionPane.showMessageDialog(this, "Seleccione un artículo para eliminar", "Atención",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (this.tableListadoArticulos.isEditing() && this.tableListadoArticulos.getCellEditor() != null
+				&& !this.tableListadoArticulos.getCellEditor().stopCellEditing()) {
+			return;
+		}
+
+		int filaModelo = this.tableListadoArticulos.convertRowIndexToModel(filaVista);
+		String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(filaModelo, COLUMNA_CODIGO));
+
+		this.modelTablaArticulo.removeRow(filaModelo);
+		this.articulosPorCodigo.remove(codigo);
+		this.preciosPorCodigo.remove(codigo);
+		this.cantidadesValidasPorCodigo.remove(codigo);
+		this.descuentosValidosPorCodigo.remove(codigo);
+		this.recalcularTotalesDesdeTabla();
 	}
 
 	private void recalcularFila(int fila) {
