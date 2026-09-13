@@ -9,11 +9,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
@@ -37,12 +40,14 @@ import com.kathsoft.kathpos.app.controller.ClientesController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
-import com.kathsoft.kathpos.app.model.Ventas;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.articulo.PrecioTipoCliente;
 import com.kathsoft.kathpos.app.model.cliente.ClienteEnVentaById;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
+import com.kathsoft.kathpos.app.model.venta.ArticuloPorVenta;
+import com.kathsoft.kathpos.app.model.venta.Venta;
+import com.kathsoft.kathpos.app.model.venta.VentaConDetalle;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
@@ -224,6 +229,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 
 		this.btnCobrar = new JButton("Cobrar");
 		this.btnCobrar.setBackground(new Color(87, 227, 137));
+		this.btnCobrar.addActionListener(e -> this.prepararCobro());
 		GroupLayout gl_panelDetallesSubtotales = new GroupLayout(this.panelDetallesSubtotales);
 		gl_panelDetallesSubtotales.setHorizontalGroup(gl_panelDetallesSubtotales.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelDetallesSubtotales.createSequentialGroup().addContainerGap()
@@ -1228,20 +1234,157 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		}
 	}
 
+	private void prepararCobro() {
+		if (!this.detenerEdicionVenta()) {
+			return;
+		}
+
+		try {
+			VentaConDetalle ventaConDetalle = this.construirVentaDesdeFormulario();
+			this.abrirFormFormaDePago(ventaConDetalle);
+		} catch (IllegalArgumentException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "No es posible cobrar la venta",
+					JOptionPane.WARNING_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error al preparar la venta: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private boolean detenerEdicionVenta() {
+		if (this.tableListadoArticulos.isEditing() && this.tableListadoArticulos.getCellEditor() != null
+				&& !this.tableListadoArticulos.getCellEditor().stopCellEditing()) {
+			JOptionPane.showMessageDialog(this, "No fue posible confirmar la edición del artículo", "Dato inválido",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
+	private VentaConDetalle construirVentaDesdeFormulario() throws Exception {
+		if (this.idSucursal <= 0) {
+			throw new IllegalArgumentException("No existe una sucursal válida para registrar la venta");
+		}
+		if (this.empleado == null || this.empleado.getIdEmpleado() <= 0) {
+			throw new IllegalArgumentException("Debe seleccionar el empleado que atiende la venta");
+		}
+		if (!this.hayClienteSeleccionado()) {
+			throw new IllegalArgumentException("Debe seleccionar un cliente");
+		}
+
+		List<ArticuloPorVenta> articulos = this.construirArticulosVenta();
+		this.recalcularTotalesDesdeTabla();
+
+		Date fechaVenta;
+		try {
+			fechaVenta = Date.valueOf(LocalDate.parse(this.formattedTextFieldFechaVenta.getText().trim()));
+		} catch (Exception er) {
+			throw new IllegalArgumentException("La fecha de venta no es válida");
+		}
+
+		BigDecimal subtotal = this.obtenerImporteCampo(this.txfSubtotalVenta, "subtotal");
+		BigDecimal iva = this.obtenerImporteCampo(this.txfIva, "IVA");
+		BigDecimal total = this.obtenerImporteCampo(this.txfTotalVenta, "total");
+		if (total.compareTo(BigDecimal.ZERO) <= 0) {
+			throw new IllegalArgumentException("El total de la venta debe ser mayor a cero");
+		}
+		if (subtotal.add(iva).setScale(2, RoundingMode.HALF_UP).compareTo(total.setScale(2, RoundingMode.HALF_UP)) != 0) {
+			throw new IllegalArgumentException("Los importes de la venta no son consistentes");
+		}
+
+		Venta venta = new Venta.VentaBuilder().idEmpleado(this.empleado.getIdEmpleado())
+				.idCliente(this.cliente.getIdCliente()).idSucursal(this.idSucursal).fecha(fechaVenta)
+				.tipoVenta(false).subtotal(subtotal.doubleValue()).iva(iva.doubleValue())
+				.importeTotal(total.doubleValue()).statusVenta(true).build();
+
+		return new VentaConDetalle(venta, articulos, new ArrayList<>());
+	}
+
+	private List<ArticuloPorVenta> construirArticulosVenta() throws Exception {
+		if (this.modelTablaArticulo.getRowCount() <= 0) {
+			throw new IllegalArgumentException("Debe agregar al menos un artículo a la venta");
+		}
+
+		List<ArticuloPorVenta> detalles = new ArrayList<>();
+		Set<Integer> idsArticulos = new HashSet<>();
+
+		for (int fila = 0; fila < this.modelTablaArticulo.getRowCount(); fila++) {
+			String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO)).trim();
+			if (codigo.isEmpty()) {
+				throw new IllegalArgumentException("No fue posible identificar el artículo de la fila " + (fila + 1));
+			}
+
+			int cantidad = this.obtenerCantidadFila(fila);
+			BigDecimal descuento = this.obtenerDescuentoFila(fila);
+			if (descuento.compareTo(BigDecimal.ZERO) != 0) {
+				throw new IllegalArgumentException("No es posible registrar descuentos por partida con el flujo actual. "
+						+ "Retire el descuento del artículo " + codigo + " antes de cobrar");
+			}
+
+			ArticuloByCodigo articuloVigente = this.articuloController.consultarArticuloPorCodigo(codigo,
+					this.idSucursal, this.cliente.getIdTipoCliente());
+			if (articuloVigente == null || articuloVigente.getIdArticulo() <= 0) {
+				throw new IllegalArgumentException("El artículo " + codigo + " ya no está disponible para la venta");
+			}
+			if (!idsArticulos.add(articuloVigente.getIdArticulo())) {
+				throw new IllegalArgumentException("El artículo " + codigo + " está repetido en la venta");
+			}
+			if (articuloVigente.getExistencia() <= 0) {
+				throw new IllegalArgumentException("El artículo " + codigo + " no tiene existencia disponible");
+			}
+			if (cantidad > articuloVigente.getExistencia()) {
+				throw new IllegalArgumentException("La cantidad solicitada del artículo " + codigo
+						+ " supera la existencia disponible en la sucursal");
+			}
+
+			PrecioTipoCliente precioVigente = this.consultarPrecioArticulo(articuloVigente.getIdArticulo());
+			if (precioVigente == null || precioVigente.getPrecio() == null) {
+				throw new IllegalArgumentException("El artículo " + codigo
+						+ " no tiene precio vigente para el tipo de cliente seleccionado");
+			}
+
+			this.articulosPorCodigo.put(codigo, articuloVigente);
+			this.preciosPorCodigo.put(codigo, precioVigente);
+			this.recalcularFila(fila);
+
+			BigDecimal totalFila = this.obtenerDecimalFila(fila, COLUMNA_SUBTOTAL);
+			BigDecimal subtotalDetalle = articuloVigente.isExento() ? totalFila
+					: totalFila.divide(FACTOR_IVA, 2, RoundingMode.HALF_UP);
+			detalles.add(new ArticuloPorVenta.ArticuloPorVentaBuilder().idArticulo(articuloVigente.getIdArticulo())
+					.cantidad(cantidad).subtotal(subtotalDetalle.doubleValue()).build());
+		}
+
+		return detalles;
+	}
+
+	private BigDecimal obtenerImporteCampo(JTextField campo, String nombre) {
+		try {
+			return new BigDecimal(campo.getText().trim()).setScale(2, RoundingMode.HALF_UP);
+		} catch (Exception er) {
+			throw new IllegalArgumentException("El " + nombre + " de la venta no es válido");
+		}
+	}
+
 	public void refreshAll() {
+		if (this.modelTablaArticulo != null) {
+			this.modelTablaArticulo.setRowCount(0);
+		}
+		this.articulosPorCodigo.clear();
+		this.preciosPorCodigo.clear();
+		this.cantidadesValidasPorCodigo.clear();
+		this.descuentosValidosPorCodigo.clear();
+		this.articulosVendidos = new ArrayList<>();
+		this.limpiarArticuloConsultado();
+		this.recalcularTotalesDesdeTabla();
 		this.cargarSiguienteIdVenta();
 		this.asignarFecha();
 	}
 
-	private void abrirFormFormaDePago(Ventas venta) {
-		if (venta == null) {
+	private void abrirFormFormaDePago(VentaConDetalle ventaConDetalle) {
+		if (ventaConDetalle == null || ventaConDetalle.getVenta() == null || ventaConDetalle.getArticulos() == null
+				|| ventaConDetalle.getArticulos().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "No existe una venta válida para cobrar", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (this.articulosVendidos == null || this.articulosVendidos.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "No existen artículos agregados a la venta", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -1252,7 +1395,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					var form = new Fr_FormasDePago(venta, articulosVendidos, fr);
+					var form = new Fr_FormasDePago(ventaConDetalle, fr);
 					form.setVisible(true);
 					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					form.setLocationRelativeTo(cmp);
