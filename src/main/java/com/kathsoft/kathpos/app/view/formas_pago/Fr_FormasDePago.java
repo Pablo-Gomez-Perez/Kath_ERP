@@ -254,11 +254,16 @@ public class Fr_FormasDePago extends JFrame {
 	}
 
 	private boolean esRespuestaError(SpResponseModel respuesta) {
-		if (respuesta == null || respuesta.message() == null) {
-			return respuesta == null;
+		if (respuesta == null) {
+			return true;
 		}
-		String mensaje = respuesta.message().trim().toLowerCase();
-		return respuesta.id() == 500 && (mensaje.startsWith("error") || mensaje.contains("no fue posible"));
+		if (respuesta.id() != 500) {
+			return false;
+		}
+		if (respuesta.message() == null) {
+			return true;
+		}
+		return !respuesta.message().toLowerCase().contains("correct");
 	}
 
 }
