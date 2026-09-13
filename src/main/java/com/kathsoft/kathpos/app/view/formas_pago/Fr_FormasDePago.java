@@ -8,9 +8,10 @@ import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
 import com.kathsoft.kathpos.app.controller.VentasController;
-import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
-import com.kathsoft.kathpos.app.model.PagosPorVenta;
-import com.kathsoft.kathpos.app.model.Ventas;
+import com.kathsoft.kathpos.app.model.venta.PagoPorVenta;
+import com.kathsoft.kathpos.app.model.venta.Venta;
+import com.kathsoft.kathpos.app.model.venta.VentaConDetalle;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 
 import java.awt.BorderLayout;
@@ -23,6 +24,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionListener;
@@ -47,9 +50,7 @@ public class Fr_FormasDePago extends JFrame {
 	private JButton btnCancelar;
 	private JButton btnRegistrar;
 	private JLabel lblNewLabel;
-	private List<ArticulosPorVentas> articulos;
-	private List<PagosPorVenta> fpagos;
-	private Ventas venta;
+	private VentaConDetalle ventaConDetalle;
 	private Fr_PuntoDeVentas formVentas;
 
 	/**
@@ -64,9 +65,10 @@ public class Fr_FormasDePago extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Fr_FormasDePago(Ventas venta, List<ArticulosPorVentas> articulos, Fr_PuntoDeVentas formVentas) {
+	public Fr_FormasDePago(VentaConDetalle ventaConDetalle, Fr_PuntoDeVentas formVentas) {
 
 		this.formVentas = formVentas;
+		this.ventaConDetalle = ventaConDetalle;
 
 		setTitle("Forma de pago");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,6 +98,7 @@ public class Fr_FormasDePago extends JFrame {
 
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.setBackground(new Color(255, 51, 51));
+		btnCancelar.addActionListener(e -> this.dispose());
 		panelInferiorBotones.add(btnCancelar);
 
 		btnRegistrar = new JButton("Cobrar");
@@ -130,9 +133,6 @@ public class Fr_FormasDePago extends JFrame {
 		}
 
 		this.llenarTablaFormasDePago();
-
-		this.articulos = articulos;
-		this.venta = venta;
 	}
 
 	private void llenarTablaFormasDePago() {
@@ -144,71 +144,121 @@ public class Fr_FormasDePago extends JFrame {
 		;
 	}
 
-	private List<PagosPorVenta> formasDePago() {
-		var fpagosList = new ArrayList<PagosPorVenta>();
-		var model = (DefaultTableModel) this.tablaFormasDePago.getModel();
+	private List<PagoPorVenta> formasDePago() {
+		List<PagoPorVenta> pagos = new ArrayList<>();
+		DefaultTableModel model = (DefaultTableModel) this.tablaFormasDePago.getModel();
 
-		try {
-
-			for (int i = 0; i < model.getRowCount(); i++) {
-				if ((model.getValueAt(i, 2)) != null) {
-
-					var formasPagoReg = PagosPorVenta.builder().idVenta(this.venta.getIdVenta())
-							.idFormaDePago((int) model.getValueAt(i, 0))
-							.importe(Double.parseDouble(model.getValueAt(i, 2).toString())).build();
-
-					fpagosList.add(formasPagoReg);
-
-				}
+		for (int fila = 0; fila < model.getRowCount(); fila++) {
+			Object valorImporte = model.getValueAt(fila, 2);
+			if (valorImporte == null || String.valueOf(valorImporte).trim().isEmpty()) {
+				continue;
 			}
 
-			return fpagosList;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		}
+			BigDecimal importe;
+			try {
+				importe = new BigDecimal(String.valueOf(valorImporte).trim()).setScale(2, RoundingMode.HALF_UP);
+			} catch (NumberFormatException er) {
+				throw new IllegalArgumentException("El importe de la forma de pago en la fila " + (fila + 1)
+						+ " no es válido");
+			}
 
+			if (importe.compareTo(BigDecimal.ZERO) < 0) {
+				throw new IllegalArgumentException("Los importes de pago no pueden ser negativos");
+			}
+			if (importe.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			Object valorIdFormaPago = model.getValueAt(fila, 0);
+			int idFormaPago;
+			try {
+				idFormaPago = valorIdFormaPago instanceof Number numero ? numero.intValue()
+						: Integer.parseInt(String.valueOf(valorIdFormaPago).trim());
+			} catch (Exception er) {
+				throw new IllegalArgumentException("No fue posible identificar la forma de pago de la fila " + (fila + 1));
+			}
+			if (idFormaPago <= 0) {
+				throw new IllegalArgumentException("La forma de pago de la fila " + (fila + 1) + " no es válida");
+			}
+
+			pagos.add(new PagoPorVenta.PagoPorVentaBuilder().idFormaPago(idFormaPago).importe(importe.doubleValue())
+					.build());
+		}
+		return pagos;
+	}
+
+	private boolean detenerEdicionPago() {
+		if (this.tablaFormasDePago.isEditing() && this.tablaFormasDePago.getCellEditor() != null
+				&& !this.tablaFormasDePago.getCellEditor().stopCellEditing()) {
+			JOptionPane.showMessageDialog(this, "No fue posible confirmar el importe capturado", "Importe inválido",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		return true;
 	}
 
 	/**
-	 * realiza escencialmente tres operaciones 1. registra los datos de la venta. 2.
-	 * registra los artículos que fueron vendidos 3. registra la forma en la que la
-	 * venta fué efectivamente pagada
+	 * Registra la venta completa en una sola transacción: cabecera, artículos,
+	 * afectación de existencias, pagos y finalización. Un pago parcial o la ausencia
+	 * de pagos genera una venta a crédito; únicamente el pago exacto genera una venta
+	 * de contado.
 	 */
 	private void finalizarVenta() {
+		if (!this.detenerEdicionPago()) {
+			return;
+		}
 
-		if (this.venta == null || this.articulos == null) {
-			JOptionPane.showMessageDialog(this, "Error al procesar venta", "Error", JOptionPane.ERROR_MESSAGE);
+		if (this.ventaConDetalle == null || this.ventaConDetalle.getVenta() == null
+				|| this.ventaConDetalle.getArticulos() == null || this.ventaConDetalle.getArticulos().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "No existe una venta completa para procesar", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
 		try {
-			this.fpagos = this.formasDePago();
+			Venta venta = this.ventaConDetalle.getVenta();
+			List<PagoPorVenta> pagos = this.formasDePago();
+			BigDecimal totalVenta = BigDecimal.valueOf(venta.getImporteTotal()).setScale(2, RoundingMode.HALF_UP);
+			BigDecimal totalPagado = pagos.stream().map(pago -> BigDecimal.valueOf(pago.getImporte()))
+					.reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
 
-			double totalVenta = fpagos.stream().mapToDouble(PagosPorVenta::getImporte).sum();
+			if (totalVenta.compareTo(BigDecimal.ZERO) <= 0) {
+				throw new IllegalArgumentException("El total de la venta debe ser mayor a cero");
+			}
+			if (totalPagado.compareTo(totalVenta) > 0) {
+				throw new IllegalArgumentException("La suma de los pagos no puede superar el importe total de la venta");
+			}
 
-			if (totalVenta < this.venta.getTotal()) {
-				JOptionPane.showMessageDialog(this, "El importe no puede ser menor a la venta", "Error",
+			this.ventaConDetalle.setPagos(pagos);
+			SpResponseModel respuesta = this.ventasController.insertVenta(this.ventaConDetalle);
+
+			if (respuesta == null || respuesta.id() <= 0 || this.esRespuestaError(respuesta)) {
+				String mensaje = respuesta == null ? "No se recibió respuesta al registrar la venta" : respuesta.message();
+				JOptionPane.showMessageDialog(this, mensaje, "No fue posible registrar la venta",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
-			double cambio = totalVenta - this.venta.getTotal();
-
-			// se registran los datos de la venta
-			this.ventasController.insertarNuevaVenta(venta);
-
 			this.formVentas.refreshAll();
-
-			JOptionPane.showMessageDialog(this, "Venta registrada, Gracias por su compra, su cambio es $" + cambio,
-					"Ventas", JOptionPane.INFORMATION_MESSAGE);
-
+			JOptionPane.showMessageDialog(this, respuesta.message() + "\nID de venta: " + respuesta.id(), "Ventas",
+					JOptionPane.INFORMATION_MESSAGE);
 			this.dispose();
+		} catch (IllegalArgumentException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos de cobro inválidos",
+					JOptionPane.WARNING_MESSAGE);
 		} catch (Exception er) {
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error " + er.getMessage(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-			er.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error al registrar la venta: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+			er.printStackTrace(System.err);
 		}
+	}
+
+	private boolean esRespuestaError(SpResponseModel respuesta) {
+		if (respuesta == null || respuesta.message() == null) {
+			return respuesta == null;
+		}
+		String mensaje = respuesta.message().trim().toLowerCase();
+		return respuesta.id() == 500 && (mensaje.startsWith("error") || mensaje.contains("no fue posible"));
 	}
 
 }
