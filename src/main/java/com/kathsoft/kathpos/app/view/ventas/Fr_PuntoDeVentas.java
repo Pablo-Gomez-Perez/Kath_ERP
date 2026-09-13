@@ -609,6 +609,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.tableListadoArticulos.setModel(this.modelTablaArticulo);
 		this.configurarEditoresTablaArticulos();
 		this.configurarEventosTablaArticulos();
+		this.configurarAtajoEliminarArticulo();
 
 		this.modelTablaExistencias = new DefaultTableModel() {
 			private static final long serialVersionUID = 1L;
@@ -903,6 +904,20 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 			} catch (IllegalArgumentException er) {
 				this.restaurarValoresValidos(fila);
 				JOptionPane.showMessageDialog(this, er.getMessage(), "Dato inválido", JOptionPane.WARNING_MESSAGE);
+			}
+		});
+	}
+
+	private void configurarAtajoEliminarArticulo() {
+		String accionEliminar = "eliminarArticuloSeleccionado";
+		this.tableListadoArticulos.getInputMap(javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0), accionEliminar);
+		this.tableListadoArticulos.getActionMap().put(accionEliminar, new javax.swing.AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				eliminarArticuloSeleccionado();
 			}
 		});
 	}
