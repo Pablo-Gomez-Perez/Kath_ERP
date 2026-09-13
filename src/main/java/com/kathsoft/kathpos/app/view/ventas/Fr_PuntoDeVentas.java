@@ -118,6 +118,22 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private JLabel lblNewLabel_1;
 	private JScrollPane scrollPaneExistenciaPorSucursal;
 	private JTable tableExistenciaPorSucursal;
+	private JScrollPane scrollPaneListadoArticulos;
+	private JPanel panelDetallesSubtotales;
+	private JTable tableListadoArticulos;
+	private JButton btnEliminarArticuloSeleccionado;
+	private JLabel lblPartidas;
+	private JTextField txfNumeroDePartidas;
+	private JLabel lblTotalDeArtculos;
+	private JTextField txfTotalDeArticulos;
+	private JLabel lblSubTotal;
+	private JTextField txfSubtotalVenta;
+	private JLabel lblIva;
+	private JTextField txfIva;
+	private JLabel lblTotal;
+	private JTextField txfTotalVenta;
+	private JButton btnCancelarSalir;
+	private JButton btnCobrar;
 
 	/**
 	 * Create the frame.
@@ -130,7 +146,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 				.getImage(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
 		setTitle("Punto de venta");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1031, 680);
+		setBounds(100, 100, 1031, 730);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(null);
@@ -144,14 +160,23 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.panelInferiorDatosArticulos = new JPanel();
 		this.panelInferiorDatosArticulos.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		this.panelInferiorDatosArticulos.setBackground(new Color(245, 194, 17));
+		
+		this.scrollPaneListadoArticulos = new JScrollPane();
+		
+		this.panelDetallesSubtotales = new JPanel();
+		this.panelDetallesSubtotales.setBackground(new Color(255, 190, 111));
 		GroupLayout gl_contentPane = new GroupLayout(this.contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.panelInferiorDatosArticulos, GroupLayout.DEFAULT_SIZE, 1007, Short.MAX_VALUE)
 						.addComponent(this.panelSuperiorDatosVenta, GroupLayout.DEFAULT_SIZE, 1007, Short.MAX_VALUE)
-						.addComponent(this.panelInferiorDatosArticulos, GroupLayout.DEFAULT_SIZE, 1007, Short.MAX_VALUE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.panelDetallesSubtotales, GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -159,10 +184,104 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(this.panelSuperiorDatosVenta, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 369, Short.MAX_VALUE)
-					.addComponent(this.panelInferiorDatosArticulos, GroupLayout.PREFERRED_SIZE, 170, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+						.addComponent(this.panelDetallesSubtotales, GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.panelInferiorDatosArticulos, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
+		
+		this.btnEliminarArticuloSeleccionado = new JButton("Eliminar Articulo");
+		this.btnEliminarArticuloSeleccionado.setBackground(new Color(237, 51, 59));
+		
+		this.lblPartidas = new JLabel("Partidas");
+		
+		this.txfNumeroDePartidas = new JTextField();
+		this.txfNumeroDePartidas.setColumns(10);
+		
+		this.lblTotalDeArtculos = new JLabel("Total de artículos");
+		
+		this.txfTotalDeArticulos = new JTextField();
+		this.txfTotalDeArticulos.setColumns(10);
+		
+		this.lblSubTotal = new JLabel("Sub Total");
+		
+		this.txfSubtotalVenta = new JTextField();
+		this.txfSubtotalVenta.setColumns(10);
+		
+		this.lblIva = new JLabel("I.V.A.");
+		
+		this.txfIva = new JTextField();
+		this.txfIva.setColumns(10);
+		
+		this.lblTotal = new JLabel("Total");
+		
+		this.txfTotalVenta = new JTextField();
+		this.txfTotalVenta.setColumns(10);
+		
+		this.btnCancelarSalir = new JButton("Cancelar");
+		this.btnCancelarSalir.setBackground(new Color(246, 97, 81));
+		
+		this.btnCobrar = new JButton("Cobrar");
+		this.btnCobrar.setBackground(new Color(87, 227, 137));
+		GroupLayout gl_panelDetallesSubtotales = new GroupLayout(this.panelDetallesSubtotales);
+		gl_panelDetallesSubtotales.setHorizontalGroup(
+			gl_panelDetallesSubtotales.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelDetallesSubtotales.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelDetallesSubtotales.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.btnEliminarArticuloSeleccionado, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.lblPartidas)
+						.addComponent(this.txfNumeroDePartidas, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.lblTotalDeArtculos)
+						.addComponent(this.txfTotalDeArticulos, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.lblSubTotal)
+						.addComponent(this.txfSubtotalVenta, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.lblIva)
+						.addComponent(this.txfIva, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.lblTotal)
+						.addComponent(this.txfTotalVenta, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.btnCancelarSalir, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+						.addComponent(this.btnCobrar, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		gl_panelDetallesSubtotales.setVerticalGroup(
+			gl_panelDetallesSubtotales.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelDetallesSubtotales.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.btnEliminarArticuloSeleccionado)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(this.lblPartidas)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfNumeroDePartidas, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblTotalDeArtculos)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfTotalDeArticulos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblSubTotal)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfSubtotalVenta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblIva)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfIva, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.lblTotal)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.txfTotalVenta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.btnCancelarSalir)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.btnCobrar)
+					.addContainerGap(15, Short.MAX_VALUE))
+		);
+		this.panelDetallesSubtotales.setLayout(gl_panelDetallesSubtotales);
+		
+		this.tableListadoArticulos = new JTable();
+		this.scrollPaneListadoArticulos.setViewportView(this.tableListadoArticulos);
 		
 		this.lblArticulo = new JLabel("Artículo");
 		
@@ -172,17 +291,21 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.lblPrecioG = new JLabel("Precio G.");
 		
 		this.textField = new JTextField();
+		this.textField.setEditable(false);
 		this.textField.setColumns(10);
 		
 		this.lblPrecioM = new JLabel("Precio M.");
 		
 		this.textField_1 = new JTextField();
+		this.textField_1.setEditable(false);
 		this.textField_1.setColumns(10);
 		
 		this.btnBuscarVentaPorID_1 = new JButton("");
+		this.btnBuscarVentaPorID_1.setBackground(new Color(181, 131, 90));
 		this.btnBuscarVentaPorID_1.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		
 		this.btnAgregar = new JButton("");
+		this.btnAgregar.setBackground(new Color(87, 227, 137));
 		this.btnAgregar.setFont(new Font("Dialog", Font.BOLD, 9));
 		this.btnAgregar.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
 		
@@ -200,7 +323,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 					.addContainerGap()
 					.addGroup(gl_panelInferiorDatosArticulos.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_panelInferiorDatosArticulos.createSequentialGroup()
-							.addComponent(this.scrollPaneDescripcionArticulo, GroupLayout.PREFERRED_SIZE, 461, GroupLayout.PREFERRED_SIZE)
+							.addComponent(this.scrollPaneDescripcionArticulo, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
 							.addGap(18)
 							.addComponent(this.scrollPaneExistenciaPorSucursal, GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE))
 						.addGroup(Alignment.TRAILING, gl_panelInferiorDatosArticulos.createSequentialGroup()
@@ -220,11 +343,11 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(this.lblPrecioG, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(this.textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(this.textField, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(this.lblPrecioM)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(this.textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(this.textField_1, GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(this.btnAgregar)))))
 					.addContainerGap())
