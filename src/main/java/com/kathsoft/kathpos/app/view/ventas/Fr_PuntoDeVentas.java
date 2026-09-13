@@ -55,12 +55,14 @@ import com.kathsoft.kathpos.app.model.Ventas;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.articulo.PrecioTipoCliente;
 import com.kathsoft.kathpos.app.model.cliente.ClienteById;
+import com.kathsoft.kathpos.app.model.cliente.ClienteEnVentaById;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -83,7 +85,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private ArticuloByCodigo articulo;
 	private PrecioTipoCliente precioArticuloConsultado;
 	private EmpleadoById empleado;
-	private ClienteById cliente;
+	private ClienteEnVentaById cliente;
 	private List<ArticulosPorVentas> articulosVendidos;
 	private final Map<String, ArticuloByCodigo> articulosPorCodigo = new HashMap<>();
 	private final Map<String, PrecioTipoCliente> preciosPorCodigo = new HashMap<>();
@@ -117,7 +119,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private JLabel lblRfc;
 	private JTextField txfRfcCliente;
 	private JLabel lblCtaContbale;
-	private JTextField txfCuentaContableCliente;
+	private JTextField txfNombreTipoCliente;
 	private JPanel panelInferiorDatosArticulos;
 	private JLabel lblArticulo;
 	private JTextField txfCodigoNombreArticulo;
@@ -182,27 +184,32 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.panelDetallesSubtotales = new JPanel();
 		this.panelDetallesSubtotales.setBackground(new Color(255, 190, 111));
 		GroupLayout gl_contentPane = new GroupLayout(this.contentPane);
-		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup().addContainerGap()
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.panelInferiorDatosArticulos, GroupLayout.DEFAULT_SIZE, 1007, Short.MAX_VALUE)
 						.addComponent(this.panelSuperiorDatosVenta, GroupLayout.DEFAULT_SIZE, 1007, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 775,
-										Short.MAX_VALUE)
-								.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelDetallesSubtotales,
-										GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)))
-				.addContainerGap()));
-		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup().addContainerGap()
-				.addComponent(this.panelSuperiorDatosVenta, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-						.addComponent(this.panelDetallesSubtotales, GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
-				.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.panelInferiorDatosArticulos,
-						GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
-				.addContainerGap()));
+							.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.panelDetallesSubtotales, GroupLayout.PREFERRED_SIZE, 226, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(this.panelSuperiorDatosVenta, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(this.scrollPaneListadoArticulos, GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+						.addComponent(this.panelDetallesSubtotales, GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.panelInferiorDatosArticulos, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
 
 		this.btnEliminarArticuloSeleccionado = new JButton("Eliminar Articulo");
 		this.btnEliminarArticuloSeleccionado.setBackground(new Color(237, 51, 59));
@@ -456,51 +463,52 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfRfcCliente = new JTextField();
 		this.txfRfcCliente.setColumns(10);
 
-		this.lblCtaContbale = new JLabel("Cta. Contable");
+		this.lblCtaContbale = new JLabel("T. Cliente");
 
-		this.txfCuentaContableCliente = new JTextField();
-		this.txfCuentaContableCliente.setColumns(10);
+		this.txfNombreTipoCliente = new JTextField();
+		this.txfNombreTipoCliente.setColumns(10);
 		GroupLayout gl_panelSuperiorDetallesCliente = new GroupLayout(this.panelSuperiorDetallesCliente);
-		gl_panelSuperiorDetallesCliente.setHorizontalGroup(gl_panelSuperiorDetallesCliente
-				.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup().addContainerGap()
-						.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING, false)
-								.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
-										.addComponent(this.lblCliente).addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(this.cmbAliasCliente, GroupLayout.PREFERRED_SIZE, 110,
-												GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_panelSuperiorDetallesCliente
-										.createSequentialGroup().addComponent(this.lblRfc)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(this.txfRfcCliente)))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
-										.addComponent(this.lblNombre_1).addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(this.txfNombreCompletoCliente, GroupLayout.DEFAULT_SIZE, 162,
-												Short.MAX_VALUE))
-								.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
-										.addComponent(this.lblCtaContbale).addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(this.txfCuentaContableCliente, GroupLayout.DEFAULT_SIZE, 131,
-												Short.MAX_VALUE)))
-						.addContainerGap()));
-		gl_panelSuperiorDetallesCliente
-				.setVerticalGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
+		gl_panelSuperiorDetallesCliente.setHorizontalGroup(
+			gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
-								.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.BASELINE)
-										.addComponent(this.cmbAliasCliente, GroupLayout.PREFERRED_SIZE,
-												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(this.lblCliente).addComponent(this.lblNombre_1)
-										.addComponent(this.txfNombreCompletoCliente, GroupLayout.PREFERRED_SIZE,
-												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.BASELINE)
-										.addComponent(this.lblRfc)
-										.addComponent(this.txfRfcCliente, GroupLayout.PREFERRED_SIZE,
-												GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-										.addComponent(this.lblCtaContbale).addComponent(this.txfCuentaContableCliente,
-												GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-												GroupLayout.PREFERRED_SIZE))
-								.addContainerGap(37, Short.MAX_VALUE)));
+							.addComponent(this.lblCliente)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.cmbAliasCliente, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
+							.addComponent(this.lblRfc)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfRfcCliente)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
+							.addComponent(this.lblNombre_1)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfNombreCompletoCliente, GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
+						.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
+							.addComponent(this.lblCtaContbale)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfNombreTipoCliente, GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)))
+					.addContainerGap())
+		);
+		gl_panelSuperiorDetallesCliente.setVerticalGroup(
+			gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
+					.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.cmbAliasCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCliente)
+						.addComponent(this.lblNombre_1)
+						.addComponent(this.txfNombreCompletoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblRfc)
+						.addComponent(this.txfRfcCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.lblCtaContbale)
+						.addComponent(this.txfNombreTipoCliente, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
 		this.panelSuperiorDetallesCliente.setLayout(gl_panelSuperiorDetallesCliente);
 
 		this.lblCajero = new JLabel("Cajero");
@@ -676,14 +684,25 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	}
 
 	private void consultarClienteSeleccionado() {
+		
 		Object seleccionado = this.cmbAliasCliente.getSelectedItem();
+		
 		if (!(seleccionado instanceof JComboboxDataViewModel item) || item.id() <= 0) {
 			this.cliente = null;
 			this.limpiarDatosCliente();
 			return;
 		}
 
-		this.cliente = this.clienteController.buscarClientePorId(item.id());
+		try {
+			
+			this.cliente = this.clienteController.getClienteEnVentaById(item.id());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, e.getMessage());
+		}
+		
 		if (this.cliente == null || this.cliente.getIdCliente() <= 0) {
 			this.limpiarDatosCliente();
 			return;
@@ -691,7 +710,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 
 		this.txfNombreCompletoCliente.setText(this.cliente.getNombreCompleto());
 		this.txfRfcCliente.setText(this.cliente.getRfc());
-		this.txfCuentaContableCliente.setText(this.cliente.getClaveCuentaContable());
+		this.txfNombreTipoCliente.setText(this.cliente.getTipoCliente());
 
 		if (this.modelTablaArticulo != null && this.modelTablaArticulo.getRowCount() > 0) {
 			this.actualizarPreciosPorClienteSeleccionado();
@@ -701,7 +720,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private void limpiarDatosCliente() {
 		this.txfNombreCompletoCliente.setText("");
 		this.txfRfcCliente.setText("");
-		this.txfCuentaContableCliente.setText("");
+		this.txfNombreTipoCliente.setText("");
 	}
 
 	private void procesarEnterArticulo() {
