@@ -462,7 +462,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfCuentaContableCliente.setColumns(10);
 		GroupLayout gl_panelSuperiorDetallesCliente = new GroupLayout(this.panelSuperiorDetallesCliente);
 		gl_panelSuperiorDetallesCliente.setHorizontalGroup(
-			gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING, false)
+			gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelSuperiorDetallesCliente.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelSuperiorDetallesCliente.createParallelGroup(Alignment.LEADING, false)
