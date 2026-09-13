@@ -12,13 +12,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,6 +43,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.controller.ArticuloController;
@@ -47,7 +52,8 @@ import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.ArticulosPorVentas;
 import com.kathsoft.kathpos.app.model.Ventas;
-import com.kathsoft.kathpos.app.model.articulo.Articulo;
+import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
+import com.kathsoft.kathpos.app.model.articulo.PrecioTipoCliente;
 import com.kathsoft.kathpos.app.model.cliente.ClienteById;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
@@ -64,11 +70,26 @@ import javax.swing.JFormattedTextField;
 public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAcciones{
 
 	private static final long serialVersionUID = 8197295139603781983L;
+	private static final int COLUMNA_CODIGO = 0;
+	private static final int COLUMNA_DESCRIPCION = 1;
+	private static final int COLUMNA_PRECIO = 2;
+	private static final int COLUMNA_CANTIDAD = 3;
+	private static final int COLUMNA_DESCUENTO = 4;
+	private static final int COLUMNA_SUBTOTAL = 5;
+	private static final BigDecimal CIEN = new BigDecimal("100");
+	private static final BigDecimal FACTOR_IVA = new BigDecimal("1.16");
+
 	private int idSucursal;
-	private Articulo articulo;
+	private ArticuloByCodigo articulo;
+	private PrecioTipoCliente precioArticuloConsultado;
 	private EmpleadoById empleado;
 	private ClienteById cliente;
 	private List<ArticulosPorVentas> articulosVendidos;
+	private final Map<String, ArticuloByCodigo> articulosPorCodigo = new HashMap<>();
+	private final Map<String, PrecioTipoCliente> preciosPorCodigo = new HashMap<>();
+	private final Map<String, Integer> cantidadesValidasPorCodigo = new HashMap<>();
+	private final Map<String, BigDecimal> descuentosValidosPorCodigo = new HashMap<>();
+	private boolean actualizandoTablaArticulo;
 	private EmpleadoController empleadoController = new EmpleadoController();
 	private ClientesController clienteController = new ClientesController();
 	private VentasController ventasController = new VentasController();
@@ -104,7 +125,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private JTextField textField;
 	private JLabel lblPrecioM;
 	private JTextField textField_1;
-	private JButton btnBuscarVentaPorID_1;
+	private JButton btnBuscarArticulo;
 	private JButton btnAgregar;
 	private JLabel lblDescripcin;
 	private JScrollPane scrollPaneDescripcionArticulo;
@@ -281,6 +302,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		
 		this.txfCodigoNombreArticulo = new JTextField();
 		this.txfCodigoNombreArticulo.setColumns(10);
+		this.txfCodigoNombreArticulo.addActionListener(e -> this.procesarEnterArticulo());
 		
 		this.lblPrecioG = new JLabel("Precio G.");
 		
@@ -294,14 +316,16 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.textField_1.setEditable(false);
 		this.textField_1.setColumns(10);
 		
-		this.btnBuscarVentaPorID_1 = new JButton("");
-		this.btnBuscarVentaPorID_1.setBackground(new Color(181, 131, 90));
-		this.btnBuscarVentaPorID_1.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscarArticulo = new JButton("");
+		this.btnBuscarArticulo.setBackground(new Color(181, 131, 90));
+		this.btnBuscarArticulo.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscarArticulo.addActionListener(e -> this.buscarArticulo());
 		
 		this.btnAgregar = new JButton("");
 		this.btnAgregar.setBackground(new Color(87, 227, 137));
 		this.btnAgregar.setFont(new Font("Dialog", Font.BOLD, 9));
 		this.btnAgregar.setIcon(new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
+		this.btnAgregar.addActionListener(e -> this.agregarArticuloConsultado());
 		
 		this.lblDescripcin = new JLabel("Descripción");
 		
@@ -333,7 +357,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 							.addGroup(gl_panelInferiorDatosArticulos.createParallelGroup(Alignment.LEADING)
 								.addComponent(this.lblNewLabel_1)
 								.addGroup(gl_panelInferiorDatosArticulos.createSequentialGroup()
-									.addComponent(this.btnBuscarVentaPorID_1, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+									.addComponent(this.btnBuscarArticulo, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(this.lblPrecioG, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
@@ -360,7 +384,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 								.addComponent(this.lblPrecioM)
 								.addComponent(this.textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addComponent(this.lblPrecioG)))
-						.addComponent(this.btnBuscarVentaPorID_1, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.btnBuscarArticulo, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panelInferiorDatosArticulos.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.lblDescripcin)
@@ -568,19 +592,37 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.llenarCmbEmpleados();
 		this.llenarCmbClientes();
 
-		modelTablaArticulo = new DefaultTableModel();
+		this.modelTablaArticulo = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
 
-		modelTablaArticulo.addColumn("Codigo");
-		modelTablaArticulo.addColumn("Descripción");
-		modelTablaArticulo.addColumn("Precio");
-		modelTablaArticulo.addColumn("Cantidad");
-		modelTablaArticulo.addColumn("Descuento");
-		modelTablaArticulo.addColumn("Subtotal");
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return column == COLUMNA_CANTIDAD || column == COLUMNA_DESCUENTO;
+			}
+		};
 
-		this.modelTablaExistencias = new DefaultTableModel();
+		this.modelTablaArticulo.addColumn("Codigo");
+		this.modelTablaArticulo.addColumn("Descripción");
+		this.modelTablaArticulo.addColumn("Precio");
+		this.modelTablaArticulo.addColumn("Cantidad");
+		this.modelTablaArticulo.addColumn("Descuento");
+		this.modelTablaArticulo.addColumn("Subtotal");
+		this.tableListadoArticulos.setModel(this.modelTablaArticulo);
+		this.configurarEditoresTablaArticulos();
+		this.configurarEventosTablaArticulos();
 
+		this.modelTablaExistencias = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		this.modelTablaExistencias.addColumn("Sucursal");
 		this.modelTablaExistencias.addColumn("Existencias");
+		this.tableExistenciaPorSucursal.setModel(this.modelTablaExistencias);
+
 		this.cargarSiguienteIdVenta();
 		this.asignarFecha();
 	}
@@ -650,6 +692,10 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfNombreCompletoCliente.setText(this.cliente.getNombreCompleto());
 		this.txfRfcCliente.setText(this.cliente.getRfc());
 		this.txfCuentaContableCliente.setText(this.cliente.getClaveCuentaContable());
+
+		if (this.modelTablaArticulo != null && this.modelTablaArticulo.getRowCount() > 0) {
+			this.actualizarPreciosPorClienteSeleccionado();
+		}
 	}
 
 	private void limpiarDatosCliente() {
@@ -658,62 +704,484 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfCuentaContableCliente.setText("");
 	}
 
+	private void procesarEnterArticulo() {
+		if (this.articulo != null && this.articulo.getIdArticulo() > 0) {
+			this.agregarArticuloConsultado();
+			return;
+		}
+		this.buscarArticulo();
+	}
+
+	private void buscarArticulo() {
+		if (!this.hayClienteSeleccionado()) {
+			JOptionPane.showMessageDialog(this, "Seleccione un cliente antes de consultar artículos", "Atención",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		String textoBusqueda = this.txfCodigoNombreArticulo.getText() == null ? ""
+				: this.txfCodigoNombreArticulo.getText().trim();
+		this.articulo = null;
+		this.precioArticuloConsultado = null;
+
+		if (textoBusqueda.isEmpty()) {
+			this.abrirFormListaArticulos("");
+			return;
+		}
+
+		try {
+			ArticuloByCodigo consultado = this.articuloController.consultarArticuloPorCodigo(textoBusqueda,
+					this.idSucursal, this.cliente.getIdTipoCliente());
+			if (consultado == null) {
+				return;
+			}
+			if (consultado.getIdArticulo() <= 0) {
+				this.abrirFormListaArticulos(textoBusqueda);
+				return;
+			}
+
+			PrecioTipoCliente precio = this.consultarPrecioArticulo(consultado.getIdArticulo());
+			if (precio == null || precio.getPrecio() == null) {
+				JOptionPane.showMessageDialog(this, "El artículo no tiene precio definido para el tipo de cliente seleccionado",
+						"Precio no disponible", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+
+			this.articulo = consultado;
+			this.precioArticuloConsultado = precio;
+			this.mostrarArticuloConsultado();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No fue posible consultar el artículo: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private boolean hayClienteSeleccionado() {
+		return this.cliente != null && this.cliente.getIdCliente() > 0 && this.cliente.getIdTipoCliente() > 0;
+	}
+
+	private PrecioTipoCliente consultarPrecioArticulo(int idArticulo) throws Exception {
+		if (!this.hayClienteSeleccionado() || idArticulo <= 0) {
+			return null;
+		}
+		return this.articuloController.listarPreciosArticuloPorTipoCliente(idArticulo).stream()
+				.filter(precio -> precio.getIdTipoCliente() == this.cliente.getIdTipoCliente())
+				.findFirst().orElse(null);
+	}
+
+	private void mostrarArticuloConsultado() {
+		if (this.articulo == null || this.precioArticuloConsultado == null) {
+			return;
+		}
+
+		this.txfCodigoNombreArticulo.setText(this.articulo.getCodigoArticulo());
+		this.textAreaDescripcionArticulo.setText(this.articulo.getDescripcion());
+		this.textField.setText(this.formatearImporte(this.precioArticuloConsultado.getPrecio()));
+		this.textField_1.setText(this.precioArticuloConsultado.getPrecioEspecial() == null ? ""
+				: this.formatearImporte(this.precioArticuloConsultado.getPrecioEspecial()));
+		this.llenarTablaExistencias(this.articulo.getIdArticulo());
+	}
+
+	private void agregarArticuloConsultado() {
+		if (this.articulo == null || this.articulo.getIdArticulo() <= 0) {
+			JOptionPane.showMessageDialog(this, "Primero debe consultar un artículo", "Atención",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		try {
+			// Se consulta nuevamente para que la cantidad mínima de mayoreo utilizada al
+			// agregar corresponda al valor vigente del tipo de cliente seleccionado.
+			PrecioTipoCliente precio = this.consultarPrecioArticulo(this.articulo.getIdArticulo());
+			if (precio == null || precio.getPrecio() == null) {
+				JOptionPane.showMessageDialog(this, "No existe precio configurado para el tipo de cliente seleccionado",
+						"Precio no disponible", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+
+			Integer cantidad = this.solicitarCantidadArticulos();
+			if (cantidad == null) {
+				return;
+			}
+
+			this.agregarArticuloATabla(this.articulo, precio, cantidad.intValue());
+			this.limpiarArticuloConsultado();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No fue posible agregar el artículo: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private Integer solicitarCantidadArticulos() {
+		String cantidadIngresada = JOptionPane.showInputDialog(this, "Ingrese la cantidad de artículos");
+		if (cantidadIngresada == null) {
+			return null;
+		}
+
+		try {
+			int cantidad = Integer.parseInt(cantidadIngresada.trim());
+			if (cantidad <= 0) {
+				throw new NumberFormatException();
+			}
+			return Integer.valueOf(cantidad);
+		} catch (NumberFormatException er) {
+			JOptionPane.showMessageDialog(this, "Ingrese una cantidad entera mayor a cero", "Cantidad inválida",
+					JOptionPane.WARNING_MESSAGE);
+			return null;
+		}
+	}
+
+	private void agregarArticuloATabla(ArticuloByCodigo articuloSeleccionado, PrecioTipoCliente precio, int cantidad) {
+		if (articuloSeleccionado == null || articuloSeleccionado.getIdArticulo() <= 0 || precio == null || cantidad <= 0) {
+			return;
+		}
+
+		String codigo = articuloSeleccionado.getCodigoArticulo();
+		int filaExistente = this.buscarFilaArticulo(codigo);
+		int cantidadExistente = filaExistente >= 0 ? this.obtenerCantidadFila(filaExistente) : 0;
+		int cantidadTotal = cantidadExistente + cantidad;
+
+		if (cantidadTotal > articuloSeleccionado.getExistencia()) {
+			JOptionPane.showMessageDialog(this, "La cantidad solicitada supera la existencia disponible en la sucursal",
+					"Existencia insuficiente", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		this.articulosPorCodigo.put(codigo, articuloSeleccionado);
+		this.preciosPorCodigo.put(codigo, precio);
+
+		if (filaExistente >= 0) {
+			this.modelTablaArticulo.setValueAt(Integer.valueOf(cantidadTotal), filaExistente, COLUMNA_CANTIDAD);
+			return;
+		}
+
+		BigDecimal descuento = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+		BigDecimal precioBase = this.obtenerPrecioBase(precio, cantidadTotal);
+		this.cantidadesValidasPorCodigo.put(codigo, Integer.valueOf(cantidadTotal));
+		this.descuentosValidosPorCodigo.put(codigo, descuento);
+		this.modelTablaArticulo.addRow(new Object[] { codigo, articuloSeleccionado.getDescripcion(), precioBase,
+				Integer.valueOf(cantidadTotal), descuento, precioBase.multiply(BigDecimal.valueOf(cantidadTotal)) });
+		this.recalcularFila(this.modelTablaArticulo.getRowCount() - 1);
+		this.recalcularTotalesDesdeTabla();
+	}
+
+	private int buscarFilaArticulo(String codigo) {
+		for (int fila = 0; fila < this.modelTablaArticulo.getRowCount(); fila++) {
+			if (codigo.equals(String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO)))) {
+				return fila;
+			}
+		}
+		return -1;
+	}
+
+	private void configurarEditoresTablaArticulos() {
+		this.tableListadoArticulos.setDefaultEditor(Object.class, null);
+		this.tableListadoArticulos.getColumnModel().getColumn(COLUMNA_CANTIDAD)
+				.setCellEditor(new DefaultCellEditor(new JTextField()));
+		this.tableListadoArticulos.getColumnModel().getColumn(COLUMNA_DESCUENTO)
+				.setCellEditor(new DefaultCellEditor(new JTextField()));
+	}
+
+	private void configurarEventosTablaArticulos() {
+		this.modelTablaArticulo.addTableModelListener(event -> {
+			if (this.actualizandoTablaArticulo || event.getType() != TableModelEvent.UPDATE
+					|| (event.getColumn() != COLUMNA_CANTIDAD && event.getColumn() != COLUMNA_DESCUENTO)) {
+				return;
+			}
+
+			int fila = event.getFirstRow();
+			if (fila < 0 || fila >= this.modelTablaArticulo.getRowCount()) {
+				return;
+			}
+
+			try {
+				this.recalcularFila(fila);
+				this.recalcularTotalesDesdeTabla();
+			} catch (IllegalArgumentException er) {
+				this.restaurarValoresValidos(fila);
+				JOptionPane.showMessageDialog(this, er.getMessage(), "Dato inválido", JOptionPane.WARNING_MESSAGE);
+			}
+		});
+	}
+
+	private void recalcularFila(int fila) {
+		String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO));
+		ArticuloByCodigo articuloFila = this.articulosPorCodigo.get(codigo);
+		PrecioTipoCliente precio = this.preciosPorCodigo.get(codigo);
+		if (articuloFila == null || precio == null) {
+			throw new IllegalArgumentException("No existe información suficiente para recalcular el artículo");
+		}
+
+		int cantidad = this.obtenerCantidadFila(fila);
+		if (cantidad > articuloFila.getExistencia()) {
+			throw new IllegalArgumentException("La cantidad solicitada supera la existencia disponible en la sucursal");
+		}
+
+		BigDecimal descuento = this.obtenerDescuentoFila(fila);
+		BigDecimal precioBase = this.obtenerPrecioBase(precio, cantidad);
+		BigDecimal factorDescuento = CIEN.subtract(descuento).divide(CIEN, 6, RoundingMode.HALF_UP);
+		BigDecimal precioUnitario = precioBase.multiply(factorDescuento).setScale(2, RoundingMode.HALF_UP);
+		BigDecimal subtotalFila = precioUnitario.multiply(BigDecimal.valueOf(cantidad)).setScale(2,
+				RoundingMode.HALF_UP);
+
+		this.actualizandoTablaArticulo = true;
+		try {
+			this.modelTablaArticulo.setValueAt(precioUnitario, fila, COLUMNA_PRECIO);
+			this.modelTablaArticulo.setValueAt(subtotalFila, fila, COLUMNA_SUBTOTAL);
+		} finally {
+			this.actualizandoTablaArticulo = false;
+		}
+
+		this.cantidadesValidasPorCodigo.put(codigo, Integer.valueOf(cantidad));
+		this.descuentosValidosPorCodigo.put(codigo, descuento);
+	}
+
+	private int obtenerCantidadFila(int fila) {
+		Object valor = this.modelTablaArticulo.getValueAt(fila, COLUMNA_CANTIDAD);
+		int cantidad;
+		try {
+			cantidad = valor instanceof Number numero ? numero.intValue() : Integer.parseInt(String.valueOf(valor).trim());
+		} catch (Exception er) {
+			throw new IllegalArgumentException("La cantidad debe ser un número entero mayor a cero");
+		}
+		if (cantidad <= 0) {
+			throw new IllegalArgumentException("La cantidad debe ser un número entero mayor a cero");
+		}
+		return cantidad;
+	}
+
+	private BigDecimal obtenerDescuentoFila(int fila) {
+		Object valor = this.modelTablaArticulo.getValueAt(fila, COLUMNA_DESCUENTO);
+		BigDecimal descuento;
+		try {
+			descuento = valor instanceof BigDecimal decimal ? decimal : new BigDecimal(String.valueOf(valor).trim());
+		} catch (Exception er) {
+			throw new IllegalArgumentException("El descuento debe ser un porcentaje entre 0 y 100");
+		}
+		if (descuento.compareTo(BigDecimal.ZERO) < 0 || descuento.compareTo(CIEN) > 0) {
+			throw new IllegalArgumentException("El descuento debe ser un porcentaje entre 0 y 100");
+		}
+		return descuento.setScale(2, RoundingMode.HALF_UP);
+	}
+
+	private BigDecimal obtenerPrecioBase(PrecioTipoCliente precio, int cantidad) {
+		if (precio == null || precio.getPrecio() == null) {
+			throw new IllegalArgumentException("El artículo no tiene precio configurado");
+		}
+
+		Integer cantidadMayoreo = precio.getCantidadPrecioEspecial();
+		if (precio.getPrecioEspecial() != null && cantidadMayoreo != null && cantidadMayoreo.intValue() > 0
+				&& cantidad >= cantidadMayoreo.intValue()) {
+			return precio.getPrecioEspecial().setScale(2, RoundingMode.HALF_UP);
+		}
+		return precio.getPrecio().setScale(2, RoundingMode.HALF_UP);
+	}
+
+	private void restaurarValoresValidos(int fila) {
+		String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO));
+		Integer cantidad = this.cantidadesValidasPorCodigo.get(codigo);
+		BigDecimal descuento = this.descuentosValidosPorCodigo.get(codigo);
+		if (cantidad == null || descuento == null) {
+			return;
+		}
+
+		this.actualizandoTablaArticulo = true;
+		try {
+			this.modelTablaArticulo.setValueAt(cantidad, fila, COLUMNA_CANTIDAD);
+			this.modelTablaArticulo.setValueAt(descuento, fila, COLUMNA_DESCUENTO);
+		} finally {
+			this.actualizandoTablaArticulo = false;
+		}
+		this.recalcularFila(fila);
+		this.recalcularTotalesDesdeTabla();
+	}
+
+	private void recalcularTotalesDesdeTabla() {
+		BigDecimal subtotalVenta = BigDecimal.ZERO;
+		BigDecimal ivaVenta = BigDecimal.ZERO;
+		BigDecimal totalVenta = BigDecimal.ZERO;
+		int totalArticulos = 0;
+
+		for (int fila = 0; fila < this.modelTablaArticulo.getRowCount(); fila++) {
+			String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO));
+			ArticuloByCodigo articuloFila = this.articulosPorCodigo.get(codigo);
+			BigDecimal totalFila = this.obtenerDecimalFila(fila, COLUMNA_SUBTOTAL);
+			int cantidad = this.obtenerCantidadFila(fila);
+			totalArticulos += cantidad;
+			totalVenta = totalVenta.add(totalFila);
+
+			if (articuloFila != null && articuloFila.isExento()) {
+				subtotalVenta = subtotalVenta.add(totalFila);
+			} else {
+				BigDecimal base = totalFila.divide(FACTOR_IVA, 2, RoundingMode.HALF_UP);
+				subtotalVenta = subtotalVenta.add(base);
+				ivaVenta = ivaVenta.add(totalFila.subtract(base));
+			}
+		}
+
+		this.txfNumeroDePartidas.setText(String.valueOf(this.modelTablaArticulo.getRowCount()));
+		this.txfTotalDeArticulos.setText(String.valueOf(totalArticulos));
+		this.txfSubtotalVenta.setText(this.formatearImporte(subtotalVenta));
+		this.txfIva.setText(this.formatearImporte(ivaVenta));
+		this.txfTotalVenta.setText(this.formatearImporte(totalVenta));
+		this.sincronizarArticulosVendidos();
+	}
+
+	private BigDecimal obtenerDecimalFila(int fila, int columna) {
+		Object valor = this.modelTablaArticulo.getValueAt(fila, columna);
+		if (valor instanceof BigDecimal decimal) {
+			return decimal;
+		}
+		if (valor instanceof Number numero) {
+			return BigDecimal.valueOf(numero.doubleValue());
+		}
+		return new BigDecimal(String.valueOf(valor).trim());
+	}
+
+	private void sincronizarArticulosVendidos() {
+		this.articulosVendidos = new ArrayList<>();
+		for (int fila = 0; fila < this.modelTablaArticulo.getRowCount(); fila++) {
+			String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO));
+			ArticuloByCodigo articuloFila = this.articulosPorCodigo.get(codigo);
+			if (articuloFila == null) {
+				continue;
+			}
+
+			ArticulosPorVentas detalle = new ArticulosPorVentas();
+			detalle.setId_articulo(articuloFila.getIdArticulo());
+			detalle.setCantidad(this.obtenerCantidadFila(fila));
+			detalle.setSubtotal(this.obtenerDecimalFila(fila, COLUMNA_SUBTOTAL).doubleValue());
+			this.articulosVendidos.add(detalle);
+		}
+	}
+
+	private void actualizarPreciosPorClienteSeleccionado() {
+		try {
+			for (int fila = 0; fila < this.modelTablaArticulo.getRowCount(); fila++) {
+				String codigo = String.valueOf(this.modelTablaArticulo.getValueAt(fila, COLUMNA_CODIGO));
+				ArticuloByCodigo articuloFila = this.articulosPorCodigo.get(codigo);
+				if (articuloFila == null) {
+					continue;
+				}
+				PrecioTipoCliente precio = this.consultarPrecioArticulo(articuloFila.getIdArticulo());
+				if (precio == null || precio.getPrecio() == null) {
+					throw new IllegalArgumentException("Un artículo no tiene precio para el tipo de cliente seleccionado");
+				}
+				this.preciosPorCodigo.put(codigo, precio);
+				this.recalcularFila(fila);
+			}
+			this.recalcularTotalesDesdeTabla();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No fue posible actualizar los precios por tipo de cliente: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 	/**
-	 * Al momento de realizar la consulta de un artículo, la tabla consulta las
-	 * existencias de ese artículo en las demás sucursales listadas.
+	 * Consulta las existencias del artículo en todas las sucursales y adapta el
+	 * resultado del controlador al modelo visible de dos columnas.
 	 *
 	 * @param id identificador del artículo a consultar
 	 */
 	private void llenarTablaExistencias(int id) {
-		this.modelTablaExistencias.getDataVector().removeAllElements();		
-		this.articuloController.consultarExistenciasPorSucursal(id, modelTablaExistencias);
+		this.modelTablaExistencias.setRowCount(0);
+		DefaultTableModel resultado = new DefaultTableModel();
+		resultado.addColumn("Id");
+		resultado.addColumn("Sucursal");
+		resultado.addColumn("Dirección");
+		resultado.addColumn("Existencia");
+		this.articuloController.consultarExistenciasPorSucursal(id, resultado);
+
+		for (int fila = 0; fila < resultado.getRowCount(); fila++) {
+			this.modelTablaExistencias.addRow(new Object[] { resultado.getValueAt(fila, 1), resultado.getValueAt(fila, 3) });
+		}
 	}
 
-	private void abrirFormListaArticulos(String nombreArticulo, int idSucursal) {
+	private void abrirFormListaArticulos(String nombreArticulo) {
+		if (!this.hayClienteSeleccionado()) {
+			JOptionPane.showMessageDialog(this, "Seleccione un cliente antes de consultar artículos", "Atención",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
 		Component cm = this;
 		Fr_PuntoDeVentas puntoVenta = this;
+		int tipoCliente = this.cliente.getIdTipoCliente();
 		try {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, idSucursal, puntoVenta);
+					Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, idSucursal, tipoCliente, puntoVenta);
 					frame.setLocationRelativeTo(cm);
 					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				}
 			});
 		} catch (Exception er) {
-			er.printStackTrace();
+			er.printStackTrace(System.err);
+		}
+	}
+
+	@Override
+	public void listarArticuloDesdeConsulta(ArticuloByCodigo articuloSeleccionado, int cantidad, BigDecimal precioListado) {
+		if (articuloSeleccionado == null || articuloSeleccionado.getIdArticulo() <= 0) {
+			return;
 		}
 
+		try {
+			PrecioTipoCliente precio = this.consultarPrecioArticulo(articuloSeleccionado.getIdArticulo());
+			if (precio == null || precio.getPrecio() == null) {
+				precio = new PrecioTipoCliente(this.cliente.getIdTipoCliente(), precioListado, null, null);
+			}
+			this.agregarArticuloATabla(articuloSeleccionado, precio, cantidad);
+			this.limpiarArticuloConsultado();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No fue posible agregar el artículo seleccionado: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
-	 * Método invocado desde el JFrame de consulta. Agrega un nuevo registro al
-	 * jTable de productos para la venta.
+	 * Contrato legado conservado por la interfaz. El selector compartido utiliza la
+	 * sobrecarga tipada con {@link ArticuloByCodigo}.
 	 */
 	@Override
-	public void listarArticuloDesdeConsulta(Object[] articulo, ArticulosPorVentas art) {		
-		modelTablaArticulo.addRow(articulo);
-		if(this.articulosVendidos == null) {
+	public void listarArticuloDesdeConsulta(Object[] articuloFila, ArticulosPorVentas art) {
+		if (articuloFila == null || art == null) {
+			return;
+		}
+		this.modelTablaArticulo.addRow(articuloFila);
+		if (this.articulosVendidos == null) {
 			this.articulosVendidos = new ArrayList<ArticulosPorVentas>();
 		}
 		this.articulosVendidos.add(art);
-		calculoDeTotales();
+		this.calculoDeTotales();
+	}
+
+	private void limpiarArticuloConsultado() {
+		this.articulo = null;
+		this.precioArticuloConsultado = null;
+		this.txfCodigoNombreArticulo.setText("");
+		this.textAreaDescripcionArticulo.setText("");
+		this.textField.setText("");
+		this.textField_1.setText("");
+		this.modelTablaExistencias.setRowCount(0);
+		this.txfCodigoNombreArticulo.requestFocusInWindow();
+	}
+
+	private String formatearImporte(BigDecimal importe) {
+		return importe == null ? "" : importe.setScale(2, RoundingMode.HALF_UP).toPlainString();
 	}
 
 	private void calculoDeTotales() {
-		double total = 0;
-		double subtotal = 0;
-		double iva = 0;
-		int totalArticulos = 0;
-
 		try {
-			subtotal = total / 1.16;
-			iva = total - subtotal;
+			this.recalcularTotalesDesdeTabla();
 		} catch (Exception er) {
-			er.printStackTrace();
-			return;
+			er.printStackTrace(System.err);
 		}
 	}
 	
