@@ -46,8 +46,11 @@ import com.kathsoft.kathpos.app.model.cliente.ClienteEnVentaById;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.venta.ArticuloPorVenta;
+import com.kathsoft.kathpos.app.model.venta.ArticuloVentaListado;
 import com.kathsoft.kathpos.app.model.venta.Venta;
+import com.kathsoft.kathpos.app.model.venta.VentaById;
 import com.kathsoft.kathpos.app.model.venta.VentaConDetalle;
+import com.kathsoft.kathpos.app.model.venta.VentaDetalleConsulta;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.view.formas_pago.Fr_FormasDePago;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
@@ -72,6 +75,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	private static final BigDecimal FACTOR_IVA = new BigDecimal("1.16");
 
 	private int idSucursal;
+	private Runnable onVentaRegistrada;
 	private ArticuloByCodigo articulo;
 	private PrecioTipoCliente precioArticuloConsultado;
 	private EmpleadoById empleado;
@@ -146,8 +150,13 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	 * Create the frame.
 	 */
 	public Fr_PuntoDeVentas(int idSucursal) {
+		this(idSucursal, null);
+	}
+
+	public Fr_PuntoDeVentas(int idSucursal, Runnable onVentaRegistrada) {
 
 		this.idSucursal = idSucursal;
+		this.onVentaRegistrada = onVentaRegistrada;
 
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/ventagr.png")));
@@ -552,6 +561,7 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.btnBuscarVentaPorID = new JButton("");
 		this.btnBuscarVentaPorID.setIcon(
 				new ImageIcon(Fr_PuntoDeVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+		this.btnBuscarVentaPorID.addActionListener(e -> this.buscarVentaPorIdCapturado());
 
 		this.lblFecha = new JLabel("Fecha");
 
@@ -638,6 +648,150 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 
 	private void cargarSiguienteIdVenta() {
 		this.txfIdVenta.setText(String.valueOf(this.ventasController.buscarUltimaVenta() + 1));
+	}
+
+	private void buscarVentaPorIdCapturado() {
+		String valor = this.txfIdVenta.getText() == null ? "" : this.txfIdVenta.getText().trim();
+		try {
+			int idVenta = Integer.parseInt(valor);
+			if (idVenta <= 0) {
+				throw new NumberFormatException();
+			}
+			this.cargarVentaPorId(idVenta);
+		} catch (NumberFormatException er) {
+			JOptionPane.showMessageDialog(this, "Ingrese un Id de venta válido", "Venta inválida",
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	public boolean cargarVentaPorId(int idVenta) {
+		if (idVenta <= 0) {
+			JOptionPane.showMessageDialog(this, "Ingrese un Id de venta válido", "Venta inválida",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		try {
+			VentaDetalleConsulta detalleVenta = this.ventasController.getVentaById(idVenta);
+			if (detalleVenta == null || detalleVenta.getVenta() == null
+					|| detalleVenta.getVenta().getIdVenta() <= 0) {
+				JOptionPane.showMessageDialog(this, "No existe una venta con el Id " + idVenta, "Venta no encontrada",
+						JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+
+			VentaById venta = detalleVenta.getVenta();
+			if (venta.getIdSucursal() != this.idSucursal) {
+				JOptionPane.showMessageDialog(this,
+						"La venta " + idVenta + " no pertenece a la sucursal actualmente seleccionada",
+						"Venta de otra sucursal", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+
+			this.cargarVentaEnFormulario(detalleVenta);
+			return true;
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this, "No fue posible consultar la venta: " + er.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+
+	private void cargarVentaEnFormulario(VentaDetalleConsulta detalleVenta) {
+		VentaById venta = detalleVenta.getVenta();
+
+		this.modelTablaArticulo.setRowCount(0);
+		this.articulosPorCodigo.clear();
+		this.preciosPorCodigo.clear();
+		this.cantidadesValidasPorCodigo.clear();
+		this.descuentosValidosPorCodigo.clear();
+		this.articulosVendidos = new ArrayList<>();
+		this.limpiarArticuloConsultado();
+
+		this.txfIdVenta.setText(String.valueOf(venta.getIdVenta()));
+		this.formattedTextFieldFechaVenta.setText(
+				venta.getFecha() == null ? "" : venta.getFecha().toLocalDate().toString());
+
+		this.seleccionarComboPorId(this.cmbAliasEmpleado, venta.getIdEmpleado(), venta.getNombreCortoEmpleado());
+		this.seleccionarComboPorId(this.cmbAliasCliente, venta.getIdCliente(), venta.getNombreCortoCliente());
+
+		if (this.empleado == null || this.empleado.getIdEmpleado() <= 0) {
+			this.txfRfcEmpleado.setText(venta.getNombreEmpleado());
+		}
+		if (this.cliente == null || this.cliente.getIdCliente() <= 0) {
+			this.txfNombreCompletoCliente.setText(venta.getNombreCliente());
+		}
+
+		int totalArticulos = 0;
+		List<ArticuloVentaListado> articulos = detalleVenta.getArticulos() == null
+				? List.of()
+				: detalleVenta.getArticulos();
+		for (ArticuloVentaListado detalle : articulos) {
+			if (detalle == null || detalle.getCantidad() <= 0) {
+				continue;
+			}
+
+			BigDecimal totalPartida = BigDecimal.valueOf(detalle.getTotal()).setScale(2, RoundingMode.HALF_UP);
+			BigDecimal precioUnitario = totalPartida.divide(BigDecimal.valueOf(detalle.getCantidad()), 2,
+					RoundingMode.HALF_UP);
+			String descripcion = detalle.getDescripcion() == null || detalle.getDescripcion().isBlank()
+					? detalle.getNombre()
+					: detalle.getDescripcion();
+
+			this.modelTablaArticulo.addRow(new Object[] { detalle.getCodigoArticulo(), descripcion, precioUnitario,
+					Integer.valueOf(detalle.getCantidad()), BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP),
+					totalPartida });
+			totalArticulos += detalle.getCantidad();
+		}
+
+		this.txfNumeroDePartidas.setText(String.valueOf(this.modelTablaArticulo.getRowCount()));
+		this.txfTotalDeArticulos.setText(String.valueOf(totalArticulos));
+		this.txfSubtotalVenta.setText(this.formatearImporte(BigDecimal.valueOf(venta.getSubtotal())));
+		this.txfIva.setText(this.formatearImporte(BigDecimal.valueOf(venta.getIva())));
+		this.txfTotalVenta.setText(this.formatearImporte(BigDecimal.valueOf(venta.getImporteTotal())));
+		this.tableListadoArticulos.clearSelection();
+		this.setTitle("Punto de venta - Venta " + venta.getIdVenta() + " - " + venta.getTipoVentaDescripcion() + " - "
+				+ venta.getStatusVentaDescripcion());
+		this.configurarModoConsulta(true);
+	}
+
+	private void seleccionarComboPorId(JComboBox<JComboboxDataViewModel> combo, int id, String nombreFallback) {
+		if (combo == null || id <= 0) {
+			return;
+		}
+
+		for (int i = 0; i < combo.getItemCount(); i++) {
+			JComboboxDataViewModel item = combo.getItemAt(i);
+			if (item != null && item.id() == id) {
+				combo.setSelectedIndex(i);
+				return;
+			}
+		}
+
+		String nombre = nombreFallback == null || nombreFallback.isBlank()
+				? "Id " + id
+				: nombreFallback;
+		JComboboxDataViewModel temporal = new JComboboxDataViewModel(id, nombre);
+		combo.addItem(temporal);
+		combo.setSelectedItem(temporal);
+	}
+
+	private void configurarModoConsulta(boolean consulta) {
+		this.cmbAliasEmpleado.setEnabled(!consulta);
+		this.cmbAliasCliente.setEnabled(!consulta);
+		this.formattedTextFieldFechaVenta.setEditable(!consulta);
+		this.txfRfcEmpleado.setEditable(!consulta);
+		this.txfNombreCompletoCliente.setEditable(!consulta);
+		this.txfRfcCliente.setEditable(!consulta);
+		this.txfNombreTipoCliente.setEditable(!consulta);
+		this.txfCodigoNombreArticulo.setEnabled(!consulta);
+		this.textAreaDescripcionArticulo.setEditable(!consulta);
+		this.btnBuscarArticulo.setEnabled(!consulta);
+		this.btnAgregar.setEnabled(!consulta);
+		this.btnEliminarArticuloSeleccionado.setEnabled(!consulta);
+		this.btnCobrar.setEnabled(!consulta);
+		this.tableListadoArticulos.setEnabled(!consulta);
 	}
 
 	/**
@@ -1377,6 +1531,8 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 	}
 
 	public void refreshAll() {
+		this.configurarModoConsulta(false);
+		this.setTitle("Punto de venta");
 		if (this.modelTablaArticulo != null) {
 			this.modelTablaArticulo.setRowCount(0);
 		}
@@ -1389,6 +1545,9 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.recalcularTotalesDesdeTabla();
 		this.cargarSiguienteIdVenta();
 		this.asignarFecha();
+		if (this.onVentaRegistrada != null) {
+			this.onVentaRegistrada.run();
+		}
 	}
 
 	private void abrirFormFormaDePago(VentaConDetalle ventaConDetalle) {
