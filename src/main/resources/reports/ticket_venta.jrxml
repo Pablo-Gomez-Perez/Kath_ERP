@@ -1,0 +1,120 @@
+<jasperReport name="TicketVenta" language="java" pageWidth="227" pageHeight="600" columnWidth="207" leftMargin="10" rightMargin="10" topMargin="8" bottomMargin="8" uuid="3f55fba4-8f83-4fda-8c7a-205cab4d4b97">
+    <property name="net.sf.jasperreports.export.pdf.metadata.title" value="Ticket de venta"/>
+    <style name="Base" default="true" fontName="SansSerif" fontSize="7.0"/>
+
+    <parameter name="EMISOR_NOMBRE_COMERCIAL" class="java.lang.String"/>
+    <parameter name="EMISOR_RAZON_SOCIAL" class="java.lang.String"/>
+    <parameter name="EMISOR_RFC" class="java.lang.String"/>
+    <parameter name="EMISOR_REGIMEN_FISCAL" class="java.lang.String"/>
+    <parameter name="SUCURSAL" class="java.lang.String"/>
+    <parameter name="DOMICILIO" class="java.lang.String"/>
+    <parameter name="LUGAR_EXPEDICION" class="java.lang.String"/>
+    <parameter name="CONTACTO" class="java.lang.String"/>
+    <parameter name="FOLIO" class="java.lang.String"/>
+    <parameter name="FECHA" class="java.lang.String"/>
+    <parameter name="EMPLEADO" class="java.lang.String"/>
+    <parameter name="CLIENTE" class="java.lang.String"/>
+    <parameter name="CLIENTE_RFC" class="java.lang.String"/>
+    <parameter name="TIPO_VENTA" class="java.lang.String"/>
+    <parameter name="STATUS_VENTA" class="java.lang.String"/>
+    <parameter name="SUBTOTAL" class="java.lang.String"/>
+    <parameter name="IVA" class="java.lang.String"/>
+    <parameter name="TOTAL" class="java.lang.String"/>
+    <parameter name="PAGOS" class="java.lang.String"/>
+    <parameter name="TOTAL_RECIBIDO" class="java.lang.String"/>
+    <parameter name="CAMBIO" class="java.lang.String"/>
+    <parameter name="REGISTRO_SISTEMA" class="java.lang.String"/>
+
+    <field name="cantidadTexto" class="java.lang.String"/>
+    <field name="unidad" class="java.lang.String"/>
+    <field name="descripcion" class="java.lang.String"/>
+    <field name="precioUnitarioTexto" class="java.lang.String"/>
+    <field name="importeTexto" class="java.lang.String"/>
+
+    <title height="194">
+        <element kind="textField" x="0" y="0" width="207" height="18" bold="true" fontSize="12.0" hTextAlign="Center" removeLineWhenBlank="true">
+            <expression><![CDATA[$P{EMISOR_NOMBRE_COMERCIAL}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="18" width="207" height="14" bold="true" fontSize="8.0" hTextAlign="Center" textAdjust="StretchHeight">
+            <expression><![CDATA[$P{EMISOR_RAZON_SOCIAL}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="34" width="207" height="12" hTextAlign="Center">
+            <expression><![CDATA["RFC: " + $P{EMISOR_RFC}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="46" width="207" height="20" hTextAlign="Center" textAdjust="StretchHeight">
+            <expression><![CDATA["Régimen fiscal: " + $P{EMISOR_REGIMEN_FISCAL}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="66" width="207" height="12" bold="true" hTextAlign="Center">
+            <expression><![CDATA[$P{SUCURSAL}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="78" width="207" height="22" hTextAlign="Center" textAdjust="StretchHeight">
+            <expression><![CDATA[$P{DOMICILIO}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="100" width="207" height="12" hTextAlign="Center">
+            <expression><![CDATA["Lugar de expedición: " + $P{LUGAR_EXPEDICION}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="112" width="207" height="12" hTextAlign="Center" removeLineWhenBlank="true">
+            <expression><![CDATA[$P{CONTACTO}]]></expression>
+        </element>
+        <element kind="staticText" x="0" y="126" width="207" height="11" hTextAlign="Center">
+            <text><![CDATA[------------------------------------------------------------]]></text>
+        </element>
+        <element kind="staticText" x="0" y="137" width="207" height="22" bold="true" fontSize="8.0" hTextAlign="Center" textAdjust="StretchHeight">
+            <text><![CDATA[COMPROBANTE DE OPERACIÓN CON PÚBLICO EN GENERAL]]></text>
+        </element>
+        <element kind="textField" x="0" y="161" width="103" height="11">
+            <expression><![CDATA["Folio: " + $P{FOLIO}]]></expression>
+        </element>
+        <element kind="textField" x="103" y="161" width="104" height="11" hTextAlign="Right">
+            <expression><![CDATA["Fecha: " + $P{FECHA}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="172" width="207" height="11">
+            <expression><![CDATA["Atendió: " + $P{EMPLEADO}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="183" width="207" height="11" textAdjust="StretchHeight">
+            <expression><![CDATA["Cliente: " + $P{CLIENTE} + (($P{CLIENTE_RFC} == null || $P{CLIENTE_RFC}.isBlank()) ? "" : " | RFC: " + $P{CLIENTE_RFC})]]></expression>
+        </element>
+    </title>
+
+    <columnHeader height="22">
+        <element kind="staticText" x="0" y="0" width="207" height="10" hTextAlign="Center">
+            <text><![CDATA[------------------------------------------------------------]]></text>
+        </element>
+        <element kind="staticText" x="0" y="11" width="20" height="11" bold="true"><text><![CDATA[Cant.]]></text></element>
+        <element kind="staticText" x="20" y="11" width="22" height="11" bold="true"><text><![CDATA[Unidad]]></text></element>
+        <element kind="staticText" x="42" y="11" width="93" height="11" bold="true"><text><![CDATA[Descripción]]></text></element>
+        <element kind="staticText" x="135" y="11" width="35" height="11" bold="true" hTextAlign="Right"><text><![CDATA[P.Unit.]]></text></element>
+        <element kind="staticText" x="170" y="11" width="37" height="11" bold="true" hTextAlign="Right"><text><![CDATA[Importe]]></text></element>
+    </columnHeader>
+
+    <detail>
+        <band height="28" splitType="Stretch">
+            <element kind="textField" x="0" y="1" width="20" height="12"><expression><![CDATA[$F{cantidadTexto}]]></expression></element>
+            <element kind="textField" x="20" y="1" width="22" height="12" textAdjust="StretchHeight"><expression><![CDATA[$F{unidad}]]></expression></element>
+            <element kind="textField" x="42" y="1" width="93" height="26" textAdjust="StretchHeight"><expression><![CDATA[$F{descripcion}]]></expression></element>
+            <element kind="textField" x="135" y="1" width="35" height="12" hTextAlign="Right"><expression><![CDATA[$F{precioUnitarioTexto}]]></expression></element>
+            <element kind="textField" x="170" y="1" width="37" height="12" hTextAlign="Right"><expression><![CDATA[$F{importeTexto}]]></expression></element>
+        </band>
+    </detail>
+
+    <summary height="205">
+        <element kind="staticText" x="0" y="0" width="207" height="10" hTextAlign="Center"><text><![CDATA[------------------------------------------------------------]]></text></element>
+        <element kind="staticText" x="105" y="12" width="55" height="12" bold="true" hTextAlign="Right"><text><![CDATA[Subtotal:]]></text></element>
+        <element kind="textField" x="160" y="12" width="47" height="12" hTextAlign="Right"><expression><![CDATA[$P{SUBTOTAL}]]></expression></element>
+        <element kind="staticText" x="105" y="24" width="55" height="12" bold="true" hTextAlign="Right"><text><![CDATA[IVA:]]></text></element>
+        <element kind="textField" x="160" y="24" width="47" height="12" hTextAlign="Right"><expression><![CDATA[$P{IVA}]]></expression></element>
+        <element kind="staticText" x="105" y="36" width="55" height="14" bold="true" fontSize="9.0" hTextAlign="Right"><text><![CDATA[TOTAL:]]></text></element>
+        <element kind="textField" x="160" y="36" width="47" height="14" bold="true" fontSize="9.0" hTextAlign="Right"><expression><![CDATA[$P{TOTAL}]]></expression></element>
+        <element kind="textField" x="0" y="52" width="207" height="12"><expression><![CDATA["Tipo de venta: " + $P{TIPO_VENTA} + " | Estado: " + $P{STATUS_VENTA}]]></expression></element>
+        <element kind="staticText" x="0" y="66" width="207" height="11" bold="true"><text><![CDATA[Formas de pago aplicadas:]]></text></element>
+        <element kind="textField" x="0" y="77" width="207" height="42" textAdjust="StretchHeight"><expression><![CDATA[$P{PAGOS}]]></expression></element>
+        <element kind="staticText" x="105" y="121" width="55" height="12" bold="true" hTextAlign="Right"><text><![CDATA[Recibido:]]></text></element>
+        <element kind="textField" x="160" y="121" width="47" height="12" hTextAlign="Right"><expression><![CDATA[$P{TOTAL_RECIBIDO}]]></expression></element>
+        <element kind="staticText" x="105" y="133" width="55" height="12" bold="true" hTextAlign="Right"><text><![CDATA[Cambio:]]></text></element>
+        <element kind="textField" x="160" y="133" width="47" height="12" hTextAlign="Right"><expression><![CDATA[$P{CAMBIO}]]></expression></element>
+        <element kind="textField" x="0" y="147" width="207" height="11" hTextAlign="Center" removeLineWhenBlank="true"><expression><![CDATA[$P{REGISTRO_SISTEMA}]]></expression></element>
+        <element kind="staticText" x="0" y="160" width="207" height="10" hTextAlign="Center"><text><![CDATA[------------------------------------------------------------]]></text></element>
+        <element kind="staticText" x="0" y="171" width="207" height="16" bold="true" hTextAlign="Center" textAdjust="StretchHeight"><text><![CDATA[Comprobante de operación con público en general.]]></text></element>
+        <element kind="staticText" x="0" y="187" width="207" height="18" hTextAlign="Center" textAdjust="StretchHeight"><text><![CDATA[Este documento no es un CFDI y no sustituye la factura electrónica.]]></text></element>
+    </summary>
+</jasperReport>
