@@ -3,6 +3,7 @@ package com.kathsoft.kathpos.app.view.formas_pago;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -20,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -41,6 +43,7 @@ public class Fr_FormasDePago extends JFrame {
 	private JPanel panelSuperiorEtiqueta;
 	private JPanel panelInferiorBotones;
 	private JPanel panelCentralTabla;
+	private JPanel panelResumenPago;
 	private JScrollPane scrollPaneFormasDePago;
 	private FormasDePagoController formasDePagoController = new FormasDePagoController();
 	private int[] formasDePagoColumnsWidth = { 40, // id forma de pago
@@ -50,6 +53,12 @@ public class Fr_FormasDePago extends JFrame {
 	private JButton btnCancelar;
 	private JButton btnRegistrar;
 	private JLabel lblNewLabel;
+	private JLabel lblTotalVenta;
+	private JLabel lblTotalPagado;
+	private JLabel lblCambio;
+	private JLabel lblTotalVentaValor;
+	private JLabel lblTotalPagadoValor;
+	private JLabel lblCambioValor;
 	private VentaConDetalle ventaConDetalle;
 	private Fr_PuntoDeVentas formVentas;
 
@@ -118,6 +127,27 @@ public class Fr_FormasDePago extends JFrame {
 		scrollPaneFormasDePago = new JScrollPane();
 		panelCentralTabla.add(scrollPaneFormasDePago, BorderLayout.CENTER);
 
+		panelResumenPago = new JPanel(new GridLayout(2, 3, 8, 2));
+		panelResumenPago.setBackground(new Color(255, 215, 0));
+		panelResumenPago.setBorder(new TitledBorder("Resumen de cobro"));
+		panelCentralTabla.add(panelResumenPago, BorderLayout.SOUTH);
+
+		lblTotalVenta = new JLabel("Total venta");
+		lblTotalPagado = new JLabel("Total pagado");
+		lblCambio = new JLabel("Cambio");
+		lblTotalVentaValor = new JLabel("$0.00");
+		lblTotalPagadoValor = new JLabel("$0.00");
+		lblCambioValor = new JLabel("$0.00");
+		lblTotalVentaValor.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblTotalPagadoValor.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblCambioValor.setFont(new Font("Tahoma", Font.BOLD, 16));
+		panelResumenPago.add(lblTotalVenta);
+		panelResumenPago.add(lblTotalPagado);
+		panelResumenPago.add(lblCambio);
+		panelResumenPago.add(lblTotalVentaValor);
+		panelResumenPago.add(lblTotalPagadoValor);
+		panelResumenPago.add(lblCambioValor);
+
 		modelTablaFormasDePago.addColumn("Id");
 		modelTablaFormasDePago.addColumn("Forma de pago");
 		modelTablaFormasDePago.addColumn("Importe $");
@@ -133,6 +163,8 @@ public class Fr_FormasDePago extends JFrame {
 		}
 
 		this.llenarTablaFormasDePago();
+		this.modelTablaFormasDePago.addTableModelListener(event -> this.actualizarResumenCobro());
+		this.actualizarResumenCobro();
 	}
 
 	private void llenarTablaFormasDePago() {
@@ -187,6 +219,69 @@ public class Fr_FormasDePago extends JFrame {
 		return pagos;
 	}
 
+	private BigDecimal calcularTotalPagado(List<PagoPorVenta> pagos) {
+		return pagos.stream().map(pago -> BigDecimal.valueOf(pago.getImporte()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+	}
+
+	private BigDecimal obtenerTotalVenta() {
+		if (this.ventaConDetalle == null || this.ventaConDetalle.getVenta() == null) {
+			return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+		}
+		return BigDecimal.valueOf(this.ventaConDetalle.getVenta().getImporteTotal()).setScale(2,
+				RoundingMode.HALF_UP);
+	}
+
+	private void actualizarResumenCobro() {
+		BigDecimal totalVenta = this.obtenerTotalVenta();
+		this.lblTotalVentaValor.setText(this.formatearImporte(totalVenta));
+
+		try {
+			BigDecimal totalPagado = this.calcularTotalPagado(this.formasDePago());
+			BigDecimal cambio = totalPagado.compareTo(totalVenta) > 0 ? totalPagado.subtract(totalVenta)
+					: BigDecimal.ZERO;
+			this.lblTotalPagadoValor.setText(this.formatearImporte(totalPagado));
+			this.lblCambioValor.setText(this.formatearImporte(cambio));
+		} catch (IllegalArgumentException er) {
+			this.lblTotalPagadoValor.setText("Inválido");
+			this.lblCambioValor.setText("$0.00");
+		}
+	}
+
+	private String formatearImporte(BigDecimal importe) {
+		BigDecimal valor = importe == null ? BigDecimal.ZERO : importe.setScale(2, RoundingMode.HALF_UP);
+		return "$" + valor.toPlainString();
+	}
+
+	/**
+	 * El importe capturado representa el dinero entregado por el cliente. Cuando
+	 * existe sobrepago, el excedente se devuelve como cambio y no debe persistirse
+	 * como pago aplicado a la venta. Este método distribuye únicamente el saldo de
+	 * la venta entre las formas de pago capturadas, respetando el orden de la tabla.
+	 */
+	private List<PagoPorVenta> limitarPagosAlTotal(List<PagoPorVenta> pagosCapturados, BigDecimal totalVenta) {
+		List<PagoPorVenta> pagosAplicados = new ArrayList<>();
+		BigDecimal saldo = totalVenta.setScale(2, RoundingMode.HALF_UP);
+
+		for (PagoPorVenta pago : pagosCapturados) {
+			if (saldo.compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+
+			BigDecimal importeCapturado = BigDecimal.valueOf(pago.getImporte()).setScale(2, RoundingMode.HALF_UP);
+			BigDecimal importeAplicado = importeCapturado.min(saldo).setScale(2, RoundingMode.HALF_UP);
+			if (importeAplicado.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			pagosAplicados.add(new PagoPorVenta.PagoPorVentaBuilder().idFormaPago(pago.getIdFormaPago())
+					.importe(importeAplicado.doubleValue()).build());
+			saldo = saldo.subtract(importeAplicado).setScale(2, RoundingMode.HALF_UP);
+		}
+
+		return pagosAplicados;
+	}
+
 	private boolean detenerEdicionPago() {
 		if (this.tablaFormasDePago.isEditing() && this.tablaFormasDePago.getCellEditor() != null
 				&& !this.tablaFormasDePago.getCellEditor().stopCellEditing()) {
@@ -200,8 +295,9 @@ public class Fr_FormasDePago extends JFrame {
 	/**
 	 * Registra la venta completa en una sola transacción: cabecera, artículos,
 	 * afectación de existencias, pagos y finalización. Un pago parcial o la ausencia
-	 * de pagos genera una venta a crédito; únicamente el pago exacto genera una venta
-	 * de contado.
+	 * de pagos genera una venta a crédito. Un pago igual o superior al total liquida
+	 * la venta; cualquier excedente se muestra como cambio y no se persiste como pago
+	 * aplicado.
 	 */
 	private void finalizarVenta() {
 		if (!this.detenerEdicionPago()) {
@@ -217,19 +313,19 @@ public class Fr_FormasDePago extends JFrame {
 
 		try {
 			Venta venta = this.ventaConDetalle.getVenta();
-			List<PagoPorVenta> pagos = this.formasDePago();
+			List<PagoPorVenta> pagosCapturados = this.formasDePago();
 			BigDecimal totalVenta = BigDecimal.valueOf(venta.getImporteTotal()).setScale(2, RoundingMode.HALF_UP);
-			BigDecimal totalPagado = pagos.stream().map(pago -> BigDecimal.valueOf(pago.getImporte()))
-					.reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+			BigDecimal totalPagado = this.calcularTotalPagado(pagosCapturados);
 
 			if (totalVenta.compareTo(BigDecimal.ZERO) <= 0) {
 				throw new IllegalArgumentException("El total de la venta debe ser mayor a cero");
 			}
-			if (totalPagado.compareTo(totalVenta) > 0) {
-				throw new IllegalArgumentException("La suma de los pagos no puede superar el importe total de la venta");
-			}
 
-			this.ventaConDetalle.setPagos(pagos);
+			BigDecimal cambio = totalPagado.compareTo(totalVenta) > 0 ? totalPagado.subtract(totalVenta)
+					: BigDecimal.ZERO;
+			List<PagoPorVenta> pagosAplicados = this.limitarPagosAlTotal(pagosCapturados, totalVenta);
+
+			this.ventaConDetalle.setPagos(pagosAplicados);
 			SpResponseModel respuesta = this.ventasController.insertVenta(this.ventaConDetalle);
 
 			if (respuesta == null || respuesta.id() <= 0 || this.esRespuestaError(respuesta)) {
@@ -240,8 +336,11 @@ public class Fr_FormasDePago extends JFrame {
 			}
 
 			this.formVentas.refreshAll();
-			JOptionPane.showMessageDialog(this, respuesta.message() + "\nID de venta: " + respuesta.id(), "Ventas",
-					JOptionPane.INFORMATION_MESSAGE);
+			String mensaje = respuesta.message() + "\nID de venta: " + respuesta.id();
+			if (cambio.compareTo(BigDecimal.ZERO) > 0) {
+				mensaje += "\nCambio: " + this.formatearImporte(cambio);
+			}
+			JOptionPane.showMessageDialog(this, mensaje, "Ventas", JOptionPane.INFORMATION_MESSAGE);
 			this.dispose();
 		} catch (IllegalArgumentException er) {
 			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos de cobro inválidos",
