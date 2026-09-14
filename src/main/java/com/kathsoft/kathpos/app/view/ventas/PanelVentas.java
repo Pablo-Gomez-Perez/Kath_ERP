@@ -65,6 +65,8 @@ public class PanelVentas extends JPanel {
 	private JComboBox<VentaCriterioBusqueda> comboBoxBuscarPor;
 	private JLabel lblOrdernarPor;
 	private JComboBox<VentaOrdenamiento> comboBoxBuscarPor_1;
+	private JButton btnVerDetalles;
+	private JButton btnCancelarVenta;
 
 	/**
 	 * Create the panel.
@@ -111,6 +113,16 @@ public class PanelVentas extends JPanel {
 				abrirFormVentas(sucursal.getIdSucursal());
 			}
 		});
+		
+		this.btnCancelarVenta = new JButton("Cancelar Venta");
+		this.btnCancelarVenta.setIcon(new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		this.btnCancelarVenta.setBackground(new Color(237, 51, 59));
+		this.panelVentasCentralBotones.add(this.btnCancelarVenta);
+		
+		this.btnVerDetalles = new JButton("Ver Detalles");
+		this.btnVerDetalles.setIcon(new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/reportes.jpg")));
+		this.btnVerDetalles.setBackground(new Color(143, 240, 164));
+		this.panelVentasCentralBotones.add(this.btnVerDetalles);
 		btNuevaVenta
 				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		btNuevaVenta.setBackground(new Color(152, 251, 152));
