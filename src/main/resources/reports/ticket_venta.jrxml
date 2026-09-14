@@ -59,7 +59,7 @@
         <element kind="staticText" x="0" y="126" width="207" height="11" hTextAlign="Center">
             <text><![CDATA[------------------------------------------------------------]]></text>
         </element>
-        <element kind="staticText" x="0" y="137" width="207" height="22" bold="true" fontSize="8.0" hTextAlign="Center" textAdjust="StretchHeight">
+        <element kind="staticText" x="0" y="137" width="207" height="22" bold="true" fontSize="8.0" hTextAlign="Center">
             <text><![CDATA[COMPROBANTE DE OPERACIÓN CON PÚBLICO EN GENERAL]]></text>
         </element>
         <element kind="textField" x="0" y="161" width="103" height="11">
@@ -114,7 +114,7 @@
         <element kind="textField" x="160" y="133" width="47" height="12" hTextAlign="Right"><expression><![CDATA[$P{CAMBIO}]]></expression></element>
         <element kind="textField" x="0" y="147" width="207" height="11" hTextAlign="Center" removeLineWhenBlank="true"><expression><![CDATA[$P{REGISTRO_SISTEMA}]]></expression></element>
         <element kind="staticText" x="0" y="160" width="207" height="10" hTextAlign="Center"><text><![CDATA[------------------------------------------------------------]]></text></element>
-        <element kind="staticText" x="0" y="171" width="207" height="16" bold="true" hTextAlign="Center" textAdjust="StretchHeight"><text><![CDATA[Comprobante de operación con público en general.]]></text></element>
-        <element kind="staticText" x="0" y="187" width="207" height="18" hTextAlign="Center" textAdjust="StretchHeight"><text><![CDATA[Este documento no es un CFDI y no sustituye la factura electrónica.]]></text></element>
+        <element kind="staticText" x="0" y="171" width="207" height="16" bold="true" hTextAlign="Center"><text><![CDATA[Comprobante de operación con público en general.]]></text></element>
+        <element kind="staticText" x="0" y="187" width="207" height="18" hTextAlign="Center"><text><![CDATA[Este documento no es un CFDI y no sustituye la factura electrónica.]]></text></element>
     </summary>
 </jasperReport>
