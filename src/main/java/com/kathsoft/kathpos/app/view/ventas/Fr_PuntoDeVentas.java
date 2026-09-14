@@ -58,6 +58,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JFormattedTextField;
+import java.awt.event.ActionListener;
 
 public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAcciones {
 
@@ -225,6 +226,15 @@ public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAccione
 		this.txfTotalVenta.setColumns(10);
 
 		this.btnCancelarSalir = new JButton("Cancelar");
+		this.btnCancelarSalir.addActionListener(e -> {
+			
+			int result = JOptionPane.showConfirmDialog(this, "Está seguro de cerrar el punto de venta? la información capturada se perderá", "Salir?", JOptionPane.YES_NO_OPTION);
+			
+			if(result == JOptionPane.YES_OPTION) this.dispose();
+			
+			return;
+			
+		});
 		this.btnCancelarSalir.setBackground(new Color(246, 97, 81));
 
 		this.btnCobrar = new JButton("Cobrar");
