@@ -148,6 +148,12 @@ public class Fr_principal extends JFrame {
 	private JMenu subMenuCompras;
 	private JMenuItem opcionRegistrarCompra;
 	private JMenuItem opcionConsultarCompra;
+	private JMenu sumMenuEntradas;
+	private JMenuItem menuItemConsultarEntradas;
+	private JMenuItem menuItemRegistrarEntradas;
+	private JMenu mnSalidas;
+	private JMenuItem mntmConsultar;
+	private JMenuItem mntmRegistrar_1;
 
 	/**
 	 * Create the frame.
@@ -386,6 +392,24 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		this.subMenuCompras.add(this.opcionConsultarCompra);
+		
+		this.sumMenuEntradas = new JMenu("Entradas");
+		this.menuOperaciones.add(this.sumMenuEntradas);
+		
+		this.menuItemConsultarEntradas = new JMenuItem("Consultar");
+		this.sumMenuEntradas.add(this.menuItemConsultarEntradas);
+		
+		this.menuItemRegistrarEntradas = new JMenuItem("Registrar");
+		this.sumMenuEntradas.add(this.menuItemRegistrarEntradas);
+		
+		this.mnSalidas = new JMenu("Salidas");
+		this.menuOperaciones.add(this.mnSalidas);
+		
+		this.mntmConsultar = new JMenuItem("Consultar");
+		this.mnSalidas.add(this.mntmConsultar);
+		
+		this.mntmRegistrar_1 = new JMenuItem("Registrar");
+		this.mnSalidas.add(this.mntmRegistrar_1);
 
 		menuReportes = new JMenu("Reportes");
 		menuReportes.setIcon(
