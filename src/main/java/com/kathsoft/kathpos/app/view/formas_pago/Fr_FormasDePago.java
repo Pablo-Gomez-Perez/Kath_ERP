@@ -13,10 +13,12 @@ import com.kathsoft.kathpos.app.model.venta.PagoPorVenta;
 import com.kathsoft.kathpos.app.model.venta.Venta;
 import com.kathsoft.kathpos.app.model.venta.VentaConDetalle;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
+import com.kathsoft.kathpos.app.report.ticket.TicketVentaReportService;
 import com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
@@ -28,6 +30,7 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionListener;
@@ -37,6 +40,7 @@ public class Fr_FormasDePago extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private VentasController ventasController = new VentasController();
+	private TicketVentaReportService ticketVentaReportService = new TicketVentaReportService();
 	private DefaultTableModel modelTablaFormasDePago = new DefaultTableModel();
 	private JPanel contentPane;
 	private JTable tablaFormasDePago;
@@ -335,12 +339,31 @@ public class Fr_FormasDePago extends JFrame {
 				return;
 			}
 
+			Path ticketPdf = null;
+			String errorTicket = null;
+			try {
+				ticketPdf = this.ticketVentaReportService.generarTicket(respuesta.id(), totalPagado, cambio);
+			} catch (Exception ticketError) {
+				errorTicket = ticketError.getMessage();
+				ticketError.printStackTrace(System.err);
+			}
+
 			this.formVentas.refreshAll();
 			String mensaje = respuesta.message() + "\nID de venta: " + respuesta.id();
 			if (cambio.compareTo(BigDecimal.ZERO) > 0) {
 				mensaje += "\nCambio: " + this.formatearImporte(cambio);
 			}
 			JOptionPane.showMessageDialog(this, mensaje, "Ventas", JOptionPane.INFORMATION_MESSAGE);
+
+			if (ticketPdf != null) {
+				this.preguntarAbrirTicket(ticketPdf);
+			} else {
+				JOptionPane.showMessageDialog(this,
+						"La venta se registró correctamente, pero no fue posible generar el ticket.\n"
+								+ (errorTicket == null ? "Revise la configuración del reporte." : errorTicket),
+						"Ticket no generado", JOptionPane.WARNING_MESSAGE);
+			}
+
 			this.dispose();
 		} catch (IllegalArgumentException er) {
 			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos de cobro inválidos",
@@ -349,6 +372,32 @@ public class Fr_FormasDePago extends JFrame {
 			JOptionPane.showMessageDialog(this, "Ha ocurrido un error al registrar la venta: " + er.getMessage(),
 					"Error", JOptionPane.ERROR_MESSAGE);
 			er.printStackTrace(System.err);
+		}
+	}
+
+	private void preguntarAbrirTicket(Path ticketPdf) {
+		int respuesta = JOptionPane.showConfirmDialog(this,
+				"El ticket fue creado en:\n" + ticketPdf + "\n\n¿Desea abrir el documento creado?", "Ticket generado",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (respuesta == JOptionPane.YES_OPTION) {
+			this.abrirDocumento(ticketPdf);
+		}
+	}
+
+	private void abrirDocumento(Path documento) {
+		try {
+			if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+				JOptionPane.showMessageDialog(this,
+						"El sistema no dispone de una aplicación asociada para abrir PDF.\nArchivo: " + documento,
+						"No fue posible abrir el ticket", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			Desktop.getDesktop().open(documento.toFile());
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this,
+					"El ticket fue generado, pero no fue posible abrirlo automáticamente.\nArchivo: " + documento,
+					"No fue posible abrir el ticket", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 
