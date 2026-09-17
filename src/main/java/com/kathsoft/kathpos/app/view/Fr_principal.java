@@ -23,6 +23,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
@@ -30,6 +31,7 @@ import com.kathsoft.kathpos.app.view.articulo.PanelArticulos;
 import com.kathsoft.kathpos.app.view.clientes.PanelClientes;
 import com.kathsoft.kathpos.app.view.clientes.PanelTipoCliente;
 import com.kathsoft.kathpos.app.view.compras.PanelCompras;
+import com.kathsoft.kathpos.app.view.configuracion.Fr_ConfiguracionFiscal;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
 import com.kathsoft.kathpos.app.view.formas_pago.PanelFormasDePago;
@@ -37,6 +39,8 @@ import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
 import com.kathsoft.kathpos.app.view.ventas.PanelVentas;
+import com.kathsoft.kathpos.tools.MessageHandler;
+
 import javax.swing.JLabel;
 
 public class Fr_principal extends JFrame {
@@ -154,6 +158,8 @@ public class Fr_principal extends JFrame {
 	private JMenu mnSalidas;
 	private JMenuItem mntmConsultar;
 	private JMenuItem mntmRegistrar_1;
+	private JMenu menuConfiguracion;
+	private JMenuItem mntmFiscal;
 
 	/**
 	 * Create the frame.
@@ -501,6 +507,15 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		menuContable.add(opcionCatalogoCuentas);
+		
+		this.menuConfiguracion = new JMenu("Configuracion");
+		this.BarraMenu.add(this.menuConfiguracion);
+		
+		this.mntmFiscal = new JMenuItem("Datos Fiscales");
+		this.mntmFiscal.addActionListener(e -> {
+			this.abrirFormConfiguracionFiscal();
+		});
+		this.menuConfiguracion.add(this.mntmFiscal);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -694,6 +709,35 @@ public class Fr_principal extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	private void abrirFormConfiguracionFiscal() {
+		
+		Component cmp = this;
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					Fr_ConfiguracionFiscal form = new Fr_ConfiguracionFiscal();
+					form.setLocationRelativeTo(cmp);
+					form.setVisible(true);
+					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					
+				}catch (Exception e) {
+					
+					e.printStackTrace();
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, e.getMessage());
+					
+				}
+				
+			}
+			
+		});
+		
 	}
 
 	private void cargarDatosDeSesion() {
