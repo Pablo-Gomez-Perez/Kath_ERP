@@ -14,7 +14,7 @@ import com.kathsoft.kathpos.tools.Conexion;
  */
 public class ConfiguracionFiscalController {
 
-    private static final int ERROR = 500;
+    private static final int ERROR = -1;
 
     public ConfiguracionFiscal getConfiguracionFiscal() {
         String call = "CALL getConfiguracionFiscal()";
