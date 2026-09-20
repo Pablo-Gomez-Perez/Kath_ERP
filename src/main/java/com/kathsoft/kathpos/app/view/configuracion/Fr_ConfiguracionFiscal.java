@@ -16,6 +16,11 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.border.EtchedBorder;
+import javax.swing.JOptionPane;
+
+import com.kathsoft.kathpos.app.controller.ConfiguracionFiscalController;
+import com.kathsoft.kathpos.app.model.configuracion.ConfiguracionFiscal;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 
 public class Fr_ConfiguracionFiscal extends JFrame {
 
@@ -39,6 +44,8 @@ public class Fr_ConfiguracionFiscal extends JFrame {
 	private JPanel panelInferiorBotones;
 	private JButton btnCancelar;
 	private JButton btnGuardar;
+	private final ConfiguracionFiscalController configuracionFiscalController = new ConfiguracionFiscalController();
+	private int idConfiguracionFiscal;
 
 	/**
 	 * Launch the application.
@@ -182,11 +189,105 @@ public class Fr_ConfiguracionFiscal extends JFrame {
 		
 		this.btnCancelar = new JButton("Cancelar");
 		this.btnCancelar.setBackground(new Color(246, 97, 81));
+		this.btnCancelar.addActionListener(e -> this.dispose());
 		this.panelInferiorBotones.add(this.btnCancelar);
 		
 		this.btnGuardar = new JButton("Guardar");
 		this.btnGuardar.setBackground(new Color(87, 227, 137));
+		this.btnGuardar.addActionListener(e -> this.guardarConfiguracionFiscal());
 		this.panelInferiorBotones.add(this.btnGuardar);
 
+		this.cargarConfiguracionFiscal();
+	}
+
+	private void cargarConfiguracionFiscal() {
+		ConfiguracionFiscal configuracion = this.configuracionFiscalController.getConfiguracionFiscal();
+		if (configuracion == null) {
+			JOptionPane.showMessageDialog(this,
+					"No fue posible obtener la configuración fiscal activa. Verifique que exista el registro inicial en la base de datos.",
+					"Configuración fiscal", JOptionPane.WARNING_MESSAGE);
+			this.btnGuardar.setEnabled(false);
+			return;
+		}
+
+		this.idConfiguracionFiscal = configuracion.idConfiguracion();
+		this.txfRfcEmisor.setText(valor(configuracion.rfcEmisor()));
+		this.txfNombreRazonSocial.setText(valor(configuracion.nombreRazonSocial()));
+		this.txfNombreComercial.setText(valor(configuracion.nombreComercial()));
+		this.txfClaveRegimenFiscal.setText(valor(configuracion.regimenFiscalClave()));
+		this.txfRegimenFiscalDescripcion.setText(valor(configuracion.regimenFiscalDescripcion()));
+		this.textField.setText(valor(configuracion.numeroRegistroSistema()));
+		this.btnGuardar.setEnabled(true);
+	}
+
+	private void guardarConfiguracionFiscal() {
+		try {
+			ConfiguracionFiscal configuracion = this.construirConfiguracionDesdeFormulario();
+			SpResponseModel respuesta = this.configuracionFiscalController.updateConfiguracionFiscal(configuracion);
+
+			if (respuesta == null || respuesta.id() <= 0) {
+				String mensaje = respuesta == null ? "No se recibió respuesta al actualizar la configuración fiscal"
+						: respuesta.message();
+				JOptionPane.showMessageDialog(this, mensaje, "No fue posible guardar",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			JOptionPane.showMessageDialog(this, respuesta.message(), "Configuración fiscal",
+					JOptionPane.INFORMATION_MESSAGE);
+			this.cargarConfiguracionFiscal();
+		} catch (IllegalArgumentException er) {
+			JOptionPane.showMessageDialog(this, er.getMessage(), "Datos fiscales inválidos",
+					JOptionPane.WARNING_MESSAGE);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(this,
+					"Ha ocurrido un error al actualizar la configuración fiscal: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private ConfiguracionFiscal construirConfiguracionDesdeFormulario() {
+		if (this.idConfiguracionFiscal <= 0) {
+			throw new IllegalArgumentException("No existe una configuración fiscal válida para actualizar");
+		}
+
+		String rfc = this.txfRfcEmisor.getText().trim().toUpperCase();
+		String razonSocial = this.txfNombreRazonSocial.getText().trim();
+		String nombreComercial = this.txfNombreComercial.getText().trim();
+		String claveRegimen = this.txfClaveRegimenFiscal.getText().trim();
+		String descripcionRegimen = this.txfRegimenFiscalDescripcion.getText().trim();
+		String numeroRegistro = this.textField.getText().trim();
+
+		if (rfc.isEmpty()) {
+			throw new IllegalArgumentException("El RFC del emisor es obligatorio");
+		}
+		if (rfc.length() != 12 && rfc.length() != 13) {
+			throw new IllegalArgumentException("El RFC del emisor debe contener 12 o 13 caracteres");
+		}
+		if (razonSocial.isEmpty()) {
+			throw new IllegalArgumentException("El nombre o razón social es obligatorio");
+		}
+		if (claveRegimen.length() != 3) {
+			throw new IllegalArgumentException("La clave del régimen fiscal debe contener 3 caracteres");
+		}
+		if (descripcionRegimen.isEmpty()) {
+			throw new IllegalArgumentException("La descripción del régimen fiscal es obligatoria");
+		}
+
+		return new ConfiguracionFiscal(
+				this.idConfiguracionFiscal,
+				rfc,
+				razonSocial,
+				nombreComercial,
+				claveRegimen,
+				descripcionRegimen,
+				numeroRegistro,
+				true);
+	}
+
+	private static String valor(String valor) {
+		return valor == null ? "" : valor;
 	}
 }
+
