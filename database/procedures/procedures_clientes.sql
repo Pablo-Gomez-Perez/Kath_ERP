@@ -648,7 +648,6 @@ CREATE PROCEDURE `kath_erp`.`insertCliente`(
     COMMENT 'Registra un nuevo cliente sin dependencias contables'
 BEGIN
 
-	DECLARE v_id_cliente INT UNSIGNED DEFAULT 0;
 	DECLARE v_existe_tipo_cliente INT DEFAULT 0;
 	DECLARE v_rfc_duplicado INT DEFAULT 0;
 
@@ -764,8 +763,6 @@ BEGIN
 		NULLIF(TRIM(p_codigo_postal), ''),
 		TRUE
 	);
-
-	SET v_id_cliente = LAST_INSERT_ID();
 
 	COMMIT;
 
