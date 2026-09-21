@@ -770,7 +770,7 @@ BEGIN
 	COMMIT;
 
 	SELECT
-		v_id_cliente AS id,
+		200 AS id,
 		'Cliente registrado correctamente' AS message;
 
 END;
