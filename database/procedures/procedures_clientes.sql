@@ -1,25 +1,29 @@
+DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_cliente_por_nombre`;
+
 CREATE PROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
 	IN `nombre` VARCHAR(30)
 )
+    READS SQL DATA
+    COMMENT 'Busca clientes por nombre sin dependencias contables'
 BEGIN
-	
+
     SELECT
-		cliente.id_cliente,
-		cliente.rfc,
-		cuentas_contables.clave,
-		cliente.nombre_completo,
-		cliente.nombre_corto,
-		cliente.correo_electronico,
-		cliente.estado,
-		cliente.ciudad,
-		cliente.direccion,
-		cliente.codigo_postal,
-        cliente.activo        
-    FROM cliente
-    INNER JOIN cuentas_contables ON cuentas_contables.id_cuenta = cliente.id_cuenta_contable
-    WHERE cliente.nombre_completo LIKE CONCAT('%',nombre,'%');
-    
+        c.id_cliente,
+        c.rfc,
+        c.nombre_completo,
+        c.nombre_corto,
+        c.correo_electronico,
+        c.estado,
+        c.ciudad,
+        c.direccion,
+        c.codigo_postal,
+        c.activo
+    FROM kath_erp.cliente AS c
+    WHERE c.nombre_completo LIKE CONCAT('%', nombre, '%');
+
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_tipoCliente_por_id`;
 
 CREATE PROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
 	IN id_tipoCliente INT
@@ -33,6 +37,8 @@ BEGIN
     WHERE tipo_cliente.id = id_tipoCliente;
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`cmb_tipoCliente`;
+
 CREATE PROCEDURE `kath_erp`.`cmb_tipoCliente`()
 BEGIN
 	SELECT
@@ -41,20 +47,18 @@ BEGIN
 	FROM tipo_cliente;
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`deleteCliente`;
+
 CREATE PROCEDURE `kath_erp`.`deleteCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
     MODIFIES SQL DATA
-    COMMENT 'Cambia el status del cliente, y de su cuenta contable'
+    COMMENT 'Desactiva un cliente únicamente cuando no tiene saldo insoluto en ventas a crédito'
 BEGIN
-	
+
 	DECLARE v_existe_cliente INT DEFAULT 0;
 	DECLARE v_cliente_activo BOOLEAN DEFAULT FALSE;
-	DECLARE v_id_cuenta_contable INT DEFAULT 0;
-
-	DECLARE v_cargo DOUBLE DEFAULT 0;
-	DECLARE v_abono DOUBLE DEFAULT 0;
-	DECLARE v_saldo DOUBLE DEFAULT 0;
+	DECLARE v_saldo_pendiente DECIMAL(20,2) DEFAULT 0;
 
 	DECLARE v_sqlstate CHAR(5);
 	DECLARE v_errno INT;
@@ -84,7 +88,7 @@ BEGIN
 
 	SELECT COUNT(*)
 	INTO v_existe_cliente
-	FROM cliente
+	FROM kath_erp.cliente
 	WHERE id_cliente = p_id_cliente;
 
 	IF v_existe_cliente = 0 THEN
@@ -92,13 +96,9 @@ BEGIN
 			SET MESSAGE_TEXT = 'El cliente indicado no existe';
 	END IF;
 
-	SELECT
-		activo,
-		id_cuenta_contable
-	INTO
-		v_cliente_activo,
-		v_id_cuenta_contable
-	FROM cliente
+	SELECT activo
+	INTO v_cliente_activo
+	FROM kath_erp.cliente
 	WHERE id_cliente = p_id_cliente
 	FOR UPDATE;
 
@@ -107,35 +107,53 @@ BEGIN
 			SET MESSAGE_TEXT = 'El cliente ya se encuentra inactivo';
 	END IF;
 
+	/*
+	 * Saldo insoluto del cliente:
+	 *
+	 * total de ventas vigentes a crédito
+	 * - pagos registrados al momento de cada venta
+	 * - cobros posteriores registrados en cobro_clientes.
+	 *
+	 * GREATEST evita que un eventual sobrepago histórico produzca
+	 * un saldo negativo que compense otra venta pendiente.
+	 */
 	SELECT
-		cargo,
-		abono
-	INTO
-		v_cargo,
-		v_abono
-	FROM cuentas_contables
-	WHERE id_cuenta = v_id_cuenta_contable
-	FOR UPDATE;
+		ROUND(
+			COALESCE(
+				SUM(
+					GREATEST(
+						CAST(v.importe_total AS DECIMAL(18,2))
+						- COALESCE((
+							SELECT SUM(CAST(pxv.importe AS DECIMAL(18,2)))
+							FROM kath_erp.pagos_x_venta AS pxv
+							WHERE pxv.id_venta = v.id_venta
+						), 0)
+						- COALESCE((
+							SELECT SUM(CAST(cc.total AS DECIMAL(18,2)))
+							FROM kath_erp.cobro_clientes AS cc
+							WHERE cc.id_venta = v.id_venta
+						), 0),
+						0
+					)
+				),
+				0
+			),
+			2
+		)
+	INTO v_saldo_pendiente
+	FROM kath_erp.ventas AS v
+	WHERE v.id_cliente = p_id_cliente
+	  AND v.status_venta = TRUE
+	  AND v.tipo_venta = FALSE;
 
-	SET v_saldo = ROUND(
-		COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-		2
-	);
-
-	IF v_saldo <> 0 THEN
+	IF v_saldo_pendiente > 0 THEN
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'No se puede eliminar el cliente porque su cuenta contable tiene saldo pendiente';
+			SET MESSAGE_TEXT = 'No se puede eliminar el cliente porque tiene saldo pendiente en ventas a crédito';
 	END IF;
 
-	UPDATE cliente
+	UPDATE kath_erp.cliente
 	SET activo = FALSE
 	WHERE id_cliente = p_id_cliente;
-
-	UPDATE cuentas_contables
-	SET
-		activa = FALSE,
-		fecha_modificacion = CURDATE()
-	WHERE id_cuenta = v_id_cuenta_contable;
 
 	COMMIT;
 
@@ -144,6 +162,8 @@ BEGIN
 		'Cliente desactivado correctamente' AS message;
 
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`deleteTelefonoCliente`;
 
 CREATE PROCEDURE `kath_erp`.`deleteTelefonoCliente`(
 	IN p_id_telefono INT
@@ -200,6 +220,8 @@ BEGIN
 	
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`eliminar_tipoCliente`;
+
 CREATE PROCEDURE `kath_erp`.`eliminar_tipoCliente`(
 	IN id_tipoCliente INT
 )
@@ -212,6 +234,8 @@ BEGIN
     SELECT 200 AS id, 'Tipo Cliente inhabilitado exitosamente' AS message;
     
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`getArticuloByCodigo`;
 
 CREATE PROCEDURE `kath_erp`.`getArticuloByCodigo`(
 	IN codigo_a VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -249,18 +273,18 @@ BEGIN
     
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`getClienteById`;
+
 CREATE PROCEDURE `kath_erp`.`getClienteById`(
 	IN p_idCliente INT
 )
     READS SQL DATA
-    COMMENT 'BUSCA EL REGISTRO DE UN CLIENTE MEDIANTE SU ID Y RETORNA LOS CAMPOS A UTILIZAR EN Fr_DatosCliente.java'
+    COMMENT 'Busca un cliente mediante su ID y retorna sus datos operativos'
 BEGIN
 
-	SELECT 
+	SELECT
 		c.id_cliente,
 		c.id_tipoCliente,
-		c.id_cuenta_contable,
-		cc.clave,
 		c.rfc,
 		c.nombre_completo,
 		c.nombre_corto,
@@ -272,22 +296,22 @@ BEGIN
 		c.codigo_postal,
 		c.activo
 	FROM kath_erp.cliente AS c
-	INNER JOIN kath_erp.cuentas_contables AS cc ON c.id_cuenta_contable  = cc.id_cuenta
-	WHERE p_idCliente = c.id_cliente; 
+	WHERE c.id_cliente = p_idCliente;
 
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`getClienteParaVentaById`;
 
 CREATE PROCEDURE `kath_erp`.`getClienteParaVentaById`(
 	IN id_cliente INT
 )
     READS SQL DATA
-    COMMENT 'CONSULTA LOS DATOS DE UN CLIENTE MEDIANTE SU ID PARA EL PUNTO DE VENTAS'
+    COMMENT 'Consulta los datos operativos de un cliente mediante su ID para el punto de ventas'
 BEGIN
-	
-	SELECT				
+
+	SELECT
 		c.id_cliente,
 		c.id_tipoCliente,
-		c.id_cuenta_contable,
 		tc.nombre AS tipo_cliente,
 		c.rfc,
 		c.nombre_completo,
@@ -299,13 +323,14 @@ BEGIN
 		c.direccion,
 		c.codigo_postal,
 		c.activo
-	FROM
-		kath_erp.cliente AS c
-		INNER JOIN kath_erp.tipo_cliente AS tc ON c.id_tipoCliente = tc.id		
-	WHERE
-		c.id_cliente = id_cliente;
-	
+	FROM kath_erp.cliente AS c
+	INNER JOIN kath_erp.tipo_cliente AS tc
+		ON c.id_tipoCliente = tc.id
+	WHERE c.id_cliente = id_cliente;
+
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`insertArticuloVenta`;
 
 CREATE PROCEDURE `kath_erp`.`insertArticuloVenta`(
     IN p_id_venta INT UNSIGNED,
@@ -597,9 +622,10 @@ BEGIN
 
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`insertCliente`;
+
 CREATE PROCEDURE `kath_erp`.`insertCliente`(
-  	IN p_id_tipoCliente INT,
-	IN p_id_cuenta_contable INT,
+	IN p_id_tipoCliente INT,
 	IN p_rfc VARCHAR(13)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_nombre_completo VARCHAR(30)
@@ -619,16 +645,12 @@ CREATE PROCEDURE `kath_erp`.`insertCliente`(
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     MODIFIES SQL DATA
-    COMMENT 'Registra un nuevo cliente asociado a una cuenta contable existente. necesario agregar una cuenta contable antes de agregar al cliente'
+    COMMENT 'Registra un nuevo cliente sin dependencias contables'
 BEGIN
-	
-    DECLARE v_id_cliente INT UNSIGNED DEFAULT 0;
+
+	DECLARE v_id_cliente INT UNSIGNED DEFAULT 0;
 	DECLARE v_existe_tipo_cliente INT DEFAULT 0;
-	DECLARE v_existe_cuenta INT DEFAULT 0;
-	DECLARE v_cuenta_asignada INT DEFAULT 0;
 	DECLARE v_rfc_duplicado INT DEFAULT 0;
-	DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-	DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
 
 	DECLARE v_sqlstate CHAR(5);
 	DECLARE v_errno INT;
@@ -658,17 +680,9 @@ BEGIN
 
 	START TRANSACTION;
 
-	/*
-	 * Validación de parámetros obligatorios.
-	 */
 	IF p_id_tipoCliente IS NULL OR p_id_tipoCliente <= 0 THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'El tipo de cliente es obligatorio';
-	END IF;
-
-	IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'La cuenta contable es obligatoria';
 	END IF;
 
 	IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
@@ -704,12 +718,9 @@ BEGIN
 			SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
 	END IF;
 
-	/*
-	 * Validación de tipo de cliente.
-	 */
 	SELECT COUNT(*)
 	INTO v_existe_tipo_cliente
-	FROM tipo_cliente
+	FROM kath_erp.tipo_cliente
 	WHERE id = p_id_tipoCliente;
 
 	IF v_existe_tipo_cliente = 0 THEN
@@ -717,12 +728,9 @@ BEGIN
 			SET MESSAGE_TEXT = 'El tipo de cliente indicado no existe';
 	END IF;
 
-	/*
-	 * Validación del RFC.
-	 */
 	SELECT COUNT(*)
 	INTO v_rfc_duplicado
-	FROM cliente
+	FROM kath_erp.cliente
 	WHERE rfc = UPPER(TRIM(p_rfc));
 
 	IF v_rfc_duplicado > 0 THEN
@@ -730,58 +738,8 @@ BEGIN
 			SET MESSAGE_TEXT = 'El RFC ya está registrado';
 	END IF;
 
-	/*
-	 * Validación de la cuenta contable.
-	 */
-	SELECT COUNT(*)
-	INTO v_existe_cuenta
-	FROM cuentas_contables
-	WHERE id_cuenta = p_id_cuenta_contable;
-
-	IF v_existe_cuenta = 0 THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'La cuenta contable indicada no existe';
-	END IF;
-
-	SELECT
-		activa,
-		ultimo_nivel
-	INTO
-		v_cuenta_activa,
-		v_ultimo_nivel
-	FROM cuentas_contables
-	WHERE id_cuenta = p_id_cuenta_contable
-	FOR UPDATE;
-
-	IF v_cuenta_activa = FALSE THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'La cuenta contable se encuentra inactiva';
-	END IF;
-
-	IF v_ultimo_nivel = FALSE THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'La cuenta del cliente debe ser una cuenta de detalle';
-	END IF;
-
-	/*
-	 * Las cuentas contables no pueden compartirse entre clientes.
-	 */
-	SELECT COUNT(*)
-	INTO v_cuenta_asignada
-	FROM cliente
-	WHERE id_cuenta_contable = p_id_cuenta_contable;
-
-	IF v_cuenta_asignada > 0 THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'La cuenta contable ya está asignada a otro cliente';
-	END IF;
-
-	/*
-	 * Registro del cliente.
-	 */
-	INSERT INTO cliente (
+	INSERT INTO kath_erp.cliente (
 		id_tipoCliente,
-		id_cuenta_contable,
 		rfc,
 		nombre_completo,
 		nombre_corto,
@@ -795,7 +753,6 @@ BEGIN
 	)
 	VALUES (
 		p_id_tipoCliente,
-		p_id_cuenta_contable,
 		UPPER(TRIM(p_rfc)),
 		TRIM(p_nombre_completo),
 		TRIM(p_nombre_corto),
@@ -813,11 +770,12 @@ BEGIN
 	COMMIT;
 
 	SELECT
-		200 AS id,
+		v_id_cliente AS id,
 		'Cliente registrado correctamente' AS message;
-	
-    
+
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`insertPrecioArticuloTipoCliente`;
 
 CREATE PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
 	IN p_id_articulo INT UNSIGNED,
@@ -919,6 +877,8 @@ BEGIN
 		'Precio registrado correctamente' AS message;
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`insertTelefonoCliente`;
+
 CREATE PROCEDURE `kath_erp`.`insertTelefonoCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -1009,6 +969,8 @@ BEGIN
 	
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`insert_nuevo_tipoCliente`;
+
 CREATE PROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -1046,6 +1008,8 @@ BEGIN
     SELECT 200 AS id, 'Tipo de cliente registrado con exito' AS message;
     
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`listArticulos`;
 
 CREATE PROCEDURE `kath_erp`.`listArticulos`(
 	IN p_id_sucursal BIGINT UNSIGNED,
@@ -1149,31 +1113,36 @@ BEGIN
     
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`listClientes`;
+
 CREATE PROCEDURE `kath_erp`.`listClientes`(
-	IN `nombre_c` VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+	IN `nombre_c` VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
-    COMMENT 'listado de clientes registrados filtrado por nombre del cliente'
+    COMMENT 'Listado de clientes registrados filtrado por nombre del cliente'
 BEGIN
-SELECT
-	cliente.id_cliente,
-	cliente.rfc,
-	tipo_cliente.nombre,
-	cuentas_contables.clave,
-	cliente.nombre_completo,
-	cliente.nombre_corto,
-	cliente.correo_electronico,
-	cliente.estado,
-	cliente.ciudad,
-	cliente.direccion,
-	cliente.codigo_postal,
-	cliente.activo
-FROM
-	cliente
-	INNER JOIN cuentas_contables ON cuentas_contables.id_cuenta = cliente.id_cuenta_contable
-	INNER JOIN tipo_cliente ON tipo_cliente.id = cliente.id_tipoCliente
-WHERE
-	cliente.nombre_completo LIKE CONCAT('%', nombre_c, '%'); END;
+
+	SELECT
+		c.id_cliente,
+		c.rfc,
+		tc.nombre,
+		c.nombre_completo,
+		c.nombre_corto,
+		c.correo_electronico,
+		c.estado,
+		c.ciudad,
+		c.direccion,
+		c.codigo_postal,
+		c.activo
+	FROM kath_erp.cliente AS c
+	INNER JOIN kath_erp.tipo_cliente AS tc
+		ON tc.id = c.id_tipoCliente
+	WHERE c.nombre_completo LIKE CONCAT('%', nombre_c, '%');
+
+END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`listCmbClientes`;
 
 CREATE PROCEDURE `kath_erp`.`listCmbClientes`()
     READS SQL DATA
@@ -1187,6 +1156,8 @@ BEGIN
 		kath_erp.cliente AS c;
 	
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`listPreciosArticuloTipoCliente`;
 
 CREATE PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
@@ -1209,6 +1180,8 @@ BEGIN
 
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`listTelefonosCliente`;
+
 CREATE PROCEDURE `kath_erp`.`listTelefonosCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
@@ -1225,10 +1198,11 @@ BEGIN
 	
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`updateCliente`;
+
 CREATE PROCEDURE `kath_erp`.`updateCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_id_tipoCliente INT,
-	IN p_id_cuenta_contable INT,
 	IN p_rfc VARCHAR(13)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_nombre_completo VARCHAR(30)
@@ -1249,22 +1223,14 @@ CREATE PROCEDURE `kath_erp`.`updateCliente`(
 	IN p_activo BOOLEAN
 )
     MODIFIES SQL DATA
-    COMMENT 'Actualiza y valida los datos de un cliente existente, si la cuenta contable presenta saldos el registro contable no puede ser modificado'
+    COMMENT 'Actualiza y valida los datos operativos de un cliente sin dependencias contables'
 BEGIN
-	
-    DECLARE v_existe_cliente INT DEFAULT 0;
+
+	DECLARE v_existe_cliente INT DEFAULT 0;
 	DECLARE v_existe_tipo_cliente INT DEFAULT 0;
-	DECLARE v_cuenta_actual INT DEFAULT 0;
-	DECLARE v_existe_cuenta INT DEFAULT 0;
-	DECLARE v_cuenta_asignada INT DEFAULT 0;
 	DECLARE v_rfc_duplicado INT DEFAULT 0;
-
-	DECLARE v_cargo DOUBLE DEFAULT 0;
-	DECLARE v_abono DOUBLE DEFAULT 0;
-	DECLARE v_saldo DOUBLE DEFAULT 0;
-
-	DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-	DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
+	DECLARE v_cliente_activo BOOLEAN DEFAULT FALSE;
+	DECLARE v_saldo_pendiente DECIMAL(20,2) DEFAULT 0;
 
 	DECLARE v_sqlstate CHAR(5);
 	DECLARE v_errno INT;
@@ -1291,10 +1257,9 @@ BEGIN
 				v_text
 			) AS message;
 	END;
-		
+
 	START TRANSACTION;
 
-	
 	IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'El identificador del cliente no es válido';
@@ -1302,7 +1267,7 @@ BEGIN
 
 	SELECT COUNT(*)
 	INTO v_existe_cliente
-	FROM cliente
+	FROM kath_erp.cliente
 	WHERE id_cliente = p_id_cliente;
 
 	IF v_existe_cliente = 0 THEN
@@ -1310,22 +1275,15 @@ BEGIN
 			SET MESSAGE_TEXT = 'El cliente indicado no existe';
 	END IF;
 
-	
-	SELECT id_cuenta_contable
-	INTO v_cuenta_actual
-	FROM cliente
+	SELECT activo
+	INTO v_cliente_activo
+	FROM kath_erp.cliente
 	WHERE id_cliente = p_id_cliente
 	FOR UPDATE;
 
-	
 	IF p_id_tipoCliente IS NULL OR p_id_tipoCliente <= 0 THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'El tipo de cliente es obligatorio';
-	END IF;
-
-	IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'La cuenta contable es obligatoria';
 	END IF;
 
 	IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
@@ -1361,12 +1319,9 @@ BEGIN
 			SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
 	END IF;
 
-	/*
-	 * Validación del tipo de cliente.
-	 */
 	SELECT COUNT(*)
 	INTO v_existe_tipo_cliente
-	FROM tipo_cliente
+	FROM kath_erp.tipo_cliente
 	WHERE id = p_id_tipoCliente;
 
 	IF v_existe_tipo_cliente = 0 THEN
@@ -1374,12 +1329,9 @@ BEGIN
 			SET MESSAGE_TEXT = 'El tipo de cliente indicado no existe';
 	END IF;
 
-	/*
-	 * Validación de RFC duplicado.
-	 */
 	SELECT COUNT(*)
 	INTO v_rfc_duplicado
-	FROM cliente
+	FROM kath_erp.cliente
 	WHERE rfc = UPPER(TRIM(p_rfc))
 	  AND id_cliente <> p_id_cliente;
 
@@ -1389,84 +1341,51 @@ BEGIN
 	END IF;
 
 	/*
-	 * Si cambia la cuenta contable, se valida el saldo de la cuenta actual y
-	 * posteriormente se valida la nueva cuenta.
+	 * La desactivación no puede utilizarse para evadir la regla de cobranza.
+	 * Si updateCliente intenta pasar un cliente activo a inactivo, se aplica
+	 * la misma validación de saldo insoluto que en deleteCliente.
 	 */
-	IF p_id_cuenta_contable <> v_cuenta_actual THEN
+	IF v_cliente_activo = TRUE AND p_activo = FALSE THEN
 
 		SELECT
-			cargo,
-			abono
-		INTO
-			v_cargo,
-			v_abono
-		FROM cuentas_contables
-		WHERE id_cuenta = v_cuenta_actual
-		FOR UPDATE;
+			ROUND(
+				COALESCE(
+					SUM(
+						GREATEST(
+							CAST(v.importe_total AS DECIMAL(18,2))
+							- COALESCE((
+								SELECT SUM(CAST(pxv.importe AS DECIMAL(18,2)))
+								FROM kath_erp.pagos_x_venta AS pxv
+								WHERE pxv.id_venta = v.id_venta
+							), 0)
+							- COALESCE((
+								SELECT SUM(CAST(cc.total AS DECIMAL(18,2)))
+								FROM kath_erp.cobro_clientes AS cc
+								WHERE cc.id_venta = v.id_venta
+							), 0),
+							0
+						)
+					),
+					0
+				),
+				2
+			)
+		INTO v_saldo_pendiente
+		FROM kath_erp.ventas AS v
+		WHERE v.id_cliente = p_id_cliente
+		  AND v.status_venta = TRUE
+		  AND v.tipo_venta = FALSE;
 
-		SET v_saldo = ROUND(
-			COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-			2
-		);
-
-		IF v_saldo <> 0 THEN
+		IF v_saldo_pendiente > 0 THEN
 			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'No se puede cambiar la cuenta contable porque tiene saldo pendiente';
-		END IF;
-
-		SELECT COUNT(*)
-		INTO v_existe_cuenta
-		FROM cuentas_contables
-		WHERE id_cuenta = p_id_cuenta_contable;
-
-		IF v_existe_cuenta = 0 THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'La nueva cuenta contable no existe';
-		END IF;
-
-		SELECT
-			activa,
-			ultimo_nivel
-		INTO
-			v_cuenta_activa,
-			v_ultimo_nivel
-		FROM cuentas_contables
-		WHERE id_cuenta = p_id_cuenta_contable
-		FOR UPDATE;
-
-		IF v_cuenta_activa = FALSE THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'La nueva cuenta contable se encuentra inactiva';
-		END IF;
-
-		IF v_ultimo_nivel = FALSE THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'La nueva cuenta debe ser una cuenta de detalle';
-		END IF;
-
-		/*
-		 * Validación de exclusividad de la nueva cuenta.
-		 */
-		SELECT COUNT(*)
-		INTO v_cuenta_asignada
-		FROM cliente
-		WHERE id_cuenta_contable = p_id_cuenta_contable
-		  AND id_cliente <> p_id_cliente;
-
-		IF v_cuenta_asignada > 0 THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'La nueva cuenta contable ya está asignada a otro cliente';
+				SET MESSAGE_TEXT = 'No se puede desactivar el cliente porque tiene saldo pendiente en ventas a crédito';
 		END IF;
 
 	END IF;
 
-	/*
-	 * Actualización del cliente.
-	 */
-	UPDATE cliente
+	UPDATE kath_erp.cliente
 	SET
 		id_tipoCliente = p_id_tipoCliente,
-		id_cuenta_contable = p_id_cuenta_contable,
 		rfc = UPPER(TRIM(p_rfc)),
 		nombre_completo = TRIM(p_nombre_completo),
 		nombre_corto = TRIM(p_nombre_corto),
@@ -1484,8 +1403,10 @@ BEGIN
 	SELECT
 		200 AS id,
 		'Cliente actualizado correctamente' AS message;
-    
+
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`updatePrecioPorTipoCliente`;
 
 CREATE PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
     IN p_id_articulo INT UNSIGNED,
@@ -1586,6 +1507,8 @@ BEGIN
 
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`update_tipoCliente`;
+
 CREATE PROCEDURE `kath_erp`.`update_tipoCliente`(
 	IN id_tipoCliente INT,
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -1623,29 +1546,32 @@ BEGIN
         
 END;
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`ver_cliente_por_rfc`;
+
 CREATE PROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
 	IN rfc_cl VARCHAR(13)
 )
+    READS SQL DATA
+    COMMENT 'Consulta un cliente por RFC sin dependencias contables'
 BEGIN
 
 	SELECT
-		cliente.id_cliente,
-        cliente.rfc,
-        sub_cuentas_tercer_nivel.clave,
-        sub_cuentas_tercer_nivel.descripcion,
-        cliente.nombre_completo,
-        cliente.nombre_corto,
-        cliente.fecha_nac,
-        cliente.correo_electronico,
-        cliente.estado,
-        cliente.ciudad,
-        cliente.direccion,
-        cliente.codigo_postal
-    FROM cliente
-    INNER JOIN sub_cuentas_tercer_nivel ON cliente.id_cuenta_contable = sub_cuentas_tercer_nivel.id_cuenta
-    WHERE cliente.rfc = rfc_cl;
+		c.id_cliente,
+		c.rfc,
+		c.nombre_completo,
+		c.nombre_corto,
+		c.fecha_nac,
+		c.correo_electronico,
+		c.estado,
+		c.ciudad,
+		c.direccion,
+		c.codigo_postal
+	FROM kath_erp.cliente AS c
+	WHERE c.rfc = UPPER(TRIM(rfc_cl));
 
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`ver_rfc_clientes`;
 
 CREATE PROCEDURE `kath_erp`.`ver_rfc_clientes`()
 BEGIN
@@ -1655,6 +1581,8 @@ BEGIN
 	FROM cliente 
     ORDER BY id_cliente ASC;
 END;
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`ver_tipo_clientes`;
 
 CREATE PROCEDURE `kath_erp`.`ver_tipo_clientes`(
 	IN nombre_tipo_cliente VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
