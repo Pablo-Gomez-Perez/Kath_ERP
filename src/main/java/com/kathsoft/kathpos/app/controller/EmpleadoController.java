@@ -5,7 +5,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -59,15 +58,16 @@ public class EmpleadoController implements Serializable {
 	}
 
 	public void consultarRfcEmpleado(JComboBox<String> jcmb) {
-		Statement stm = null;
+		CallableStatement stm = null;
 		ResultSet rset = null;
 
 		try {
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.createStatement();
-			rset = stm.executeQuery("SELECT * FROM vw_rfcempleados");
+			stm = cn.prepareCall("CALL getListadoEmpleados(?)");
+			stm.setString(1, "");
+			rset = stm.executeQuery();
 			while (rset.next()) {
-				jcmb.addItem(rset.getString(1));
+				jcmb.addItem(rset.getString("rfc"));
 			}
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -92,8 +92,7 @@ public class EmpleadoController implements Serializable {
 			rset = stm.executeQuery();
 			if (rset.next()) {
 				return new EmpleadoById.EmpleadoBuilder().idEmpleado(rset.getInt("id_empleado"))
-						.idCuentaContable(rset.getInt("id_cuenta_contable"))
-						.claveCuentaContable(rset.getString("clave")).idSucursal(rset.getInt("id_sucursal"))
+						.idSucursal(rset.getInt("id_sucursal"))
 						.rfc(rset.getString("rfc")).curp(rset.getString("curp"))
 						.nombreCompleto(rset.getString("nombre_completo")).nombreCorto(rset.getString("nombre_corto"))
 						.fechaNac(rset.getDate("fecha_nac")).correoElectronico(rset.getString("correo_electronico"))
@@ -129,8 +128,7 @@ public class EmpleadoController implements Serializable {
 			rset = stm.executeQuery();
 			if (rset.next()) {
 				return new EmpleadoById.EmpleadoBuilder().idEmpleado(rset.getInt("id_empleado"))
-						.idCuentaContable(rset.getInt("id_cuenta_contable"))
-						.claveCuentaContable(rset.getString("clave")).idSucursal(rset.getInt("id_sucursal"))
+						.idSucursal(rset.getInt("id_sucursal"))
 						.rfc(rset.getString("rfc")).curp(rset.getString("curp"))
 						.nombreCompleto(rset.getString("nombre_completo")).nombreCorto(rset.getString("nombre_corto"))
 						.fechaNac(rset.getDate("fecha_nac")).correoElectronico(rset.getString("correo_electronico"))
@@ -195,20 +193,19 @@ public class EmpleadoController implements Serializable {
 			String contraseniaHash = PasswordHashService.hashIfPlain(empl.getContrasenia());
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL insert_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?)");
-			stm.setInt(1, empl.getIdCuentaContable());
-			stm.setInt(2, empl.getIdSucursal());
-			stm.setString(3, empl.getRfc());
-			stm.setString(4, empl.getCurp());
-			stm.setString(5, empl.getNombreCompleto());
-			stm.setString(6, empl.getNombreCorto());
-			stm.setDate(7, empl.getFechaNac());
-			stm.setString(8, empl.getCorreoElectronico());
-			stm.setString(9, empl.getEstado());
-			stm.setString(10, empl.getCiudad());
-			stm.setString(11, empl.getDireccion());
-			stm.setString(12, empl.getCodigoPostal());
-			stm.setString(13, contraseniaHash);
+			stm = cn.prepareCall("CALL insert_empleado(?,?,?,?,?,?,?,?,?,?,?,?)");
+			stm.setInt(1, empl.getIdSucursal());
+			stm.setString(2, empl.getRfc());
+			stm.setString(3, empl.getCurp());
+			stm.setString(4, empl.getNombreCompleto());
+			stm.setString(5, empl.getNombreCorto());
+			stm.setDate(6, empl.getFechaNac());
+			stm.setString(7, empl.getCorreoElectronico());
+			stm.setString(8, empl.getEstado());
+			stm.setString(9, empl.getCiudad());
+			stm.setString(10, empl.getDireccion());
+			stm.setString(11, empl.getCodigoPostal());
+			stm.setString(12, contraseniaHash);
 			rset = stm.executeQuery();
 			return leerRespuestaSp(rset);
 		} catch (SQLException er) {
@@ -238,22 +235,21 @@ public class EmpleadoController implements Serializable {
 			}
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			stm = cn.prepareCall("CALL update_empleado(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			stm.setInt(1, empl.getIdEmpleado());
-			stm.setInt(2, empl.getIdCuentaContable());
-			stm.setInt(3, empl.getIdSucursal());
-			stm.setString(4, empl.getRfc());
-			stm.setString(5, empl.getCurp());
-			stm.setString(6, empl.getNombreCompleto());
-			stm.setString(7, empl.getNombreCorto());
-			stm.setDate(8, empl.getFechaNac());
-			stm.setString(9, empl.getCorreoElectronico());
-			stm.setString(10, empl.getEstado());
-			stm.setString(11, empl.getCiudad());
-			stm.setString(12, empl.getDireccion());
-			stm.setString(13, empl.getCodigoPostal());
-			stm.setString(14, contraseniaHash);
-			stm.setBoolean(15, empl.isActivo());
+			stm.setInt(2, empl.getIdSucursal());
+			stm.setString(3, empl.getRfc());
+			stm.setString(4, empl.getCurp());
+			stm.setString(5, empl.getNombreCompleto());
+			stm.setString(6, empl.getNombreCorto());
+			stm.setDate(7, empl.getFechaNac());
+			stm.setString(8, empl.getCorreoElectronico());
+			stm.setString(9, empl.getEstado());
+			stm.setString(10, empl.getCiudad());
+			stm.setString(11, empl.getDireccion());
+			stm.setString(12, empl.getCodigoPostal());
+			stm.setString(13, contraseniaHash);
+			stm.setBoolean(14, empl.isActivo());
 			rset = stm.executeQuery();
 			return leerRespuestaSp(rset);
 		} catch (SQLException er) {
