@@ -13,7 +13,6 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,11 +23,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
-import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.telefono_x_empleado.TelefonoEmpleado;
-import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
@@ -95,7 +92,6 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JPasswordField passwordFieldContraseniaEmpleado;
 	private JPasswordField passwordFieldVerificarContraseniaEmpleado;
 	private JLabel lblNewLabel_1;
-	private CuentaContableResponseViewModel cuentaContable;
 	private DefaultTableModel modelTablaTelefonoEmpleado;;
 
 	/**
@@ -193,6 +189,9 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		txfClaveCuentaContable = new JTextField();
 		txfClaveCuentaContable.setColumns(10);
+		txfClaveCuentaContable.setText("");
+		txfClaveCuentaContable.setEditable(false);
+		txfClaveCuentaContable.setEnabled(false);
 
 		lblNmerosDeContacto = new JLabel("Números de contacto");
 
@@ -230,11 +229,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		passwordFieldVerificarContraseniaEmpleado = new JPasswordField();
 
 		JButton btnFormConsultaCuentaContable = new JButton("");
-		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				abrirFormConsultaCuentaContableEmpleado();
-			}
-		});
+		btnFormConsultaCuentaContable.setEnabled(false);
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(
 				Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
@@ -473,11 +468,9 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfCiudadEmpleado.setText(empleado.getCiudad());
 		textAreaDireccionEmpleado.setText(empleado.getDireccion());
 		txfCodigoPostal.setText(empleado.getCodigoPostal());
-		txfClaveCuentaContable.setText(empleado.getClaveCuentaContable());
+		txfClaveCuentaContable.setText("");
 		passwordFieldContraseniaEmpleado.setText("");
 		passwordFieldVerificarContraseniaEmpleado.setText("");
-		this.cuentaContable = new CuentaContableResponseViewModel(empleado.getIdCuentaContable(),
-				empleado.getClaveCuentaContable());
 		UiTools.jComboboxSetSelectedIndex(this.cmbSucursalEmpleado, empleado.getIdSucursal());
 
 	}
@@ -491,7 +484,6 @@ public class Fr_DatosEmpleado extends JFrame {
 		}
 
 		Empleado empleado = new Empleado();
-		empleado.setIdCuentaContable(this.cuentaContable.idCuentaContable());
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
@@ -529,7 +521,6 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		Empleado empleado = new Empleado();
 		empleado.setIdEmpleado(idEmpleado);
-		empleado.setIdCuentaContable(this.cuentaContable.idCuentaContable());
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
@@ -564,7 +555,7 @@ public class Fr_DatosEmpleado extends JFrame {
 				&& !frmtxfCorreoElectronico.getText().trim().isEmpty() && !txfEstadoEmpleado.getText().trim().isEmpty()
 				&& !txfCiudadEmpleado.getText().trim().isEmpty()
 				&& !textAreaDireccionEmpleado.getText().trim().isEmpty() && !txfCodigoPostal.getText().trim().isEmpty()
-				&& !txfClaveCuentaContable.getText().trim().isEmpty() && cmbSucursalEmpleado.getSelectedItem() != null;
+				&& cmbSucursalEmpleado.getSelectedItem() != null;
 
 	}
 
@@ -602,21 +593,6 @@ public class Fr_DatosEmpleado extends JFrame {
 
 	}
 
-	private void abrirFormConsultaCuentaContableEmpleado() {
-
-		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-
-		this.cuentaContable = dialog.getCuentaContable();
-
-		if (cuentaContable.idCuentaContable() < 0)
-			return;
-
-		this.txfClaveCuentaContable.setText(this.cuentaContable.claveCuentaContable());
-
-	}
-	
 	private void createTelefonoEmpleado(int idEmpleado) {
 		
 		String telefono = JOptionPane.showInputDialog(this, "Indique el número a registrar:", "Telefonos", JOptionPane.INFORMATION_MESSAGE);
