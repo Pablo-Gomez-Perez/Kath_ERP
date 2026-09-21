@@ -1,4 +1,4 @@
-CREATE DPROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
+CREATE PROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
 	IN `nombre` VARCHAR(30)
 )
 BEGIN
@@ -21,7 +21,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
+CREATE PROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
 	IN id_tipoCliente INT
 )
 BEGIN	
@@ -33,7 +33,7 @@ BEGIN
     WHERE tipo_cliente.id = id_tipoCliente;
 END;
 
-CREATE DPROCEDURE `kath_erp`.`cmb_tipoCliente`()
+CREATE PROCEDURE `kath_erp`.`cmb_tipoCliente`()
 BEGIN
 	SELECT
 		tipo_cliente.id,
@@ -41,7 +41,7 @@ BEGIN
 	FROM tipo_cliente;
 END;
 
-CREATE DPROCEDURE `kath_erp`.`deleteCliente`(
+CREATE PROCEDURE `kath_erp`.`deleteCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -145,7 +145,7 @@ BEGIN
 
 END;
 
-CREATE DPROCEDURE `kath_erp`.`deleteTelefonoCliente`(
+CREATE PROCEDURE `kath_erp`.`deleteTelefonoCliente`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -200,7 +200,7 @@ BEGIN
 	
 END;
 
-CREATE DPROCEDURE `kath_erp`.`eliminar_tipoCliente`(
+CREATE PROCEDURE `kath_erp`.`eliminar_tipoCliente`(
 	IN id_tipoCliente INT
 )
 BEGIN
@@ -213,7 +213,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`getArticuloByCodigo`(
+CREATE PROCEDURE `kath_erp`.`getArticuloByCodigo`(
 	IN codigo_a VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN idSucursal INT,
     IN idTipoCliente INT
@@ -249,7 +249,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`getClienteById`(
+CREATE PROCEDURE `kath_erp`.`getClienteById`(
 	IN p_idCliente INT
 )
     READS SQL DATA
@@ -277,7 +277,7 @@ BEGIN
 
 END;
 
-CREATE DPROCEDURE `kath_erp`.`getClienteParaVentaById`(
+CREATE PROCEDURE `kath_erp`.`getClienteParaVentaById`(
 	IN id_cliente INT
 )
     READS SQL DATA
@@ -307,7 +307,7 @@ BEGIN
 	
 END;
 
-CREATE DPROCEDURE `kath_erp`.`insertArticuloVenta`(
+CREATE PROCEDURE `kath_erp`.`insertArticuloVenta`(
     IN p_id_venta INT UNSIGNED,
     IN p_id_articulo INT UNSIGNED,
     IN p_cantidad INT
@@ -597,7 +597,7 @@ BEGIN
 
 END;
 
-CREATE DPROCEDURE `kath_erp`.`insertCliente`(
+CREATE PROCEDURE `kath_erp`.`insertCliente`(
   	IN p_id_tipoCliente INT,
 	IN p_id_cuenta_contable INT,
 	IN p_rfc VARCHAR(13)
@@ -819,7 +819,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
+CREATE PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
 	IN p_id_articulo INT UNSIGNED,
 	IN p_id_tipo_cliente INT,
 	IN p_precio DECIMAL(18,2),
@@ -919,7 +919,7 @@ BEGIN
 		'Precio registrado correctamente' AS message;
 END;
 
-CREATE DPROCEDURE `kath_erp`.`insertTelefonoCliente`(
+CREATE PROCEDURE `kath_erp`.`insertTelefonoCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -1009,7 +1009,7 @@ BEGIN
 	
 END;
 
-CREATE DPROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
+CREATE PROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -1047,7 +1047,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`listArticulos`(
+CREATE PROCEDURE `kath_erp`.`listArticulos`(
 	IN p_id_sucursal BIGINT UNSIGNED,
 	IN p_tipo_busqueda VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_ordenar_por VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -1149,7 +1149,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`listClientes`(
+CREATE PROCEDURE `kath_erp`.`listClientes`(
 	IN `nombre_c` VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
@@ -1175,7 +1175,7 @@ FROM
 WHERE
 	cliente.nombre_completo LIKE CONCAT('%', nombre_c, '%'); END;
 
-CREATE DPROCEDURE `kath_erp`.`listCmbClientes`()
+CREATE PROCEDURE `kath_erp`.`listCmbClientes`()
     READS SQL DATA
     COMMENT 'Listado de nombre cortos de clientes para ComboBox'
 BEGIN
@@ -1188,7 +1188,7 @@ BEGIN
 	
 END;
 
-CREATE DPROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
+CREATE PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
@@ -1209,7 +1209,7 @@ BEGIN
 
 END;
 
-CREATE DPROCEDURE `kath_erp`.`listTelefonosCliente`(
+CREATE PROCEDURE `kath_erp`.`listTelefonosCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
     READS SQL DATA
@@ -1225,7 +1225,7 @@ BEGIN
 	
 END;
 
-CREATE DPROCEDURE `kath_erp`.`updateCliente`(
+CREATE PROCEDURE `kath_erp`.`updateCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_id_tipoCliente INT,
 	IN p_id_cuenta_contable INT,
@@ -1487,7 +1487,7 @@ BEGIN
     
 END;
 
-CREATE DPROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
+CREATE PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
     IN p_id_articulo INT UNSIGNED,
     IN p_id_tipoCliente INT,
     IN p_precio DECIMAL(18,2),
@@ -1498,6 +1498,9 @@ CREATE DPROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
     COMMENT 'Actualiza el precio de un artículo por tipo de cliente'
 BEGIN
 
+   /*
+     * Validar artículo.
+     */
     IF NOT EXISTS (
         SELECT 1
         FROM kath_erp.articulo AS a
@@ -1508,6 +1511,14 @@ BEGIN
             404 AS id,
             'No se encontró el artículo indicado' AS message;
 
+
+    /*
+     * El tipo de cliente debe existir y estar activo.
+     *
+     * Si no existe en tipo_cliente NO debemos insertar nada en
+     * precios_x_tipocliente porque estaríamos intentando crear
+     * una relación contra un registro inexistente.
+     */
     ELSEIF NOT EXISTS (
         SELECT 1
         FROM kath_erp.tipo_cliente AS tc
@@ -1519,6 +1530,14 @@ BEGIN
             404 AS id,
             'No se encontró el tipo de cliente activo indicado' AS message;
 
+
+    /*
+     * Si todavía no existe una relación entre el artículo y
+     * este tipo de cliente, se crea.
+     *
+     * Este será el caso típico cuando se acaba de registrar
+     * un nuevo tipo de cliente.
+     */
     ELSEIF NOT EXISTS (
         SELECT 1
         FROM kath_erp.precios_x_tipocliente AS pxt
@@ -1526,10 +1545,29 @@ BEGIN
           AND pxt.id_tipoCliente = p_id_tipoCliente
     ) THEN
 
-        SELECT
-            404 AS id,
-            'No se encontró el precio del artículo para el tipo de cliente indicado' AS message;
+        INSERT INTO kath_erp.precios_x_tipocliente (
+            id_articulo,
+            id_tipoCliente,
+            precio,
+            precios_especial,
+            cant_p_precioEspecial
+        )
+        VALUES (
+            p_id_articulo,
+            p_id_tipoCliente,
+            p_precio,
+            p_precios_especial,
+            p_cant_p_precioEspecial
+        );
 
+        SELECT
+            200 AS id,
+            'Precio por tipo de cliente registrado correctamente' AS message;
+
+
+    /*
+     * Si ya existe, simplemente se actualiza.
+     */
     ELSE
 
         UPDATE kath_erp.precios_x_tipocliente AS pxt
@@ -1548,7 +1586,7 @@ BEGIN
 
 END;
 
-CREATE DPROCEDURE `kath_erp`.`update_tipoCliente`(
+CREATE PROCEDURE `kath_erp`.`update_tipoCliente`(
 	IN id_tipoCliente INT,
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -1585,7 +1623,7 @@ BEGIN
         
 END;
 
-CREATE DPROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
+CREATE PROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
 	IN rfc_cl VARCHAR(13)
 )
 BEGIN
@@ -1609,7 +1647,7 @@ BEGIN
 
 END;
 
-CREATE DPROCEDURE `kath_erp`.`ver_rfc_clientes`()
+CREATE PROCEDURE `kath_erp`.`ver_rfc_clientes`()
 BEGIN
 	SELECT
 		cliente.id_cliente,
@@ -1618,7 +1656,7 @@ BEGIN
     ORDER BY id_cliente ASC;
 END;
 
-CREATE DPROCEDURE `kath_erp`.`ver_tipo_clientes`(
+CREATE PROCEDURE `kath_erp`.`ver_tipo_clientes`(
 	IN nombre_tipo_cliente VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
