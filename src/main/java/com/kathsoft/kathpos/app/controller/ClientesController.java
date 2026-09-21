@@ -38,9 +38,16 @@ public class ClientesController implements Serializable {
 
 			while (rset.next()) {
 
-				data.add(new Object[] { rset.getInt("id_cliente"), rset.getString("rfc"), rset.getString("nombre"),
-						rset.getString("clave"), rset.getString("nombre_completo"), rset.getString("nombre_corto"),
-						rset.getString("correo_electronico"), rset.getShort("activo") == 1 ? "Activo" : "Inactivo" });
+				data.add(new Object[] {
+						rset.getInt("id_cliente"),
+						rset.getString("rfc"),
+						rset.getString("nombre"),
+						"",
+						rset.getString("nombre_completo"),
+						rset.getString("nombre_corto"),
+						rset.getString("correo_electronico"),
+						rset.getBoolean("activo") ? "Activo" : "Inactivo"
+				});
 
 			}
 
@@ -144,19 +151,16 @@ public class ClientesController implements Serializable {
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				cl.setIdCliente(rset.getInt(1));
-				cl.setRfc(rset.getString(2));
-				cl.setIdCuentaContable(rset.getInt(3));
-				cl.setClaveCuentaContable(rset.getString(3));
-				cl.setNombreCompleto(rset.getString(4));
-				cl.setNombreCorto(rset.getString(5));
-				cl.setFechaNac(rset.getDate(6));
-				cl.setCorreoElectronico(rset.getString(7));
-				cl.setEstado(rset.getString(8));
-				cl.setCiudad(rset.getString(9));
-				cl.setDireccion(rset.getString(10));
-				cl.setCodigoPostal(rset.getString(11));
-				cl.setActivo(true);
+				cl.setIdCliente(rset.getInt("id_cliente"));
+				cl.setRfc(rset.getString("rfc"));
+				cl.setNombreCompleto(rset.getString("nombre_completo"));
+				cl.setNombreCorto(rset.getString("nombre_corto"));
+				cl.setFechaNac(rset.getDate("fecha_nac"));
+				cl.setCorreoElectronico(rset.getString("correo_electronico"));
+				cl.setEstado(rset.getString("estado"));
+				cl.setCiudad(rset.getString("ciudad"));
+				cl.setDireccion(rset.getString("direccion"));
+				cl.setCodigoPostal(rset.getString("codigo_postal"));
 			}
 
 			return cl;
@@ -224,8 +228,6 @@ public class ClientesController implements Serializable {
 			if (rset.next()) {
 				cl.setIdCliente(rset.getInt("id_cliente"));
 				cl.setIdTipoCliente(rset.getInt("id_tipoCliente"));
-				cl.setIdCuentaContable(rset.getInt("id_cuenta_contable"));
-				cl.setClaveCuentaContable(rset.getString("clave"));
 				cl.setRfc(rset.getString("rfc"));
 				cl.setNombreCompleto(rset.getString("nombre_completo"));
 				cl.setNombreCorto(rset.getString("nombre_corto"));
@@ -268,23 +270,30 @@ public class ClientesController implements Serializable {
 	 */
 	public ClienteEnVentaById getClienteEnVentaById(int idCliente) throws SQLException, Exception {
 
-		Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = connection.prepareCall("CALL getClienteParaVentaById(?)")) {
 
-		CallableStatement stm = cn.prepareCall("CALL getClienteParaVentaById(?)");
-		stm.setInt("id_cliente", idCliente);
+			stm.setInt(1, idCliente);
 
-		ResultSet rset = stm.executeQuery();
-
-		if (rset.next()) {
-			return new ClienteEnVentaById(rset.getInt("id_cliente"), rset.getInt("id_tipoCliente"),
-					rset.getInt("id_cuenta_contable"), rset.getString("tipo_cliente"), rset.getString("rfc"),
-					rset.getString("nombre_completo"), rset.getString("nombre_corto"), rset.getDate("fecha_nac"),
-					rset.getString("correo_electronico"), rset.getString("estado"), rset.getString("ciudad"),
-					rset.getString("direccion"), rset.getString("codigo_postal"), rset.getBoolean("activo"));
+			try (ResultSet rset = stm.executeQuery()) {
+				if (rset.next()) {
+					return new ClienteEnVentaById(
+							rset.getInt("id_cliente"),
+							rset.getInt("id_tipoCliente"),
+							rset.getString("tipo_cliente"),
+							rset.getString("rfc"),
+							rset.getString("nombre_completo"),
+							rset.getString("nombre_corto"),
+							rset.getDate("fecha_nac"),
+							rset.getString("correo_electronico"),
+							rset.getString("estado"),
+							rset.getString("ciudad"),
+							rset.getString("direccion"),
+							rset.getString("codigo_postal"),
+							rset.getBoolean("activo"));
+				}
+			}
 		}
-
-		if (!cn.isClosed())
-			Conexion.cerrarConexion(cn, rset, stm);
 
 		return new ClienteEnVentaById();
 
@@ -299,18 +308,17 @@ public class ClientesController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL insertCliente(?,?,?,?,?,?,?,?,?,?,?);");
+			stm = cn.prepareCall("CALL insertCliente(?,?,?,?,?,?,?,?,?,?);");
 			stm.setInt(1, cl.getIdTipoCliente());
-			stm.setInt(2, cl.getIdCuentaContable());
-			stm.setString(3, cl.getRfc());
-			stm.setString(4, cl.getNombreCompleto());
-			stm.setString(5, cl.getNombreCorto());
-			stm.setDate(6, cl.getFechaNac());
-			stm.setString(7, cl.getCorreoElectronico());
-			stm.setString(8, cl.getEstado());
-			stm.setString(9, cl.getCiudad());
-			stm.setString(10, cl.getDireccion());
-			stm.setString(11, cl.getCodigoPostal());
+			stm.setString(2, cl.getRfc());
+			stm.setString(3, cl.getNombreCompleto());
+			stm.setString(4, cl.getNombreCorto());
+			stm.setDate(5, cl.getFechaNac());
+			stm.setString(6, cl.getCorreoElectronico());
+			stm.setString(7, cl.getEstado());
+			stm.setString(8, cl.getCiudad());
+			stm.setString(9, cl.getDireccion());
+			stm.setString(10, cl.getCodigoPostal());
 
 			if (stm.execute()) {
 				rset = stm.getResultSet();
@@ -347,20 +355,19 @@ public class ClientesController implements Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-			stm = cn.prepareCall("CALL updateCliente(?,?,?,?,?,?,?,?,?,?,?,?,?);");
+			stm = cn.prepareCall("CALL updateCliente(?,?,?,?,?,?,?,?,?,?,?,?);");
 			stm.setInt(1, cl.getIdCliente());
 			stm.setInt(2, cl.getIdTipoCliente());
-			stm.setInt(3, cl.getIdCuentaContable());
-			stm.setString(4, cl.getRfc());
-			stm.setString(5, cl.getNombreCompleto());
-			stm.setString(6, cl.getNombreCorto());
-			stm.setDate(7, cl.getFechaNac());
-			stm.setString(8, cl.getCorreoElectronico());
-			stm.setString(9, cl.getEstado());
-			stm.setString(10, cl.getCiudad());
-			stm.setString(11, cl.getDireccion());
-			stm.setString(12, cl.getCodigoPostal());
-			stm.setBoolean(13, cl.isActivo());
+			stm.setString(3, cl.getRfc());
+			stm.setString(4, cl.getNombreCompleto());
+			stm.setString(5, cl.getNombreCorto());
+			stm.setDate(6, cl.getFechaNac());
+			stm.setString(7, cl.getCorreoElectronico());
+			stm.setString(8, cl.getEstado());
+			stm.setString(9, cl.getCiudad());
+			stm.setString(10, cl.getDireccion());
+			stm.setString(11, cl.getCodigoPostal());
+			stm.setBoolean(12, cl.isActivo());
 
 			if (stm.execute()) {
 				rset = stm.getResultSet();

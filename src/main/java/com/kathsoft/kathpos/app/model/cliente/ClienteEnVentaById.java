@@ -2,11 +2,13 @@ package com.kathsoft.kathpos.app.model.cliente;
 
 import java.sql.Date;
 
+/**
+ * DTO con el resultado de getClienteParaVentaById.
+ */
 public class ClienteEnVentaById {
 
 	private int idCliente;
 	private int idTipoCliente;
-	private int idCuentaContable;
 	private String tipoCliente;
 	private String rfc;
 	private String nombreCompleto;
@@ -19,13 +21,11 @@ public class ClienteEnVentaById {
 	private String codigoPostal;
 	private boolean activo;
 
-	public ClienteEnVentaById(int idCliente, int idTipoCliente, int idCuentaContable, String tipoCliente, String rfc,
-			String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico, String estado,
-			String ciudad, String direccion, String codigoPostal, boolean activo) {
-		super();
+	public ClienteEnVentaById(int idCliente, int idTipoCliente, String tipoCliente, String rfc,
+			String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico,
+			String estado, String ciudad, String direccion, String codigoPostal, boolean activo) {
 		this.idCliente = idCliente;
 		this.idTipoCliente = idTipoCliente;
-		this.idCuentaContable = idCuentaContable;
 		this.tipoCliente = tipoCliente;
 		this.rfc = rfc;
 		this.nombreCompleto = nombreCompleto;
@@ -56,14 +56,6 @@ public class ClienteEnVentaById {
 
 	public void setIdTipoCliente(int idTipoCliente) {
 		this.idTipoCliente = idTipoCliente;
-	}
-
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
 	}
 
 	public String getTipoCliente() {
@@ -156,11 +148,10 @@ public class ClienteEnVentaById {
 
 	@Override
 	public String toString() {
-		return "ClienteEnVentaById [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente + ", idCuentaContable="
-				+ idCuentaContable + ", tipoCliente=" + tipoCliente + ", rfc=" + rfc + ", nombreCompleto="
-				+ nombreCompleto + ", nombreCorto=" + nombreCorto + ", fechaNac=" + fechaNac + ", correoElectronico="
+		return "ClienteEnVentaById [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente
+				+ ", tipoCliente=" + tipoCliente + ", rfc=" + rfc + ", nombreCompleto=" + nombreCompleto
+				+ ", nombreCorto=" + nombreCorto + ", fechaNac=" + fechaNac + ", correoElectronico="
 				+ correoElectronico + ", estado=" + estado + ", ciudad=" + ciudad + ", direccion=" + direccion
 				+ ", codigoPostal=" + codigoPostal + ", activo=" + activo + "]";
 	}
-
 }

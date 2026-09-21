@@ -4,14 +4,15 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.Objects;
 
+/**
+ * DTO con el resultado de getClienteById.
+ */
 public class ClienteById implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private int idCliente;
 	private int idTipoCliente;
-	private int idCuentaContable;
-	private String claveCuentaContable;
 	private String rfc;
 	private String nombreCompleto;
 	private String nombreCorto;
@@ -23,16 +24,11 @@ public class ClienteById implements Serializable {
 	private String codigoPostal;
 	private boolean activo;
 
-	
-	
-	public ClienteById(int idCliente, int idTipoCliente, int idCuentaContable, String claveCuentaContable, String rfc,
-			String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico, String estado,
-			String ciudad, String direccion, String codigoPostal, boolean activo) {
-		super();
+	public ClienteById(int idCliente, int idTipoCliente, String rfc, String nombreCompleto,
+			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad,
+			String direccion, String codigoPostal, boolean activo) {
 		this.idCliente = idCliente;
 		this.idTipoCliente = idTipoCliente;
-		this.idCuentaContable = idCuentaContable;
-		this.claveCuentaContable = claveCuentaContable;
 		this.rfc = rfc;
 		this.nombreCompleto = nombreCompleto;
 		this.nombreCorto = nombreCorto;
@@ -44,8 +40,9 @@ public class ClienteById implements Serializable {
 		this.codigoPostal = codigoPostal;
 		this.activo = activo;
 	}
-	
-	public ClienteById() {}
+
+	public ClienteById() {
+	}
 
 	public int getIdCliente() {
 		return idCliente;
@@ -61,22 +58,6 @@ public class ClienteById implements Serializable {
 
 	public void setIdTipoCliente(int idTipoCliente) {
 		this.idTipoCliente = idTipoCliente;
-	}
-
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
-	}
-
-	public String getClaveCuentaContable() {
-		return claveCuentaContable;
-	}
-
-	public void setClaveCuentaContable(String claveCuentaContable) {
-		this.claveCuentaContable = claveCuentaContable;
 	}
 
 	public String getRfc() {
@@ -162,21 +143,17 @@ public class ClienteById implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(Boolean.valueOf(activo), ciudad, codigoPostal, correoElectronico, direccion, estado,
-				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idCuentaContable), Integer.valueOf(idTipoCliente),
-				claveCuentaContable, nombreCompleto, nombreCorto, rfc);
+				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idTipoCliente), nombreCompleto, nombreCorto, rfc);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof ClienteById)) {
+		if (!(obj instanceof ClienteById))
 			return false;
-		}
 		ClienteById other = (ClienteById) obj;
 		return activo == other.activo && idCliente == other.idCliente && idTipoCliente == other.idTipoCliente
-				&& idCuentaContable == other.idCuentaContable && Objects.equals(claveCuentaContable, other.claveCuentaContable)
 				&& Objects.equals(rfc, other.rfc) && Objects.equals(nombreCompleto, other.nombreCompleto)
 				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(fechaNac, other.fechaNac)
 				&& Objects.equals(correoElectronico, other.correoElectronico) && Objects.equals(estado, other.estado)
