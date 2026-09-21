@@ -1,5 +1,3 @@
-DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_cliente_por_nombre`;
-
 CREATE PROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
 	IN `nombre` VARCHAR(30)
 )
@@ -23,8 +21,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_tipoCliente_por_id`;
-
 CREATE PROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
 	IN id_tipoCliente INT
 )
@@ -37,8 +33,6 @@ BEGIN
     WHERE tipo_cliente.id = id_tipoCliente;
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`cmb_tipoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`cmb_tipoCliente`()
 BEGIN
 	SELECT
@@ -46,8 +40,6 @@ BEGIN
         tipo_cliente.nombre
 	FROM tipo_cliente;
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`deleteCliente`;
 
 CREATE PROCEDURE `kath_erp`.`deleteCliente`(
 	IN p_id_cliente INT UNSIGNED
@@ -163,8 +155,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`deleteTelefonoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`deleteTelefonoCliente`(
 	IN p_id_telefono INT
 )
@@ -220,8 +210,6 @@ BEGIN
 	
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`eliminar_tipoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`eliminar_tipoCliente`(
 	IN id_tipoCliente INT
 )
@@ -234,8 +222,6 @@ BEGIN
     SELECT 200 AS id, 'Tipo Cliente inhabilitado exitosamente' AS message;
     
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getArticuloByCodigo`;
 
 CREATE PROCEDURE `kath_erp`.`getArticuloByCodigo`(
 	IN codigo_a VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -273,8 +259,6 @@ BEGIN
     
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`getClienteById`;
-
 CREATE PROCEDURE `kath_erp`.`getClienteById`(
 	IN p_idCliente INT
 )
@@ -299,8 +283,6 @@ BEGIN
 	WHERE c.id_cliente = p_idCliente;
 
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getClienteParaVentaById`;
 
 CREATE PROCEDURE `kath_erp`.`getClienteParaVentaById`(
 	IN id_cliente INT
@@ -329,8 +311,6 @@ BEGIN
 	WHERE c.id_cliente = id_cliente;
 
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertArticuloVenta`;
 
 CREATE PROCEDURE `kath_erp`.`insertArticuloVenta`(
     IN p_id_venta INT UNSIGNED,
@@ -622,8 +602,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertCliente`;
-
 CREATE PROCEDURE `kath_erp`.`insertCliente`(
 	IN p_id_tipoCliente INT,
 	IN p_rfc VARCHAR(13)
@@ -772,8 +750,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertPrecioArticuloTipoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
 	IN p_id_articulo INT UNSIGNED,
 	IN p_id_tipo_cliente INT,
@@ -874,8 +850,6 @@ BEGIN
 		'Precio registrado correctamente' AS message;
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertTelefonoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`insertTelefonoCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -966,8 +940,6 @@ BEGIN
 	
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`insert_nuevo_tipoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -1005,8 +977,6 @@ BEGIN
     SELECT 200 AS id, 'Tipo de cliente registrado con exito' AS message;
     
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`listArticulos`;
 
 CREATE PROCEDURE `kath_erp`.`listArticulos`(
 	IN p_id_sucursal BIGINT UNSIGNED,
@@ -1110,8 +1080,6 @@ BEGIN
     
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`listClientes`;
-
 CREATE PROCEDURE `kath_erp`.`listClientes`(
 	IN `nombre_c` VARCHAR(30)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -1139,8 +1107,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`listCmbClientes`;
-
 CREATE PROCEDURE `kath_erp`.`listCmbClientes`()
     READS SQL DATA
     COMMENT 'Listado de nombre cortos de clientes para ComboBox'
@@ -1153,8 +1119,6 @@ BEGIN
 		kath_erp.cliente AS c;
 	
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`listPreciosArticuloTipoCliente`;
 
 CREATE PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
@@ -1177,8 +1141,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`listTelefonosCliente`;
-
 CREATE PROCEDURE `kath_erp`.`listTelefonosCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
@@ -1194,8 +1156,6 @@ BEGIN
 	ORDER BY txc.id_telefono ASC;
 	
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`updateCliente`;
 
 CREATE PROCEDURE `kath_erp`.`updateCliente`(
 	IN p_id_cliente INT UNSIGNED,
@@ -1403,8 +1363,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`updatePrecioPorTipoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
     IN p_id_articulo INT UNSIGNED,
     IN p_id_tipoCliente INT,
@@ -1504,8 +1462,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`update_tipoCliente`;
-
 CREATE PROCEDURE `kath_erp`.`update_tipoCliente`(
 	IN id_tipoCliente INT,
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -1543,8 +1499,6 @@ BEGIN
         
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`ver_cliente_por_rfc`;
-
 CREATE PROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
 	IN rfc_cl VARCHAR(13)
 )
@@ -1568,8 +1522,6 @@ BEGIN
 
 END;
 
-DROP PROCEDURE IF EXISTS `kath_erp`.`ver_rfc_clientes`;
-
 CREATE PROCEDURE `kath_erp`.`ver_rfc_clientes`()
 BEGIN
 	SELECT
@@ -1578,8 +1530,6 @@ BEGIN
 	FROM cliente 
     ORDER BY id_cliente ASC;
 END;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`ver_tipo_clientes`;
 
 CREATE PROCEDURE `kath_erp`.`ver_tipo_clientes`(
 	IN nombre_tipo_cliente VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
