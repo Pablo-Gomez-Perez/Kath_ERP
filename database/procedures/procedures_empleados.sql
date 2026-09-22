@@ -1,8 +1,4 @@
-DROP PROCEDURE IF EXISTS `kath_erp`.`actualizarPassWordEmpleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`actualizarPassWordEmpleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`actualizarPassWordEmpleado`(
     IN rfcEmpl VARCHAR(13),
     IN passwordE VARCHAR(255)
 )
@@ -12,15 +8,9 @@ BEGIN
     UPDATE kath_erp.empleados
     SET contrasenia = passwordE
     WHERE rfc = rfcEmpl;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_empleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`buscar_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_empleado`(
 	IN nombre_e VARCHAR(30)
 )
 BEGIN
@@ -38,15 +28,9 @@ BEGIN
 	INNER JOIN sucursal ON empleados.id_sucursal = sucursal.id_sucursar
     WHERE empleados.nombre_completo LIKE CONCAT('%',nombre_e,'%') ORDER BY id_empleado;
     
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_empleado_por_nombre`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`buscar_empleado_por_nombre`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_empleado_por_nombre`(
 	IN nombre VARCHAR(10)
 )
 BEGIN
@@ -56,15 +40,9 @@ BEGIN
         empleados.nombre_completo
 	FROM empleados WHERE empleados.nombre_corto = nombre;
 
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`deleteTelefonoEmpleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`deleteTelefonoEmpleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteTelefonoEmpleado`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -100,15 +78,9 @@ BEGIN
 	SELECT 200 AS id, 'Numero telefonico eliminado correctamente' AS message;
 	
 	
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`delete_empleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`delete_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`delete_empleado`(
     IN p_id_empleado INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -173,39 +145,9 @@ BEGIN
     SELECT
         p_id_empleado AS id,
         'Empleado desactivado correctamente' AS message;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`eliminar_empleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`eliminar_empleado`(
-	IN idEmpleado INT
-)
-BEGIN
-	
-    DECLARE estado TINYINT(1);
-    SELECT @estado := empleados.activo FROM empleados WHERE empleados.id_empleado = idEmpleado;
-    
-    IF(@estado = 0) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El empleado ya se encuentra inactivo';
-    END IF;
-    
-    UPDATE empleados SET
-		empleados.activo = 0
-	WHERE empleados.id_empleado = idEmpleado;
-    
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getEmpleadoById`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`getEmpleadoById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getEmpleadoById`(
     IN id_empleado INT
 )
     READS SQL DATA
@@ -229,15 +171,9 @@ BEGIN
     FROM kath_erp.empleados AS em
     WHERE em.id_empleado = id_empleado;
 
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getEmpleadoByRFC`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`getEmpleadoByRFC`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getEmpleadoByRFC`(
     IN rfc_empleado VARCHAR(13)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -262,15 +198,9 @@ BEGIN
     FROM kath_erp.empleados AS em
     WHERE em.rfc = rfc_empleado;
 
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getEmpleadoLogin`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`getEmpleadoLogin`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getEmpleadoLogin`(
     IN p_nombre_corto VARCHAR(10)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -304,42 +234,33 @@ BEGIN
     WHERE e.nombre_corto = TRIM(p_nombre_corto)
       AND e.activo = TRUE
     LIMIT 1;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getListadoEmpleados`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`getListadoEmpleados`(
-    IN nombre_empleado VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getListadoEmpleados`(
+	IN nombre_empleado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
-    COMMENT 'Obtiene un listado de empleados registrados y filtra por nombre'
+    COMMENT 'Obtiene un listado completo de todos los empleados registrados en la bd y filtra por nombres'
 BEGIN
+	
+	SELECT 
+		
+		em.id_empleado,		
+		cc.clave,		
+		em.rfc,
+		em.curp,
+		em.nombre_completo,
+		em.nombre_corto,	
+		em.correo_electronico,		
+		em.activo
+	
+	FROM kath_erp.empleados AS em
+	INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
+	WHERE em.nombre_completo LIKE CONCAT('%',nombre_empleado,'%');
+	
+END;
 
-    SELECT
-        em.id_empleado,
-        em.rfc,
-        em.curp,
-        em.nombre_completo,
-        em.nombre_corto,
-        em.correo_electronico,
-        em.activo
-    FROM kath_erp.empleados AS em
-    WHERE em.nombre_completo LIKE CONCAT('%', nombre_empleado, '%');
-
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertTelefonoEmpleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`insertTelefonoEmpleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertTelefonoEmpleado`(
 	IN p_id_empleado INT,
 	IN p_telefono_empleado VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci 
 )
@@ -373,15 +294,9 @@ BEGIN
 		
 	SELECT 200 AS id, 'Numero registrado exitosamente' AS message;
 	
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`insert_empleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`insert_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insert_empleado`(
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_rfc VARCHAR(13)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -557,65 +472,9 @@ BEGIN
     SELECT
         v_id_empleado AS id,
         'Empleado registrado correctamente' AS message;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`insert_nuevo_empleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`insert_nuevo_empleado`(
-  IN id_sucursal INT,
-  IN rfc_e VARCHAR(13),
-  IN curp_e VARCHAR(18),
-  IN nombre_completo_e VARCHAR(30),
-  IN nombre_corto_e VARCHAR(10),
-  IN fecha_nac_e DATE,
-  IN correo_electronico_e VARCHAR(30),
-  IN estado_e VARCHAR(30),
-  IN ciudad_e VARCHAR(40),
-  IN direccion_e TEXT,
-  IN codigo_postal_e VARCHAR(6)
-)
-BEGIN
-INSERT INTO empleados(
-	id_sucursal,
-    rfc,
-    curp,
-    nombre_completo,
-    nombre_corto,
-    fecha_nac,
-    correo_electronico,
-    estado,
-    ciudad,
-    direccion,
-    codigo_postal,
-    activo
-  )
-VALUES(
-	id_sucursal,
-    rfc_e,
-    curp_e,
-    nombre_completo_e,
-    nombre_corto_e,
-    fecha_nac_e,
-    correo_electronico_e,
-    estado_e,
-    ciudad_e,
-    direccion_e,
-    codigo_postal_e,
-    1
-  );
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`listTelefonosDeEmpleadoByID`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`listTelefonosDeEmpleadoByID`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonosDeEmpleadoByID`(
 	IN id_empleado INT
 )
     READS SQL DATA
@@ -630,56 +489,9 @@ BEGIN
 	WHERE 
 		txe.id_empleado = id_empleado;
 	
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`sp_consultarEmpleadoPorRFC`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`sp_consultarEmpleadoPorRFC`(IN `rfc` VARCHAR(13) CHARSET utf8)
-BEGIN
-
-	SELECT
-
-    	empleados.curp,
-
-        empleados.nombre_completo,
-
-        empleados.nombre_corto,
-
-        empleados.fecha_nac,
-
-        empleados.correo_electronico,
-
-        empleados.estado,
-
-        empleados.ciudad,
-
-        empleados.direccion,
-
-        empleados.codigo_postal,
-
-        empleados.contrasenia
-
-	FROM
-
-    	empleados
-
-    WHERE
-
-    	empleados.rfc = rfc;
-
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`update_empleado`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`update_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`update_empleado`(
     IN p_id_empleado INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_rfc VARCHAR(13)
@@ -826,25 +638,19 @@ BEGIN
     COMMIT;
 
     SELECT
-        p_id_empleado AS id,
+        200 AS id,
         'Empleado actualizado correctamente' AS message;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`ver_rfc_empleado_por_sucursal`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `kath_erp`.`ver_rfc_empleado_por_sucursal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_rfc_empleado_por_sucursal`(
 	IN id_sucursal INT
 )
+    READS SQL DATA
+    COMMENT 'Consulta el alias de los empleados, usado para JCombobox u objetos de tipo lista desplegable'
 BEGIN	
     SELECT
     	empleados.id_empleado,
 		empleados.nombre_corto
 	FROM empleados
     WHERE empleados.id_sucursal = id_sucursal;
-END$
-
-DELIMITER ;
+END;
