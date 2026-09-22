@@ -53,8 +53,7 @@ public class PanelEmpleados extends JPanel {
 		setBackground(new Color(255, 204, 0));
 		
 		modelTablaEmpleados = new DefaultTableModel();
-		modelTablaEmpleados.addColumn("id");
-		modelTablaEmpleados.addColumn("clave");
+		modelTablaEmpleados.addColumn("id");		
 		modelTablaEmpleados.addColumn("RFC");
 		modelTablaEmpleados.addColumn("CURP");
 		modelTablaEmpleados.addColumn("Nombre");

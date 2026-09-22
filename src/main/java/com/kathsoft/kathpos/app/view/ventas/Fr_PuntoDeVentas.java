@@ -61,7 +61,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JFormattedTextField;
-import java.awt.event.ActionListener;
 
 public class Fr_PuntoDeVentas extends JFrame implements IListadoArticulosAcciones {
 

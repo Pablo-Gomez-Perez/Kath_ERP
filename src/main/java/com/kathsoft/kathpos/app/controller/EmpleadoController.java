@@ -102,6 +102,7 @@ public class EmpleadoController implements Serializable {
 	 *
 	 * @param jcmb componente que recibirá los RFC consultados
 	 */
+	@Deprecated
 	public void consultarRfcEmpleado(JComboBox<String> jcmb) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -246,7 +247,7 @@ public class EmpleadoController implements Serializable {
 			stm.setString(1, nombreEmpleado);
 			rset = stm.executeQuery();
 			while (rset.next()) {
-				data.add(new Object[] { rset.getInt("id_empleado"), rset.getString("clave"), rset.getString("rfc"),
+				data.add(new Object[] { rset.getInt("id_empleado"), rset.getString("rfc"),
 						rset.getString("curp"), rset.getString("nombre_completo"), rset.getString("nombre_corto"),
 						rset.getString("correo_electronico"), rset.getInt("activo") == 1 ? "Activo" : "Inactivo" });
 			}
