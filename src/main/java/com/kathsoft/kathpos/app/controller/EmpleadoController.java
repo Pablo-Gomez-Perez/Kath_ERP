@@ -19,14 +19,50 @@ import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 import com.kathsoft.kathpos.tools.PasswordHashService;
 
+/**
+ * Controlador encargado de las operaciones de acceso y mantenimiento de empleados.
+ * <p>
+ * Centraliza la comunicación entre las vistas del módulo de empleados y los
+ * procedimientos almacenados responsables de consultar, registrar, actualizar y
+ * desactivar empleados. También transforma los resultados JDBC en modelos y
+ * estructuras consumibles por la interfaz gráfica.
+ * </p>
+ * <p>
+ * Las operaciones de persistencia se ejecutan mediante procedimientos almacenados;
+ * el controlador no contiene lógica SQL de negocio embebida. Las contraseñas se
+ * procesan mediante {@link PasswordHashService} antes de enviarse a la base de datos.
+ * </p>
+ *
+ * @see Empleado
+ * @see EmpleadoById
+ * @see SpResponseModel
+ * @see Conexion
+ */
 public class EmpleadoController implements Serializable {
 
 	private static final long serialVersionUID = -1598821464656008533L;
 	private static Connection cn = null;
 
+	/**
+	 * Crea una nueva instancia del controlador de empleados.
+	 */
 	public EmpleadoController() {
 	}
 
+	/**
+	 * Obtiene los empleados asociados a una sucursal para su representación en
+	 * componentes de selección.
+	 * <p>
+	 * Ejecuta el procedimiento almacenado
+	 * {@code ver_rfc_empleado_por_sucursal} y transforma cada registro en un
+	 * {@link JComboboxDataViewModel}, utilizando el identificador del empleado como
+	 * valor y su nombre corto como texto visible.
+	 * </p>
+	 *
+	 * @param id_sucursal identificador de la sucursal cuyos empleados se consultarán
+	 * @return lista de empleados disponibles para selección; si ocurre un error,
+	 *         devuelve la lista acumulada hasta ese momento, que puede estar vacía
+	 */
 	public List<JComboboxDataViewModel> consultaNombresCortosEmpleados(int id_sucursal) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -57,6 +93,15 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Carga en un {@link JComboBox} los RFC de los empleados registrados.
+	 * <p>
+	 * La consulta se realiza mediante {@code getListadoEmpleados} sin aplicar filtro
+	 * por nombre. Cada RFC recuperado se agrega al componente recibido.
+	 * </p>
+	 *
+	 * @param jcmb componente que recibirá los RFC consultados
+	 */
 	public void consultarRfcEmpleado(JComboBox<String> jcmb) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -82,6 +127,18 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Consulta los datos de un empleado mediante su identificador.
+	 * <p>
+	 * Ejecuta {@code getEmpleadoById} y mapea el primer registro obtenido a
+	 * {@link EmpleadoById}.
+	 * </p>
+	 *
+	 * @param id identificador del empleado que se desea consultar
+	 * @return empleado encontrado; devuelve una instancia vacía de
+	 *         {@link EmpleadoById} cuando la consulta no produce registros, o
+	 *         {@code null} si ocurre un error durante el acceso a datos
+	 */
 	public EmpleadoById consultarEmpleadoPorId(int id) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -118,6 +175,18 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Consulta los datos de un empleado mediante su RFC.
+	 * <p>
+	 * Ejecuta {@code getEmpleadoByRFC} y mapea el primer registro obtenido a
+	 * {@link EmpleadoById}.
+	 * </p>
+	 *
+	 * @param rfc RFC del empleado que se desea consultar
+	 * @return empleado encontrado; devuelve una instancia vacía de
+	 *         {@link EmpleadoById} cuando la consulta no produce registros, o
+	 *         {@code null} si ocurre un error durante el acceso a datos
+	 */
 	public EmpleadoById consultarEmpleadoPorRfc(String rfc) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -154,6 +223,19 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Obtiene el listado de empleados utilizado por la tabla principal del módulo.
+	 * <p>
+	 * Ejecuta {@code getListadoEmpleados} aplicando el texto recibido como criterio
+	 * de búsqueda por nombre y convierte cada registro en un arreglo compatible con
+	 * el modelo de tabla de la vista.
+	 * </p>
+	 *
+	 * @param nombreEmpleado texto utilizado para filtrar empleados por nombre; puede
+	 *                       ser una cadena vacía para obtener el listado completo
+	 * @return filas preparadas para el modelo de tabla; si ocurre un error, devuelve
+	 *         la colección acumulada hasta ese momento
+	 */
 	public Vector<Object[]> verEmpleadosEnTabla(String nombreEmpleado) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
@@ -186,6 +268,18 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Registra un nuevo empleado.
+	 * <p>
+	 * Antes de invocar {@code insert_empleado}, la contraseña contenida en el modelo
+	 * se procesa mediante {@link PasswordHashService#hashIfPlain(String)}. La
+	 * respuesta del procedimiento se transforma en un {@link SpResponseModel}.
+	 * </p>
+	 *
+	 * @param empl empleado con los datos requeridos para el registro
+	 * @return respuesta generada por el procedimiento almacenado; ante un error de
+	 *         acceso o procesamiento devuelve una respuesta con código {@code 500}
+	 */
 	public SpResponseModel insertarNuevoEmpleado(Empleado empl) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -225,6 +319,20 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Actualiza los datos de un empleado existente.
+	 * <p>
+	 * Si el modelo contiene una contraseña no vacía, esta se procesa mediante
+	 * {@link PasswordHashService#hashIfPlain(String)} antes de ejecutar
+	 * {@code update_empleado}. Cuando no se proporciona una nueva contraseña, se
+	 * envía {@code null} para conservar la contraseña almacenada según el contrato
+	 * del procedimiento.
+	 * </p>
+	 *
+	 * @param empl empleado con el identificador y los datos que se actualizarán
+	 * @return respuesta generada por el procedimiento almacenado; ante un error de
+	 *         acceso o procesamiento devuelve una respuesta con código {@code 500}
+	 */
 	public SpResponseModel actualizarEmpleado(Empleado empl) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -269,6 +377,17 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Desactiva un empleado mediante su identificador.
+	 * <p>
+	 * Ejecuta el procedimiento almacenado {@code delete_empleado}. La eliminación
+	 * es lógica y su resultado se devuelve utilizando {@link SpResponseModel}.
+	 * </p>
+	 *
+	 * @param idEmpleado identificador del empleado que se desea desactivar
+	 * @return respuesta generada por el procedimiento almacenado; ante un error de
+	 *         acceso o procesamiento devuelve una respuesta con código {@code 500}
+	 */
 	public SpResponseModel eliminarEmpleado(int idEmpleado) {
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -295,6 +414,18 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Actualiza la contraseña de un empleado.
+	 * <p>
+	 * La operación no se ejecuta si el empleado es {@code null} o si la contraseña
+	 * no contiene datos. En caso contrario, la contraseña se procesa mediante
+	 * {@link PasswordHashService#hashIfPlain(String)} y se envía al procedimiento
+	 * {@code actualizarPassWordEmpleado}.
+	 * </p>
+	 *
+	 * @param empl empleado cuyo RFC identifica el registro y cuya contraseña contiene
+	 *             el nuevo valor
+	 */
 	public void actualizarContrasenia(Empleado empl) {
 		CallableStatement stm = null;
 		if (empl == null || empl.getContrasenia() == null || empl.getContrasenia().isEmpty()) {
@@ -322,6 +453,19 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Convierte la respuesta estándar de un procedimiento almacenado en un
+	 * {@link SpResponseModel}.
+	 * <p>
+	 * El conjunto de resultados debe exponer las columnas {@code id} y
+	 * {@code message}. Si no existe una fila disponible, se genera una respuesta de
+	 * error con código {@code 500}.
+	 * </p>
+	 *
+	 * @param rset conjunto de resultados devuelto por el procedimiento almacenado
+	 * @return respuesta normalizada con identificador y mensaje
+	 * @throws SQLException si ocurre un error al leer el conjunto de resultados
+	 */
 	private SpResponseModel leerRespuestaSp(ResultSet rset) throws SQLException {
 		if (rset != null && rset.next()) {
 			return new SpResponseModel(rset.getInt("id"), rset.getString("message"));
@@ -329,6 +473,18 @@ public class EmpleadoController implements Serializable {
 		return new SpResponseModel(500, "Sin respuesta del procedimiento almacenado");
 	}
 
+	/**
+	 * Consulta un empleado mediante su nombre corto.
+	 * <p>
+	 * Ejecuta {@code buscar_empleado_por_nombre}. Cuando existe coincidencia, el
+	 * modelo devuelto contiene el identificador y el nombre completo recuperados por
+	 * el procedimiento.
+	 * </p>
+	 *
+	 * @param nombre nombre corto del empleado que se desea buscar
+	 * @return empleado encontrado; devuelve un modelo vacío si no existe
+	 *         coincidencia, o {@code null} si ocurre un error
+	 */
 	public Empleado consultarEmpleadoPorNombre(String nombre) {
 		Empleado empleado = new Empleado();
 		CallableStatement stm = null;
@@ -358,6 +514,18 @@ public class EmpleadoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Busca empleados por nombre y prepara los resultados para una vista tabular.
+	 * <p>
+	 * Ejecuta el procedimiento almacenado {@code buscar_empleado} y transforma cada
+	 * registro en un arreglo de valores. El estado lógico se representa como
+	 * {@code "Activo"} o {@code "Inactivo"}.
+	 * </p>
+	 *
+	 * @param nombre texto utilizado como criterio de búsqueda
+	 * @return filas obtenidas para presentación; si ocurre un error, devuelve la
+	 *         colección acumulada hasta ese momento
+	 */
 	public Vector<Object[]> buscarEmpleadoPorNombre(String nombre) {
 		ResultSet rset = null;
 		CallableStatement stm = null;
