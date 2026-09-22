@@ -37,7 +37,7 @@ public class ProveedorController implements java.io.Serializable {
 					data.add(new Object[] {
 							rset.getInt("id_proveedor"),
 							rset.getString("rfc"),
-							rset.getString("clave"),
+							"",
 							rset.getString("nombre"),
 							rset.getString("descripcion"),
 							rset.getString("correo_electronico"),
@@ -45,7 +45,7 @@ public class ProveedorController implements java.io.Serializable {
 							rset.getString("ciudad"),
 							rset.getString("direccion"),
 							rset.getString("codigo_postal"),
-							rset.getShort("activo") == 1 ? "Activo" : "Inactivo"
+							rset.getBoolean("activo") ? "Activo" : "Inactivo"
 					});
 				}
 
@@ -58,7 +58,7 @@ public class ProveedorController implements java.io.Serializable {
 		}
 
 		return data;
-	}	
+	}
 
 	public SpResponseModel eliminarProveedor(int idProveedor) {
 
@@ -103,7 +103,7 @@ public class ProveedorController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL ver_rfcProveedores();");
 			rset = stm.executeQuery();
 
@@ -130,7 +130,7 @@ public class ProveedorController implements java.io.Serializable {
 	}
 
 	public Vector<JComboboxDataViewModel> consultarNombresProveedor() {
-		
+
 		var data = new Vector<JComboboxDataViewModel>();
 		CallableStatement stm = null;
 		ResultSet rset = null;
@@ -147,7 +147,7 @@ public class ProveedorController implements java.io.Serializable {
 						rset.getString("nombre")
 				));
 			}
-			
+
 			return data;
 		} catch (SQLException er) {
 			er.printStackTrace();
@@ -173,10 +173,9 @@ public class ProveedorController implements java.io.Serializable {
 
 		try (
 				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL insertProveedor(?, ?, ?, ?, ?, ?, ?, ?, ?);")
+				CallableStatement stm = cn.prepareCall("CALL insertProveedor(?, ?, ?, ?, ?, ?, ?, ?);")
 		) {
 
-			stm.setInt("p_id_cuenta_contable", prv.getIdCuentaContable());
 			stm.setString("p_rfc", prv.getRfc());
 			stm.setString("p_nombre", prv.getNombre());
 			stm.setString("p_descripcion", prv.getDescripcion());
@@ -217,11 +216,10 @@ public class ProveedorController implements java.io.Serializable {
 
 		try (
 				Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
-				CallableStatement stm = cn.prepareCall("CALL updateProveedor(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
+				CallableStatement stm = cn.prepareCall("CALL updateProveedor(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
 		) {
 
 			stm.setInt("p_id_proveedor", prv.getIdProveedor());
-			stm.setInt("p_id_cuenta_contable", prv.getIdCuentaContable());
 			stm.setString("p_rfc", prv.getRfc());
 			stm.setString("p_nombre", prv.getNombre());
 			stm.setString("p_descripcion", prv.getDescripcion());
@@ -230,7 +228,7 @@ public class ProveedorController implements java.io.Serializable {
 			stm.setString("p_ciudad", prv.getCiudad());
 			stm.setString("p_direccion", prv.getDireccion());
 			stm.setString("p_codigo_postal", prv.getCodigoPostal());
-			stm.setBoolean("p_activo", true);
+			stm.setBoolean("p_activo", prv.isActivo());
 
 			if (stm.execute()) {
 
@@ -267,22 +265,23 @@ public class ProveedorController implements java.io.Serializable {
 
 		try {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
+			cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
 			stm = cn.prepareCall("CALL ver_proveedor_por_rfc(?);");
 			stm.setString(1, rfc);
 
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				prv.setIdProveedor(rset.getInt(1));
-				prv.setIdCuentaContable(rset.getInt(2));				
-				prv.setNombre(rset.getString(4));
-				prv.setDescripcion(rset.getString(5));
-				prv.setCorreoElectronico(rset.getString(6));
-				prv.setEstado(rset.getString(7));
-				prv.setCiudad(rset.getString(8));
-				prv.setDireccion(rset.getString(9));
-				prv.setCodigoPostal(rset.getString(10));
+				prv.setIdProveedor(rset.getInt("id_proveedor"));
+				prv.setRfc(rset.getString("rfc"));
+				prv.setNombre(rset.getString("nombre"));
+				prv.setDescripcion(rset.getString("descripcion"));
+				prv.setCorreoElectronico(rset.getString("correo_electronico"));
+				prv.setEstado(rset.getString("estado"));
+				prv.setCiudad(rset.getString("ciudad"));
+				prv.setDireccion(rset.getString("direccion"));
+				prv.setCodigoPostal(rset.getString("codigo_postal"));
+				prv.setActivo(rset.getBoolean("activo"));
 			}
 
 			return prv;
@@ -321,9 +320,7 @@ public class ProveedorController implements java.io.Serializable {
 				if (rset.next()) {
 					return new ProveedorById.ProveedorByIdBuilder()
 							.idProveedor(rset.getInt("id_proveedor"))
-							.idCuentaContable(rset.getInt("id_cuenta_contable"))
 							.rfc(rset.getString("rfc"))
-							.claveCuentaContable(rset.getString("clave"))
 							.nombre(rset.getString("nombre"))
 							.descripcion(rset.getString("descripcion"))
 							.correoElectronico(rset.getString("correo_electronico"))
