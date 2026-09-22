@@ -10,8 +10,6 @@ import com.kathsoft.kathpos.app.controller.TelefonosProveedorController;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.app.model.proveedor.ProveedorById;
 import com.kathsoft.kathpos.app.model.proveedor.TelefonoProveedor;
-import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
-import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -23,7 +21,6 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.Component;
 import javax.swing.Box;
-import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
@@ -57,7 +54,6 @@ public class Fr_DatosProveedor extends JFrame {
 	private Component horizontalStrut_10;
 	private JButton btn_Guardar;
 	private int indiceProveedor;
-	private CuentaContableResponseViewModel cuentaContable;
 	private boolean operacionEjecutada = false;
 	private boolean proveedorActivo = true;
 	private JLabel lblRfc;
@@ -138,12 +134,7 @@ public class Fr_DatosProveedor extends JFrame {
 		txfClaveCtaContable.setColumns(10);
 		
 		JButton btnFormConsultaCuentaContable = new JButton("");
-		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				abrirFormConsultaCuentaContableProveedor();
-			}
-		});
+		btnFormConsultaCuentaContable.setEnabled(false);
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		
 		JLabel lblMail = new JLabel("Mail");
@@ -482,10 +473,6 @@ public class Fr_DatosProveedor extends JFrame {
 			return true;
 		}
 
-		if (this.cuentaContable == null || this.cuentaContable.idCuentaContable() < 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar una cuenta contable");
-			return true;
-		}
 
 		if (correo.isEmpty()) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El correo electronico del proveedor es obligatorio");
@@ -548,7 +535,6 @@ public class Fr_DatosProveedor extends JFrame {
 	private Proveedor buildProveedor() {
 		return new Proveedor.ProveedorBuilder()
 				.idProveedor(this.indiceProveedor)
-				.idCuentaContable(this.cuentaContable.idCuentaContable())
 				.rfc(this.txfRFC.getText().trim().toUpperCase())
 				.nombre(this.txfNombre.getText().trim())
 				.descripcion(this.textAreaDescripcion.getText().trim())
@@ -584,48 +570,17 @@ public class Fr_DatosProveedor extends JFrame {
 		}
 
 		this.indiceProveedor = proveedor.getIdProveedor();
-		this.cuentaContable = new CuentaContableResponseViewModel(
-				proveedor.getIdCuentaContable(),
-				proveedor.getClaveCuentaContable()
-		);
 		this.proveedorActivo = proveedor.isActivo();
 
 		this.txfRFC.setText(this.valueOrEmpty(proveedor.getRfc()));
 		this.txfNombre.setText(this.valueOrEmpty(proveedor.getNombre()));
-		this.txfClaveCtaContable.setText(this.valueOrEmpty(proveedor.getClaveCuentaContable()));
+		this.txfClaveCtaContable.setText("");
 		this.txfCorreoElectronico.setText(this.valueOrEmpty(proveedor.getCorreoElectronico()));
 		this.txfEstado.setText(this.valueOrEmpty(proveedor.getEstado()));
 		this.txfCiudad.setText(this.valueOrEmpty(proveedor.getCiudad()));
 		this.textField.setText(this.valueOrEmpty(proveedor.getCodigoPostal()));
 		this.txfDireccion.setText(this.valueOrEmpty(proveedor.getDireccion()));
 		this.textAreaDescripcion.setText(this.valueOrEmpty(proveedor.getDescripcion()));
-	}
-
-	/**
-	 * Abre el dialogo de consulta de cuentas contables y asigna la cuenta
-	 * seleccionada al proveedor.
-	 *
-	 * <p>
-	 * Si no se selecciona una cuenta valida, no modifica el campo contable.
-	 * </p>
-	 *
-	 * @see ConsultaCuentaContableDialog
-	 * @see CuentaContableResponseViewModel
-	 */
-	private void abrirFormConsultaCuentaContableProveedor() {
-
-		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-
-		this.cuentaContable = dialog.getCuentaContable();
-
-		if (this.cuentaContable.idCuentaContable() < 0) {
-			return;
-		}
-
-		this.txfClaveCtaContable.setText(this.cuentaContable.claveCuentaContable());
-
 	}
 
 	private String valueOrEmpty(String value) {
