@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -50,7 +51,8 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -2754103795838559070L;
-	private static final DateTimeFormatter FECHA_VISIBLE = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+	private static final DateTimeFormatter FECHA_VISIBLE = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+			.withResolverStyle(ResolverStyle.STRICT);
 	/**
 	 * 
 	 * 
