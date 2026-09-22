@@ -2,10 +2,12 @@ package com.kathsoft.kathpos.app.model.empleado;
 
 import java.sql.Date;
 
+/**
+ * Datos del empleado requeridos por el flujo de autenticación.
+ */
 public class EmpleadoLogin {
 
 	private int idEmpleado;
-	private int idCuentaContable;
 	private int idSucursal;
 	private String nombreSucursal;
 	private String rfc;
@@ -22,7 +24,7 @@ public class EmpleadoLogin {
 	private boolean activo;
 
 	public Empleado toEmpleado() {
-		return new Empleado.EmpleadoBuilder().idEmpleado(this.idEmpleado).idCuentaContable(this.idCuentaContable)
+		return new Empleado.EmpleadoBuilder().idEmpleado(this.idEmpleado)
 				.idSucursal(this.idSucursal).rfc(this.rfc).curp(this.curp).nombreCompleto(this.nombreCompleto)
 				.nombreCorto(this.nombreCorto).fechaNac(this.fechaNac).correoElectronico(this.correoElectronico)
 				.estado(this.estado).ciudad(this.ciudad).direccion(this.direccion).codigoPostal(this.codigoPostal)
@@ -35,14 +37,6 @@ public class EmpleadoLogin {
 
 	public void setIdEmpleado(int idEmpleado) {
 		this.idEmpleado = idEmpleado;
-	}
-
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
 	}
 
 	public int getIdSucursal() {
