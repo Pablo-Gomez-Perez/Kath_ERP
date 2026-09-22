@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -359,8 +360,7 @@ public class EmpleadoController implements Serializable {
 			stm.setString(12, empl.getCodigoPostal());
 			stm.setString(13, contraseniaHash);
 			stm.setBoolean(14, empl.isActivo());
-			rset = stm.executeQuery();
-			return leerRespuestaSp(rset);
+			return leerRespuestaSp(stm);
 		} catch (SQLException er) {
 			er.printStackTrace();
 			return new SpResponseModel(500, er.getMessage());
@@ -452,6 +452,67 @@ public class EmpleadoController implements Serializable {
 				er.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Recorre los resultados producidos por un procedimiento almacenado hasta
+	 * localizar la respuesta estándar formada por las columnas {@code id} y
+	 * {@code message}.
+	 * <p>
+	 * Este método tolera conjuntos de resultados intermedios generados por el
+	 * procedimiento. Es necesario para {@code update_empleado}, cuya implementación
+	 * actual emite primero un resultado de bloqueo de fila antes de devolver la
+	 * respuesta operativa.
+	 * </p>
+	 *
+	 * @param stm sentencia preparada que ejecutará el procedimiento almacenado
+	 * @return respuesta normalizada del procedimiento
+	 * @throws SQLException si ocurre un error al ejecutar o recorrer los resultados
+	 */
+	private SpResponseModel leerRespuestaSp(CallableStatement stm) throws SQLException {
+		boolean hayResultado = stm.execute();
+
+		while (true) {
+			if (hayResultado) {
+				try (ResultSet resultado = stm.getResultSet()) {
+					if (resultado != null && contieneRespuestaSp(resultado) && resultado.next()) {
+						return new SpResponseModel(resultado.getInt("id"), resultado.getString("message"));
+					}
+				}
+			} else if (stm.getUpdateCount() == -1) {
+				break;
+			}
+
+			hayResultado = stm.getMoreResults();
+		}
+
+		return new SpResponseModel(500, "Sin respuesta del procedimiento almacenado");
+	}
+
+	/**
+	 * Determina si un conjunto de resultados contiene las columnas estándar
+	 * utilizadas por {@link SpResponseModel}.
+	 *
+	 * @param resultado conjunto de resultados a inspeccionar
+	 * @return {@code true} cuando contiene las columnas {@code id} y
+	 *         {@code message}; {@code false} en caso contrario
+	 * @throws SQLException si no es posible consultar los metadatos del resultado
+	 */
+	private boolean contieneRespuestaSp(ResultSet resultado) throws SQLException {
+		ResultSetMetaData metadata = resultado.getMetaData();
+		boolean contieneId = false;
+		boolean contieneMessage = false;
+
+		for (int i = 1; i <= metadata.getColumnCount(); i++) {
+			String etiqueta = metadata.getColumnLabel(i);
+			if ("id".equalsIgnoreCase(etiqueta)) {
+				contieneId = true;
+			} else if ("message".equalsIgnoreCase(etiqueta)) {
+				contieneMessage = true;
+			}
+		}
+
+		return contieneId && contieneMessage;
 	}
 
 	/**
