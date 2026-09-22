@@ -101,6 +101,7 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JPasswordField passwordFieldVerificarContraseniaEmpleado;
 	private JLabel lblNewLabel_1;
 	private DefaultTableModel modelTablaTelefonoEmpleado;;
+	private boolean operacionEjecutada = false;
 
 	/**
 	 * Launch the application.
@@ -515,6 +516,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		JOptionPane.showMessageDialog(this, respuesta.message(), respuesta.id() == 500 ? "Error" : "Aviso",
 				respuesta.id() == 500 ? JOptionPane.ERROR_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
 		if (respuesta.id() != 500) {
+			this.operacionEjecutada = true;
 			this.dispose();
 		}
 	}
@@ -552,6 +554,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		JOptionPane.showMessageDialog(this, respuesta.message(), respuesta.id() == 500 ? "Error" : "Aviso",
 				respuesta.id() == 500 ? JOptionPane.ERROR_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
 		if (respuesta.id() != 500) {
+			this.operacionEjecutada = true;
 			this.dispose();
 		}
 	}
@@ -653,6 +656,17 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		AppContext.sucursalController.consultarNombreSucursales().forEach(cmbSucursalEmpleado::addItem);
 
+	}
+
+	/**
+	 * Indica si el formulario completó correctamente una operación de alta o
+	 * actualización de empleado.
+	 *
+	 * @return {@code true} si la persistencia terminó exitosamente; {@code false}
+	 *         si el formulario se cerró sin completar la operación
+	 */
+	public boolean isOperacionEjecutada() {
+		return this.operacionEjecutada;
 	}
 
 	private void listarTelefonoDeEmpleado(int idEmpleado) {
