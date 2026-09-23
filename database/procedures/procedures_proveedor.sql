@@ -1,4 +1,4 @@
-CREATE PROCEDURE `kath_erp`.`buscar_proveedor_por_nombre`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_proveedor_por_nombre`(
 	IN nombre_prov VARCHAR(30)
 )
 BEGIN
@@ -21,7 +21,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteProveedor`(
     IN idProveedor INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -121,7 +121,7 @@ BEGIN
         'Proveedor inhabilitado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -176,7 +176,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`getProveedorById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getProveedorById`(
     IN idProveedor INT UNSIGNED
 )
     READS SQL DATA
@@ -197,7 +197,7 @@ BEGIN
     WHERE p.id_proveedor = idProveedor;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertProveedor`(
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -286,7 +286,7 @@ BEGIN
         'Proveedor registrado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
 	IN p_id_proveedor INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -376,7 +376,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCmbProveeodor`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbProveeodor`()
 BEGIN
 	
     SELECT 
@@ -387,7 +387,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`listProveedores`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listProveedores`(
     IN p_nombre_proveedor VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
@@ -413,7 +413,7 @@ BEGIN
     ORDER BY p.nombre ASC;
 END;
 
-CREATE PROCEDURE `kath_erp`.`listTelefonoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonoProveedor`(
 	IN p_id_proveedor INT UNSIGNED
 )
     READS SQL DATA
@@ -429,7 +429,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateProveedor`(
     IN p_id_proveedor INT UNSIGNED,
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_nombre VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -566,7 +566,7 @@ BEGIN
         'Proveedor actualizado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_proveedor_por_rfc`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_proveedor_por_rfc`(
     IN rfc_p VARCHAR(13)
 )
     READS SQL DATA
@@ -587,7 +587,7 @@ BEGIN
     WHERE p.rfc = UPPER(TRIM(rfc_p));
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_rfcProveedores`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_rfcProveedores`()
 BEGIN
 	select
 		proveedor.rfc

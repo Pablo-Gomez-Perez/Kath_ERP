@@ -58,9 +58,9 @@ CREATE TABLE `permisos` (
 CREATE TABLE `proveedor` (
   `id_proveedor` int unsigned NOT NULL AUTO_INCREMENT,
   `rfc` varchar(13) COLLATE utf8mb4_general_ci NOT NULL,
-  `nombre` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombre` varchar(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `correo_electronico` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
+  `correo_electronico` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `estado` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ciudad` varchar(40) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `direccion` text COLLATE utf8mb4_general_ci,
@@ -68,7 +68,7 @@ CREATE TABLE `proveedor` (
   `activo` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_proveedor`),
   UNIQUE KEY `rfc` (`rfc`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- kath_erp.sucursal definition
