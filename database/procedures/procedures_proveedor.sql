@@ -1,33 +1,25 @@
-DROP PROCEDURE IF EXISTS `kath_erp`.`buscar_proveedor_por_nombre`;
-
-DELIMITER $$
-
 CREATE PROCEDURE `kath_erp`.`buscar_proveedor_por_nombre`(
-    IN nombre_prov VARCHAR(30)
+	IN nombre_prov VARCHAR(30)
 )
-    READS SQL DATA
-    COMMENT 'Busca proveedores por nombre sin dependencias contables'
 BEGIN
-    SELECT
-        p.id_proveedor,
-        p.rfc,
-        p.nombre,
-        p.descripcion,
-        p.correo_electronico,
-        p.estado,
-        p.ciudad,
-        p.direccion,
-        p.codigo_postal,
-        p.activo
-    FROM kath_erp.proveedor AS p
-    WHERE p.nombre LIKE CONCAT('%', nombre_prov, '%');
-END$
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`deleteProveedor`;
-
-DELIMITER $$
+	SELECT
+		proveedor.id_proveedor,
+		proveedor.rfc,
+		sub_cuentas_tercer_nivel.clave,
+		proveedor.nombre,
+		proveedor.descripcion,
+		proveedor.correo_electronico,
+		proveedor.estado,
+		proveedor.ciudad,
+		proveedor.direccion,
+		proveedor.codigo_postal,
+        proveedor.activo
+	FROM proveedor
+	INNER JOIN sub_cuentas_tercer_nivel ON proveedor.id_cuenta_contable = sub_cuentas_tercer_nivel.id_cuenta
+    WHERE proveedor.nombre LIKE CONCAT('%',nombre_prov,'%');
+    
+END;
 
 CREATE PROCEDURE `kath_erp`.`deleteProveedor`(
     IN idProveedor INT UNSIGNED
@@ -127,15 +119,9 @@ BEGIN
     SELECT
         200 AS id,
         'Proveedor inhabilitado correctamente' AS message;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`deleteTelefonoProveedor`;
-
-DELIMITER $$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
+CREATE PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -188,13 +174,7 @@ BEGIN
 		200 AS id,
 		'Telefono eliminado correctamente' AS message;
 	
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`getProveedorById`;
-
-DELIMITER $$
+END;
 
 CREATE PROCEDURE `kath_erp`.`getProveedorById`(
     IN idProveedor INT UNSIGNED
@@ -215,19 +195,13 @@ BEGIN
         p.activo
     FROM kath_erp.proveedor AS p
     WHERE p.id_proveedor = idProveedor;
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertProveedor`;
-
-DELIMITER $$
+END;
 
 CREATE PROCEDURE `kath_erp`.`insertProveedor`(
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_correo_electronico VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_correo_electronico VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_estado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_ciudad VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_direccion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -310,15 +284,9 @@ BEGIN
     SELECT
         200 AS id,
         'Proveedor registrado correctamente' AS message;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`insertTelefonoProveedor`;
-
-DELIMITER $$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
+CREATE PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
 	IN p_id_proveedor INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -406,13 +374,18 @@ BEGIN
 		200 AS id,
 		'Telefono registrado correctamente' AS message;
 	
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`listProveedores`;
-
-DELIMITER $$
+CREATE PROCEDURE `kath_erp`.`listCmbProveeodor`()
+BEGIN
+	
+    SELECT 
+    	p.id_proveedor AS id,
+    	p.nombre 
+    FROM kath_erp.proveedor  AS p
+    WHERE p.activo = true;
+    
+END;
 
 CREATE PROCEDURE `kath_erp`.`listProveedores`(
     IN p_nombre_proveedor VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -438,15 +411,9 @@ BEGIN
         OR p.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
         OR p.rfc COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
     ORDER BY p.nombre ASC;
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`listTelefonoProveedor`;
-
-DELIMITER $$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonoProveedor`(
+CREATE PROCEDURE `kath_erp`.`listTelefonoProveedor`(
 	IN p_id_proveedor INT UNSIGNED
 )
     READS SQL DATA
@@ -460,13 +427,7 @@ BEGIN
 	WHERE txp.id_proveedor = p_id_proveedor
 	ORDER BY txp.id_telefono ASC;
 	
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`updateProveedor`;
-
-DELIMITER $$
+END;
 
 CREATE PROCEDURE `kath_erp`.`updateProveedor`(
     IN p_id_proveedor INT UNSIGNED,
@@ -595,7 +556,7 @@ BEGIN
         ciudad = NULLIF(TRIM(p_ciudad), ''),
         direccion = NULLIF(TRIM(p_direccion), ''),
         codigo_postal = NULLIF(TRIM(p_codigo_postal), ''),
-        activo = p_activo
+        activo = TRUE
     WHERE id_proveedor = p_id_proveedor;
 
     COMMIT;
@@ -603,13 +564,7 @@ BEGIN
     SELECT
         200 AS id,
         'Proveedor actualizado correctamente' AS message;
-END$
-
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`ver_proveedor_por_rfc`;
-
-DELIMITER $$
+END;
 
 CREATE PROCEDURE `kath_erp`.`ver_proveedor_por_rfc`(
     IN rfc_p VARCHAR(13)
@@ -630,19 +585,11 @@ BEGIN
         p.activo
     FROM kath_erp.proveedor AS p
     WHERE p.rfc = UPPER(TRIM(rfc_p));
-END$
+END;
 
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS `kath_erp`.`ver_rfcProveedores`;
-
-DELIMITER $$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_rfcProveedores`()
+CREATE PROCEDURE `kath_erp`.`ver_rfcProveedores`()
 BEGIN
 	select
 		proveedor.rfc
 	from proveedor;
-END$
-
-DELIMITER ;
+END;
