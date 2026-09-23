@@ -61,7 +61,6 @@ public class ConstantsConllections implements java.io.Serializable{
 	// Array que define el ancho de cada columna de la tabla de Proveedores
 	public static final int[] tablaProveedoresColumnsWidth = { 30, // Indice
 			150, // Rfc
-			150, // Clave contable
 			180, // Nombre
 			400, // Descripcion
 			200, // Correo
