@@ -17,10 +17,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mysql.MySQLContainer;
-import org.testcontainers.utility.MountableFile;
 
 import com.kathsoft.kathpos.app.controller.CompraController;
 import com.kathsoft.kathpos.app.model.compra.ArticuloCompraListado;
@@ -29,40 +25,20 @@ import com.kathsoft.kathpos.app.model.compra.Compra;
 import com.kathsoft.kathpos.app.model.compra.CompraConDetalle;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 
-@Testcontainers
-class CompraUpdateControllerIT {
+class CompraUpdateControllerIT extends CompraDatabaseIT {
 
-    private static final String DATABASE_NAME = "kath_erp";
     private static final int ID_SUCURSAL_COMPRA = 1;
     private static final int ID_SUCURSAL_CONTROL = 2;
     private static final int ID_ARTICULO_EXISTENTE = 100;
     private static final int ID_ARTICULO_A_ELIMINAR = 101;
 
-    @Container
-    private static final MySQLContainer MYSQL = new MySQLContainer("mysql:8.0.46")
-            .withDatabaseName(DATABASE_NAME)
-            .withUsername("kath_test")
-            .withPassword("kath_test")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/schema.sql"),
-                    "/docker-entrypoint-initdb.d/01-schema.sql")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/procedures/procedures_articulos.sql"),
-                    "/docker-entrypoint-initdb.d/02-procedures-articulos.sql")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/procedures/procedures_compras.sql"),
-                    "/docker-entrypoint-initdb.d/03-procedures-compras.sql")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/fixtures/compra_minima.sql"),
-                    "/docker-entrypoint-initdb.d/04-compra-minima.sql");
-
     @BeforeAll
     static void configurarConexionDelControlador() {
-        System.setProperty("db.host", MYSQL.getHost());
-        System.setProperty("db.port", String.valueOf(MYSQL.getMappedPort(3306)));
+        System.setProperty("db.host", host());
+        System.setProperty("db.port", String.valueOf(port()));
         System.setProperty("db.name", DATABASE_NAME);
-        System.setProperty("db.user", MYSQL.getUsername());
-        System.setProperty("db.password", MYSQL.getPassword());
+        System.setProperty("db.user", username());
+        System.setProperty("db.password", password());
         System.setProperty("db.params", "serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true");
     }
 
@@ -195,6 +171,6 @@ class CompraUpdateControllerIT {
     }
 
     private Connection nuevaConexion() throws SQLException {
-        return DriverManager.getConnection(MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
+        return DriverManager.getConnection(jdbcUrl(), username(), password());
     }
 }
