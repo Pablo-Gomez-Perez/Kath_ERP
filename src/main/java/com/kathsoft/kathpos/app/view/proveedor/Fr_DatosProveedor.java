@@ -36,6 +36,10 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JScrollPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 public class Fr_DatosProveedor extends JFrame {
 
@@ -119,6 +123,7 @@ public class Fr_DatosProveedor extends JFrame {
 		lblRfc = new JLabel("RFC");
 		
 		txfRFC = new JTextField();
+		((AbstractDocument) txfRFC.getDocument()).setDocumentFilter(new LongitudMaximaFilter(13));
 		txfRFC.setColumns(10);
 		
 		JLabel lblNombre = new JLabel("Nombre");
@@ -459,11 +464,11 @@ public class Fr_DatosProveedor extends JFrame {
 			return true;
 		}
 
-		if (rfc.length() != 10 && rfc.length() != 13) {
+		if (rfc.length() != 12 && rfc.length() != 13) {
 			MessageHandler.displayMessage(
 					MessageHandler.WARN_MESSAGE,
 					this,
-					"El RFC del proveedor debe tener exactamente 10 o 13 caracteres"
+					"El RFC del proveedor debe tener exactamente 12 caracteres para persona moral o 13 para persona física"
 			);
 			return true;
 		}
@@ -585,6 +590,41 @@ public class Fr_DatosProveedor extends JFrame {
 
 	private String valueOrEmpty(String value) {
 		return value == null ? "" : value;
+	}
+
+	/**
+	 * Limita la longitud máxima del contenido de un documento de texto.
+	 */
+	private static final class LongitudMaximaFilter extends DocumentFilter {
+
+		private final int longitudMaxima;
+
+		private LongitudMaximaFilter(int longitudMaxima) {
+			this.longitudMaxima = longitudMaxima;
+		}
+
+		@Override
+		public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+				throws BadLocationException {
+			if (string == null) {
+				return;
+			}
+
+			if (fb.getDocument().getLength() + string.length() <= longitudMaxima) {
+				super.insertString(fb, offset, string, attr);
+			}
+		}
+
+		@Override
+		public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+				throws BadLocationException {
+			String reemplazo = text == null ? "" : text;
+			int nuevaLongitud = fb.getDocument().getLength() - length + reemplazo.length();
+
+			if (nuevaLongitud <= longitudMaxima) {
+				super.replace(fb, offset, length, text, attrs);
+			}
+		}
 	}
 
 	/**
