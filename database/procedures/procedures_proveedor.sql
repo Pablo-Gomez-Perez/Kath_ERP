@@ -432,9 +432,9 @@ END;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateProveedor`(
     IN p_id_proveedor INT UNSIGNED,
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_correo_electronico VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_correo_electronico VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_estado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_ciudad VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_direccion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
