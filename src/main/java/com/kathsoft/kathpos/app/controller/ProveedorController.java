@@ -37,7 +37,6 @@ public class ProveedorController implements java.io.Serializable {
 					data.add(new Object[] {
 							rset.getInt("id_proveedor"),
 							rset.getString("rfc"),
-							"",
 							rset.getString("nombre"),
 							rset.getString("descripcion"),
 							rset.getString("correo_electronico"),
