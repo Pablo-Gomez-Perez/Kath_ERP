@@ -18,7 +18,7 @@ abstract class CompraDatabaseIT {
 
     protected static final String DATABASE_NAME = "kath_erp";
 
-    private static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.39")
+    private static final MySQLContainer MYSQL = new MySQLContainer("mysql:8.0.39")
             .withDatabaseName(DATABASE_NAME)
             .withUsername("kath_test")
             .withPassword("kath_test")
