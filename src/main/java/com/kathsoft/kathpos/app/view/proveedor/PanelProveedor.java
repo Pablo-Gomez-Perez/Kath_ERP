@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.ConstantsConllections;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 import javax.swing.GroupLayout;
@@ -95,6 +96,9 @@ public class PanelProveedor extends JPanel {
 		modelTablaProveedores = this.setTableModel();
 		tablaProveedor = new JTable();
 		this.tablaProveedor.setModel(modelTablaProveedores);
+		this.tablaProveedor.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		DataTools.removerEditorDeTabla(this.tablaProveedor, this.modelTablaProveedores);
+		DataTools.definirTamanioDeColumnas(ConstantsConllections.tablaProveedoresColumnsWidth, this.tablaProveedor);
 		scrollPaneTablaProveedor.setViewportView(tablaProveedor);
 		
 		btnAgregar = new JButton("Agregar");
@@ -115,7 +119,7 @@ public class PanelProveedor extends JPanel {
 					MessageHandler.displayMessage(
 							MessageHandler.WARN_MESSAGE,
 							PanelProveedor.this,
-							"Seleccione un proveedor para modificar"
+							"Debe seleccionar un proveedor antes de modificarlo"
 					);
 					return;
 				}
@@ -153,13 +157,19 @@ public class PanelProveedor extends JPanel {
 		btnBuscar = new JButton("Buscar");
 		btnBuscar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				llenarTablaProveedor(txfNombreProveedor.getText());
+				buscarProveedor();
 			}
 		});
 		btnBuscar.setBackground(new Color(153, 102, 51));
 		btnBuscar.setIcon(new ImageIcon(PanelProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		
 		txfNombreProveedor = new JTextField();
+		txfNombreProveedor.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				buscarProveedor();
+			}
+		});
 		txfNombreProveedor.setColumns(10);
 		GroupLayout gl_panelInferiorBusqueda = new GroupLayout(panelInferiorBusqueda);
 		gl_panelInferiorBusqueda.setHorizontalGroup(
@@ -210,6 +220,11 @@ public class PanelProveedor extends JPanel {
 	private void eliminarProveedor() {
 
 		if (this.tablaProveedor.getSelectedRow() < 0) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"Debe seleccionar un proveedor antes de eliminarlo"
+			);
 			return;
 		}
 
@@ -256,13 +271,16 @@ public class PanelProveedor extends JPanel {
 		}
 	}
 	
+	private void buscarProveedor() {
+		this.llenarTablaProveedor(this.txfNombreProveedor.getText().trim());
+	}
+
 	private DefaultTableModel setTableModel() {
 		
 		DefaultTableModel model = new DefaultTableModel();
 		
 		model.addColumn("Id");
 		model.addColumn("RFC");
-		model.addColumn("Cta Contable");
 		model.addColumn("Nombre");
 		model.addColumn("Descripcion");
 		model.addColumn("Email");
