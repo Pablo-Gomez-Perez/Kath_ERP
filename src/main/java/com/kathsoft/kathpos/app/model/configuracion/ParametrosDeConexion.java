@@ -37,7 +37,7 @@ public record ParametrosDeConexion(
         if (password == null) {
             throw new IllegalArgumentException("La contraseña no puede ser nula; utilice una cadena vacía si corresponde");
         }
-        if (params == null || params.contains("#") || params.contains("\\r") || params.contains("\\n")) {
+        if (params == null || params.contains("#") || params.indexOf((char) 13) >= 0 || params.indexOf((char) 10) >= 0) {
             throw new IllegalArgumentException("Los parámetros JDBC contienen caracteres no admitidos");
         }
     }
@@ -45,7 +45,7 @@ public record ParametrosDeConexion(
     @Override
     public String toString() {
         return "ParametrosDeConexion[host=" + host + ", port=" + port
-                + ", name=" + name + ", user=" + user + ", params=" + params
+                + ", name=" + name + ", user=" + user + ", params=<ocultos>"
                 + ", password=<oculta>]";
     }
 }
