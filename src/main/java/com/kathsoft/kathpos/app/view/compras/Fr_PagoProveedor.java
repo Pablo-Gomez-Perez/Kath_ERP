@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 
-import com.kathsoft.kathpos.app.controller.PagoProveedorController;
+import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.app.model.compra.PagoProveedor;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 
@@ -39,7 +39,6 @@ public class Fr_PagoProveedor extends JDialog {
     private static final Color DORADO = new Color(255, 215, 0);
     private static final Color AZUL_ACCIONES = new Color(30, 144, 255);
 
-    private final PagoProveedorController pagoController = new PagoProveedorController();
     private final BigDecimal total;
     private final JComboBox<JComboboxDataViewModel> cmbFormaPago = new JComboBox<>();
     private final JTextField txfImporte = new JTextField();
@@ -127,7 +126,7 @@ public class Fr_PagoProveedor extends JDialog {
     private void cargarFormasPago() {
         btnConfirmar.setEnabled(false);
         try {
-            List<JComboboxDataViewModel> formas = pagoController.listarFormasPagoActivas();
+            List<JComboboxDataViewModel> formas = AppContext.pagoProveedorController.listarFormasPagoActivas();
             for (JComboboxDataViewModel forma : formas) {
                 cmbFormaPago.addItem(forma);
             }
