@@ -204,8 +204,18 @@ public final class ConfiguracionConexionDBService {
         }
         byte[] nueva = new byte[LONGITUD_CLAVE];
         RANDOM.nextBytes(nueva);
+        boolean creada = false;
         try {
-            Files.write(rutaClave(), nueva, java.nio.file.StandardOpenOption.CREATE_NEW);
+            // Se crea con permisos 0600 ANTES de escribir la clave,
+            // evitando una ventana temporal de lectura en sistemas POSIX.
+            if (Files.getFileStore(directorio).supportsFileAttributeView("posix")) {
+                Files.createFile(rutaClave(),
+                        java.nio.file.attribute.PosixFilePermissions.asFileAttribute(PERMISOS_ARCHIVO));
+            } else {
+                Files.createFile(rutaClave());
+            }
+            creada = true;
+            Files.write(rutaClave(), nueva);
             protegerArchivo(rutaClave());
             return nueva;
         } catch (java.nio.file.FileAlreadyExistsException ex) {
@@ -213,6 +223,13 @@ public final class ConfiguracionConexionDBService {
             return leerClave();
         } catch (IOException ex) {
             Arrays.fill(nueva, (byte) 0);
+            if (creada) {
+                try {
+                    Files.deleteIfExists(rutaClave());
+                } catch (IOException limpieza) {
+                    ex.addSuppressed(limpieza);
+                }
+            }
             throw ex;
         }
     }
