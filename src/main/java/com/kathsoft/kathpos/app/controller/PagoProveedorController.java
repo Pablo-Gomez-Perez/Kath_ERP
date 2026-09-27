@@ -18,7 +18,9 @@ import com.kathsoft.kathpos.tools.Conexion;
  * <p>El registro utiliza la conexión y transacción recibidas de
  * {@link CompraController}; nunca confirma una transacción propia.</p>
  */
-public class PagoProveedorController {
+public class PagoProveedorController implements java.io.Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Consulta las formas de pago activas a través de su procedimiento almacenado.
