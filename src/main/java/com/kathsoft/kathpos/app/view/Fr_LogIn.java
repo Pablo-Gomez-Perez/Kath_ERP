@@ -239,7 +239,7 @@ public class Fr_LogIn extends JFrame {
 				configuracionAbierta = false;
 				// Cancelar sólo cierra el formulario y permite reabrirlo al
 				// intentar iniciar sesión; no altera la configuración guardada.
-				btn_ingresar.setEnabled(true);
+				btn_ingresar.setEnabled(!comprobandoConexion && !configuracionAbierta);
 			}
 		});
 		configuracion.setLocationRelativeTo(this);
