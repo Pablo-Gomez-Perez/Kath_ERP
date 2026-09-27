@@ -9,6 +9,7 @@ public class CompraConDetalle implements java.io.Serializable {
 
 	private Compra compra;
 	private List<ArticuloPorCompra> articulosPorCompra;
+	private PagoProveedor pagoProveedor;
 
 	public CompraConDetalle() {
 		super();
@@ -19,6 +20,23 @@ public class CompraConDetalle implements java.io.Serializable {
 		super();
 		this.compra = compra;
 		this.articulosPorCompra = articulosPorCompra == null ? new ArrayList<>() : articulosPorCompra;
+	}
+
+	/**
+	 * Constructor de compra con pago inicial opcional.
+	 * Las compras de contado requieren un pago confirmado antes de persistir.
+	 */
+	public CompraConDetalle(Compra compra, List<ArticuloPorCompra> articulosPorCompra, PagoProveedor pagoProveedor) {
+		this(compra, articulosPorCompra);
+		this.pagoProveedor = pagoProveedor;
+	}
+
+	public PagoProveedor getPagoProveedor() {
+		return pagoProveedor;
+	}
+
+	public void setPagoProveedor(PagoProveedor pagoProveedor) {
+		this.pagoProveedor = pagoProveedor;
 	}
 
 	public Compra getCompra() {
@@ -47,7 +65,7 @@ public class CompraConDetalle implements java.io.Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("CompraConDetalle [compra=").append(compra).append(", articulosPorCompra=")
-				.append(articulosPorCompra).append("]");
+				.append(articulosPorCompra).append(", pagoProveedor=").append(pagoProveedor).append("]");
 		return builder.toString();
 	}
 }
