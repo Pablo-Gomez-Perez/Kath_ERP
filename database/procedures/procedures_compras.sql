@@ -125,6 +125,171 @@ BEGIN
         'Artículo eliminado de la compra correctamente' AS message;
 END $$
 
+
+/*
+ * La cancelación lógica conserva las partidas históricas y revierte
+ * existencias únicamente cuando no hay pagos registrados ni ventas
+ * posteriores que impidan retirar los artículos.
+ *
+ * La transacción se administra desde CompraController (misma conexión).
+ */
+DROP PROCEDURE IF EXISTS `kath_erp`.`deleteCompra` $
+
+CREATE PROCEDURE `kath_erp`.`deleteCompra`(
+    IN p_id_compra INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    MODIFIES SQL DATA
+    COMMENT 'Cancela una compra sin pagos y revierte las existencias respetando ventas posteriores'
+BEGIN
+    DECLARE v_sucursal_compra BIGINT UNSIGNED DEFAULT 0;
+    DECLARE v_fecha_compra DATE;
+    DECLARE v_activo BOOLEAN DEFAULT FALSE;
+    DECLARE v_pagos INT DEFAULT 0;
+    DECLARE v_articulo INT UNSIGNED DEFAULT 0;
+    DECLARE v_cantidad INT DEFAULT 0;
+    DECLARE v_existe_existencia INT DEFAULT 0;
+    DECLARE v_id_existencia INT DEFAULT 0;
+    DECLARE v_existencia INT DEFAULT 0;
+    DECLARE v_ventas_posteriores INT DEFAULT 0;
+    DECLARE v_fin BOOLEAN DEFAULT FALSE;
+
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_errno INT;
+    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+    DECLARE cur_detalles CURSOR FOR
+        SELECT id_articulo, cantidad
+        FROM kath_erp.articulo_x_compra
+        WHERE id_compra = p_id_compra
+        ORDER BY id_articulo, id;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_fin = TRUE;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_errno = MYSQL_ERRNO,
+            v_text = MESSAGE_TEXT;
+
+        SELECT 500 AS id,
+            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+    END;
+
+    IF p_id_compra IS NULL OR p_id_compra <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La compra es obligatoria';
+    END IF;
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+    END IF;
+
+    /*
+     * Mismo bloqueo de compra utilizado por insertPagoProveedor.
+     * Impide que un pago concurrente se registre entre la validación
+     * de pagos y la cancelación.
+     */
+    SELECT id_sucursal, fecha_compra, activo
+    INTO v_sucursal_compra, v_fecha_compra, v_activo
+    FROM kath_erp.compras
+    WHERE id_compra = p_id_compra
+    LIMIT 1
+    FOR UPDATE;
+
+    IF v_sucursal_compra IS NULL OR v_sucursal_compra = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La compra indicada no existe';
+    END IF;
+
+    IF v_sucursal_compra <> p_id_sucursal THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La compra indicada no pertenece a la sucursal actual';
+    END IF;
+
+    IF v_activo = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La compra ya se encuentra cancelada';
+    END IF;
+
+    SELECT COUNT(*)
+    INTO v_pagos
+    FROM kath_erp.pago_proveedor
+    WHERE id_compra = p_id_compra;
+
+    IF v_pagos > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No se puede cancelar la compra porque tiene pagos registrados';
+    END IF;
+
+    SET v_fin = FALSE;
+    OPEN cur_detalles;
+
+    detalles: LOOP
+        FETCH cur_detalles INTO v_articulo, v_cantidad;
+        IF v_fin THEN
+            LEAVE detalles;
+        END IF;
+
+        SELECT COUNT(*)
+        INTO v_ventas_posteriores
+        FROM kath_erp.articulo_x_venta AS axv
+        INNER JOIN kath_erp.ventas AS v
+            ON axv.id_venta = v.id_venta
+        WHERE axv.id_articulo = v_articulo
+          AND v.id_sucursal = v_sucursal_compra
+          AND v.fecha > v_fecha_compra
+          AND v.status_venta = TRUE;
+
+        IF v_ventas_posteriores > 0 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT =
+                    'No se puede cancelar la compra porque existen ventas posteriores de sus artículos';
+        END IF;
+
+        SELECT COUNT(*)
+        INTO v_existe_existencia
+        FROM kath_erp.existencia_x_sucursal
+        WHERE id_articulo = v_articulo
+          AND id_sucursal = v_sucursal_compra;
+
+        IF v_existe_existencia <> 1 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT =
+                    'No existe una existencia única para uno de los artículos de la compra';
+        END IF;
+
+        SELECT id, COALESCE(existencia, 0)
+        INTO v_id_existencia, v_existencia
+        FROM kath_erp.existencia_x_sucursal
+        WHERE id_articulo = v_articulo
+          AND id_sucursal = v_sucursal_compra
+        LIMIT 1
+        FOR UPDATE;
+
+        IF v_existencia - v_cantidad < 0 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT =
+                    'No se puede cancelar la compra porque la existencia quedaría negativa';
+        END IF;
+
+        UPDATE kath_erp.existencia_x_sucursal
+        SET existencia = v_existencia - v_cantidad
+        WHERE id = v_id_existencia;
+    END LOOP;
+
+    CLOSE cur_detalles;
+
+    UPDATE kath_erp.compras
+    SET activo = FALSE
+    WHERE id_compra = p_id_compra
+      AND id_sucursal = p_id_sucursal;
+
+    SELECT p_id_compra AS id, 'Compra cancelada correctamente' AS message;
+END $$
+
 CREATE  PROCEDURE `kath_erp`.`getCompraById`(
     IN p_id_compra INT UNSIGNED
 )
@@ -899,6 +1064,8 @@ BEGIN
 
 END $$
 
+DROP PROCEDURE IF EXISTS `kath_erp`.`updateCompra` $
+
 CREATE  PROCEDURE `kath_erp`.`updateCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_empleado INT UNSIGNED,
@@ -920,6 +1087,8 @@ BEGIN
     DECLARE v_existe_empleado INT DEFAULT 0;
     DECLARE v_existe_proveedor INT DEFAULT 0;
     DECLARE v_existe_sucursal INT DEFAULT 0;
+    DECLARE v_pagos_asociados INT DEFAULT 0;
+    DECLARE v_id_compra_bloqueada INT UNSIGNED DEFAULT 0;
 
     DECLARE v_folio_duplicado INT DEFAULT 0;
 
@@ -1077,6 +1246,30 @@ BEGIN
             SET MESSAGE_TEXT =
                 'La compra indicada no pertenece a la sucursal actual';
 
+    END IF;
+
+    /*
+     * El procedimiento de pago bloquea la misma cabecera con FOR UPDATE.
+     * Bloquear aquí antes de consultar pago_proveedor serializa ambas
+     * operaciones y evita editar mientras se registra un pago concurrente.
+     */
+    SELECT id_compra
+    INTO v_id_compra_bloqueada
+    FROM kath_erp.compras
+    WHERE id_compra = p_id_compra
+      AND id_sucursal = p_id_sucursal
+    LIMIT 1
+    FOR UPDATE;
+
+    SELECT COUNT(*)
+    INTO v_pagos_asociados
+    FROM kath_erp.pago_proveedor
+    WHERE id_compra = p_id_compra;
+
+    IF v_pagos_asociados > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No se puede modificar la compra porque tiene pagos registrados';
     END IF;
 
 
