@@ -11,6 +11,9 @@
 
 # configuracion local y secretos
 config/database.properties
+# El instalador guarda estos archivos fuera del repositorio, en el perfil del usuario
+**/database.properties
+**/connection.key
 .env
 *.env
 
