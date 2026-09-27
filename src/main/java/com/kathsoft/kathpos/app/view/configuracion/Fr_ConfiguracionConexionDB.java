@@ -91,7 +91,7 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource("/com/kathsoft/kathpos/app/assets/login_ico.png")));
-        setSize(670, 605);
+        setSize(600, 475);
         setMinimumSize(new java.awt.Dimension(600, 540));
         setLocationRelativeTo(null);
 
@@ -259,6 +259,7 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
                 registrar("La contraseña se almacena cifrada, pero no sustituye un gestor de secretos del SO.");
             }
         });
+
     }
 
     private void cargarValoresGuardados() {
@@ -357,7 +358,7 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
                     if (alGuardar != null) {
                         alGuardar.run();
                     }
-                    dispose();
+                    //dispose();
                 } catch (Exception ex) {
                     registrar("No fue posible guardar el archivo: " + describirFallo(ex, datos.password()));
                     JOptionPane.showMessageDialog(Fr_ConfiguracionConexionDB.this,
