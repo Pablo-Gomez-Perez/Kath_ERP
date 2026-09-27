@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import com.kathsoft.kathpos.app.model.compra.CompraById;
 import com.kathsoft.kathpos.app.model.compra.CompraConDetalle;
 import com.kathsoft.kathpos.app.model.compra.CompraFiltro;
 import com.kathsoft.kathpos.app.model.compra.CompraListado;
+import com.kathsoft.kathpos.app.model.compra.PagoProveedor;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.tools.Conexion;
 
@@ -28,6 +31,7 @@ public class CompraController implements java.io.Serializable {
 	private static final long serialVersionUID = -4974480297011718553L;
 	private static final int ERROR_VALIDACION = 500;
 	private static final double TOLERANCIA_IMPORTE = 0.01;
+	private final PagoProveedorController pagoProveedorController = new PagoProveedorController();
 	private static Connection cn = null;
 
 	public List<CompraListado> listCompras(int idSucursal) {
@@ -142,6 +146,11 @@ public class CompraController implements java.io.Serializable {
 		if (validacion != null) {
 			return validacion;
 		}
+		// La sobrecarga sin detalle no puede registrar el pago obligatorio de contado.
+		if (!compra.isTipoCompra()) {
+			return new SpResponseModel(ERROR_VALIDACION,
+					"Para registrar una compra de contado debe indicar el pago y las partidas");
+		}
 
 		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE)) {
 			return this.insertCompra(connection, idSucursal, compra);
@@ -156,6 +165,10 @@ public class CompraController implements java.io.Serializable {
 
 	public SpResponseModel insertCompra(int idSucursal, CompraConDetalle compraConDetalle) {
 		SpResponseModel validacion = this.validarNuevaCompra(idSucursal, compraConDetalle);
+		if (validacion != null) {
+			return validacion;
+		}
+		validacion = this.validarPagoInicial(compraConDetalle);
 		if (validacion != null) {
 			return validacion;
 		}
@@ -190,6 +203,18 @@ public class CompraController implements java.io.Serializable {
 					if (!isSuccess(respuestaExistencia)) {
 						connection.rollback();
 						return respuestaExistencia;
+					}
+				}
+
+				// El pago de contado participa en la MISMA conexión/transacción:
+				// si insertPagoProveedor responde con 500, se revierte compra + inventario.
+				if (!compraConDetalle.getCompra().isTipoCompra()) {
+					PagoProveedor elegido = compraConDetalle.getPagoProveedor();
+					PagoProveedor pago = new PagoProveedor(idCompra, elegido.idFormaPago(), elegido.importe());
+					SpResponseModel respuestaPago = pagoProveedorController.registrarPago(connection, pago);
+					if (!isSuccess(respuestaPago)) {
+						connection.rollback();
+						return respuestaPago;
 					}
 				}
 
@@ -500,6 +525,36 @@ public class CompraController implements java.io.Serializable {
 					"El subtotal de la compra no coincide con la suma de los artículos");
 		}
 
+		return null;
+	}
+
+	/**
+	 * Valida la liquidación total requerida para una nueva compra de contado.
+	 * Crédito mantiene el flujo de registro actual, sin pago inicial obligatorio.
+	 */
+	SpResponseModel validarPagoInicial(CompraConDetalle agregado) {
+		Compra compra = agregado.getCompra();
+		PagoProveedor pago = agregado.getPagoProveedor();
+
+		if (compra.isTipoCompra()) {
+			return pago == null ? null : new SpResponseModel(ERROR_VALIDACION,
+					"El pago inicial de este formulario corresponde únicamente a compras de contado");
+		}
+
+		if (pago == null || pago.idFormaPago() <= 0 || pago.idCompra() != 0
+				|| pago.importe() == null || pago.importe().signum() <= 0
+				|| pago.importe().scale() > 2) {
+			return new SpResponseModel(ERROR_VALIDACION,
+					"La compra de contado necesita una forma de pago y un importe total válidos");
+		}
+
+		BigDecimal total = BigDecimal.valueOf(compra.getSubtotal())
+				.add(BigDecimal.valueOf(compra.getIva()))
+				.setScale(2, RoundingMode.HALF_UP);
+		if (total.signum() <= 0 || pago.importe().compareTo(total) != 0) {
+			return new SpResponseModel(ERROR_VALIDACION,
+					"El pago de contado debe liquidar exactamente el total de la compra");
+		}
 		return null;
 	}
 

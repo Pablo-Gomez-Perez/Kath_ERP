@@ -284,7 +284,7 @@ class CompraControllerIT extends CompraDatabaseIT {
                 .folioFactura(folio)
                 .fechaFactura(Date.valueOf("2026-08-20"))
                 .fechaCompra(Date.valueOf("2026-08-21"))
-                .tipoCompra(false)
+                .tipoCompra(true)
                 .subtotal(subtotal)
                 .iva(iva)
                 .build();

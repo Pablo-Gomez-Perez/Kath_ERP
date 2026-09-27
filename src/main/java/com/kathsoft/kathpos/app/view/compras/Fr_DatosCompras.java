@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -57,6 +58,7 @@ import com.kathsoft.kathpos.app.model.compra.ArticuloPorCompra;
 import com.kathsoft.kathpos.app.model.compra.Compra;
 import com.kathsoft.kathpos.app.model.compra.CompraById;
 import com.kathsoft.kathpos.app.model.compra.CompraConDetalle;
+import com.kathsoft.kathpos.app.model.compra.PagoProveedor;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
@@ -884,6 +886,20 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 		try {
 			CompraConDetalle compraConDetalle = this.construirCompraDesdeFormulario();
+
+			if (!compraConDetalle.getCompra().isTipoCompra()) {
+				BigDecimal total = BigDecimal.valueOf(compraConDetalle.getCompra().getSubtotal())
+						.add(BigDecimal.valueOf(compraConDetalle.getCompra().getIva()))
+						.setScale(2, RoundingMode.HALF_UP);
+				Fr_PagoProveedor formularioPago = new Fr_PagoProveedor(this, total);
+				formularioPago.setVisible(true); // Modal: aún NO existe ni se ha persistido la compra.
+				PagoProveedor pagoConfirmado = formularioPago.getPagoConfirmado();
+				if (pagoConfirmado == null) {
+					return; // Cancelar pago no genera compra ni movimientos de inventario.
+				}
+				compraConDetalle.setPagoProveedor(pagoConfirmado);
+			}
+
 			SpResponseModel respuesta = AppContext.compraController.insertCompra(this.idSucursal, compraConDetalle);
 
 			if (respuesta == null || respuesta.id() <= 0 || respuesta.id() == 500) {
