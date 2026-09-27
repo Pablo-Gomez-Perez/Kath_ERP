@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,7 +23,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -44,16 +46,31 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
 
     private final ConfiguracionConexionDBService almacenamiento = new ConfiguracionConexionDBService();
     private final Runnable alGuardar;
-    private final JTextField txfHost = new JTextField("localhost");
-    private final JTextField txfPuerto = new JTextField("3306");
-    private final JTextField txfNombreBD = new JTextField("kath_erp");
-    private final JTextField txfUsuario = new JTextField("root");
-    private final JPasswordField pswfContrasenia = new JPasswordField();
-    private final JTextField txfParametros = new JTextField("serverTimezone=UTC");
-    private final JTextArea txaConsola = new JTextArea();
-    private final JButton btnCancelar = new JButton("Cancelar");
-    private final JButton btnGuardar = new JButton("Guardar");
-    private final JButton btnProbarConexion = new JButton("Probar conexión");
+    private JPanel contentPane;
+    private JPanel panelSuperiorEtiqueta;
+    private JPanel panelCentral;
+    private JPanel panelDatosConexion;
+    private JPanel panelConsola;
+    private JPanel panelInferiorBotones;
+    private JLabel lblTitulo;
+    private JLabel lblHost;
+    private JLabel lblPuerto;
+    private JLabel lblNombreBD;
+    private JLabel lblUsuario;
+    private JLabel lblContrasenia;
+    private JLabel lblParametros;
+    private JLabel lblConsola;
+    private JTextField txfHost;
+    private JTextField txfPuerto;
+    private JTextField txfNombreBD;
+    private JTextField txfUsuario;
+    private JPasswordField pswfContrasenia;
+    private JTextField txfParametros;
+    private JTextArea txaConsola;
+    private JScrollPane scrollPaneConsola;
+    private JButton btnCancelar;
+    private JButton btnGuardar;
+    private JButton btnProbarConexion;
 
     /**
      * Crea el formulario para invocarse posteriormente desde Configuración.
@@ -78,92 +95,170 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
         setMinimumSize(new java.awt.Dimension(600, 540));
         setLocationRelativeTo(null);
 
-        JPanel contenido = new JPanel(new BorderLayout());
-        setContentPane(contenido);
+        contentPane = new JPanel();
+        setContentPane(contentPane);
+        contentPane.setLayout(new BorderLayout(0, 0));
 
-        JPanel encabezado = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        encabezado.setBackground(new Color(14, 14, 216));
-        JLabel titulo = new JLabel("Conexión con MySQL / MariaDB");
-        titulo.setForeground(Color.WHITE);
-        titulo.setFont(new Font("Dialog", Font.BOLD, 16));
-        encabezado.add(titulo);
-        contenido.add(encabezado, BorderLayout.NORTH);
+        panelSuperiorEtiqueta = new JPanel();
+        panelSuperiorEtiqueta.setBackground(new Color(14, 14, 216));
+        contentPane.add(panelSuperiorEtiqueta, BorderLayout.NORTH);
+        panelSuperiorEtiqueta.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JPanel centro = new JPanel(new BorderLayout(8, 10));
-        centro.setBackground(new Color(255, 204, 0));
-        centro.setBorder(new EmptyBorder(12, 14, 12, 14));
-        contenido.add(centro, BorderLayout.CENTER);
+        lblTitulo = new JLabel("Conexión con MySQL / MariaDB");
+        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setFont(new Font("Dialog", Font.BOLD, 16));
+        panelSuperiorEtiqueta.add(lblTitulo);
 
-        JPanel datos = new JPanel();
-        datos.setBackground(new Color(255, 204, 0));
-        datos.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-        JLabel host = new JLabel("Servidor / IP");
-        JLabel puerto = new JLabel("Puerto");
-        JLabel nombre = new JLabel("Base de datos");
-        JLabel usuario = new JLabel("Usuario");
-        JLabel contrasenia = new JLabel("Contraseña");
-        JLabel parametros = new JLabel("Parámetros JDBC");
-        JLabel[] etiquetas = {host, puerto, nombre, usuario, contrasenia, parametros};
-        javax.swing.JComponent[] entradas = {txfHost, txfPuerto, txfNombreBD,
-                txfUsuario, pswfContrasenia, txfParametros};
-        for (javax.swing.JComponent entrada : entradas) {
-            if (entrada instanceof JTextField campo) {
-                campo.setColumns(24);
-                campo.setBackground(new Color(204, 255, 255));
-            }
-        }
+        panelCentral = new JPanel();
+        panelCentral.setBackground(new Color(255, 204, 0));
+        panelCentral.setBorder(new EmptyBorder(12, 14, 12, 14));
+        contentPane.add(panelCentral, BorderLayout.CENTER);
+        panelCentral.setLayout(new BorderLayout(8, 10));
 
-        GroupLayout layout = new GroupLayout(datos);
-        datos.setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-        GroupLayout.ParallelGroup columnasTexto = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        GroupLayout.ParallelGroup columnasCampo = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-        GroupLayout.SequentialGroup filas = layout.createSequentialGroup();
-        for (int indice = 0; indice < etiquetas.length; indice++) {
-            columnasTexto.addComponent(etiquetas[indice]);
-            columnasCampo.addComponent(entradas[indice], GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE);
-            filas.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(etiquetas[indice])
-                    .addComponent(entradas[indice], GroupLayout.PREFERRED_SIZE,
-                            GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
-        }
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-                .addGroup(columnasTexto)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(columnasCampo));
-        layout.setVerticalGroup(filas);
-        centro.add(datos, BorderLayout.NORTH);
+        panelDatosConexion = new JPanel();
+        panelDatosConexion.setBackground(new Color(255, 204, 0));
+        panelDatosConexion.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+        panelCentral.add(panelDatosConexion, BorderLayout.NORTH);
 
-        JPanel consola = new JPanel(new BorderLayout(0, 5));
-        consola.setOpaque(false);
-        JLabel tituloConsola = new JLabel("Registro de conexión (no muestra contraseñas)");
-        consola.add(tituloConsola, BorderLayout.NORTH);
+        lblHost = new JLabel("Servidor / IP");
+        txfHost = new JTextField("localhost");
+        txfHost.setColumns(24);
+        txfHost.setBackground(new Color(204, 255, 255));
+
+        lblPuerto = new JLabel("Puerto");
+        txfPuerto = new JTextField("3306");
+        txfPuerto.setColumns(24);
+        txfPuerto.setBackground(new Color(204, 255, 255));
+
+        lblNombreBD = new JLabel("Base de datos");
+        txfNombreBD = new JTextField("kath_erp");
+        txfNombreBD.setColumns(24);
+        txfNombreBD.setBackground(new Color(204, 255, 255));
+
+        lblUsuario = new JLabel("Usuario");
+        txfUsuario = new JTextField("root");
+        txfUsuario.setColumns(24);
+        txfUsuario.setBackground(new Color(204, 255, 255));
+
+        lblContrasenia = new JLabel("Contraseña");
+        pswfContrasenia = new JPasswordField();
+        pswfContrasenia.setColumns(24);
+        pswfContrasenia.setBackground(new Color(204, 255, 255));
+
+        lblParametros = new JLabel("Parámetros JDBC");
+        txfParametros = new JTextField("serverTimezone=UTC");
+        txfParametros.setColumns(24);
+        txfParametros.setBackground(new Color(204, 255, 255));
+
+        // Grupos explícitos generados en el patrón del diseñador Eclipse.
+        GroupLayout gl_panelDatosConexion = new GroupLayout(panelDatosConexion);
+        gl_panelDatosConexion.setHorizontalGroup(
+            gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(gl_panelDatosConexion.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(lblHost)
+                        .addComponent(lblPuerto)
+                        .addComponent(lblNombreBD)
+                        .addComponent(lblUsuario)
+                        .addComponent(lblContrasenia)
+                        .addComponent(lblParametros))
+                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(txfHost, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                        .addComponent(txfPuerto, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                        .addComponent(txfNombreBD, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                        .addComponent(txfUsuario, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                        .addComponent(pswfContrasenia, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                        .addComponent(txfParametros, GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
+                    .addContainerGap())
+        );
+        gl_panelDatosConexion.setVerticalGroup(
+            gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(gl_panelDatosConexion.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblHost)
+                        .addComponent(txfHost, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblPuerto)
+                        .addComponent(txfPuerto, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblNombreBD)
+                        .addComponent(txfNombreBD, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblUsuario)
+                        .addComponent(txfUsuario, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblContrasenia)
+                        .addComponent(pswfContrasenia, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addGroup(gl_panelDatosConexion.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblParametros)
+                        .addComponent(txfParametros, GroupLayout.PREFERRED_SIZE,
+                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
+        );
+        panelDatosConexion.setLayout(gl_panelDatosConexion);
+
+        panelConsola = new JPanel();
+        panelConsola.setOpaque(false);
+        panelCentral.add(panelConsola, BorderLayout.CENTER);
+        panelConsola.setLayout(new BorderLayout(0, 5));
+
+        lblConsola = new JLabel("Registro de conexión (no muestra contraseñas)");
+        panelConsola.add(lblConsola, BorderLayout.NORTH);
+
+        scrollPaneConsola = new JScrollPane();
+        panelConsola.add(scrollPaneConsola, BorderLayout.CENTER);
+
+        txaConsola = new JTextArea();
         txaConsola.setEditable(false);
         txaConsola.setLineWrap(true);
         txaConsola.setWrapStyleWord(true);
         txaConsola.setBackground(new Color(248, 248, 248));
-        JScrollPane desplazamiento = new JScrollPane(txaConsola);
-        consola.add(desplazamiento, BorderLayout.CENTER);
-        centro.add(consola, BorderLayout.CENTER);
+        scrollPaneConsola.setViewportView(txaConsola);
 
-        JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        acciones.setBackground(new Color(51, 153, 255));
+        panelInferiorBotones = new JPanel();
+        panelInferiorBotones.setBackground(new Color(51, 153, 255));
+        contentPane.add(panelInferiorBotones, BorderLayout.SOUTH);
+        panelInferiorBotones.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        btnCancelar = new JButton("Cancelar");
         btnCancelar.setBackground(new Color(205, 92, 92));
-        btnGuardar.setBackground(new Color(0, 204, 51));
+        panelInferiorBotones.add(btnCancelar);
+
+        btnProbarConexion = new JButton("Probar conexión");
         btnProbarConexion.setBackground(new Color(204, 255, 255));
-        acciones.add(btnCancelar);
-        acciones.add(btnProbarConexion);
-        acciones.add(btnGuardar);
-        contenido.add(acciones, BorderLayout.SOUTH);
+        panelInferiorBotones.add(btnProbarConexion);
+
+        btnGuardar = new JButton("Guardar");
+        btnGuardar.setBackground(new Color(0, 204, 51));
+        panelInferiorBotones.add(btnGuardar);
 
         btnCancelar.addActionListener(e -> dispose());
         btnGuardar.addActionListener(e -> guardarConfiguracion());
         btnProbarConexion.addActionListener(e -> probarConexion());
 
-        cargarValoresGuardados();
-        registrar("Archivo de conexión: " + almacenamiento.rutaArchivo());
-        registrar("La contraseña se almacena cifrada, pero no sustituye un gestor de secretos del SO.");
+        // El diseñador instancia el JFrame para generar la previsualización.
+        // La lectura de credenciales se pospone al evento real de apertura.
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent event) {
+                cargarValoresGuardados();
+                registrar("Archivo de conexión: " + almacenamiento.rutaArchivo());
+                registrar("La contraseña se almacena cifrada, pero no sustituye un gestor de secretos del SO.");
+            }
+        });
     }
 
     private void cargarValoresGuardados() {
