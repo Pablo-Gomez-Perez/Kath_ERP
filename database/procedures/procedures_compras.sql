@@ -238,10 +238,8 @@ BEGIN
         FROM kath_erp.articulo_x_venta AS axv
         INNER JOIN kath_erp.ventas AS v
             ON axv.id_venta = v.id_venta
-        INNER JOIN kath_erp.empleados AS e
-            ON v.id_empleado = e.id_empleado
         WHERE axv.id_articulo = v_articulo
-          AND e.id_sucursal = v_sucursal_compra
+          AND v.id_sucursal = v_sucursal_compra
           AND v.fecha > v_fecha_compra
           AND v.status_venta = TRUE;
 
