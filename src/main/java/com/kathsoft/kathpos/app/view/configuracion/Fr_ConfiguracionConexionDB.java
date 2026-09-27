@@ -199,7 +199,7 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
         } catch (NumberFormatException ex) {
             throw new IllegalArgumentException("El puerto debe ser un número válido");
         } finally {
-            Arrays.fill(clave, '\\0');
+            Arrays.fill(clave, (char) 0);
         }
     }
 
