@@ -532,7 +532,7 @@ public class CompraController implements java.io.Serializable {
 	 * Valida la liquidación total requerida para una nueva compra de contado.
 	 * Crédito mantiene el flujo de registro actual, sin pago inicial obligatorio.
 	 */
-	private SpResponseModel validarPagoInicial(CompraConDetalle agregado) {
+	SpResponseModel validarPagoInicial(CompraConDetalle agregado) {
 		Compra compra = agregado.getCompra();
 		PagoProveedor pago = agregado.getPagoProveedor();
 
