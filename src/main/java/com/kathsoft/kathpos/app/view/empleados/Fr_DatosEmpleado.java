@@ -8,12 +8,16 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,13 +26,12 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
-import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.app.model.empleado.Empleado;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoById;
 import com.kathsoft.kathpos.app.model.telefono_x_empleado.TelefonoEmpleado;
-import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
@@ -48,6 +51,8 @@ public class Fr_DatosEmpleado extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -2754103795838559070L;
+	private static final DateTimeFormatter FECHA_VISIBLE = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+			.withResolverStyle(ResolverStyle.STRICT);
 	/**
 	 * 
 	 * 
@@ -95,8 +100,8 @@ public class Fr_DatosEmpleado extends JFrame {
 	private JPasswordField passwordFieldContraseniaEmpleado;
 	private JPasswordField passwordFieldVerificarContraseniaEmpleado;
 	private JLabel lblNewLabel_1;
-	private CuentaContableResponseViewModel cuentaContable;
 	private DefaultTableModel modelTablaTelefonoEmpleado;;
+	private boolean operacionEjecutada = false;
 
 	/**
 	 * Launch the application.
@@ -164,7 +169,9 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		lblFNacimiento = new JLabel("F. Nacimiento");
 
-		frmtdtxtfldFechanacimientoempleado = new JFormattedTextField();
+		frmtdtxtfldFechanacimientoempleado = new JFormattedTextField(crearCampoFechaNacimiento());
+		frmtdtxtfldFechanacimientoempleado.setFocusLostBehavior(JFormattedTextField.PERSIST);
+		frmtdtxtfldFechanacimientoempleado.setToolTipText("dd/MM/yyyy");
 
 		lblEmail = new JLabel("Email");
 
@@ -193,6 +200,9 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		txfClaveCuentaContable = new JTextField();
 		txfClaveCuentaContable.setColumns(10);
+		txfClaveCuentaContable.setText("");
+		txfClaveCuentaContable.setEditable(false);
+		txfClaveCuentaContable.setEnabled(false);
 
 		lblNmerosDeContacto = new JLabel("Números de contacto");
 
@@ -230,11 +240,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		passwordFieldVerificarContraseniaEmpleado = new JPasswordField();
 
 		JButton btnFormConsultaCuentaContable = new JButton("");
-		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				abrirFormConsultaCuentaContableEmpleado();
-			}
-		});
+		btnFormConsultaCuentaContable.setEnabled(false);
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(
 				Fr_DatosEmpleado.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		GroupLayout gl_panelCentralFormulario = new GroupLayout(panelCentralFormulario);
@@ -466,18 +472,15 @@ public class Fr_DatosEmpleado extends JFrame {
 		txfCurpEmpleado.setText(empleado.getCurp());
 		txfNombreCompletoEmpleado.setText(empleado.getNombreCompleto());
 		txfNombreCortoEmpleado.setText(empleado.getNombreCorto());
-		frmtdtxtfldFechanacimientoempleado
-				.setText(empleado.getFechaNac() == null ? "" : empleado.getFechaNac().toString());
+		frmtdtxtfldFechanacimientoempleado.setText(formatearFechaVisible(empleado.getFechaNac()));
 		frmtxfCorreoElectronico.setText(empleado.getCorreoElectronico());
 		txfEstadoEmpleado.setText(empleado.getEstado());
 		txfCiudadEmpleado.setText(empleado.getCiudad());
 		textAreaDireccionEmpleado.setText(empleado.getDireccion());
 		txfCodigoPostal.setText(empleado.getCodigoPostal());
-		txfClaveCuentaContable.setText(empleado.getClaveCuentaContable());
+		txfClaveCuentaContable.setText("");
 		passwordFieldContraseniaEmpleado.setText("");
 		passwordFieldVerificarContraseniaEmpleado.setText("");
-		this.cuentaContable = new CuentaContableResponseViewModel(empleado.getIdCuentaContable(),
-				empleado.getClaveCuentaContable());
 		UiTools.jComboboxSetSelectedIndex(this.cmbSucursalEmpleado, empleado.getIdSucursal());
 
 	}
@@ -491,13 +494,12 @@ public class Fr_DatosEmpleado extends JFrame {
 		}
 
 		Empleado empleado = new Empleado();
-		empleado.setIdCuentaContable(this.cuentaContable.idCuentaContable());
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
 		empleado.setNombreCompleto(txfNombreCompletoEmpleado.getText().trim());
 		empleado.setNombreCorto(txfNombreCortoEmpleado.getText().trim());
-		empleado.setFechaNac(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
+		empleado.setFechaNac(convertirFechaSql(frmtdtxtfldFechanacimientoempleado.getText().trim()));
 		empleado.setCorreoElectronico(frmtxfCorreoElectronico.getText().trim());
 		empleado.setEstado(txfEstadoEmpleado.getText().trim());
 		empleado.setCiudad(txfCiudadEmpleado.getText().trim());
@@ -514,6 +516,7 @@ public class Fr_DatosEmpleado extends JFrame {
 		JOptionPane.showMessageDialog(this, respuesta.message(), respuesta.id() == 500 ? "Error" : "Aviso",
 				respuesta.id() == 500 ? JOptionPane.ERROR_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
 		if (respuesta.id() != 500) {
+			this.operacionEjecutada = true;
 			this.dispose();
 		}
 	}
@@ -529,13 +532,12 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		Empleado empleado = new Empleado();
 		empleado.setIdEmpleado(idEmpleado);
-		empleado.setIdCuentaContable(this.cuentaContable.idCuentaContable());
 		empleado.setIdSucursal(((JComboboxDataViewModel) cmbSucursalEmpleado.getSelectedItem()).id());
 		empleado.setRfc(txfRfcEmpleado.getText().trim());
 		empleado.setCurp(txfCurpEmpleado.getText().trim());
 		empleado.setNombreCompleto(txfNombreCompletoEmpleado.getText().trim());
 		empleado.setNombreCorto(txfNombreCortoEmpleado.getText().trim());
-		empleado.setFechaNac(Date.valueOf(frmtdtxtfldFechanacimientoempleado.getText().trim()));
+		empleado.setFechaNac(convertirFechaSql(frmtdtxtfldFechanacimientoempleado.getText().trim()));
 		empleado.setCorreoElectronico(frmtxfCorreoElectronico.getText().trim());
 		empleado.setEstado(txfEstadoEmpleado.getText().trim());
 		empleado.setCiudad(txfCiudadEmpleado.getText().trim());
@@ -552,20 +554,99 @@ public class Fr_DatosEmpleado extends JFrame {
 		JOptionPane.showMessageDialog(this, respuesta.message(), respuesta.id() == 500 ? "Error" : "Aviso",
 				respuesta.id() == 500 ? JOptionPane.ERROR_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
 		if (respuesta.id() != 500) {
+			this.operacionEjecutada = true;
 			this.dispose();
 		}
 	}
 
 	private boolean validarCamposVacios() {
-		return !txfRfcEmpleado.getText().trim().isEmpty() && !txfCurpEmpleado.getText().trim().isEmpty()
-				&& !txfNombreCompletoEmpleado.getText().trim().isEmpty()
-				&& !txfNombreCortoEmpleado.getText().trim().isEmpty()
-				&& !frmtdtxtfldFechanacimientoempleado.getText().trim().isEmpty()
-				&& !frmtxfCorreoElectronico.getText().trim().isEmpty() && !txfEstadoEmpleado.getText().trim().isEmpty()
-				&& !txfCiudadEmpleado.getText().trim().isEmpty()
-				&& !textAreaDireccionEmpleado.getText().trim().isEmpty() && !txfCodigoPostal.getText().trim().isEmpty()
-				&& !txfClaveCuentaContable.getText().trim().isEmpty() && cmbSucursalEmpleado.getSelectedItem() != null;
+		String rfc = txfRfcEmpleado.getText().trim();
+		String curp = txfCurpEmpleado.getText().trim();
+		String fechaNacimiento = frmtdtxtfldFechanacimientoempleado.getText().trim();
 
+		if (rfc.isEmpty() || curp.isEmpty()
+				|| txfNombreCompletoEmpleado.getText().trim().isEmpty()
+				|| txfNombreCortoEmpleado.getText().trim().isEmpty()
+				|| fechaNacimiento.isEmpty() || fechaNacimiento.contains("_")
+				|| frmtxfCorreoElectronico.getText().trim().isEmpty()
+				|| txfEstadoEmpleado.getText().trim().isEmpty()
+				|| txfCiudadEmpleado.getText().trim().isEmpty()
+				|| textAreaDireccionEmpleado.getText().trim().isEmpty()
+				|| txfCodigoPostal.getText().trim().isEmpty()
+				|| cmbSucursalEmpleado.getSelectedItem() == null) {
+			JOptionPane.showMessageDialog(this, "Existen campos obligatorios vacíos", "Validación",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		if (rfc.length() != 13) {
+			JOptionPane.showMessageDialog(this,
+					"El RFC del empleado debe contener exactamente 13 caracteres", "Validación",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		if (curp.length() != 18) {
+			JOptionPane.showMessageDialog(this,
+					"La CURP del empleado debe contener exactamente 18 caracteres", "Validación",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		try {
+			LocalDate fecha = LocalDate.parse(fechaNacimiento, FECHA_VISIBLE);
+			if (fecha.isAfter(LocalDate.now())) {
+				JOptionPane.showMessageDialog(this,
+						"La fecha de nacimiento no puede ser posterior a la fecha actual", "Validación",
+						JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+		} catch (DateTimeParseException er) {
+			JOptionPane.showMessageDialog(this,
+					"La fecha de nacimiento debe tener el formato dd/MM/yyyy y ser una fecha válida", "Validación",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Crea la máscara de captura para la fecha de nacimiento.
+	 *
+	 * @return máscara con formato {@code dd/MM/yyyy}
+	 */
+	private MaskFormatter crearCampoFechaNacimiento() {
+		try {
+			MaskFormatter formatter = new MaskFormatter("##/##/####");
+			formatter.setPlaceholderCharacter('_');
+			formatter.setValidCharacters("0123456789");
+			return formatter;
+		} catch (ParseException er) {
+			throw new IllegalStateException("No se pudo configurar el formato de fecha", er);
+		}
+	}
+
+	/**
+	 * Convierte la fecha visible del formulario a {@link Date}.
+	 *
+	 * @param fechaVisible fecha en formato {@code dd/MM/yyyy}
+	 * @return fecha SQL correspondiente
+	 * @throws DateTimeParseException si el valor no representa una fecha válida
+	 */
+	private Date convertirFechaSql(String fechaVisible) {
+		return Date.valueOf(LocalDate.parse(fechaVisible, FECHA_VISIBLE));
+	}
+
+	/**
+	 * Convierte una fecha SQL al formato utilizado por el formulario.
+	 *
+	 * @param fecha fecha almacenada en la base de datos
+	 * @return fecha en formato {@code dd/MM/yyyy}, o una cadena vacía si es
+	 *         {@code null}
+	 */
+	private String formatearFechaVisible(Date fecha) {
+		return fecha == null ? "" : fecha.toLocalDate().format(FECHA_VISIBLE);
 	}
 
 	private void llenarCmbSucursales() {
@@ -575,6 +656,17 @@ public class Fr_DatosEmpleado extends JFrame {
 
 		AppContext.sucursalController.consultarNombreSucursales().forEach(cmbSucursalEmpleado::addItem);
 
+	}
+
+	/**
+	 * Indica si el formulario completó correctamente una operación de alta o
+	 * actualización de empleado.
+	 *
+	 * @return {@code true} si la persistencia terminó exitosamente; {@code false}
+	 *         si el formulario se cerró sin completar la operación
+	 */
+	public boolean isOperacionEjecutada() {
+		return this.operacionEjecutada;
 	}
 
 	private void listarTelefonoDeEmpleado(int idEmpleado) {
@@ -602,21 +694,6 @@ public class Fr_DatosEmpleado extends JFrame {
 
 	}
 
-	private void abrirFormConsultaCuentaContableEmpleado() {
-
-		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-
-		this.cuentaContable = dialog.getCuentaContable();
-
-		if (cuentaContable.idCuentaContable() < 0)
-			return;
-
-		this.txfClaveCuentaContable.setText(this.cuentaContable.claveCuentaContable());
-
-	}
-	
 	private void createTelefonoEmpleado(int idEmpleado) {
 		
 		String telefono = JOptionPane.showInputDialog(this, "Indique el número a registrar:", "Telefonos", JOptionPane.INFORMATION_MESSAGE);

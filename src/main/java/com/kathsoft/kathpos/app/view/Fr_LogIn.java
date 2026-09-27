@@ -70,6 +70,7 @@ public class Fr_LogIn extends JFrame {
 	private JPanel panelInferior;
 	private FlowLayout flowLayout;
 
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -81,7 +82,7 @@ public class Fr_LogIn extends JFrame {
 				}
 			}
 		});
-	}
+	}*/
 
 	public Fr_LogIn() {
 		setResizable(false);

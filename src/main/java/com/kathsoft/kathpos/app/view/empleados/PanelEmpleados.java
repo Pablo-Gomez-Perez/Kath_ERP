@@ -53,8 +53,7 @@ public class PanelEmpleados extends JPanel {
 		setBackground(new Color(255, 204, 0));
 		
 		modelTablaEmpleados = new DefaultTableModel();
-		modelTablaEmpleados.addColumn("id");
-		modelTablaEmpleados.addColumn("clave");
+		modelTablaEmpleados.addColumn("id");		
 		modelTablaEmpleados.addColumn("RFC");
 		modelTablaEmpleados.addColumn("CURP");
 		modelTablaEmpleados.addColumn("Nombre");
@@ -215,6 +214,14 @@ public class PanelEmpleados extends JPanel {
 				try {
 					Fr_DatosEmpleado fr = new Fr_DatosEmpleado(opcion, idEmpleado);
 					fr.setLocationRelativeTo(cm);
+					fr.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosed(java.awt.event.WindowEvent e) {
+							if (fr.isOperacionEjecutada()) {
+								llenarTablaEmpleados(txfNombreEmpleado.getText().trim());
+							}
+						}
+					});
 					fr.setVisible(true);
 				} catch (Exception er) {
 					er.printStackTrace();
@@ -234,7 +241,15 @@ public class PanelEmpleados extends JPanel {
 			return;
 		}
 		var respuesta = AppContext.empleadoController.eliminarEmpleado(idEmpleado);
-		MessageHandler.displayMessage(respuesta.id() == 500 ? MessageHandler.ERROR_MESSAGE : MessageHandler.DELETE_SUCCESS_MESSAGE,
-				this, respuesta.message());
+		boolean operacionExitosa = respuesta != null && respuesta.id() != 500;
+
+		MessageHandler.displayMessage(
+				operacionExitosa ? MessageHandler.DELETE_SUCCESS_MESSAGE : MessageHandler.ERROR_MESSAGE,
+				this,
+				respuesta == null ? "No se obtuvo respuesta al eliminar el empleado" : respuesta.message());
+
+		if (operacionExitosa) {
+			llenarTablaEmpleados(txfNombreEmpleado.getText().trim());
+		}
 	}
 }

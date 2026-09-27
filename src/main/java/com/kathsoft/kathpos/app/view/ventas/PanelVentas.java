@@ -12,12 +12,14 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,6 +32,7 @@ import com.kathsoft.kathpos.app.model.venta.VentaCriterioBusqueda;
 import com.kathsoft.kathpos.app.model.venta.VentaFiltro;
 import com.kathsoft.kathpos.app.model.venta.VentaListado;
 import com.kathsoft.kathpos.app.model.venta.VentaOrdenamiento;
+import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
@@ -65,6 +68,8 @@ public class PanelVentas extends JPanel {
 	private JComboBox<VentaCriterioBusqueda> comboBoxBuscarPor;
 	private JLabel lblOrdernarPor;
 	private JComboBox<VentaOrdenamiento> comboBoxBuscarPor_1;
+	private JButton btnVerDetalles;
+	private JButton btnCancelarVenta;
 
 	/**
 	 * Create the panel.
@@ -111,6 +116,18 @@ public class PanelVentas extends JPanel {
 				abrirFormVentas(sucursal.getIdSucursal());
 			}
 		});
+		
+		this.btnCancelarVenta = new JButton("Cancelar Venta");
+		this.btnCancelarVenta.setIcon(new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/nwCancel.png")));
+		this.btnCancelarVenta.setBackground(new Color(237, 51, 59));
+		this.btnCancelarVenta.addActionListener(e -> this.cancelarVentaSeleccionada());
+		this.panelVentasCentralBotones.add(this.btnCancelarVenta);
+		
+		this.btnVerDetalles = new JButton("Ver Detalles");
+		this.btnVerDetalles.setIcon(new ImageIcon(PanelVentas.class.getResource("/com/kathsoft/kathpos/app/assets/reportes.jpg")));
+		this.btnVerDetalles.setBackground(new Color(143, 240, 164));
+		this.btnVerDetalles.addActionListener(e -> this.verDetalleVentaSeleccionada());
+		this.panelVentasCentralBotones.add(this.btnVerDetalles);
 		btNuevaVenta
 				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		btNuevaVenta.setBackground(new Color(152, 251, 152));
@@ -282,13 +299,100 @@ public class PanelVentas extends JPanel {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas fr = new com.kathsoft.kathpos.app.view.ventas.Fr_PuntoDeVentas(
-						idSucursal);
+				Fr_PuntoDeVentas fr = new Fr_PuntoDeVentas(idSucursal, PanelVentas.this::llenarTablaVentas);
 				fr.setLocationRelativeTo(cm);
 				fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				fr.setVisible(true);
 			}
 		});
+	}
+
+	private void abrirDetalleVenta(int idVenta) {
+		if (this.sucursal == null || this.sucursal.getIdSucursal() <= 0 || idVenta <= 0) {
+			return;
+		}
+
+		Component cm = this;
+		EventQueue.invokeLater(() -> {
+			Fr_PuntoDeVentas fr = new Fr_PuntoDeVentas(this.sucursal.getIdSucursal(), PanelVentas.this::llenarTablaVentas);
+			fr.setLocationRelativeTo(cm);
+			fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			if (fr.cargarVentaPorId(idVenta)) {
+				fr.setVisible(true);
+			} else {
+				fr.dispose();
+			}
+		});
+	}
+
+	private Integer obtenerIdVentaSeleccionada() {
+		int filaVista = this.tablaVentas.getSelectedRow();
+		if (filaVista < 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Seleccione una venta de la tabla");
+			return null;
+		}
+
+		int filaModelo = this.tablaVentas.convertRowIndexToModel(filaVista);
+		Object valorId = this.modelTablaVentas.getValueAt(filaModelo, 0);
+		try {
+			int idVenta = valorId instanceof Number numero ? numero.intValue()
+					: Integer.parseInt(String.valueOf(valorId).trim());
+			if (idVenta <= 0) {
+				throw new NumberFormatException();
+			}
+			return Integer.valueOf(idVenta);
+		} catch (Exception er) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"No fue posible identificar la venta seleccionada");
+			return null;
+		}
+	}
+
+	private void verDetalleVentaSeleccionada() {
+		Integer idVenta = this.obtenerIdVentaSeleccionada();
+		if (idVenta != null) {
+			this.abrirDetalleVenta(idVenta.intValue());
+		}
+	}
+
+	private void cancelarVentaSeleccionada() {
+		Integer idVenta = this.obtenerIdVentaSeleccionada();
+		if (idVenta == null) {
+			return;
+		}
+
+		int confirmacion = JOptionPane.showConfirmDialog(this,
+				"¿Está seguro de cancelar la venta " + idVenta + "?\nLas existencias serán reincorporadas por el sistema.",
+				"Cancelar venta", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (confirmacion != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		try {
+			SpResponseModel respuesta = AppContext.ventasController.cancelVenta(idVenta.intValue());
+			if (this.esRespuestaError(respuesta)) {
+				String mensaje = respuesta == null ? "No se recibió respuesta al cancelar la venta" : respuesta.message();
+				MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, mensaje);
+				return;
+			}
+
+			JOptionPane.showMessageDialog(this, respuesta.message(), "Venta cancelada", JOptionPane.INFORMATION_MESSAGE);
+			this.llenarTablaVentas();
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, er.getMessage());
+		}
+	}
+
+	private boolean esRespuestaError(SpResponseModel respuesta) {
+		if (respuesta == null || respuesta.id() <= 0) {
+			return true;
+		}
+		if (respuesta.id() != 500) {
+			return false;
+		}
+		return respuesta.message() == null
+				|| !respuesta.message().toLowerCase(Locale.ROOT).contains("correct");
 	}
 
 	/**

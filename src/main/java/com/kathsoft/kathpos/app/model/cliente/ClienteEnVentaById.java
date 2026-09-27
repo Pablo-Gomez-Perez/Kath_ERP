@@ -1,18 +1,15 @@
 package com.kathsoft.kathpos.app.model.cliente;
 
-import java.io.Serializable;
 import java.sql.Date;
-import java.util.Objects;
 
 /**
- * DTO con el resultado de getClienteById.
+ * DTO con el resultado de getClienteParaVentaById.
  */
-public class ClienteById implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class ClienteEnVentaById {
 
 	private int idCliente;
 	private int idTipoCliente;
+	private String tipoCliente;
 	private String rfc;
 	private String nombreCompleto;
 	private String nombreCorto;
@@ -24,11 +21,12 @@ public class ClienteById implements Serializable {
 	private String codigoPostal;
 	private boolean activo;
 
-	public ClienteById(int idCliente, int idTipoCliente, String rfc, String nombreCompleto,
-			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad,
-			String direccion, String codigoPostal, boolean activo) {
+	public ClienteEnVentaById(int idCliente, int idTipoCliente, String tipoCliente, String rfc,
+			String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico,
+			String estado, String ciudad, String direccion, String codigoPostal, boolean activo) {
 		this.idCliente = idCliente;
 		this.idTipoCliente = idTipoCliente;
+		this.tipoCliente = tipoCliente;
 		this.rfc = rfc;
 		this.nombreCompleto = nombreCompleto;
 		this.nombreCorto = nombreCorto;
@@ -41,7 +39,7 @@ public class ClienteById implements Serializable {
 		this.activo = activo;
 	}
 
-	public ClienteById() {
+	public ClienteEnVentaById() {
 	}
 
 	public int getIdCliente() {
@@ -58,6 +56,14 @@ public class ClienteById implements Serializable {
 
 	public void setIdTipoCliente(int idTipoCliente) {
 		this.idTipoCliente = idTipoCliente;
+	}
+
+	public String getTipoCliente() {
+		return tipoCliente;
+	}
+
+	public void setTipoCliente(String tipoCliente) {
+		this.tipoCliente = tipoCliente;
 	}
 
 	public String getRfc() {
@@ -141,23 +147,11 @@ public class ClienteById implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(Boolean.valueOf(activo), ciudad, codigoPostal, correoElectronico, direccion, estado,
-				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idTipoCliente), nombreCompleto, nombreCorto, rfc);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof ClienteById))
-			return false;
-		ClienteById other = (ClienteById) obj;
-		return activo == other.activo && idCliente == other.idCliente && idTipoCliente == other.idTipoCliente
-				&& Objects.equals(rfc, other.rfc) && Objects.equals(nombreCompleto, other.nombreCompleto)
-				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(fechaNac, other.fechaNac)
-				&& Objects.equals(correoElectronico, other.correoElectronico) && Objects.equals(estado, other.estado)
-				&& Objects.equals(ciudad, other.ciudad) && Objects.equals(direccion, other.direccion)
-				&& Objects.equals(codigoPostal, other.codigoPostal);
+	public String toString() {
+		return "ClienteEnVentaById [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente
+				+ ", tipoCliente=" + tipoCliente + ", rfc=" + rfc + ", nombreCompleto=" + nombreCompleto
+				+ ", nombreCorto=" + nombreCorto + ", fechaNac=" + fechaNac + ", correoElectronico="
+				+ correoElectronico + ", estado=" + estado + ", ciudad=" + ciudad + ", direccion=" + direccion
+				+ ", codigoPostal=" + codigoPostal + ", activo=" + activo + "]";
 	}
 }

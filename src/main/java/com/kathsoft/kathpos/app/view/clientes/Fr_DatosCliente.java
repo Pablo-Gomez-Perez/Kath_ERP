@@ -17,10 +17,8 @@ import javax.swing.text.MaskFormatter;
 import com.kathsoft.kathpos.app.model.cliente.ClienteById;
 import com.kathsoft.kathpos.app.model.cliente.Clientes;
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
-import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
-import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -38,7 +36,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
@@ -103,7 +100,6 @@ public class Fr_DatosCliente extends JFrame {
 	private int tipoOperacion;
 	private JButton btnAgregarTelefono;
 	private JButton btnEliminarTelefono;
-	private CuentaContableResponseViewModel cuentaContable;
 	private DefaultTableModel tablaTelefonosModel;
 	private boolean operacionEjecutada = false;
 
@@ -171,17 +167,14 @@ public class Fr_DatosCliente extends JFrame {
 
 		txfCtaContable = new JTextField();
 		txfCtaContable.setColumns(10);
+		txfCtaContable.setText("");
+		txfCtaContable.setEditable(false);
+		txfCtaContable.setEnabled(false);
 
 		btnFormConsultaCuentaContable = new JButton("");
-		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				abrirFormConsultaCuentaContablCliente();
-
-			}
-		});
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(
 				Fr_DatosCliente.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
+		btnFormConsultaCuentaContable.setEnabled(false);
 
 		lblCategoria = new JLabel("Categoria");
 
@@ -567,7 +560,7 @@ public class Fr_DatosCliente extends JFrame {
 
 			this.indiceCliente = cl.getIdCliente();
 			this.txfRfcCliente.setText(cl.getRfc());
-			this.txfCtaContable.setText(cl.getClaveCuentaContable());
+			this.txfCtaContable.setText("");
 			this.txfNombreCompleto.setText(cl.getNombreCompleto());
 			this.txfNombreCorto.setText(cl.getNombreCorto());
 			this.frmtdtxtfldFechaNacimiento.setText(formatearFechaVisible(cl.getFechaNac()));
@@ -691,8 +684,6 @@ public class Fr_DatosCliente extends JFrame {
 		cl.setRfc(this.txfRfcCliente.getText().trim());
 		cl.setNombreCompleto(this.txfNombreCompleto.getText().trim());
 		cl.setNombreCorto(this.txfNombreCorto.getText().trim());
-		cl.setIdCuentaContable(this.cuentaContable != null ? this.cuentaContable.idCuentaContable() : 0);
-		cl.setClaveCuentaContable(this.txfCtaContable.getText().trim());
 		cl.setFechaNac(convertirFechaSql(this.frmtdtxtfldFechaNacimiento.getText().trim()));
 		cl.setCorreoElectronico(this.txfCorreoElectronico.getText().trim());
 		cl.setEstado(this.txfEstado.getText().trim());
@@ -787,31 +778,6 @@ public class Fr_DatosCliente extends JFrame {
 		}
 	}
 
-	/**
-	 * Abre el diálogo de consulta de cuentas contables y asigna la cuenta
-	 * seleccionada al cliente.
-	 *
-	 * <p>
-	 * Si no se selecciona una cuenta válida, no modifica el campo contable.
-	 * </p>
-	 *
-	 * @see ConsultaCuentaContableDialog
-	 * @see CuentaContableResponseViewModel
-	 */
-	private void abrirFormConsultaCuentaContablCliente() {
-
-		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-
-		this.cuentaContable = dialog.getCuentaContable();
-
-		if (cuentaContable.idCuentaContable() < 0)
-			return;
-
-		this.txfCtaContable.setText(this.cuentaContable.claveCuentaContable());
-
-	}
 
 	/**
 	 * Consulta y carga en tabla los teléfonos asociados al cliente actual.

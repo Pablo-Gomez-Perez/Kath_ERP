@@ -7,19 +7,14 @@ import java.sql.Date;
 import java.util.Objects;
 
 /**
- * @author PABLO
+ * Modelo operativo de cliente.
  *
+ * <p>La relación con cuentas contables fue eliminada del esquema de clientes.</p>
  */
 public class Clientes {
 
-	/**
-	 * 
-	 */
-
 	private int idCliente;
 	private int idTipoCliente;
-	private int idCuentaContable;
-	private String claveCuentaContable;
 	private String rfc;
 	private String nombreCompleto;
 	private String nombreCorto;
@@ -31,13 +26,11 @@ public class Clientes {
 	private String codigoPostal;
 	private boolean activo;
 
-	public Clientes(int idCliente, int idTipoCliente, int idCuentaContable, String rfc, String nombreCompleto,
-			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad, String direccion,
-			String codigoPostal, boolean activo) {
-		super();
+	public Clientes(int idCliente, int idTipoCliente, String rfc, String nombreCompleto,
+			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad,
+			String direccion, String codigoPostal, boolean activo) {
 		this.idCliente = idCliente;
 		this.idTipoCliente = idTipoCliente;
-		this.idCuentaContable = idCuentaContable;
 		this.rfc = rfc;
 		this.nombreCompleto = nombreCompleto;
 		this.nombreCorto = nombreCorto;
@@ -51,7 +44,6 @@ public class Clientes {
 	}
 
 	public Clientes() {
-
 	}
 
 	public int getIdCliente() {
@@ -70,28 +62,12 @@ public class Clientes {
 		this.idTipoCliente = idTipoCliente;
 	}
 
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
-	}
-
 	public int getId() {
 		return getIdCliente();
 	}
 
 	public void setId(int id) {
 		setIdCliente(id);
-	}
-
-	public String getClaveCuentaContable() {
-		return claveCuentaContable;
-	}
-
-	public void setClaveCuentaContable(String claveCuentaContable) {
-		this.claveCuentaContable = claveCuentaContable;
 	}
 
 	public String getNombre() {
@@ -200,37 +176,30 @@ public class Clientes {
 
 	@Override
 	public String toString() {
-		return "Clientes [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente + ", idCuentaContable="
-				+ idCuentaContable + ", rfc=" + rfc + ", nombreCompleto=" + nombreCompleto + ", nombreCorto="
-				+ nombreCorto + ", fechaNac=" + fechaNac + ", correoElectronico=" + correoElectronico + ", estado="
-				+ estado + ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal=" + codigoPostal
-				+ ", activo=" + activo + "]";
+		return "Clientes [idCliente=" + idCliente + ", idTipoCliente=" + idTipoCliente + ", rfc=" + rfc
+				+ ", nombreCompleto=" + nombreCompleto + ", nombreCorto=" + nombreCorto + ", fechaNac=" + fechaNac
+				+ ", correoElectronico=" + correoElectronico + ", estado=" + estado + ", ciudad=" + ciudad
+				+ ", direccion=" + direccion + ", codigoPostal=" + codigoPostal + ", activo=" + activo + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(Boolean.valueOf(activo), ciudad, codigoPostal, correoElectronico, direccion, estado,
-				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idCuentaContable), Integer.valueOf(idTipoCliente),
-				nombreCompleto, nombreCorto, rfc);
+				fechaNac, Integer.valueOf(idCliente), Integer.valueOf(idTipoCliente), nombreCompleto, nombreCorto, rfc);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Clientes other = (Clientes) obj;
-		return activo == other.activo && Objects.equals(ciudad, other.ciudad)
-				&& Objects.equals(codigoPostal, other.codigoPostal)
-				&& Objects.equals(correoElectronico, other.correoElectronico)
-				&& Objects.equals(direccion, other.direccion) && Objects.equals(estado, other.estado)
-				&& Objects.equals(fechaNac, other.fechaNac) && idCliente == other.idCliente
-				&& idCuentaContable == other.idCuentaContable && idTipoCliente == other.idTipoCliente
-				&& Objects.equals(nombreCompleto, other.nombreCompleto)
-				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(rfc, other.rfc);
+		return activo == other.activo && idCliente == other.idCliente && idTipoCliente == other.idTipoCliente
+				&& Objects.equals(rfc, other.rfc) && Objects.equals(nombreCompleto, other.nombreCompleto)
+				&& Objects.equals(nombreCorto, other.nombreCorto) && Objects.equals(fechaNac, other.fechaNac)
+				&& Objects.equals(correoElectronico, other.correoElectronico) && Objects.equals(estado, other.estado)
+				&& Objects.equals(ciudad, other.ciudad) && Objects.equals(direccion, other.direccion)
+				&& Objects.equals(codigoPostal, other.codigoPostal);
 	}
-
 }

@@ -47,7 +47,6 @@ public class LoginController implements java.io.Serializable {
 				if (rset.next()) {
 					EmpleadoLogin empleado = new EmpleadoLogin();
 					empleado.setIdEmpleado(rset.getInt("id_empleado"));
-					empleado.setIdCuentaContable(rset.getInt("id_cuenta_contable"));
 					empleado.setIdSucursal(rset.getInt("id_sucursal"));
 					empleado.setNombreSucursal(rset.getString("nombre_sucursal"));
 					empleado.setRfc(rset.getString("rfc"));

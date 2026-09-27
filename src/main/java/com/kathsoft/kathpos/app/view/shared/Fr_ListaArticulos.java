@@ -46,6 +46,7 @@ public class Fr_ListaArticulos extends JFrame {
 	private ArticuloController articuloController = new ArticuloController();
 	private String nombreArticulo;
 	private int idSucursal;
+	private int idTipoCliente;
 
 	/**
 	 * Referencia al formulario invocador que recibirá el artículo seleccionado.
@@ -68,17 +69,33 @@ public class Fr_ListaArticulos extends JFrame {
 	private JButton btnSeleccionarArticulo;
 
 	/**
-	 * Crea el formulario auxiliar para consultar y seleccionar artículos.
+	 * Crea el formulario auxiliar utilizando el tipo de cliente general. Se mantiene
+	 * para conservar compatibilidad con los módulos que no administran un tipo de
+	 * cliente específico.
 	 *
-	 * @param nombreArticulo texto inicial de búsqueda para filtrar artículos.
-	 * @param idSucursal identificador de la sucursal sobre la cual se consulta
-	 *                   la disponibilidad o información del artículo.
-	 * @param frame formulario invocador que recibirá el artículo seleccionado.
+	 * @param nombreArticulo texto inicial de búsqueda para filtrar artículos
+	 * @param idSucursal identificador de la sucursal consultada
+	 * @param frame formulario invocador que recibirá el artículo seleccionado
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, IListadoArticulosAcciones frame) {
+		this(nombreArticulo, idSucursal, ID_TIPO_CLIENTE_GENERAL, frame);
+	}
+
+	/**
+	 * Crea el formulario auxiliar de artículos respetando el tipo de cliente que
+	 * determina los precios mostrados y el precio recuperado al seleccionar una fila.
+	 *
+	 * @param nombreArticulo texto inicial de búsqueda para filtrar artículos
+	 * @param idSucursal identificador de la sucursal consultada
+	 * @param idTipoCliente identificador del tipo de cliente utilizado para precios
+	 * @param frame formulario invocador que recibirá el artículo seleccionado
+	 */
+	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, int idTipoCliente,
+			IListadoArticulosAcciones frame) {
 
 		this.nombreArticulo = nombreArticulo;
 		this.idSucursal = idSucursal;
+		this.idTipoCliente = idTipoCliente > 0 ? idTipoCliente : ID_TIPO_CLIENTE_GENERAL;
 		this.frame = frame;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -194,7 +211,7 @@ public class Fr_ListaArticulos extends JFrame {
 
 	private void llenarTablaArticulos(String nombreArticulo) {
 		this.modelTablaArticulos.setRowCount(0);
-		this.articuloController.verArticulosEnTabla(this.idSucursal, nombreArticulo, ID_TIPO_CLIENTE_GENERAL)
+		this.articuloController.verArticulosEnTabla(this.idSucursal, nombreArticulo, this.idTipoCliente)
 				.forEach(this.modelTablaArticulos::addRow);
 	}
 
@@ -221,7 +238,7 @@ public class Fr_ListaArticulos extends JFrame {
 			int idArticulo = this.obtenerIdArticuloSeleccionado(filaModelo);
 			String codigoArticulo = String.valueOf(this.modelTablaArticulos.getValueAt(filaModelo, 1));
 			ArticuloByCodigo articulo = this.articuloController.consultarArticuloPorCodigo(codigoArticulo,
-					this.idSucursal, ID_TIPO_CLIENTE_GENERAL);
+					this.idSucursal, this.idTipoCliente);
 
 			if (articulo == null || articulo.getIdArticulo() <= 0) {
 				this.manejarArticuloNoDisponible(idArticulo);

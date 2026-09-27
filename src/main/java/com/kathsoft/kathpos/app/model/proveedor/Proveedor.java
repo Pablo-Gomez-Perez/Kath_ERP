@@ -4,13 +4,13 @@
 package com.kathsoft.kathpos.app.model.proveedor;
 
 /**
- * @author PABLO
+ * Modelo operativo de proveedor.
  *
+ * @author PABLO
  */
 public class Proveedor {
 
 	private int idProveedor;
-	private int idCuentaContable;
 	private String rfc;
 	private String nombre;
 	private String descripcion;
@@ -21,12 +21,10 @@ public class Proveedor {
 	private String codigoPostal;
 	private boolean activo;
 
-	public Proveedor(int idProveedor, int idCuentaContable, String rfc, String nombre, String descripcion,
+	public Proveedor(int idProveedor, String rfc, String nombre, String descripcion,
 			String correoElectronico, String estado, String ciudad, String direccion, String codigoPostal,
 			boolean activo) {
-		super();
 		this.idProveedor = idProveedor;
-		this.idCuentaContable = idCuentaContable;
 		this.rfc = rfc;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
@@ -39,7 +37,6 @@ public class Proveedor {
 	}
 
 	public Proveedor() {
-		super();
 	}
 
 	public int getIdProveedor() {
@@ -48,14 +45,6 @@ public class Proveedor {
 
 	public void setIdProveedor(int idProveedor) {
 		this.idProveedor = idProveedor;
-	}
-
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
 	}
 
 	public String getRfc() {
@@ -132,19 +121,14 @@ public class Proveedor {
 
 	@Override
 	public String toString() {
-		return "Proveedor [idProveedor=" + idProveedor + ", idCuentaContable=" + idCuentaContable + ", rfc=" + rfc
-				+ ", nombre=" + nombre + ", descripcion=" + descripcion + ", correoElectronico=" + correoElectronico
-				+ ", estado=" + estado + ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal="
-				+ codigoPostal + ", activo=" + activo + "]";
+		return "Proveedor [idProveedor=" + idProveedor + ", rfc=" + rfc + ", nombre=" + nombre
+				+ ", descripcion=" + descripcion + ", correoElectronico=" + correoElectronico + ", estado=" + estado
+				+ ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal=" + codigoPostal
+				+ ", activo=" + activo + "]";
 	}
-	
+
 	/**
 	 * Constructor fluido para crear instancias de {@link Proveedor}.
-	 *
-	 * <p>Permite construir objetos {@code Proveedor} de forma legible, encadenando
-	 * métodos para asignar sus propiedades.</p>
-	 *
-	 * @author PABLO
 	 */
 	public static class ProveedorBuilder {
 
@@ -156,11 +140,6 @@ public class Proveedor {
 
 		public ProveedorBuilder idProveedor(int idProveedor) {
 			this.proveedor.idProveedor = idProveedor;
-			return this;
-		}
-
-		public ProveedorBuilder idCuentaContable(int idCuentaContable) {
-			this.proveedor.idCuentaContable = idCuentaContable;
 			return this;
 		}
 
@@ -213,5 +192,4 @@ public class Proveedor {
 			return this.proveedor;
 		}
 	}
-
 }

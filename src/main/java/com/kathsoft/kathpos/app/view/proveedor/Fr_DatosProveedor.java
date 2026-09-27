@@ -10,8 +10,6 @@ import com.kathsoft.kathpos.app.controller.TelefonosProveedorController;
 import com.kathsoft.kathpos.app.model.proveedor.Proveedor;
 import com.kathsoft.kathpos.app.model.proveedor.ProveedorById;
 import com.kathsoft.kathpos.app.model.proveedor.TelefonoProveedor;
-import com.kathsoft.kathpos.app.model.viewmodel.CuentaContableResponseViewModel;
-import com.kathsoft.kathpos.app.view.contabilidad.ConsultaCuentaContableDialog;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
 
@@ -23,7 +21,6 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.Component;
 import javax.swing.Box;
-import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JTextArea;
@@ -39,6 +36,10 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JScrollPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 public class Fr_DatosProveedor extends JFrame {
 
@@ -57,7 +58,6 @@ public class Fr_DatosProveedor extends JFrame {
 	private Component horizontalStrut_10;
 	private JButton btn_Guardar;
 	private int indiceProveedor;
-	private CuentaContableResponseViewModel cuentaContable;
 	private boolean operacionEjecutada = false;
 	private boolean proveedorActivo = true;
 	private JLabel lblRfc;
@@ -123,6 +123,7 @@ public class Fr_DatosProveedor extends JFrame {
 		lblRfc = new JLabel("RFC");
 		
 		txfRFC = new JTextField();
+		((AbstractDocument) txfRFC.getDocument()).setDocumentFilter(new LongitudMaximaFilter(13));
 		txfRFC.setColumns(10);
 		
 		JLabel lblNombre = new JLabel("Nombre");
@@ -138,12 +139,7 @@ public class Fr_DatosProveedor extends JFrame {
 		txfClaveCtaContable.setColumns(10);
 		
 		JButton btnFormConsultaCuentaContable = new JButton("");
-		btnFormConsultaCuentaContable.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				abrirFormConsultaCuentaContableProveedor();
-			}
-		});
+		btnFormConsultaCuentaContable.setEnabled(false);
 		btnFormConsultaCuentaContable.setIcon(new ImageIcon(Fr_DatosProveedor.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		
 		JLabel lblMail = new JLabel("Mail");
@@ -468,11 +464,11 @@ public class Fr_DatosProveedor extends JFrame {
 			return true;
 		}
 
-		if (rfc.length() != 10 && rfc.length() != 13) {
+		if (rfc.length() != 12 && rfc.length() != 13) {
 			MessageHandler.displayMessage(
 					MessageHandler.WARN_MESSAGE,
 					this,
-					"El RFC del proveedor debe tener exactamente 10 o 13 caracteres"
+					"El RFC del proveedor debe tener exactamente 12 caracteres para persona moral o 13 para persona física"
 			);
 			return true;
 		}
@@ -482,10 +478,6 @@ public class Fr_DatosProveedor extends JFrame {
 			return true;
 		}
 
-		if (this.cuentaContable == null || this.cuentaContable.idCuentaContable() < 0) {
-			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "Debe seleccionar una cuenta contable");
-			return true;
-		}
 
 		if (correo.isEmpty()) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, "El correo electronico del proveedor es obligatorio");
@@ -548,7 +540,6 @@ public class Fr_DatosProveedor extends JFrame {
 	private Proveedor buildProveedor() {
 		return new Proveedor.ProveedorBuilder()
 				.idProveedor(this.indiceProveedor)
-				.idCuentaContable(this.cuentaContable.idCuentaContable())
 				.rfc(this.txfRFC.getText().trim().toUpperCase())
 				.nombre(this.txfNombre.getText().trim())
 				.descripcion(this.textAreaDescripcion.getText().trim())
@@ -584,15 +575,11 @@ public class Fr_DatosProveedor extends JFrame {
 		}
 
 		this.indiceProveedor = proveedor.getIdProveedor();
-		this.cuentaContable = new CuentaContableResponseViewModel(
-				proveedor.getIdCuentaContable(),
-				proveedor.getClaveCuentaContable()
-		);
 		this.proveedorActivo = proveedor.isActivo();
 
 		this.txfRFC.setText(this.valueOrEmpty(proveedor.getRfc()));
 		this.txfNombre.setText(this.valueOrEmpty(proveedor.getNombre()));
-		this.txfClaveCtaContable.setText(this.valueOrEmpty(proveedor.getClaveCuentaContable()));
+		this.txfClaveCtaContable.setText("");
 		this.txfCorreoElectronico.setText(this.valueOrEmpty(proveedor.getCorreoElectronico()));
 		this.txfEstado.setText(this.valueOrEmpty(proveedor.getEstado()));
 		this.txfCiudad.setText(this.valueOrEmpty(proveedor.getCiudad()));
@@ -601,35 +588,43 @@ public class Fr_DatosProveedor extends JFrame {
 		this.textAreaDescripcion.setText(this.valueOrEmpty(proveedor.getDescripcion()));
 	}
 
-	/**
-	 * Abre el dialogo de consulta de cuentas contables y asigna la cuenta
-	 * seleccionada al proveedor.
-	 *
-	 * <p>
-	 * Si no se selecciona una cuenta valida, no modifica el campo contable.
-	 * </p>
-	 *
-	 * @see ConsultaCuentaContableDialog
-	 * @see CuentaContableResponseViewModel
-	 */
-	private void abrirFormConsultaCuentaContableProveedor() {
-
-		ConsultaCuentaContableDialog dialog = new ConsultaCuentaContableDialog(this);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-
-		this.cuentaContable = dialog.getCuentaContable();
-
-		if (this.cuentaContable.idCuentaContable() < 0) {
-			return;
-		}
-
-		this.txfClaveCtaContable.setText(this.cuentaContable.claveCuentaContable());
-
-	}
-
 	private String valueOrEmpty(String value) {
 		return value == null ? "" : value;
+	}
+
+	/**
+	 * Limita la longitud máxima del contenido de un documento de texto.
+	 */
+	private static final class LongitudMaximaFilter extends DocumentFilter {
+
+		private final int longitudMaxima;
+
+		private LongitudMaximaFilter(int longitudMaxima) {
+			this.longitudMaxima = longitudMaxima;
+		}
+
+		@Override
+		public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+				throws BadLocationException {
+			if (string == null) {
+				return;
+			}
+
+			if (fb.getDocument().getLength() + string.length() <= longitudMaxima) {
+				super.insertString(fb, offset, string, attr);
+			}
+		}
+
+		@Override
+		public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+				throws BadLocationException {
+			String reemplazo = text == null ? "" : text;
+			int nuevaLongitud = fb.getDocument().getLength() - length + reemplazo.length();
+
+			if (nuevaLongitud <= longitudMaxima) {
+				super.replace(fb, offset, length, text, attrs);
+			}
+		}
 	}
 
 	/**

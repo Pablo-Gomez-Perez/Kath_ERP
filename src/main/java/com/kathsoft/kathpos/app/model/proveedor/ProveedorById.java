@@ -11,9 +11,7 @@ package com.kathsoft.kathpos.app.model.proveedor;
 public class ProveedorById {
 
 	private int idProveedor;
-	private int idCuentaContable;
 	private String rfc;
-	private String claveCuentaContable;
 	private String nombre;
 	private String descripcion;
 	private String correoElectronico;
@@ -24,17 +22,13 @@ public class ProveedorById {
 	private boolean activo;
 
 	public ProveedorById() {
-		super();
 	}
 
-	public ProveedorById(int idProveedor, int idCuentaContable, String rfc, String claveCuentaContable, String nombre,
-			String descripcion, String correoElectronico, String estado, String ciudad, String direccion,
+	public ProveedorById(int idProveedor, String rfc, String nombre, String descripcion,
+			String correoElectronico, String estado, String ciudad, String direccion,
 			String codigoPostal, boolean activo) {
-		super();
 		this.idProveedor = idProveedor;
-		this.idCuentaContable = idCuentaContable;
 		this.rfc = rfc;
-		this.claveCuentaContable = claveCuentaContable;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.correoElectronico = correoElectronico;
@@ -53,28 +47,12 @@ public class ProveedorById {
 		this.idProveedor = idProveedor;
 	}
 
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
-	}
-
 	public String getRfc() {
 		return rfc;
 	}
 
 	public void setRfc(String rfc) {
 		this.rfc = rfc;
-	}
-
-	public String getClaveCuentaContable() {
-		return claveCuentaContable;
-	}
-
-	public void setClaveCuentaContable(String claveCuentaContable) {
-		this.claveCuentaContable = claveCuentaContable;
 	}
 
 	public String getNombre() {
@@ -143,8 +121,7 @@ public class ProveedorById {
 
 	@Override
 	public String toString() {
-		return "ProveedorById [idProveedor=" + idProveedor + ", idCuentaContable=" + idCuentaContable
-				+ ", rfc=" + rfc + ", claveCuentaContable=" + claveCuentaContable + ", nombre=" + nombre
+		return "ProveedorById [idProveedor=" + idProveedor + ", rfc=" + rfc + ", nombre=" + nombre
 				+ ", descripcion=" + descripcion + ", correoElectronico=" + correoElectronico + ", estado=" + estado
 				+ ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal=" + codigoPostal
 				+ ", activo=" + activo + "]";
@@ -166,18 +143,8 @@ public class ProveedorById {
 			return this;
 		}
 
-		public ProveedorByIdBuilder idCuentaContable(int idCuentaContable) {
-			this.proveedor.idCuentaContable = idCuentaContable;
-			return this;
-		}
-
 		public ProveedorByIdBuilder rfc(String rfc) {
 			this.proveedor.rfc = rfc;
-			return this;
-		}
-
-		public ProveedorByIdBuilder claveCuentaContable(String claveCuentaContable) {
-			this.proveedor.claveCuentaContable = claveCuentaContable;
 			return this;
 		}
 

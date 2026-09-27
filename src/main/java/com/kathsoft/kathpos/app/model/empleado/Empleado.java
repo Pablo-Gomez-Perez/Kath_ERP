@@ -6,13 +6,11 @@ package com.kathsoft.kathpos.app.model.empleado;
 import java.sql.Date;
 
 /**
- * @author PABLO
- *
+ * Modelo operativo de empleado.
  */
 public class Empleado {
 
 	private int idEmpleado;
-	private int idCuentaContable;
 	private int idSucursal;
 	private String rfc;
 	private String curp;
@@ -26,7 +24,7 @@ public class Empleado {
 	private String codigoPostal;
 	private String contrasenia;
 	private boolean activo;
-	
+
 	public static class EmpleadoBuilder {
 
 		private final Empleado empleado;
@@ -37,11 +35,6 @@ public class Empleado {
 
 		public EmpleadoBuilder idEmpleado(int idEmpleado) {
 			this.empleado.idEmpleado = idEmpleado;
-			return this;
-		}
-
-		public EmpleadoBuilder idCuentaContable(int idCuentaContable) {
-			this.empleado.idCuentaContable = idCuentaContable;
 			return this;
 		}
 
@@ -114,13 +107,11 @@ public class Empleado {
 			return this.empleado;
 		}
 	}
-	
-	public Empleado(int idEmpleado, int idCuentaContable, int idSucursal, String rfc, String curp,
-			String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico, String estado,
-			String ciudad, String direccion, String codigoPostal, String contrasenia, boolean activo) {
-		super();
+
+	public Empleado(int idEmpleado, int idSucursal, String rfc, String curp, String nombreCompleto,
+			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad,
+			String direccion, String codigoPostal, String contrasenia, boolean activo) {
 		this.idEmpleado = idEmpleado;
-		this.idCuentaContable = idCuentaContable;
 		this.idSucursal = idSucursal;
 		this.rfc = rfc;
 		this.curp = curp;
@@ -145,14 +136,6 @@ public class Empleado {
 
 	public void setIdEmpleado(int idEmpleado) {
 		this.idEmpleado = idEmpleado;
-	}
-
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
 	}
 
 	public int getIdSucursal() {
@@ -261,16 +244,10 @@ public class Empleado {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Empleado [idEmpleado=").append(idEmpleado).append(", idCuentaContable=")
-				.append(idCuentaContable).append(", idSucursal=").append(idSucursal).append(", rfc=").append(rfc)
-				.append(", curp=").append(curp).append(", nombreCompleto=").append(nombreCompleto)
-				.append(", nombreCorto=").append(nombreCorto).append(", fechaNac=").append(fechaNac)
-				.append(", correoElectronico=").append(correoElectronico).append(", estado=").append(estado)
-				.append(", ciudad=").append(ciudad).append(", direccion=").append(direccion).append(", codigoPostal=")
-				.append(codigoPostal).append(", contrasenia=").append(contrasenia).append(", activo=").append(activo)
-				.append("]");
-		return builder.toString();
+		return "Empleado [idEmpleado=" + idEmpleado + ", idSucursal=" + idSucursal + ", rfc=" + rfc
+				+ ", curp=" + curp + ", nombreCompleto=" + nombreCompleto + ", nombreCorto=" + nombreCorto
+				+ ", fechaNac=" + fechaNac + ", correoElectronico=" + correoElectronico + ", estado=" + estado
+				+ ", ciudad=" + ciudad + ", direccion=" + direccion + ", codigoPostal=" + codigoPostal
+				+ ", activo=" + activo + "]";
 	}
-
 }

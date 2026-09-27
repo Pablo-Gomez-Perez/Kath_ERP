@@ -2,11 +2,12 @@ package com.kathsoft.kathpos.app.model.empleado;
 
 import java.sql.Date;
 
+/**
+ * DTO con el resultado de getEmpleadoById y getEmpleadoByRFC.
+ */
 public class EmpleadoById {
 
 	private int idEmpleado;
-	private int idCuentaContable;
-	private String claveCuentaContable;
 	private int idSucursal;
 	private String rfc;
 	private String curp;
@@ -30,16 +31,6 @@ public class EmpleadoById {
 
 		public EmpleadoBuilder idEmpleado(int idEmpleado) {
 			this.empleado.idEmpleado = idEmpleado;
-			return this;
-		}
-
-		public EmpleadoBuilder idCuentaContable(int idCuentaContable) {
-			this.empleado.idCuentaContable = idCuentaContable;
-			return this;
-		}
-		
-		public EmpleadoBuilder claveCuentaContable(String claveCuentaContable) {
-			this.empleado.claveCuentaContable = claveCuentaContable;
 			return this;
 		}
 
@@ -108,30 +99,10 @@ public class EmpleadoById {
 		}
 	}
 
-	/**
-	 * @param idEmpleado
-	 * @param idCuentaContable
-	 * @param claveCuentaContable
-	 * @param idSucursal
-	 * @param rfc
-	 * @param curp
-	 * @param nombreCompleto
-	 * @param nombreCorto
-	 * @param fechaNac
-	 * @param correoElectronico
-	 * @param estado
-	 * @param ciudad
-	 * @param direccion
-	 * @param codigoPostal
-	 * @param activo
-	 */
-	public EmpleadoById(int idEmpleado, int idCuentaContable, String claveCuentaContable, int idSucursal, String rfc,
-			String curp, String nombreCompleto, String nombreCorto, Date fechaNac, String correoElectronico,
-			String estado, String ciudad, String direccion, String codigoPostal, boolean activo) {
-		super();
+	public EmpleadoById(int idEmpleado, int idSucursal, String rfc, String curp, String nombreCompleto,
+			String nombreCorto, Date fechaNac, String correoElectronico, String estado, String ciudad,
+			String direccion, String codigoPostal, boolean activo) {
 		this.idEmpleado = idEmpleado;
-		this.idCuentaContable = idCuentaContable;
-		this.claveCuentaContable = claveCuentaContable;
 		this.idSucursal = idSucursal;
 		this.rfc = rfc;
 		this.curp = curp;
@@ -145,8 +116,9 @@ public class EmpleadoById {
 		this.codigoPostal = codigoPostal;
 		this.activo = activo;
 	}
-	
-	public EmpleadoById() {}
+
+	public EmpleadoById() {
+	}
 
 	public int getIdEmpleado() {
 		return idEmpleado;
@@ -154,22 +126,6 @@ public class EmpleadoById {
 
 	public void setIdEmpleado(int idEmpleado) {
 		this.idEmpleado = idEmpleado;
-	}
-
-	public int getIdCuentaContable() {
-		return idCuentaContable;
-	}
-
-	public void setIdCuentaContable(int idCuentaContable) {
-		this.idCuentaContable = idCuentaContable;
-	}
-
-	public String getClaveCuentaContable() {
-		return claveCuentaContable;
-	}
-
-	public void setClaveCuentaContable(String claveCuentaContable) {
-		this.claveCuentaContable = claveCuentaContable;
 	}
 
 	public int getIdSucursal() {
@@ -267,6 +223,4 @@ public class EmpleadoById {
 	public void setActivo(boolean activo) {
 		this.activo = activo;
 	}
-	
-	
 }
