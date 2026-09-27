@@ -133,6 +133,8 @@ END $$
  *
  * La transacción se administra desde CompraController (misma conexión).
  */
+DROP PROCEDURE IF EXISTS `kath_erp`.`deleteCompra` $
+
 CREATE PROCEDURE `kath_erp`.`deleteCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED
@@ -1063,6 +1065,8 @@ BEGIN
         'Artículo de compra actualizado correctamente' AS message;
 
 END $$
+
+DROP PROCEDURE IF EXISTS `kath_erp`.`updateCompra` $
 
 CREATE  PROCEDURE `kath_erp`.`updateCompra`(
     IN p_id_compra INT UNSIGNED,
