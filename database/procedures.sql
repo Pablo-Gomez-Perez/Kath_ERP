@@ -1,329 +1,162 @@
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE actualizarPassWordEmpleado(IN rfcEmpl VARCHAR(13), IN passwordE VARCHAR(15))
+CREATE PROCEDURE `kath_erp`.`actualizarPassWordEmpleado`(
+    IN rfcEmpl VARCHAR(13),
+    IN passwordE VARCHAR(255)
+)
+    MODIFIES SQL DATA
+    COMMENT 'Actualiza la contraseña hasheada de un empleado'
 BEGIN
-    UPDATE empleados
-    SET empleados.contrasenia = passwordE WHERE empleados.rfc = rfcEmpl;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE bucar_forma_pago_por_id(
-    IN idFormaDePago INT
+    UPDATE kath_erp.empleados
+    SET contrasenia = passwordE
+    WHERE rfc = rfcEmpl;
+END;
+
+CREATE PROCEDURE `kath_erp`.`bucar_forma_pago_por_id`(
+	IN idFormaDePago INT
 )
 BEGIN
-
+	
     SELECT * FROM formas_de_pago WHERE formas_de_pago.id = idFormaDePago;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_articulo_por_codigo(
-    IN codigo_a VARCHAR(65),
-    IN sucursal INT
-)
+CREATE PROCEDURE `kath_erp`.`buscar_categoria_por_nombre`(IN `nombre` VARCHAR(60))
 BEGIN
-
-    SELECT
-        articulo.id_articulo,
-        articulo.codigo_articulo,
-        proveedor.nombre,
+    SELECT 
+		categoria_producto.id_categoria,
         categoria_producto.nombre,
-        articulo.nombre,
-        articulo.codigo_sat,
-        articulo.descripcion,
-        existencia_x_sucursal.existencia,
-        articulo.es_exento,
-        articulo.costo_unitario,
-        articulo.precio_general,
-        articulo.precio_mayoreo,
-        articulo.cantidad_mayoreo
-    FROM existencia_x_sucursal
-    INNER JOIN articulo ON existencia_x_sucursal.id_articulo = articulo.id_articulo
-    INNER JOIN proveedor ON articulo.id_proveedor = proveedor.id_proveedor
-    INNER JOIN categoria_producto ON articulo.id_categoria = categoria_producto.id_categoria
-    WHERE articulo.codigo_articulo = codigo_a AND existencia_x_sucursal.id_sucursal = sucursal;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_categoria_por_nombre(IN `nombre` VARCHAR(60))
-BEGIN
-    SELECT
-        categoria_producto.id_categoria,
-        categoria_producto.nombre,
-        categoria_producto.descripcion,
+		categoria_producto.descripcion,
         categoria_producto.activo
     FROM categoria_producto WHERE categoria_producto.nombre LIKE CONCAT('%',nombre,'%');
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_cliente_por_nombre(
-    IN `nombre` VARCHAR(30)
+END;
+
+CREATE PROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
+	IN `nombre` VARCHAR(30)
 )
+    READS SQL DATA
+    COMMENT 'Busca clientes por nombre sin dependencias contables'
 BEGIN
 
     SELECT
-        cliente.id_cliente,
-        cliente.rfc,
-        cuentas_contables.clave,
-        cliente.nombre_completo,
-        cliente.nombre_corto,
-        cliente.correo_electronico,
-        cliente.estado,
-        cliente.ciudad,
-        cliente.direccion,
-        cliente.codigo_postal,
-        cliente.activo
-    FROM cliente
-    INNER JOIN cuentas_contables ON cuentas_contables.id_cuenta = cliente.id_cuenta_contable
-    WHERE cliente.nombre_completo LIKE CONCAT('%',nombre,'%');
+        c.id_cliente,
+        c.rfc,
+        c.nombre_completo,
+        c.nombre_corto,
+        c.correo_electronico,
+        c.estado,
+        c.ciudad,
+        c.direccion,
+        c.codigo_postal,
+        c.activo
+    FROM kath_erp.cliente AS c
+    WHERE c.nombre_completo LIKE CONCAT('%', nombre, '%');
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_cuenta_x_clave(
-    IN `clave_cuenta` VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`buscar_cuenta_x_clave`(
+	IN `clave_cuenta` VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
     COMMENT 'busqueda de una cuenta contable por su clave'
 BEGIN
+	
+	SELECT
+		cc.id_cuenta,
+		CASE WHEN cc.id_cuenta_padre IS NULL THEN 0 ELSE cc.id_cuenta_padre END AS 'id_cuenta_padre',
+		cc.fk_id_rubro,
+		rcc.fk_id_grupo_contable,
+		cc.clave,
+		cc.nombre,
+		cc.descripcion,
+		cc.nivel,
+		cc.ultimo_nivel 
+	FROM
+		kath_erp.cuentas_contables AS cc
+		INNER JOIN kath_erp.rubro_cuenta_contable rcc ON cc.fk_id_rubro = rcc.id_rubro
+		WHERE cc.clave LIKE CONCAT('%',`clave_cuenta`) COLLATE utf8mb4_general_ci;
+	
+END;
 
-    SELECT
-        cc.id_cuenta,
-        CASE WHEN cc.id_cuenta_padre IS NULL THEN 0 ELSE cc.id_cuenta_padre END AS 'id_cuenta_padre',
-        cc.fk_id_rubro,
-        rcc.fk_id_grupo_contable,
-        cc.clave,
-        cc.nombre,
-        cc.descripcion,
-        cc.nivel,
-        cc.ultimo_nivel
-    FROM
-        kath_erp.cuentas_contables AS cc
-        INNER JOIN kath_erp.rubro_cuenta_contable rcc ON cc.fk_id_rubro = rcc.id_rubro
-        WHERE cc.clave LIKE CONCAT('%',`clave_cuenta`) COLLATE utf8mb4_general_ci;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_cuenta_x_id(
-    IN `id_cuenta` INT
+CREATE PROCEDURE `kath_erp`.`buscar_cuenta_x_id`(
+	IN `id_cuenta` INT
 )
 BEGIN
+	
+	SELECT
+		_cc.id_cuenta,
+		_cp.nombre AS `nombre_cuenta_padre`,
+		_rcta.nombre AS `rubro_cuenta`,
+		_cc.nombre AS `nombre_cuenta`,
+		_cc.descripcion,
+		_cc.nivel,
+		_cc.ultimo_nivel,
+		_cc.cargo,
+		_cc.abono,
+		(_cc.cargo - _cc.abono) AS `saldo`,
+		_rcta.naturaleza
+	FROM cuentas_contables AS _cc
+	INNER JOIN cuentas_contables AS _cp ON _cc.id_cuenta_padre = _cp.id_cuenta 
+	INNER JOIN rubro_cuenta_contable AS _rcta ON _cc.fk_id_rubro = _rcta.id_rubro
+	WHERE _cc.id_cuenta = id_cuenta;
+	
+END;
 
-    SELECT
-        _cc.id_cuenta,
-        _cp.nombre AS `nombre_cuenta_padre`,
-        _rcta.nombre AS `rubro_cuenta`,
-        _cc.nombre AS `nombre_cuenta`,
-        _cc.descripcion,
-        _cc.nivel,
-        _cc.ultimo_nivel,
-        _cc.cargo,
-        _cc.abono,
-        (_cc.cargo - _cc.abono) AS `saldo`,
-        _rcta.naturaleza
-    FROM cuentas_contables AS _cc
-    INNER JOIN cuentas_contables AS _cp ON _cc.id_cuenta_padre = _cp.id_cuenta
-    INNER JOIN rubro_cuenta_contable AS _rcta ON _cc.fk_id_rubro = _rcta.id_rubro
-    WHERE _cc.id_cuenta = id_cuenta;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_empleado(
-    IN nombre_e VARCHAR(30)
+CREATE PROCEDURE `kath_erp`.`buscar_empleado`(
+	IN nombre_e VARCHAR(30)
 )
 BEGIN
-
-    SELECT
-        empleados.id_empleado,
-        sucursal.nombre,
-        empleados.rfc,
-        empleados.curp,
-        empleados.nombre_completo,
-        empleados.nombre_corto,
-        empleados.correo_electronico,
-        empleados.activo
-    FROM empleados
-    INNER JOIN sucursal ON empleados.id_sucursal = sucursal.id_sucursar
+	
+	SELECT
+		empleados.id_empleado,
+		sucursal.nombre,
+		empleados.rfc,
+		empleados.curp,
+		empleados.nombre_completo,
+		empleados.nombre_corto,
+		empleados.correo_electronico,
+		empleados.activo
+	FROM empleados
+	INNER JOIN sucursal ON empleados.id_sucursal = sucursal.id_sucursar
     WHERE empleados.nombre_completo LIKE CONCAT('%',nombre_e,'%') ORDER BY id_empleado;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_empleado_por_nombre(
-    IN nombre VARCHAR(10)
+CREATE PROCEDURE `kath_erp`.`buscar_empleado_por_nombre`(
+	IN nombre VARCHAR(10)
 )
 BEGIN
 
-    SELECT
-        empleados.id_empleado,
+	SELECT
+		empleados.id_empleado,
         empleados.nombre_completo
-    FROM empleados WHERE empleados.nombre_corto = nombre;
+	FROM empleados WHERE empleados.nombre_corto = nombre;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_proveedor_por_nombre(
-    IN nombre_prov VARCHAR(30)
+END;
+
+CREATE PROCEDURE `kath_erp`.`buscar_proveedor_por_nombre`(
+	IN nombre_prov VARCHAR(30)
 )
 BEGIN
 
-    SELECT
-        proveedor.id_proveedor,
-        proveedor.rfc,
-        sub_cuentas_tercer_nivel.clave,
-        proveedor.nombre,
-        proveedor.descripcion,
-        proveedor.correo_electronico,
-        proveedor.estado,
-        proveedor.ciudad,
-        proveedor.direccion,
-        proveedor.codigo_postal,
+	SELECT
+		proveedor.id_proveedor,
+		proveedor.rfc,
+		sub_cuentas_tercer_nivel.clave,
+		proveedor.nombre,
+		proveedor.descripcion,
+		proveedor.correo_electronico,
+		proveedor.estado,
+		proveedor.ciudad,
+		proveedor.direccion,
+		proveedor.codigo_postal,
         proveedor.activo
-    FROM proveedor
-    INNER JOIN sub_cuentas_tercer_nivel ON proveedor.id_cuenta_contable = sub_cuentas_tercer_nivel.id_cuenta
+	FROM proveedor
+	INNER JOIN sub_cuentas_tercer_nivel ON proveedor.id_cuenta_contable = sub_cuentas_tercer_nivel.id_cuenta
     WHERE proveedor.nombre LIKE CONCAT('%',nombre_prov,'%');
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_sucursal_por_id(
-    IN `id_sucursal` INT
+CREATE PROCEDURE `kath_erp`.`buscar_sucursal_por_id`(
+	IN `id_sucursal` INT
 )
 BEGIN
 SELECT id_sucursar,
@@ -339,185 +172,281 @@ SELECT id_sucursar,
 FROM sucursal
 WHERE sucursal.id_sucursar = id_sucursal;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_tipoCliente_por_id(
-    IN id_tipoCliente INT
+END;
+
+CREATE PROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
+	IN id_tipoCliente INT
 )
-BEGIN
+BEGIN	
     SELECT
-        tipo_cliente.id,
+		tipo_cliente.id,
         tipo_cliente.nombre,
         tipo_cliente.descripcion
-    FROM tipo_cliente
+	FROM tipo_cliente
     WHERE tipo_cliente.id = id_tipoCliente;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_ultima_venta()
+END;
+
+CREATE PROCEDURE `kath_erp`.`buscar_ultima_venta`()
 BEGIN
+	
+    SELECT 
+		ventas.id_venta
+	FROM ventas ORDER BY ventas.id_venta DESC LIMIT 1;
+    
+END;
 
-    SELECT
-        ventas.id_venta
-    FROM ventas ORDER BY ventas.id_venta DESC LIMIT 1;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE buscar_ventas_por(
-    IN dato VARCHAR(100),
-    IN opcion INT
+CREATE PROCEDURE `kath_erp`.`cancelVenta`(
+    IN p_id_venta INT UNSIGNED
 )
+    MODIFIES SQL DATA
+    COMMENT 'Cancela una venta y reincorpora sus existencias'
 BEGIN
 
+    DECLARE v_existe_venta INT DEFAULT 0;
 
-    IF opcion = 1 THEN
-         SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE ventas.id_venta LIKE CONCAT('%',dato,'%')
-        ORDER BY ventas.id_venta;
+    DECLARE v_status_venta BOOLEAN;
+    DECLARE v_tipo_venta BOOLEAN;
+    DECLARE v_id_sucursal BIGINT UNSIGNED;
+
+    DECLARE v_facturas INT DEFAULT 0;
+    DECLARE v_num_articulos INT DEFAULT 0;
+    DECLARE v_num_existencias INT DEFAULT 0;
+
+    DECLARE v_pagos_venta DECIMAL(18,2) DEFAULT 0;
+    DECLARE v_cobros_cliente DECIMAL(18,2) DEFAULT 0;
+
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_errno INT;
+    DECLARE v_text TEXT
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_errno = MYSQL_ERRNO,
+            v_text = MESSAGE_TEXT;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+
+    END;
+
+
+    IF p_id_venta IS NULL OR p_id_venta <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta es obligatoria';
     END IF;
 
 
-    IF opcion = 2 THEN
-         SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE empleados.nombre_corto LIKE CONCAT('%',dato,'%')
-        ORDER BY ventas.id_venta;
+    SELECT COUNT(*)
+    INTO v_existe_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta;
+
+
+    IF v_existe_venta = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta indicada no existe';
     END IF;
 
-    IF opcion = 3 THEN
-         SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE cliente.nombre_corto LIKE CONCAT('%',dato,'%')
-        ORDER BY ventas.id_venta;
-    END IF;
 
-    IF opcion = 4 THEN
-         SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE ventas.fecha LIKE CONCAT('%',dato,'%')
-        ORDER BY ventas.id_venta;
-    END IF;
+    /*
+     * Bloqueo de cabecera.
+     * Evita que la venta sea modificada concurrentemente mientras
+     * se procesa la cancelación.
+     */
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE cmb_tipoCliente()
-BEGIN
     SELECT
-        tipo_cliente.id,
+        status_venta,
+        tipo_venta,
+        id_sucursal
+    INTO
+        v_status_venta,
+        v_tipo_venta,
+        v_id_sucursal
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta
+    LIMIT 1
+    FOR UPDATE;
+
+
+    IF v_status_venta = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta ya se encuentra cancelada';
+    END IF;
+
+
+    /* Una venta facturada no se cancela */
+
+    SELECT COUNT(*)
+    INTO v_facturas
+    FROM kath_erp.factura
+    WHERE id_venta = p_id_venta;
+
+
+    IF v_facturas > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta no puede cancelarse porque tiene una factura relacionada';
+    END IF;
+
+
+    /*
+     * Para una venta a crédito verificamos:
+     *
+     * 1. pagos realizados al momento de la venta;
+     * 2. cobros posteriores registrados al cliente.
+     */
+
+    IF v_tipo_venta = FALSE THEN
+
+        SELECT
+            ROUND(
+                COALESCE(
+                    SUM(
+                        CAST(importe AS DECIMAL(18,2))
+                    ),
+                    0
+                ),
+                2
+            )
+        INTO v_pagos_venta
+        FROM kath_erp.pagos_x_venta
+        WHERE id_venta = p_id_venta;
+
+
+        SELECT
+            ROUND(
+                COALESCE(
+                    SUM(
+                        CAST(total AS DECIMAL(18,2))
+                    ),
+                    0
+                ),
+                2
+            )
+        INTO v_cobros_cliente
+        FROM kath_erp.cobro_clientes
+        WHERE id_venta = p_id_venta;
+
+
+        IF v_pagos_venta > 0
+           OR v_cobros_cliente > 0 THEN
+
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT =
+                    'La venta a crédito no puede cancelarse porque ya tiene pagos relacionados';
+
+        END IF;
+
+    END IF;
+
+
+    /*
+     * Antes de modificar nada comprobamos que todos los artículos
+     * tengan registro de existencia en la sucursal.
+     */
+
+    SELECT COUNT(DISTINCT id_articulo)
+    INTO v_num_articulos
+    FROM kath_erp.articulo_x_venta
+    WHERE id_venta = p_id_venta;
+
+
+    IF v_num_articulos = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta no contiene artículos registrados';
+    END IF;
+
+
+    SELECT COUNT(DISTINCT exs.id_articulo)
+    INTO v_num_existencias
+    FROM kath_erp.existencia_x_sucursal AS exs
+
+    INNER JOIN (
+        SELECT
+            id_articulo,
+            SUM(cantidad) AS cantidad
+        FROM kath_erp.articulo_x_venta
+        WHERE id_venta = p_id_venta
+        GROUP BY id_articulo
+    ) AS detalle
+        ON exs.id_articulo = detalle.id_articulo
+
+    WHERE exs.id_sucursal = v_id_sucursal;
+
+
+    IF v_num_existencias <> v_num_articulos THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No todos los artículos de la venta tienen existencia registrada en la sucursal';
+    END IF;
+
+
+    /*
+     * Reincorporar existencia.
+     *
+     * Se agrupan artículos para tolerar ventas históricas que
+     * pudieran contener más de una partida del mismo artículo.
+     */
+
+    UPDATE kath_erp.existencia_x_sucursal AS exs
+
+    INNER JOIN (
+        SELECT
+            id_articulo,
+            SUM(cantidad) AS cantidad
+        FROM kath_erp.articulo_x_venta
+        WHERE id_venta = p_id_venta
+        GROUP BY id_articulo
+    ) AS detalle
+        ON exs.id_articulo = detalle.id_articulo
+
+    SET exs.existencia =
+        COALESCE(exs.existencia, 0) + detalle.cantidad
+
+    WHERE exs.id_sucursal = v_id_sucursal;
+
+
+    /*
+     * Finalmente cancelar la venta.
+     */
+
+    UPDATE kath_erp.ventas
+    SET status_venta = FALSE
+    WHERE id_venta = p_id_venta;
+
+
+    SELECT
+        p_id_venta AS id,
+        'Venta cancelada y existencias reincorporadas correctamente'
+            AS message;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`cmb_tipoCliente`()
+BEGIN
+	SELECT
+		tipo_cliente.id,
         tipo_cliente.nombre
-    FROM tipo_cliente;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteArticuloCompra(
+	FROM tipo_cliente;
+END;
+
+CREATE PROCEDURE `kath_erp`.`deleteArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -638,231 +567,611 @@ BEGIN
     SELECT
         p_id_detalle_compra AS id,
         'Artículo eliminado de la compra correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteCategoriaProducto(
-    IN p_id_categoria INT UNSIGNED
+END;
+
+CREATE PROCEDURE `kath_erp`.`deleteCategoriaProducto`(
+	IN p_id_categoria INT UNSIGNED
 )
     MODIFIES SQL DATA
     COMMENT 'Inhabilita una categoria de producto'
 BEGIN
-
+	
     DECLARE v_existe_categoria INT DEFAULT 0;
-    DECLARE v_categoria_activa BOOLEAN DEFAULT FALSE;
+	DECLARE v_categoria_activa BOOLEAN DEFAULT FALSE;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-        ROLLBACK;
+		ROLLBACK;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
 
-    START TRANSACTION;
+	START TRANSACTION;
 
-    IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador de la categoria no es valido';
-    END IF;
+	IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador de la categoria no es valido';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_categoria
-    FROM categoria_producto
-    WHERE id_categoria = p_id_categoria;
+	SELECT COUNT(*)
+	INTO v_existe_categoria
+	FROM categoria_producto
+	WHERE id_categoria = p_id_categoria;
 
-    IF v_existe_categoria = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La categoria indicada no existe';
-    END IF;
+	IF v_existe_categoria = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La categoria indicada no existe';
+	END IF;
 
-    SELECT activo
-    INTO v_categoria_activa
-    FROM categoria_producto
-    WHERE id_categoria = p_id_categoria
-    FOR UPDATE;
+	SELECT activo
+	INTO v_categoria_activa
+	FROM categoria_producto
+	WHERE id_categoria = p_id_categoria
+	FOR UPDATE;
 
-    IF v_categoria_activa = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La categoria ya se encuentra inactiva';
-    END IF;
+	IF v_categoria_activa = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La categoria ya se encuentra inactiva';
+	END IF;
 
-    UPDATE categoria_producto
-    SET activo = FALSE
-    WHERE id_categoria = p_id_categoria;
+	UPDATE categoria_producto
+	SET activo = FALSE
+	WHERE id_categoria = p_id_categoria;
 
-    COMMIT;
+	COMMIT;
 
-    SELECT
-        200 AS id,
-        'Categoria inhabilitada correctamente' AS message;
+	SELECT
+		200 AS id,
+		'Categoria inhabilitada correctamente' AS message;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteCliente(
-    IN p_id_cliente INT UNSIGNED
+CREATE PROCEDURE `kath_erp`.`deleteCliente`(
+	IN p_id_cliente INT UNSIGNED
 )
     MODIFIES SQL DATA
-    COMMENT 'Cambia el status del cliente, y de su cuenta contable'
+    COMMENT 'Desactiva un cliente únicamente cuando no tiene saldo insoluto en ventas a crédito'
 BEGIN
 
-    DECLARE v_existe_cliente INT DEFAULT 0;
-    DECLARE v_cliente_activo BOOLEAN DEFAULT FALSE;
-    DECLARE v_id_cuenta_contable INT DEFAULT 0;
+	DECLARE v_existe_cliente INT DEFAULT 0;
+	DECLARE v_cliente_activo BOOLEAN DEFAULT FALSE;
+	DECLARE v_saldo_pendiente DECIMAL(20,2) DEFAULT 0;
 
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_saldo DOUBLE DEFAULT 0;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del cliente no es válido';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_cliente
+	FROM kath_erp.cliente
+	WHERE id_cliente = p_id_cliente;
+
+	IF v_existe_cliente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El cliente indicado no existe';
+	END IF;
+
+	SELECT activo
+	INTO v_cliente_activo
+	FROM kath_erp.cliente
+	WHERE id_cliente = p_id_cliente
+	FOR UPDATE;
+
+	IF v_cliente_activo = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El cliente ya se encuentra inactivo';
+	END IF;
+
+	/*
+	 * Saldo insoluto del cliente:
+	 *
+	 * total de ventas vigentes a crédito
+	 * - pagos registrados al momento de cada venta
+	 * - cobros posteriores registrados en cobro_clientes.
+	 *
+	 * GREATEST evita que un eventual sobrepago histórico produzca
+	 * un saldo negativo que compense otra venta pendiente.
+	 */
+	SELECT
+		ROUND(
+			COALESCE(
+				SUM(
+					GREATEST(
+						CAST(v.importe_total AS DECIMAL(18,2))
+						- COALESCE((
+							SELECT SUM(CAST(pxv.importe AS DECIMAL(18,2)))
+							FROM kath_erp.pagos_x_venta AS pxv
+							WHERE pxv.id_venta = v.id_venta
+						), 0)
+						- COALESCE((
+							SELECT SUM(CAST(cc.total AS DECIMAL(18,2)))
+							FROM kath_erp.cobro_clientes AS cc
+							WHERE cc.id_venta = v.id_venta
+						), 0),
+						0
+					)
+				),
+				0
+			),
+			2
+		)
+	INTO v_saldo_pendiente
+	FROM kath_erp.ventas AS v
+	WHERE v.id_cliente = p_id_cliente
+	  AND v.status_venta = TRUE
+	  AND v.tipo_venta = FALSE;
+
+	IF v_saldo_pendiente > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede eliminar el cliente porque tiene saldo pendiente en ventas a crédito';
+	END IF;
+
+	UPDATE kath_erp.cliente
+	SET activo = FALSE
+	WHERE id_cliente = p_id_cliente;
+
+	COMMIT;
+
+	SELECT
+		200 AS id,
+		'Cliente desactivado correctamente' AS message;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`deleteCompra`(
+    IN p_id_compra INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    MODIFIES SQL DATA
+    COMMENT 'Cancela lógicamente una compra y revierte las existencias generadas por ella'
+BEGIN
+
+    DECLARE v_existe_compra INT DEFAULT 0;
+    DECLARE v_id_sucursal_compra BIGINT UNSIGNED DEFAULT 0;
+    DECLARE v_fecha_compra DATE;
+    DECLARE v_activo BOOLEAN DEFAULT FALSE;
+
+    DECLARE v_pagos_asociados INT DEFAULT 0;
+    DECLARE v_total_detalles INT DEFAULT 0;
+    DECLARE v_detalles_invalidos INT DEFAULT 0;
+
+    DECLARE v_inicio_mes DATE;
+    DECLARE v_inicio_mes_siguiente DATE;
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
     DECLARE v_text TEXT
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
+
+    /*
+     * El procedimiento NO controla la transacción.
+     *
+     * La transacción debe manejarse desde Java para que,
+     * ante una respuesta de error, CompraController pueda
+     * ejecutar rollback sobre toda la operación.
+     */
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
+
         GET DIAGNOSTICS CONDITION 1
             v_sqlstate = RETURNED_SQLSTATE,
             v_errno = MYSQL_ERRNO,
             v_text = MESSAGE_TEXT;
 
-        ROLLBACK;
-
         SELECT
             500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+
     END;
 
-    START TRANSACTION;
 
-    IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
+    /*
+     * VALIDACIONES BÁSICAS
+     */
+
+    IF p_id_compra IS NULL OR p_id_compra <= 0 THEN
+
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del cliente no es válido';
+            SET MESSAGE_TEXT = 'La compra es obligatoria';
+
     END IF;
+
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+
+    END IF;
+
+
+    /*
+     * CONSULTAR Y BLOQUEAR LA COMPRA
+     *
+     * FOR UPDATE evita que la compra sea modificada mientras
+     * se está procesando su cancelación dentro de la transacción.
+     */
 
     SELECT COUNT(*)
-    INTO v_existe_cliente
-    FROM cliente
-    WHERE id_cliente = p_id_cliente;
+    INTO v_existe_compra
+    FROM kath_erp.compras
+    WHERE id_compra = p_id_compra;
 
-    IF v_existe_cliente = 0 THEN
+
+    IF v_existe_compra = 0 THEN
+
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El cliente indicado no existe';
+            SET MESSAGE_TEXT = 'La compra indicada no existe';
+
     END IF;
+
 
     SELECT
-        activo,
-        id_cuenta_contable
+        id_sucursal,
+        fecha_compra,
+        activo
     INTO
-        v_cliente_activo,
-        v_id_cuenta_contable
-    FROM cliente
-    WHERE id_cliente = p_id_cliente
+        v_id_sucursal_compra,
+        v_fecha_compra,
+        v_activo
+    FROM kath_erp.compras
+    WHERE id_compra = p_id_compra
+    LIMIT 1
     FOR UPDATE;
 
-    IF v_cliente_activo = FALSE THEN
+
+    /*
+     * AISLAMIENTO POR SUCURSAL
+     */
+
+    IF v_id_sucursal_compra <> p_id_sucursal THEN
+
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El cliente ya se encuentra inactivo';
+            SET MESSAGE_TEXT =
+                'La compra indicada no pertenece a la sucursal actual';
+
     END IF;
 
-    SELECT
-        cargo,
-        abono
-    INTO
-        v_cargo,
-        v_abono
-    FROM cuentas_contables
-    WHERE id_cuenta = v_id_cuenta_contable
-    FOR UPDATE;
 
-    SET v_saldo = ROUND(
-        COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-        2
-    );
+    /*
+     * EVITAR CANCELAR DOS VECES
+     */
 
-    IF v_saldo <> 0 THEN
+    IF v_activo = FALSE THEN
+
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede eliminar el cliente porque su cuenta contable tiene saldo pendiente';
+            SET MESSAGE_TEXT =
+                'La compra indicada ya se encuentra cancelada';
+
     END IF;
 
-    UPDATE cliente
+
+    /*
+     * VALIDAR PERIODO
+     *
+     * Solamente puede cancelarse una compra cuya fecha_compra
+     * pertenezca al mes calendario actual.
+     *
+     * Se compara intervalo completo y no únicamente MONTH(),
+     * para considerar también el año.
+     */
+
+    SET v_inicio_mes =
+        STR_TO_DATE(
+            DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01'),
+            '%Y-%m-%d'
+        );
+
+    SET v_inicio_mes_siguiente =
+        DATE_ADD(v_inicio_mes, INTERVAL 1 MONTH);
+
+
+    IF v_fecha_compra < v_inicio_mes
+       OR v_fecha_compra >= v_inicio_mes_siguiente THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No se puede cancelar una compra fuera del mes actual';
+
+    END IF;
+
+
+    /*
+     * VALIDAR PAGOS A PROVEEDOR
+     *
+     * Basta la existencia de un pago relacionado para impedir
+     * la cancelación de la compra.
+     */
+
+    SELECT COUNT(*)
+    INTO v_pagos_asociados
+    FROM kath_erp.pago_proveedor
+    WHERE id_compra = p_id_compra;
+
+
+    IF v_pagos_asociados > 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No se puede cancelar la compra porque ya tiene pagos asociados';
+
+    END IF;
+
+
+    /*
+     * VALIDAR QUE EXISTAN PARTIDAS
+     */
+
+    SELECT COUNT(*)
+    INTO v_total_detalles
+    FROM kath_erp.articulo_x_compra
+    WHERE id_compra = p_id_compra;
+
+
+    IF v_total_detalles = 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La compra no contiene artículos registrados';
+
+    END IF;
+
+
+    /*
+     * VALIDACIÓN DEFENSIVA DE CANTIDADES
+     */
+
+    SELECT COUNT(*)
+    INTO v_detalles_invalidos
+    FROM kath_erp.articulo_x_compra
+    WHERE id_compra = p_id_compra
+      AND (
+            cantidad IS NULL
+            OR cantidad <= 0
+          );
+
+
+    IF v_detalles_invalidos > 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La compra contiene cantidades de artículos inválidas';
+
+    END IF;
+
+
+    /*
+     * VALIDAR EXISTENCIAS
+     *
+     * Se agrupa por artículo para que el procedimiento siga
+     * siendo correcto aunque existieran accidentalmente varias
+     * partidas para el mismo artículo.
+     *
+     * Cada existencia involucrada se bloquea mediante FOR UPDATE.
+     */
+
+    BEGIN
+
+        DECLARE v_fin BOOLEAN DEFAULT FALSE;
+
+        DECLARE v_id_articulo INT UNSIGNED;
+        DECLARE v_cantidad_compra INT;
+
+        DECLARE v_registros_existencia INT DEFAULT 0;
+        DECLARE v_id_existencia INT DEFAULT 0;
+        DECLARE v_existencia_actual INT DEFAULT 0;
+
+
+        DECLARE cur_articulos CURSOR FOR
+
+            SELECT
+                axc.id_articulo,
+                SUM(axc.cantidad) AS cantidad_compra
+            FROM kath_erp.articulo_x_compra AS axc
+            WHERE axc.id_compra = p_id_compra
+            GROUP BY axc.id_articulo;
+
+
+        DECLARE CONTINUE HANDLER FOR NOT FOUND
+            SET v_fin = TRUE;
+
+
+        OPEN cur_articulos;
+
+
+        validar_existencias: LOOP
+
+            FETCH cur_articulos
+            INTO
+                v_id_articulo,
+                v_cantidad_compra;
+
+
+            IF v_fin THEN
+                LEAVE validar_existencias;
+            END IF;
+
+
+            /*
+             * Debe existir exactamente un registro de existencia
+             * para artículo + sucursal.
+             */
+
+            SELECT
+                COUNT(*),
+                COALESCE(MAX(id), 0)
+            INTO
+                v_registros_existencia,
+                v_id_existencia
+            FROM kath_erp.existencia_x_sucursal
+            WHERE id_articulo = v_id_articulo
+              AND id_sucursal = p_id_sucursal;
+
+
+            IF v_registros_existencia = 0 THEN
+
+                SIGNAL SQLSTATE '45000'
+                    SET MESSAGE_TEXT =
+                        'No existe registro de existencia para uno de los artículos de la compra';
+
+            END IF;
+
+
+            IF v_registros_existencia > 1 THEN
+
+                SIGNAL SQLSTATE '45000'
+                    SET MESSAGE_TEXT =
+                        'Existe más de un registro de existencia para un artículo y sucursal';
+
+            END IF;
+
+
+            /*
+             * Bloquear la existencia antes de comprobarla.
+             */
+
+            SELECT COALESCE(existencia, 0)
+            INTO v_existencia_actual
+            FROM kath_erp.existencia_x_sucursal
+            WHERE id = v_id_existencia
+            LIMIT 1
+            FOR UPDATE;
+
+
+            /*
+             * Regla principal:
+             *
+             * existencia actual - cantidad proveniente de la compra
+             * nunca puede ser negativa.
+             */
+
+            IF v_existencia_actual - v_cantidad_compra < 0 THEN
+
+                SIGNAL SQLSTATE '45000'
+                    SET MESSAGE_TEXT =
+                        'No se puede cancelar la compra porque la existencia de uno o más artículos quedaría negativa';
+
+            END IF;
+
+
+        END LOOP validar_existencias;
+
+
+        CLOSE cur_articulos;
+
+    END;
+
+
+    /*
+     * TODAS LAS VALIDACIONES PASARON.
+     *
+     * Restar de cada artículo exactamente la cantidad que
+     * originalmente ingresó mediante esta compra.
+     */
+
+    UPDATE kath_erp.existencia_x_sucursal AS exs
+
+    INNER JOIN (
+
+        SELECT
+            axc.id_articulo,
+            SUM(axc.cantidad) AS cantidad_compra
+
+        FROM kath_erp.articulo_x_compra AS axc
+
+        WHERE axc.id_compra = p_id_compra
+
+        GROUP BY axc.id_articulo
+
+    ) AS detalle
+        ON detalle.id_articulo = exs.id_articulo
+
+    SET exs.existencia =
+        COALESCE(exs.existencia, 0)
+        - detalle.cantidad_compra
+
+    WHERE exs.id_sucursal = p_id_sucursal;
+
+
+    /*
+     * CANCELACIÓN LÓGICA.
+     *
+     * No se elimina la compra.
+     * No se eliminan articulo_x_compra.
+     */
+
+    UPDATE kath_erp.compras
     SET activo = FALSE
-    WHERE id_cliente = p_id_cliente;
+    WHERE id_compra = p_id_compra
+      AND id_sucursal = p_id_sucursal
+      AND activo = TRUE;
 
-    UPDATE cuentas_contables
-    SET
-        activa = FALSE,
-        fecha_modificacion = CURDATE()
-    WHERE id_cuenta = v_id_cuenta_contable;
 
-    COMMIT;
+    IF ROW_COUNT() <> 1 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No fue posible actualizar el estado de la compra';
+
+    END IF;
+
 
     SELECT
-        200 AS id,
-        'Cliente desactivado correctamente' AS message;
+        p_id_compra AS id,
+        'Compra cancelada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteProveedor(
+END;
+
+CREATE PROCEDURE `kath_erp`.`deleteProveedor`(
     IN idProveedor INT UNSIGNED
 )
+    MODIFIES SQL DATA
+    COMMENT 'Inhabilita un proveedor cuando no tiene compras a crédito con saldo pendiente'
 BEGIN
-
     DECLARE v_existe_proveedor INT DEFAULT 0;
     DECLARE v_proveedor_activo BOOLEAN DEFAULT FALSE;
-    DECLARE v_id_cuenta_contable INT DEFAULT 0;
-
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_saldo DOUBLE DEFAULT 0;
+    DECLARE v_saldo_pendiente DECIMAL(20,2) DEFAULT 0;
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
@@ -891,7 +1200,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_existe_proveedor
-    FROM proveedor
+    FROM kath_erp.proveedor
     WHERE id_proveedor = idProveedor;
 
     IF v_existe_proveedor = 0 THEN
@@ -899,13 +1208,9 @@ BEGIN
             SET MESSAGE_TEXT = 'El proveedor indicado no existe';
     END IF;
 
-    SELECT
-        activo,
-        id_cuenta_contable
-    INTO
-        v_proveedor_activo,
-        v_id_cuenta_contable
-    FROM proveedor
+    SELECT activo
+    INTO v_proveedor_activo
+    FROM kath_erp.proveedor
     WHERE id_proveedor = idProveedor
     FOR UPDATE;
 
@@ -914,375 +1219,312 @@ BEGIN
             SET MESSAGE_TEXT = 'El proveedor ya se encuentra inactivo';
     END IF;
 
+    /*
+     * Sustituye la antigua validación de saldo contable por el saldo operativo
+     * real de las compras vigentes a crédito del proveedor.
+     */
     SELECT
-        cargo,
-        abono
-    INTO
-        v_cargo,
-        v_abono
-    FROM cuentas_contables
-    WHERE id_cuenta = v_id_cuenta_contable
-    FOR UPDATE;
+        ROUND(
+            COALESCE(
+                SUM(
+                    GREATEST(
+                        CAST(c.subtotal + c.iva AS DECIMAL(18,2))
+                        - COALESCE((
+                            SELECT SUM(CAST(pp.importe AS DECIMAL(18,2)))
+                            FROM kath_erp.pago_proveedor AS pp
+                            WHERE pp.id_compra = c.id_compra
+                        ), 0),
+                        0
+                    )
+                ),
+                0
+            ),
+            2
+        )
+    INTO v_saldo_pendiente
+    FROM kath_erp.compras AS c
+    WHERE c.id_proveedor = idProveedor
+      AND c.activo = TRUE
+      AND c.tipo_compra = TRUE;
 
-    SET v_saldo = ROUND(
-        COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-        2
-    );
-
-    IF v_saldo <> 0 THEN
+    IF v_saldo_pendiente > 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede inhabilitar el proveedor porque su cuenta contable tiene saldo';
+            SET MESSAGE_TEXT = 'No se puede inhabilitar el proveedor porque tiene saldo pendiente en compras a crédito';
     END IF;
 
-    UPDATE proveedor
+    UPDATE kath_erp.proveedor
     SET activo = FALSE
     WHERE id_proveedor = idProveedor;
-
-    UPDATE cuentas_contables
-    SET
-        activa = FALSE,
-        fecha_modificacion = CURDATE()
-    WHERE id_cuenta = v_id_cuenta_contable;
 
     COMMIT;
 
     SELECT
         200 AS id,
         'Proveedor inhabilitado correctamente' AS message;
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteTelefonoCliente(
-    IN p_id_telefono INT
+CREATE PROCEDURE `kath_erp`.`deleteTelefonoCliente`(
+	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
     COMMENT 'Elimina un telefono asociado a un cliente'
 BEGIN
+	
+	DECLARE v_existe_telefono INT DEFAULT 0;
 
-    DECLARE v_existe_telefono INT DEFAULT 0;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+		ROLLBACK;
 
-        ROLLBACK;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
+	START TRANSACTION;
 
-    START TRANSACTION;
+	IF p_id_telefono IS NULL OR p_id_telefono <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del telefono no es valido';
+	END IF;
 
-    IF p_id_telefono IS NULL OR p_id_telefono <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del telefono no es valido';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_existe_telefono
+	FROM telefono_x_cliente
+	WHERE id_telefono = p_id_telefono;
 
-    SELECT COUNT(*)
-    INTO v_existe_telefono
-    FROM telefono_x_cliente
-    WHERE id_telefono = p_id_telefono;
+	IF v_existe_telefono = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono indicado no existe';
+	END IF;
 
-    IF v_existe_telefono = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono indicado no existe';
-    END IF;
+	DELETE FROM telefono_x_cliente
+	WHERE id_telefono = p_id_telefono;
 
-    DELETE FROM telefono_x_cliente
-    WHERE id_telefono = p_id_telefono;
+	COMMIT;
 
-    COMMIT;
+	SELECT
+		200 AS id,
+		'Telefono eliminado correctamente' AS message;
+	
+END;
 
-    SELECT
-        200 AS id,
-        'Telefono eliminado correctamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteTelefonoEmpleado(
-    IN p_id_telefono INT
+CREATE PROCEDURE `kath_erp`.`deleteTelefonoEmpleado`(
+	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
     COMMENT 'Elimina un numero telefonico asociado a un empleado'
 BEGIN
+	
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE v_numero_existe INT;
+	
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;		
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-    DECLARE v_numero_existe INT;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+	
+	SELECT COUNT(*) INTO v_numero_existe FROM kath_erp.telefono_x_empleado AS txe WHERE txe.id_telefono = p_id_telefono;
+	
+	IF v_numero_existe = 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El numero indicado no existe o es erroneo';
+	END IF;
+	
+	
+	DELETE FROM kath_erp.telefono_x_empleado WHERE id_telefono = p_id_telefono;
+	
+	SELECT 200 AS id, 'Numero telefonico eliminado correctamente' AS message;
+	
+	
+END;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
-
-    SELECT COUNT(*) INTO v_numero_existe FROM kath_erp.telefono_x_empleado AS txe WHERE txe.id_telefono = p_id_telefono;
-
-    IF v_numero_existe = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El numero indicado no existe o es erroneo';
-    END IF;
-
-
-    DELETE FROM kath_erp.telefono_x_empleado WHERE id_telefono = p_id_telefono;
-
-    SELECT 200 AS id, 'Numero telefonico eliminado correctamente' AS message;
-
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE deleteTelefonoProveedor(
-    IN p_id_telefono INT
+CREATE PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
+	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
     COMMENT 'Elimina un telefono asociado a un proveedor'
 BEGIN
+	
+	DECLARE v_existe_telefono INT DEFAULT 0;
 
-    DECLARE v_existe_telefono INT DEFAULT 0;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+		ROLLBACK;
 
-        ROLLBACK;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
+	START TRANSACTION;
 
-    START TRANSACTION;
+	IF p_id_telefono IS NULL OR p_id_telefono <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del telefono no es valido';
+	END IF;
 
-    IF p_id_telefono IS NULL OR p_id_telefono <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del telefono no es valido';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_existe_telefono
+	FROM telefono_x_proveedor
+	WHERE id_telefono = p_id_telefono;
 
-    SELECT COUNT(*)
-    INTO v_existe_telefono
-    FROM telefono_x_proveedor
-    WHERE id_telefono = p_id_telefono;
+	IF v_existe_telefono = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono indicado no existe';
+	END IF;
 
-    IF v_existe_telefono = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono indicado no existe';
-    END IF;
+	DELETE FROM telefono_x_proveedor
+	WHERE id_telefono = p_id_telefono;
 
-    DELETE FROM telefono_x_proveedor
-    WHERE id_telefono = p_id_telefono;
+	COMMIT;
 
-    COMMIT;
+	SELECT
+		200 AS id,
+		'Telefono eliminado correctamente' AS message;
+	
+END;
 
-    SELECT
-        200 AS id,
-        'Telefono eliminado correctamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE delete_cuenta_contable(
-    IN p_id_cuenta INT
+CREATE PROCEDURE `kath_erp`.`delete_cuenta_contable`(
+	IN p_id_cuenta INT
 )
     MODIFIES SQL DATA
     COMMENT 'Desactiva una cuenta contable con validaciones operativas'
 BEGIN
-    DECLARE v_cuenta_existe INT DEFAULT 0;
-    DECLARE v_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_hijas_activas INT DEFAULT 0;
+	DECLARE v_cuenta_existe INT DEFAULT 0;
+	DECLARE v_activa BOOLEAN DEFAULT FALSE;
+	DECLARE v_cargo DOUBLE DEFAULT 0;
+	DECLARE v_abono DOUBLE DEFAULT 0;
+	DECLARE v_hijas_activas INT DEFAULT 0;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT
-        CHARACTER SET utf8mb4
-        COLLATE utf8mb4_general_ci;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4
+		COLLATE utf8mb4_general_ci;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-        ROLLBACK;
+		ROLLBACK;
 
-        SELECT
-            500 AS id,
-            CONCAT(
-                'Error ',
-                v_errno,
-                ' (',
-                v_sqlstate,
-                '): ',
-                v_text
-            ) AS message;
-    END;
+		SELECT
+			500 AS id,
+			CONCAT(
+				'Error ',
+				v_errno,
+				' (',
+				v_sqlstate,
+				'): ',
+				v_text
+			) AS message;
+	END;
 
-    START TRANSACTION;
+	START TRANSACTION;
 
-    IF p_id_cuenta IS NULL OR p_id_cuenta <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador de la cuenta es inválido';
-    END IF;
+	IF p_id_cuenta IS NULL OR p_id_cuenta <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador de la cuenta es inválido';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_cuenta_existe
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta;
+	SELECT COUNT(*)
+	INTO v_cuenta_existe
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta;
 
-    IF v_cuenta_existe = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable no existe';
-    END IF;
+	IF v_cuenta_existe = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable no existe';
+	END IF;
 
-    SELECT
-        activa,
-        cargo,
-        abono
-    INTO
-        v_activa,
-        v_cargo,
-        v_abono
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta
-    FOR UPDATE;
+	SELECT
+		activa,
+		cargo,
+		abono
+	INTO
+		v_activa,
+		v_cargo,
+		v_abono
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta
+	FOR UPDATE;
 
-    IF v_activa = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable ya se encuentra inactiva';
-    END IF;
+	IF v_activa = FALSE THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable ya se encuentra inactiva';
+	END IF;
 
-    /*
-     * Bloquea cuentas que ya registraron movimientos,
-     * aunque su saldo actual sea cero.
-     */
-    IF v_cargo <> 0 OR v_abono <> 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede eliminar una cuenta con movimientos contables';
-    END IF;
+	/*
+	 * Bloquea cuentas que ya registraron movimientos,
+	 * aunque su saldo actual sea cero.
+	 */
+	IF v_cargo <> 0 OR v_abono <> 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede eliminar una cuenta con movimientos contables';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_hijas_activas
-    FROM cuentas_contables
-    WHERE id_cuenta_padre = p_id_cuenta
-      AND activa = TRUE;
+	SELECT COUNT(*)
+	INTO v_hijas_activas
+	FROM cuentas_contables
+	WHERE id_cuenta_padre = p_id_cuenta
+	  AND activa = TRUE;
 
-    IF v_hijas_activas > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede eliminar una cuenta con subcuentas activas';
-    END IF;
+	IF v_hijas_activas > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede eliminar una cuenta con subcuentas activas';
+	END IF;
 
-    UPDATE cuentas_contables
-    SET
-        activa = FALSE,
-        fecha_modificacion = CURDATE()
-    WHERE id_cuenta = p_id_cuenta;
+	UPDATE cuentas_contables
+	SET
+		activa = FALSE,
+		fecha_modificacion = CURDATE()
+	WHERE id_cuenta = p_id_cuenta;
 
-    COMMIT;
+	COMMIT;
 
-    SELECT
-        p_id_cuenta AS id,
-        'Cuenta contable desactivada correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE delete_empleado(
+	SELECT
+		p_id_cuenta AS id,
+		'Cuenta contable desactivada correctamente' AS message;
+END;
+
+CREATE PROCEDURE `kath_erp`.`delete_empleado`(
     IN p_id_empleado INT UNSIGNED
 )
     MODIFIES SQL DATA
-    COMMENT 'Desactiva un empleado y su cuenta contable'
+    COMMENT 'Desactiva un empleado'
 BEGIN
     DECLARE v_existe_empleado INT DEFAULT 0;
     DECLARE v_empleado_activo BOOLEAN DEFAULT FALSE;
-    DECLARE v_id_cuenta_contable INT DEFAULT 0;
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_saldo DOUBLE DEFAULT 0;
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
@@ -1312,7 +1554,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_existe_empleado
-    FROM empleados
+    FROM kath_erp.empleados
     WHERE id_empleado = p_id_empleado;
 
     IF v_existe_empleado = 0 THEN
@@ -1320,9 +1562,9 @@ BEGIN
             SET MESSAGE_TEXT = 'El empleado no existe';
     END IF;
 
-    SELECT activo, id_cuenta_contable
-    INTO v_empleado_activo, v_id_cuenta_contable
-    FROM empleados
+    SELECT activo
+    INTO v_empleado_activo
+    FROM kath_erp.empleados
     WHERE id_empleado = p_id_empleado
     FOR UPDATE;
 
@@ -1331,329 +1573,424 @@ BEGIN
             SET MESSAGE_TEXT = 'El empleado ya se encuentra inactivo';
     END IF;
 
-    SELECT cargo, abono
-    INTO v_cargo, v_abono
-    FROM cuentas_contables
-    WHERE id_cuenta = v_id_cuenta_contable
-    FOR UPDATE;
-
-    SET v_saldo = ROUND(v_cargo - v_abono, 2);
-
-    IF v_saldo <> 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede eliminar al empleado porque su cuenta contable tiene saldo pendiente';
-    END IF;
-
-    UPDATE empleados
+    UPDATE kath_erp.empleados
     SET activo = FALSE
     WHERE id_empleado = p_id_empleado;
-
-    UPDATE cuentas_contables
-    SET
-        activa = FALSE,
-        fecha_modificacion = CURDATE()
-    WHERE id_cuenta = v_id_cuenta_contable;
 
     COMMIT;
 
     SELECT
         p_id_empleado AS id,
         'Empleado desactivado correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE eliminar_articulo(
-    IN id INT
+END;
+
+CREATE PROCEDURE `kath_erp`.`eliminar_articulo`(
+	IN id INT
 )
 BEGIN
-
+	
     DECLARE estado TINYINT(1);
     SELECT @estado := articulo.activo FROM articulo WHERE articulo.id_articulo = id;
     IF(@estado = 0) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El articulo ya se encuentra inactivo';
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El articulo ya se encuentra inactivo';
     END IF;
-
+    
     UPDATE articulo SET
-        activo = 0
-    WHERE articulo.id_articulo = id;
+		activo = 0
+	WHERE articulo.id_articulo = id;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE eliminar_empleado(
-    IN idEmpleado INT
+CREATE PROCEDURE `kath_erp`.`eliminar_forma_pago`(
+	IN idFormaPago INT
 )
 BEGIN
-
-    DECLARE estado TINYINT(1);
-    SELECT @estado := empleados.activo FROM empleados WHERE empleados.id_empleado = idEmpleado;
-
-    IF(@estado = 0) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El empleado ya se encuentra inactivo';
-    END IF;
-
-    UPDATE empleados SET
-        empleados.activo = 0
-    WHERE empleados.id_empleado = idEmpleado;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE eliminar_forma_pago(
-    IN idFormaPago INT
-)
-BEGIN
-
+	
     DECLARE estado TINYINT(1);
     SELECT @estado := formas_de_pago.activo FROM formas_de_pago WHERE formas_de_pago.id = idFormaPago;
-
+    
     IF(@estado = 0) THEN
-        SIGNAL SQLSTATE '45000'  SET MESSAGE_TEXT = 'La forma de pago ya se encuentra inactiva';
+		SIGNAL SQLSTATE '45000'  SET MESSAGE_TEXT = 'La forma de pago ya se encuentra inactiva';
+    END IF;
+    
+    UPDATE formas_de_pago SET
+		activo = 0
+    WHERE id = idFormaPago;
+    
+END;
+
+CREATE PROCEDURE `kath_erp`.`eliminar_sucursal`(
+	IN idSucursal INT
+)
+BEGIN
+	
+    
+    UPDATE sucursal SET
+		activo = 0
+	WHERE sucursal.id_sucursar = idSucursal;
+    
+END;
+
+CREATE PROCEDURE `kath_erp`.`eliminar_tipoCliente`(
+	IN id_tipoCliente INT
+)
+BEGIN
+	
+    UPDATE tipo_cliente SET
+		tipo_cliente.activo = 0
+	WHERE tipo_cliente.id = id_tipoCliente;
+    
+    SELECT 200 AS id, 'Tipo Cliente inhabilitado exitosamente' AS message;
+    
+END;
+
+CREATE PROCEDURE `kath_erp`.`finalizarVenta`(
+    IN p_id_venta INT UNSIGNED
+)
+    MODIFIES SQL DATA
+    COMMENT 'Calcula totales y determina automáticamente si la venta es de contado o crédito'
+BEGIN
+
+    DECLARE v_existe_venta INT DEFAULT 0;
+    DECLARE v_num_detalles INT DEFAULT 0;
+
+    DECLARE v_subtotal DECIMAL(18,2) DEFAULT 0;
+    DECLARE v_iva DECIMAL(18,2) DEFAULT 0;
+    DECLARE v_total DECIMAL(18,2) DEFAULT 0;
+
+    DECLARE v_total_pagos DECIMAL(18,2) DEFAULT 0;
+
+    DECLARE v_tipo_venta BOOLEAN DEFAULT FALSE;
+
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_errno INT;
+    DECLARE v_text TEXT
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_errno = MYSQL_ERRNO,
+            v_text = MESSAGE_TEXT;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+
+    END;
+
+
+    IF p_id_venta IS NULL OR p_id_venta <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta es obligatoria';
     END IF;
 
-    UPDATE formas_de_pago SET
-        activo = 0
-    WHERE id = idFormaPago;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE eliminar_sucursal(
-    IN idSucursal INT
+    SELECT COUNT(*)
+    INTO v_existe_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta
+      AND status_venta = TRUE;
+
+
+    IF v_existe_venta = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta indicada no existe o está cancelada';
+    END IF;
+
+
+    /* Bloquea la cabecera durante la finalización */
+
+    SELECT id_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta
+    FOR UPDATE;
+
+
+    SELECT COUNT(*)
+    INTO v_num_detalles
+    FROM kath_erp.articulo_x_venta
+    WHERE id_venta = p_id_venta;
+
+
+    IF v_num_detalles = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No se puede finalizar una venta sin artículos';
+    END IF;
+
+
+    /*
+     * El subtotal ya fue calculado por partida.
+     * Solamente los artículos no exentos generan IVA.
+     */
+
+    SELECT
+
+        ROUND(
+            COALESCE(
+                SUM(
+                    CAST(axv.subtotal AS DECIMAL(18,2))
+                ),
+                0
+            ),
+            2
+        ),
+
+        ROUND(
+            COALESCE(
+                SUM(
+                    CASE
+                        WHEN a.es_exento = TRUE THEN 0
+
+                        ELSE ROUND(
+                            CAST(
+                                axv.subtotal AS DECIMAL(18,2)
+                            ) * 0.16,
+                            2
+                        )
+                    END
+                ),
+                0
+            ),
+            2
+        )
+
+    INTO
+        v_subtotal,
+        v_iva
+
+    FROM kath_erp.articulo_x_venta AS axv
+
+    INNER JOIN kath_erp.articulo AS a
+        ON axv.id_articulo = a.id_articulo
+
+    WHERE axv.id_venta = p_id_venta;
+
+
+    SET v_total =
+        ROUND(v_subtotal + v_iva, 2);
+
+
+    /*
+     * Se convierte a DECIMAL antes de comparar porque actualmente
+     * pagos_x_venta.importe e importe_total son DOUBLE.
+     */
+
+    SELECT
+        ROUND(
+            COALESCE(
+                SUM(
+                    CAST(importe AS DECIMAL(18,2))
+                ),
+                0
+            ),
+            2
+        )
+    INTO v_total_pagos
+    FROM kath_erp.pagos_x_venta
+    WHERE id_venta = p_id_venta;
+
+
+    /* Un pago mayor al importe es un error */
+
+    IF v_total_pagos > v_total THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La suma de pagos supera el importe total de la venta';
+    END IF;
+
+
+    /*
+     * 1 = CONTADO
+     * 0 = CRÉDITO
+     */
+
+    IF v_total_pagos = v_total THEN
+        SET v_tipo_venta = TRUE;
+    ELSE
+        SET v_tipo_venta = FALSE;
+    END IF;
+
+
+    UPDATE kath_erp.ventas
+    SET
+        subtotal = v_subtotal,
+        iva = v_iva,
+        importe_total = v_total,
+        tipo_venta = v_tipo_venta
+    WHERE id_venta = p_id_venta;
+
+
+    SELECT
+        p_id_venta AS id,
+
+        CASE
+            WHEN v_tipo_venta = TRUE
+                THEN 'Venta de contado registrada correctamente'
+            ELSE
+                'Venta a crédito registrada correctamente'
+        END AS message,
+
+        v_subtotal AS subtotal,
+        v_iva AS iva,
+        v_total AS total,
+        v_total_pagos AS pagos,
+
+        CASE
+            WHEN v_tipo_venta = TRUE THEN 'Contado'
+            ELSE 'Crédito'
+        END AS tipo_venta;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`getArticuloByCodigo`(
+	IN codigo_a VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN idSucursal INT,
+    IN idTipoCliente INT
 )
+    READS SQL DATA
+    COMMENT 'Consulta el detalle de un articulo por su codigo fijando el precio por el tipo de cliente'
 BEGIN
+    
+    SELECT     
+    	exs.id_articulo,
+    	a.id_proveedor,
+    	a.id_categoria,
+    	a.codigo_articulo,
+    	a.codigo_sat,
+    	a.nombre,
+    	a.descripcion,
+    	a.es_exento AS exento,
+    	a.costo_unitario,
+    	pxt.cant_p_precioEspecial,
+    	pxt.precio,
+    	pxt.precios_especial,
+    	a.activo,
+    	exs.existencia    	
+    FROM
+   		kath_erp.existencia_x_sucursal AS exs 
+   		INNER JOIN kath_erp.articulo AS a ON exs.id_articulo = a.id_articulo
+   		INNER JOIN kath_erp.precios_x_tipocliente AS pxt ON exs.id_articulo = pxt.id_articulo
+    WHERE
+    	a.activo = TRUE 
+    	AND a.codigo_articulo = `codigo_a` 
+    	AND exs.id_sucursal = `idSucursal`
+    	AND pxt.id_tipoCliente = `idTipoCliente`;
+    
+END;
 
-
-    UPDATE sucursal SET
-        activo = 0
-    WHERE sucursal.id_sucursar = idSucursal;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE eliminar_tipoCliente(
-    IN id_tipoCliente INT
-)
-BEGIN
-
-    UPDATE tipo_cliente SET
-        tipo_cliente.activo = 0
-    WHERE tipo_cliente.id = id_tipoCliente;
-
-    SELECT 200 AS id, 'Tipo Cliente inhabilitado exitosamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE eliminar_venta(
-    IN idVenta INT
-)
-BEGIN
-
-    UPDATE ventas SET
-        status_venta = 0
-    WHERE ventas.id_venta = idVenta;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getArticuloById(
-    IN p_id_articulo INT UNSIGNED
+CREATE PROCEDURE `kath_erp`.`getArticuloById`(
+	IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
     COMMENT 'Consulta el detalle de un articulo por su id para edicion'
 BEGIN
+	
+	IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del articulo no es valido';
+	END IF;
 
-    IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del articulo no es valido';
-    END IF;
+	SELECT
+		art.id_articulo,
+		art.id_proveedor,		
+		art.id_categoria,		
+		art.codigo_articulo,
+		art.codigo_sat,
+		art.unidad_sat,
+		art.nombre,
+		art.descripcion,
+		art.es_exento,
+		art.costo_unitario,
+		art.activo
+	FROM kath_erp.articulo AS art	
+	WHERE art.id_articulo = p_id_articulo;
+	
+END;
 
-    SELECT
-        art.id_articulo,
-        art.id_proveedor,
-        art.id_categoria,
-        art.codigo_articulo,
-        art.codigo_sat,
-        art.unidad_sat,
-        art.nombre,
-        art.descripcion,
-        art.es_exento,
-        art.costo_unitario,
-        art.activo
-    FROM kath_erp.articulo AS art
-    WHERE art.id_articulo = p_id_articulo;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getCategoriaById(
-    IN `p_id_categoria` INT UNSIGNED
+CREATE PROCEDURE `kath_erp`.`getCategoriaById`(
+	IN `p_id_categoria` INT UNSIGNED
 )
     READS SQL DATA
     COMMENT 'CONSULTA EL DETALLE DE UNA CATEGORIA DE PRODUCTO POR SU ID'
 BEGIN
 
     SELECT
-        cp.id_categoria,
-        cp.nombre,
-        cp.descripcion,
-        cp.activo
+	    cp.id_categoria,
+	    cp.nombre,
+	    cp.descripcion,
+	    cp.activo
     FROM kath_erp.categoria_producto AS cp
     WHERE cp.id_categoria = `p_id_categoria`;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getClienteById(
-    IN p_idCliente INT
+END;
+
+CREATE PROCEDURE `kath_erp`.`getClienteById`(
+	IN p_idCliente INT
 )
     READS SQL DATA
-    COMMENT 'BUSCA EL REGISTRO DE UN CLIENTE MEDIANTE SU ID Y RETORNA LOS CAMPOS A UTILIZAR EN Fr_DatosCliente.java'
+    COMMENT 'Busca un cliente mediante su ID y retorna sus datos operativos'
 BEGIN
 
-    SELECT
-        c.id_cliente,
-        c.id_tipoCliente,
-        c.id_cuenta_contable,
-        cc.clave,
-        c.rfc,
-        c.nombre_completo,
-        c.nombre_corto,
-        c.fecha_nac,
-        c.correo_electronico,
-        c.estado,
-        c.ciudad,
-        c.direccion,
-        c.codigo_postal,
-        c.activo
-    FROM kath_erp.cliente AS c
-    INNER JOIN kath_erp.cuentas_contables AS cc ON c.id_cuenta_contable  = cc.id_cuenta
-    WHERE p_idCliente = c.id_cliente;
+	SELECT
+		c.id_cliente,
+		c.id_tipoCliente,
+		c.rfc,
+		c.nombre_completo,
+		c.nombre_corto,
+		c.fecha_nac,
+		c.correo_electronico,
+		c.estado,
+		c.ciudad,
+		c.direccion,
+		c.codigo_postal,
+		c.activo
+	FROM kath_erp.cliente AS c
+	WHERE c.id_cliente = p_idCliente;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getCompraById(
+END;
+
+CREATE PROCEDURE `kath_erp`.`getClienteParaVentaById`(
+	IN id_cliente INT
+)
+    READS SQL DATA
+    COMMENT 'Consulta los datos operativos de un cliente mediante su ID para el punto de ventas'
+BEGIN
+
+	SELECT
+		c.id_cliente,
+		c.id_tipoCliente,
+		tc.nombre AS tipo_cliente,
+		c.rfc,
+		c.nombre_completo,
+		c.nombre_corto,
+		c.fecha_nac,
+		c.correo_electronico,
+		c.estado,
+		c.ciudad,
+		c.direccion,
+		c.codigo_postal,
+		c.activo
+	FROM kath_erp.cliente AS c
+	INNER JOIN kath_erp.tipo_cliente AS tc
+		ON c.id_tipoCliente = tc.id
+	WHERE c.id_cliente = id_cliente;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`getCompraById`(
     IN p_id_compra INT UNSIGNED
 )
     READS SQL DATA
@@ -1688,22 +2025,29 @@ BEGIN
         ON c.id_empleado = emp.id_empleado
     WHERE c.id_compra = p_id_compra
     LIMIT 1;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getEmpleadoById(
+END;
+
+CREATE PROCEDURE `kath_erp`.`getConfiguracionFiscal`()
+    READS SQL DATA
+BEGIN
+
+    SELECT
+        id_configuracion,
+        rfc_emisor,
+        nombre_razon_social,
+        nombre_comercial,
+        regimen_fiscal_clave,
+        regimen_fiscal_descripcion,
+        numero_registro_sistema,
+        activo
+    FROM kath_erp.configuracion_fiscal
+    WHERE activo = TRUE
+    ORDER BY id_configuracion ASC
+    LIMIT 1;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`getEmpleadoById`(
     IN id_empleado INT
 )
     READS SQL DATA
@@ -1711,10 +2055,7 @@ CREATE PROCEDURE getEmpleadoById(
 BEGIN
 
     SELECT
-
         em.id_empleado,
-        em.id_cuenta_contable,
-        cc.clave,
         em.id_sucursal,
         em.rfc,
         em.curp,
@@ -1727,38 +2068,21 @@ BEGIN
         em.direccion,
         em.codigo_postal,
         em.activo
-
     FROM kath_erp.empleados AS em
-    INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
     WHERE em.id_empleado = id_empleado;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getEmpleadoByRFC(
-    IN rfc_empleado VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`getEmpleadoByRFC`(
+    IN rfc_empleado VARCHAR(13)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
-    COMMENT 'Consulta los datos de un empleado por su rfc'
+    COMMENT 'Consulta los datos de un empleado por su RFC'
 BEGIN
 
     SELECT
-
         em.id_empleado,
-        em.id_cuenta_contable,
-        cc.clave,
         em.id_sucursal,
         em.rfc,
         em.curp,
@@ -1771,27 +2095,12 @@ BEGIN
         em.direccion,
         em.codigo_postal,
         em.activo
-
     FROM kath_erp.empleados AS em
-    INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
     WHERE em.rfc = rfc_empleado;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getEmpleadoLogin(
+END;
+
+CREATE PROCEDURE `kath_erp`.`getEmpleadoLogin`(
     IN p_nombre_corto VARCHAR(10)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -1805,7 +2114,6 @@ BEGIN
 
     SELECT
         e.id_empleado,
-        e.id_cuenta_contable,
         e.id_sucursal,
         s.nombre AS nombre_sucursal,
         e.rfc,
@@ -1826,236 +2134,552 @@ BEGIN
     WHERE e.nombre_corto = TRIM(p_nombre_corto)
       AND e.activo = TRUE
     LIMIT 1;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getListadoEmpleados(
-    IN nombre_empleado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`getIdUltimaCompra`()
+    READS SQL DATA
+    COMMENT 'Obtiene el ID de la última compra que se haya efectuado'
+BEGIN
+	
+	SELECT
+		c.id_compra
+	FROM
+		kath_erp.compras AS c
+	ORDER BY
+		c.id_compra DESC LIMIT 1;
+	
+END;
+
+CREATE PROCEDURE `kath_erp`.`getListadoEmpleados`(
+    IN nombre_empleado VARCHAR(30)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
-    COMMENT 'Obtiene un listado completo de todos los empleados registrados en la bd y filtra por nombres'
+    COMMENT 'Obtiene un listado de empleados registrados y filtra por nombre'
 BEGIN
 
     SELECT
-
         em.id_empleado,
-        cc.clave,
         em.rfc,
         em.curp,
         em.nombre_completo,
         em.nombre_corto,
         em.correo_electronico,
         em.activo
-
     FROM kath_erp.empleados AS em
-    INNER JOIN kath_erp.cuentas_contables AS cc ON em.id_cuenta_contable = cc.id_cuenta
-    WHERE em.nombre_completo LIKE CONCAT('%',nombre_empleado,'%');
+    WHERE em.nombre_completo LIKE CONCAT('%', nombre_empleado, '%');
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE getProveedorById(
+END;
+
+CREATE PROCEDURE `kath_erp`.`getProveedorById`(
     IN idProveedor INT UNSIGNED
 )
     READS SQL DATA
-    COMMENT 'Consulta los detalles de un proveedor por su ID'
+    COMMENT 'Consulta los detalles operativos de un proveedor por su ID'
+BEGIN
+    SELECT
+        p.id_proveedor,
+        p.rfc,
+        p.nombre,
+        p.descripcion,
+        p.correo_electronico,
+        p.estado,
+        p.ciudad,
+        p.direccion,
+        p.codigo_postal,
+        p.activo
+    FROM kath_erp.proveedor AS p
+    WHERE p.id_proveedor = idProveedor;
+END;
+
+CREATE PROCEDURE `kath_erp`.`getTicketVentaById`(
+    IN p_id_venta INT UNSIGNED
+)
+    READS SQL DATA
+    COMMENT 'Obtiene la informacion fiscal, partidas y pagos necesarios para generar el ticket de una venta'
 BEGIN
 
-    SELECT
-        pr.id_proveedor,
-        pr.id_cuenta_contable,
-        cc.clave,
-        pr.rfc,
-        pr.nombre,
-        pr.descripcion,
-        pr.correo_electronico,
-        pr.estado,
-        pr.ciudad,
-        pr.direccion,
-        pr.codigo_postal,
-        pr.activo
-    FROM kath_erp.proveedor AS pr
-    INNER JOIN kath_erp.cuentas_contables AS cc ON pr.id_cuenta_contable = cc.id_cuenta
-    WHERE pr.id_proveedor = idProveedor;
+    DECLARE v_existe_venta INT DEFAULT 0;
+    DECLARE v_configuraciones_fiscales INT DEFAULT 0;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertArticulo(
-    IN p_id_proveedor INT UNSIGNED,
-    IN p_id_categoria INT UNSIGNED,
-    IN p_codigo_articulo VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_codigo_sat VARCHAR(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_unidad_sat VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_descripcion VARCHAR(555) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_es_exento TINYINT,
-    IN p_costo_unitario DECIMAL(18,2)
+    IF p_id_venta IS NULL OR p_id_venta <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta es obligatoria';
+    END IF;
+
+
+    SELECT COUNT(*)
+    INTO v_existe_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta;
+
+
+    IF v_existe_venta = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta indicada no existe';
+    END IF;
+
+
+    /*
+     * Para evitar emitir documentos con información fiscal
+     * ambigua debe existir exactamente una configuración activa.
+     */
+    SELECT COUNT(*)
+    INTO v_configuraciones_fiscales
+    FROM kath_erp.configuracion_fiscal
+    WHERE activo = TRUE;
+
+
+    IF v_configuraciones_fiscales = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No existe una configuracion fiscal activa para generar el ticket';
+    END IF;
+
+
+    IF v_configuraciones_fiscales > 1 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'Existe mas de una configuracion fiscal activa';
+    END IF;
+
+
+    /*
+     * RESULT SET 1
+     * Cabecera de la venta, datos fiscales del emisor
+     * y establecimiento de expedición.
+     */
+    SELECT
+        v.id_venta AS folio,
+        v.fecha AS fecha_venta,
+
+        CASE
+            WHEN v.tipo_venta = TRUE THEN 'Contado'
+            ELSE 'Crédito'
+        END AS tipo_venta,
+
+        CASE
+            WHEN v.status_venta = TRUE THEN 'Vigente'
+            ELSE 'Cancelada'
+        END AS status_venta,
+
+        emp.nombre_completo AS empleado,
+
+        cli.nombre_completo AS cliente,
+        cli.rfc AS cliente_rfc,
+
+        cf.rfc_emisor AS rfc_emisor,
+        cf.nombre_razon_social AS emisor_razon_social,
+        cf.nombre_comercial AS emisor_nombre_comercial,
+
+        CONCAT(
+            cf.regimen_fiscal_clave,
+            ' - ',
+            cf.regimen_fiscal_descripcion
+        ) AS emisor_regimen_fiscal,
+
+        cf.numero_registro_sistema AS numero_registro_sistema,
+
+        suc.nombre AS sucursal_nombre,
+        suc.direccion AS sucursal_direccion,
+        suc.ciudad AS sucursal_ciudad,
+        suc.estado AS sucursal_estado,
+        suc.codigo_postal AS sucursal_codigo_postal,
+        suc.telefono AS sucursal_telefono,
+        suc.email AS sucursal_email,
+
+        ROUND(
+            CAST(v.subtotal AS DECIMAL(18,2)),
+            2
+        ) AS subtotal,
+
+        ROUND(
+            CAST(v.iva AS DECIMAL(18,2)),
+            2
+        ) AS iva,
+
+        ROUND(
+            CAST(v.importe_total AS DECIMAL(18,2)),
+            2
+        ) AS total
+
+    FROM kath_erp.ventas AS v
+
+    INNER JOIN kath_erp.empleados AS emp
+        ON emp.id_empleado = v.id_empleado
+
+    INNER JOIN kath_erp.cliente AS cli
+        ON cli.id_cliente = v.id_cliente
+
+    INNER JOIN kath_erp.sucursal AS suc
+        ON suc.id_sucursar = v.id_sucursal
+
+    INNER JOIN kath_erp.configuracion_fiscal AS cf
+        ON cf.activo = TRUE
+
+    WHERE v.id_venta = p_id_venta
+
+    LIMIT 1;
+
+
+    /*
+     * RESULT SET 2
+     * Partidas que integran la venta.
+     *
+     * articulo_x_venta.subtotal conserva la misma semántica
+     * utilizada actualmente por finalizarVenta:
+     *
+     * - Exento: subtotal = importe final.
+     * - Gravado: subtotal = base antes de IVA.
+     *
+     * Por ello se reconstruye el importe bruto exactamente con
+     * la misma regla del módulo actual.
+     */
+    SELECT
+        detalle.codigo_articulo,
+        detalle.unidad,
+        detalle.descripcion,
+        detalle.cantidad,
+
+        ROUND(
+            detalle.importe / NULLIF(detalle.cantidad, 0),
+            2
+        ) AS precio_unitario,
+
+        detalle.importe
+
+    FROM (
+        SELECT
+            axv.id,
+
+            a.codigo_articulo,
+
+            COALESCE(
+                a.unidad_sat,
+                ''
+            ) AS unidad,
+
+            COALESCE(
+                NULLIF(a.descripcion, ''),
+                NULLIF(a.nombre, ''),
+                a.codigo_articulo
+            ) AS descripcion,
+
+            axv.cantidad,
+
+            CASE
+                WHEN a.es_exento = TRUE THEN
+                    ROUND(
+                        CAST(axv.subtotal AS DECIMAL(18,2)),
+                        2
+                    )
+
+                ELSE
+                    ROUND(
+                        CAST(axv.subtotal AS DECIMAL(18,2))
+                        +
+                        ROUND(
+                            CAST(axv.subtotal AS DECIMAL(18,2)) * 0.16,
+                            2
+                        ),
+                        2
+                    )
+            END AS importe
+
+        FROM kath_erp.articulo_x_venta AS axv
+
+        INNER JOIN kath_erp.articulo AS a
+            ON a.id_articulo = axv.id_articulo
+
+        WHERE axv.id_venta = p_id_venta
+
+    ) AS detalle
+
+    ORDER BY detalle.id ASC;
+
+
+    /*
+     * RESULT SET 3
+     * Formas de pago efectivamente aplicadas a la venta.
+     *
+     * El cambio entregado al cliente no aparece aquí porque,
+     * correctamente, no forma parte de pagos_x_venta.
+     */
+    SELECT
+        fp.tipo_de_pago AS forma_pago,
+
+        ROUND(
+            CAST(pxv.importe AS DECIMAL(18,2)),
+            2
+        ) AS importe
+
+    FROM kath_erp.pagos_x_venta AS pxv
+
+    INNER JOIN kath_erp.formas_de_pago AS fp
+        ON fp.id = pxv.id_forma_pago
+
+    WHERE pxv.id_venta = p_id_venta
+
+    ORDER BY pxv.id ASC;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`getVentaById`(
+    IN p_id_venta INT UNSIGNED
+)
+    READS SQL DATA
+    COMMENT 'Obtiene la cabecera y los artículos correspondientes a una venta'
+BEGIN
+
+    DECLARE v_existe_venta INT DEFAULT 0;
+
+
+    IF p_id_venta IS NULL OR p_id_venta <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta es obligatoria';
+    END IF;
+
+
+    SELECT COUNT(*)
+    INTO v_existe_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta;
+
+
+    IF v_existe_venta = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta indicada no existe';
+    END IF;
+
+
+    /* RESULT SET 1: cabecera */
+
+    SELECT
+        v.id_venta,
+        v.id_empleado,
+        emp.nombre_completo AS nombre_empleado,
+        emp.nombre_corto AS nombre_corto_empleado,
+
+        v.id_cliente,
+        cli.nombre_completo AS nombre_cliente,
+        cli.nombre_corto AS nombre_corto_cliente,
+
+        v.id_sucursal,
+        v.fecha,
+
+        v.tipo_venta,
+
+        CASE
+            WHEN v.tipo_venta = TRUE THEN 'Contado'
+            ELSE 'Crédito'
+        END AS tipo_venta_descripcion,
+
+        v.subtotal,
+        v.iva,
+        v.importe_total,
+
+        v.status_venta,
+
+        CASE
+            WHEN v.status_venta = TRUE THEN 'Vigente'
+            ELSE 'Cancelada'
+        END AS status_venta_descripcion
+
+    FROM kath_erp.ventas AS v
+
+    INNER JOIN kath_erp.empleados AS emp
+        ON v.id_empleado = emp.id_empleado
+
+    INNER JOIN kath_erp.cliente AS cli
+        ON v.id_cliente = cli.id_cliente
+
+    WHERE v.id_venta = p_id_venta
+
+    LIMIT 1;
+
+
+    /* RESULT SET 2: artículos */
+
+    SELECT
+        axv.id,
+        axv.id_venta,
+        axv.id_articulo,
+
+        a.codigo_articulo,
+        a.codigo_sat,
+        a.unidad_sat,
+        a.nombre,
+        a.descripcion,
+
+        a.es_exento,
+
+        axv.cantidad,
+        axv.subtotal,
+
+        CASE
+            WHEN a.es_exento = TRUE THEN 0
+            ELSE ROUND(
+                CAST(axv.subtotal AS DECIMAL(18,2)) * 0.16,
+                2
+            )
+        END AS iva,
+
+        CASE
+            WHEN a.es_exento = TRUE
+                THEN ROUND(
+                    CAST(axv.subtotal AS DECIMAL(18,2)),
+                    2
+                )
+
+            ELSE ROUND(
+                CAST(axv.subtotal AS DECIMAL(18,2))
+                +
+                ROUND(
+                    CAST(axv.subtotal AS DECIMAL(18,2))
+                    * 0.16,
+                    2
+                ),
+                2
+            )
+        END AS total
+
+    FROM kath_erp.articulo_x_venta AS axv
+
+    INNER JOIN kath_erp.articulo AS a
+        ON axv.id_articulo = a.id_articulo
+
+    WHERE axv.id_venta = p_id_venta
+
+    ORDER BY axv.id ASC;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertArticulo`(
+	IN p_id_proveedor INT UNSIGNED,
+	IN p_id_categoria INT UNSIGNED,
+	IN p_codigo_articulo VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_codigo_sat VARCHAR(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_unidad_sat VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(555) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_es_exento TINYINT,
+	IN p_costo_unitario DECIMAL(18,2)
 )
     MODIFIES SQL DATA
     COMMENT 'Inserta un articulo base y devuelve el id generado'
 BEGIN
-
+	
     DECLARE v_id_articulo INT UNSIGNED;
-    DECLARE v_existe_proveedor INT DEFAULT 0;
-    DECLARE v_existe_categoria INT DEFAULT 0;
-    DECLARE v_codigo_duplicado INT DEFAULT 0;
+	DECLARE v_existe_proveedor INT DEFAULT 0;
+	DECLARE v_existe_categoria INT DEFAULT 0;
+	DECLARE v_codigo_duplicado INT DEFAULT 0;
 
-    IF p_id_proveedor IS NULL OR p_id_proveedor <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El proveedor no es valido';
-    END IF;
+	IF p_id_proveedor IS NULL OR p_id_proveedor <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El proveedor no es valido';
+	END IF;
 
-    IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La categoria no es valida';
-    END IF;
+	IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La categoria no es valida';
+	END IF;
 
-    IF p_codigo_articulo IS NULL OR TRIM(p_codigo_articulo) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El codigo del articulo es obligatorio';
-    END IF;
+	IF p_codigo_articulo IS NULL OR TRIM(p_codigo_articulo) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El codigo del articulo es obligatorio';
+	END IF;
 
-    IF p_codigo_sat IS NULL OR TRIM(p_codigo_sat) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El codigo SAT es obligatorio';
-    END IF;
+	IF p_codigo_sat IS NULL OR TRIM(p_codigo_sat) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El codigo SAT es obligatorio';
+	END IF;
 
-    IF p_unidad_sat IS NULL OR TRIM(p_unidad_sat) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La unidad SAT es obligatoria';
-    END IF;
+	IF p_unidad_sat IS NULL OR TRIM(p_unidad_sat) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La unidad SAT es obligatoria';
+	END IF;
 
-    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre del articulo es obligatorio';
-    END IF;
+	IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre del articulo es obligatorio';
+	END IF;
 
-    IF p_es_exento IS NULL OR p_es_exento NOT IN (0, 1) THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El valor de exento no es valido';
-    END IF;
+	IF p_es_exento IS NULL OR p_es_exento NOT IN (0, 1) THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El valor de exento no es valido';
+	END IF;
 
-    IF p_costo_unitario IS NULL OR p_costo_unitario < 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El costo unitario no es valido';
-    END IF;
+	IF p_costo_unitario IS NULL OR p_costo_unitario < 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El costo unitario no es valido';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_proveedor
-    FROM kath_erp.proveedor
-    WHERE id_proveedor = p_id_proveedor
-      AND activo = 1;
+	SELECT COUNT(*)
+	INTO v_existe_proveedor
+	FROM kath_erp.proveedor
+	WHERE id_proveedor = p_id_proveedor
+	  AND activo = 1;
 
-    IF v_existe_proveedor = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El proveedor no existe o esta inactivo';
-    END IF;
+	IF v_existe_proveedor = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El proveedor no existe o esta inactivo';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_categoria
-    FROM kath_erp.categoria_producto
-    WHERE id_categoria = p_id_categoria
-      AND activo = 1;
+	SELECT COUNT(*)
+	INTO v_existe_categoria
+	FROM kath_erp.categoria_producto
+	WHERE id_categoria = p_id_categoria
+	  AND activo = 1;
 
-    IF v_existe_categoria = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La categoria no existe o esta inactiva';
-    END IF;
+	IF v_existe_categoria = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La categoria no existe o esta inactiva';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_codigo_duplicado
-    FROM kath_erp.articulo
-    WHERE codigo_articulo COLLATE utf8mb4_general_ci = TRIM(p_codigo_articulo) COLLATE utf8mb4_general_ci;
+	SELECT COUNT(*)
+	INTO v_codigo_duplicado
+	FROM kath_erp.articulo
+	WHERE codigo_articulo COLLATE utf8mb4_general_ci = TRIM(p_codigo_articulo) COLLATE utf8mb4_general_ci;
 
-    IF v_codigo_duplicado > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El codigo del articulo ya esta registrado';
-    END IF;
+	IF v_codigo_duplicado > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El codigo del articulo ya esta registrado';
+	END IF;
 
-    INSERT INTO kath_erp.articulo (
-        id_proveedor,
-        id_categoria,
-        codigo_articulo,
-        codigo_sat,
-        unidad_sat,
-        nombre,
-        descripcion,
-        es_exento,
-        costo_unitario,
-        activo
-    ) VALUES (
-        p_id_proveedor,
-        p_id_categoria,
-        UPPER(TRIM(p_codigo_articulo)),
-        TRIM(p_codigo_sat),
-        UPPER(TRIM(p_unidad_sat)),
-        TRIM(p_nombre),
-        NULLIF(TRIM(p_descripcion), ''),
-        p_es_exento,
-        p_costo_unitario,
-        1
-    );
+	INSERT INTO kath_erp.articulo (
+		id_proveedor,
+		id_categoria,
+		codigo_articulo,
+		codigo_sat,
+		unidad_sat,
+		nombre,
+		descripcion,
+		es_exento,
+		costo_unitario,
+		activo
+	) VALUES (
+		p_id_proveedor,
+		p_id_categoria,
+		UPPER(TRIM(p_codigo_articulo)),
+		TRIM(p_codigo_sat),
+		UPPER(TRIM(p_unidad_sat)),
+		TRIM(p_nombre),
+		NULLIF(TRIM(p_descripcion), ''),
+		p_es_exento,
+		p_costo_unitario,
+		1
+	);
 
-    SET v_id_articulo = LAST_INSERT_ID();
+	SET v_id_articulo = LAST_INSERT_ID();
 
-    SELECT
-        v_id_articulo AS id,
-        'Articulo registrado correctamente' AS message;
+	SELECT
+		v_id_articulo AS id,
+		'Articulo registrado correctamente' AS message;
 
+	
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertArticuloCompra(
+CREATE PROCEDURE `kath_erp`.`insertArticuloCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_articulo INT UNSIGNED,
     IN p_cantidad INT,
@@ -2156,146 +2780,53 @@ BEGIN
     SELECT
         v_id_detalle AS id,
         'Artículo agregado a la compra correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertCategoriaProducto(
-    IN p_nombre VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertArticuloVenta`(
+    IN p_id_venta INT UNSIGNED,
+    IN p_id_articulo INT UNSIGNED,
+    IN p_cantidad INT
 )
     MODIFIES SQL DATA
-    COMMENT 'Registra una nueva categoria de producto'
+    COMMENT 'Inserta un artículo en una venta y calcula su subtotal considerando IVA y tipo de cliente'
 BEGIN
 
-    DECLARE v_existe_categoria INT DEFAULT 0;
-    DECLARE v_id_categoria INT DEFAULT 0;
+    DECLARE v_existe_venta INT DEFAULT 0;
+    DECLARE v_existe_articulo INT DEFAULT 0;
+    DECLARE v_existe_detalle INT DEFAULT 0;
+    DECLARE v_existe_existencia INT DEFAULT 0;
+    DECLARE v_existe_precio INT DEFAULT 0;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+    DECLARE v_id_detalle INT UNSIGNED DEFAULT 0;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+    DECLARE v_id_sucursal BIGINT UNSIGNED;
+    DECLARE v_id_tipo_cliente INT;
 
-        ROLLBACK;
+    DECLARE v_existencia_actual INT DEFAULT 0;
+    DECLARE v_es_exento BOOLEAN DEFAULT FALSE;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
+    DECLARE v_precio DECIMAL(18,2);
+    DECLARE v_precio_especial DECIMAL(18,2);
+    DECLARE v_cantidad_precio_especial INT;
 
-    START TRANSACTION;
-
-    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre de la categoria es obligatorio';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_existe_categoria
-    FROM categoria_producto
-    WHERE nombre COLLATE utf8mb4_general_ci = TRIM(p_nombre);
-
-    IF v_existe_categoria > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Ya existe una categoria con el nombre indicado';
-    END IF;
-
-    INSERT INTO categoria_producto (
-        nombre,
-        descripcion,
-        activo
-    ) VALUES (
-        TRIM(p_nombre),
-        NULLIF(TRIM(p_descripcion), ''),
-        TRUE
-    );
-
-    SET v_id_categoria = LAST_INSERT_ID();
-
-    COMMIT;
-
-    SELECT
-        200 AS id,
-        'Categoria registrada correctamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertCliente(
-      IN p_id_tipoCliente INT,
-    IN p_id_cuenta_contable INT,
-    IN p_rfc VARCHAR(13)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre_completo VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre_corto VARCHAR(10)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_fecha_nac DATE,
-    IN p_correo_electronico VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_estado VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_ciudad VARCHAR(40)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_direccion TEXT
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_codigo_postal VARCHAR(6)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
-)
-    MODIFIES SQL DATA
-    COMMENT 'Registra un nuevo cliente asociado a una cuenta contable existente. necesario agregar una cuenta contable antes de agregar al cliente'
-BEGIN
-
-    DECLARE v_id_cliente INT UNSIGNED DEFAULT 0;
-    DECLARE v_existe_tipo_cliente INT DEFAULT 0;
-    DECLARE v_existe_cuenta INT DEFAULT 0;
-    DECLARE v_cuenta_asignada INT DEFAULT 0;
-    DECLARE v_rfc_duplicado INT DEFAULT 0;
-    DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
+    DECLARE v_precio_unitario DECIMAL(18,2);
+    DECLARE v_importe_bruto DECIMAL(18,2);
+    DECLARE v_subtotal_linea DECIMAL(18,2);
+    DECLARE v_iva_linea DECIMAL(18,2);
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
     DECLARE v_text TEXT
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
+
         GET DIAGNOSTICS CONDITION 1
             v_sqlstate = RETURNED_SQLSTATE,
             v_errno = MYSQL_ERRNO,
             v_text = MESSAGE_TEXT;
-
-        ROLLBACK;
 
         SELECT
             500 AS id,
@@ -2307,185 +2838,455 @@ BEGIN
                 '): ',
                 v_text
             ) AS message;
+
     END;
 
-    START TRANSACTION;
 
-    /*
-     * Validación de parámetros obligatorios.
-     */
-    IF p_id_tipoCliente IS NULL OR p_id_tipoCliente <= 0 THEN
+    IF p_id_venta IS NULL OR p_id_venta <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de cliente es obligatorio';
+            SET MESSAGE_TEXT = 'La venta es obligatoria';
     END IF;
 
-    IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
+
+    IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable es obligatoria';
+            SET MESSAGE_TEXT = 'El artículo es obligatorio';
     END IF;
 
-    IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
+
+    IF p_cantidad IS NULL OR p_cantidad <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El RFC es obligatorio';
+            SET MESSAGE_TEXT = 'La cantidad debe ser mayor a cero';
     END IF;
 
-    IF p_nombre_completo IS NULL
-            OR TRIM(p_nombre_completo) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre completo es obligatorio';
-    END IF;
 
-    IF p_nombre_corto IS NULL
-            OR TRIM(p_nombre_corto) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre corto es obligatorio';
-    END IF;
+    /* Venta vigente */
 
-    IF p_fecha_nac IS NULL THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La fecha de nacimiento es obligatoria';
-    END IF;
-
-    IF p_fecha_nac > CURDATE() THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La fecha de nacimiento no es válida';
-    END IF;
-
-    IF p_correo_electronico IS NULL
-            OR TRIM(p_correo_electronico) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
-    END IF;
-
-    /*
-     * Validación de tipo de cliente.
-     */
     SELECT COUNT(*)
-    INTO v_existe_tipo_cliente
-    FROM tipo_cliente
-    WHERE id = p_id_tipoCliente;
+    INTO v_existe_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta
+      AND status_venta = TRUE;
 
-    IF v_existe_tipo_cliente = 0 THEN
+    IF v_existe_venta = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de cliente indicado no existe';
+            SET MESSAGE_TEXT =
+                'La venta indicada no existe o está cancelada';
     END IF;
 
-    /*
-     * Validación del RFC.
-     */
-    SELECT COUNT(*)
-    INTO v_rfc_duplicado
-    FROM cliente
-    WHERE rfc = UPPER(TRIM(p_rfc));
-
-    IF v_rfc_duplicado > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El RFC ya está registrado';
-    END IF;
-
-    /*
-     * Validación de la cuenta contable.
-     */
-    SELECT COUNT(*)
-    INTO v_existe_cuenta
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta_contable;
-
-    IF v_existe_cuenta = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable indicada no existe';
-    END IF;
 
     SELECT
-        activa,
-        ultimo_nivel
+        v.id_sucursal,
+        c.id_tipoCliente
     INTO
-        v_cuenta_activa,
-        v_ultimo_nivel
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta_contable
-    FOR UPDATE;
+        v_id_sucursal,
+        v_id_tipo_cliente
+    FROM kath_erp.ventas AS v
 
-    IF v_cuenta_activa = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable se encuentra inactiva';
-    END IF;
+    INNER JOIN kath_erp.cliente AS c
+        ON v.id_cliente = c.id_cliente
 
-    IF v_ultimo_nivel = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta del cliente debe ser una cuenta de detalle';
-    END IF;
+    WHERE v.id_venta = p_id_venta
+    LIMIT 1;
 
-    /*
-     * Las cuentas contables no pueden compartirse entre clientes.
-     */
+
+    /* Artículo activo */
+
     SELECT COUNT(*)
-    INTO v_cuenta_asignada
-    FROM cliente
-    WHERE id_cuenta_contable = p_id_cuenta_contable;
+    INTO v_existe_articulo
+    FROM kath_erp.articulo
+    WHERE id_articulo = p_id_articulo
+      AND activo = TRUE;
 
-    IF v_cuenta_asignada > 0 THEN
+    IF v_existe_articulo = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable ya está asignada a otro cliente';
+            SET MESSAGE_TEXT =
+                'El artículo indicado no existe o está inactivo';
     END IF;
 
+
+    SELECT es_exento
+    INTO v_es_exento
+    FROM kath_erp.articulo
+    WHERE id_articulo = p_id_articulo
+    LIMIT 1;
+
+
+    /* No repetir el mismo artículo */
+
+    SELECT COUNT(*)
+    INTO v_existe_detalle
+    FROM kath_erp.articulo_x_venta
+    WHERE id_venta = p_id_venta
+      AND id_articulo = p_id_articulo;
+
+    IF v_existe_detalle > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El artículo ya está registrado en esta venta';
+    END IF;
+
+
+    /* Existencia en la sucursal */
+
+    SELECT COUNT(*)
+    INTO v_existe_existencia
+    FROM kath_erp.existencia_x_sucursal
+    WHERE id_articulo = p_id_articulo
+      AND id_sucursal = v_id_sucursal;
+
+    IF v_existe_existencia = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El artículo no tiene existencia registrada en esta sucursal';
+    END IF;
+
+
+    SELECT COALESCE(existencia, 0)
+    INTO v_existencia_actual
+    FROM kath_erp.existencia_x_sucursal
+    WHERE id_articulo = p_id_articulo
+      AND id_sucursal = v_id_sucursal
+    LIMIT 1;
+
+
+    IF v_existencia_actual <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El artículo no tiene existencia disponible';
+    END IF;
+
+
+    IF p_cantidad > v_existencia_actual THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La cantidad solicitada supera la existencia disponible';
+    END IF;
+
+
+    /* Precio correspondiente al tipo de cliente */
+
+    SELECT COUNT(*)
+    INTO v_existe_precio
+    FROM kath_erp.precios_x_tipocliente AS pxt
+    WHERE pxt.id_articulo = p_id_articulo
+      AND pxt.id_tipoCliente = v_id_tipo_cliente;
+
+
+    IF v_existe_precio = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El artículo no tiene precio definido para este tipo de cliente';
+    END IF;
+
+
+    IF v_existe_precio > 1 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'Existe más de un precio para el artículo y tipo de cliente';
+    END IF;
+
+
+    SELECT
+        precio,
+        precios_especial,
+        cant_p_precioEspecial
+    INTO
+        v_precio,
+        v_precio_especial,
+        v_cantidad_precio_especial
+    FROM kath_erp.precios_x_tipocliente
+    WHERE id_articulo = p_id_articulo
+      AND id_tipoCliente = v_id_tipo_cliente
+    LIMIT 1;
+
+
+    IF v_precio_especial IS NOT NULL
+       AND v_cantidad_precio_especial IS NOT NULL
+       AND p_cantidad >= v_cantidad_precio_especial THEN
+
+        SET v_precio_unitario = v_precio_especial;
+
+    ELSE
+
+        SET v_precio_unitario = v_precio;
+
+    END IF;
+
+
+    SET v_importe_bruto =
+        ROUND(v_precio_unitario * p_cantidad, 2);
+
+
     /*
-     * Registro del cliente.
+     * Se conserva la convención actual del POS:
+     * los precios mostrados al usuario son precios finales.
+     *
+     * Artículo gravado:
+     *   base = total / 1.16
+     *
+     * Artículo exento:
+     *   base = total
      */
-    INSERT INTO cliente (
-        id_tipoCliente,
-        id_cuenta_contable,
-        rfc,
-        nombre_completo,
-        nombre_corto,
-        fecha_nac,
-        correo_electronico,
-        estado,
-        ciudad,
-        direccion,
-        codigo_postal,
-        activo
+
+    IF v_es_exento = TRUE THEN
+
+        SET v_subtotal_linea = v_importe_bruto;
+        SET v_iva_linea = 0;
+
+    ELSE
+
+        SET v_subtotal_linea =
+            ROUND(v_importe_bruto / 1.16, 2);
+
+        SET v_iva_linea =
+            ROUND(v_importe_bruto - v_subtotal_linea, 2);
+
+    END IF;
+
+
+    INSERT INTO kath_erp.articulo_x_venta (
+        id_venta,
+        id_articulo,
+        cantidad,
+        subtotal
     )
     VALUES (
-        p_id_tipoCliente,
-        p_id_cuenta_contable,
-        UPPER(TRIM(p_rfc)),
-        TRIM(p_nombre_completo),
-        TRIM(p_nombre_corto),
-        p_fecha_nac,
-        LOWER(TRIM(p_correo_electronico)),
-        NULLIF(TRIM(p_estado), ''),
-        NULLIF(TRIM(p_ciudad), ''),
-        NULLIF(TRIM(p_direccion), ''),
-        NULLIF(TRIM(p_codigo_postal), ''),
-        TRUE
+        p_id_venta,
+        p_id_articulo,
+        p_cantidad,
+        v_subtotal_linea
     );
 
-    SET v_id_cliente = LAST_INSERT_ID();
 
-    COMMIT;
+    SET v_id_detalle = LAST_INSERT_ID();
+
 
     SELECT
-        200 AS id,
-        'Cliente registrado correctamente' AS message;
+        v_id_detalle AS id,
+        'Artículo agregado a la venta correctamente' AS message,
+        v_precio_unitario AS precio_unitario,
+        v_subtotal_linea AS subtotal,
+        v_iva_linea AS iva,
+        v_importe_bruto AS total;
 
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertCompra(
+CREATE PROCEDURE `kath_erp`.`insertCategoriaProducto`(
+	IN p_nombre VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+)
+    MODIFIES SQL DATA
+    COMMENT 'Registra una nueva categoria de producto'
+BEGIN
+
+	DECLARE v_existe_categoria INT DEFAULT 0;
+	DECLARE v_id_categoria INT DEFAULT 0;
+
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre de la categoria es obligatorio';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_categoria
+	FROM categoria_producto
+	WHERE nombre COLLATE utf8mb4_general_ci = TRIM(p_nombre);
+
+	IF v_existe_categoria > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Ya existe una categoria con el nombre indicado';
+	END IF;
+
+	INSERT INTO categoria_producto (
+		nombre,
+		descripcion,
+		activo
+	) VALUES (
+		TRIM(p_nombre),
+		NULLIF(TRIM(p_descripcion), ''),
+		TRUE
+	);
+
+	SET v_id_categoria = LAST_INSERT_ID();
+
+	COMMIT;
+
+	SELECT
+		200 AS id,
+		'Categoria registrada correctamente' AS message;
+	
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertCliente`(
+	IN p_id_tipoCliente INT,
+	IN p_rfc VARCHAR(13)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_completo VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_corto VARCHAR(10)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_fecha_nac DATE,
+	IN p_correo_electronico VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_estado VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ciudad VARCHAR(40)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_direccion TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_codigo_postal VARCHAR(6)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+)
+    MODIFIES SQL DATA
+    COMMENT 'Registra un nuevo cliente sin dependencias contables'
+BEGIN
+
+	DECLARE v_existe_tipo_cliente INT DEFAULT 0;
+	DECLARE v_rfc_duplicado INT DEFAULT 0;
+
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT(
+				'Error ',
+				v_errno,
+				' (',
+				v_sqlstate,
+				'): ',
+				v_text
+			) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_id_tipoCliente IS NULL OR p_id_tipoCliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de cliente es obligatorio';
+	END IF;
+
+	IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC es obligatorio';
+	END IF;
+
+	IF p_nombre_completo IS NULL
+			OR TRIM(p_nombre_completo) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre completo es obligatorio';
+	END IF;
+
+	IF p_nombre_corto IS NULL
+			OR TRIM(p_nombre_corto) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre corto es obligatorio';
+	END IF;
+
+	IF p_fecha_nac IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La fecha de nacimiento es obligatoria';
+	END IF;
+
+	IF p_fecha_nac > CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La fecha de nacimiento no es válida';
+	END IF;
+
+	IF p_correo_electronico IS NULL
+			OR TRIM(p_correo_electronico) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_tipo_cliente
+	FROM kath_erp.tipo_cliente
+	WHERE id = p_id_tipoCliente;
+
+	IF v_existe_tipo_cliente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de cliente indicado no existe';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_rfc_duplicado
+	FROM kath_erp.cliente
+	WHERE rfc = UPPER(TRIM(p_rfc));
+
+	IF v_rfc_duplicado > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC ya está registrado';
+	END IF;
+
+	INSERT INTO kath_erp.cliente (
+		id_tipoCliente,
+		rfc,
+		nombre_completo,
+		nombre_corto,
+		fecha_nac,
+		correo_electronico,
+		estado,
+		ciudad,
+		direccion,
+		codigo_postal,
+		activo
+	)
+	VALUES (
+		p_id_tipoCliente,
+		UPPER(TRIM(p_rfc)),
+		TRIM(p_nombre_completo),
+		TRIM(p_nombre_corto),
+		p_fecha_nac,
+		LOWER(TRIM(p_correo_electronico)),
+		NULLIF(TRIM(p_estado), ''),
+		NULLIF(TRIM(p_ciudad), ''),
+		NULLIF(TRIM(p_direccion), ''),
+		NULLIF(TRIM(p_codigo_postal), ''),
+		TRUE
+	);
+
+	COMMIT;
+
+	SELECT
+		200 AS id,
+		'Cliente registrado correctamente' AS message;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertCompra`(
     IN p_id_empleado INT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED,
@@ -2673,241 +3474,472 @@ BEGIN
         v_id_compra AS id,
         'Compra registrada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertExistenciaArticuloSucursal(
-    IN p_id_articulo INT UNSIGNED,
-    IN p_id_sucursal BIGINT UNSIGNED,
-    IN p_existencia INT
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertExistenciaArticuloSucursal`(
+	IN p_id_articulo INT UNSIGNED,
+	IN p_id_sucursal BIGINT UNSIGNED,
+	IN p_existencia INT
 )
     MODIFIES SQL DATA
     COMMENT 'Inserta existencia inicial de un articulo por sucursal'
 BEGIN
-    DECLARE v_existe_articulo INT DEFAULT 0;
-    DECLARE v_existe_sucursal INT DEFAULT 0;
-    DECLARE v_existe_relacion INT DEFAULT 0;
+	DECLARE v_existe_articulo INT DEFAULT 0;
+	DECLARE v_existe_sucursal INT DEFAULT 0;
+	DECLARE v_existe_relacion INT DEFAULT 0;
 
-    IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
+	IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El articulo no es valido';
+	END IF;
+
+	IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La sucursal no es valida';
+	END IF;
+
+	IF p_existencia IS NULL OR p_existencia < 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La existencia no es valida';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_articulo
+	FROM kath_erp.articulo
+	WHERE id_articulo = p_id_articulo;
+
+	IF v_existe_articulo = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El articulo no existe';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_sucursal
+	FROM kath_erp.sucursal
+	WHERE id_sucursar = p_id_sucursal;
+
+	IF v_existe_sucursal = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La sucursal no existe';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_relacion
+	FROM kath_erp.existencia_x_sucursal
+	WHERE id_articulo = p_id_articulo
+	  AND id_sucursal = p_id_sucursal;
+
+	IF v_existe_relacion > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La existencia del articulo ya existe para esta sucursal';
+	END IF;
+
+	INSERT INTO kath_erp.existencia_x_sucursal (
+		id_articulo,
+		id_sucursal,
+		existencia
+	) VALUES (
+		p_id_articulo,
+		p_id_sucursal,
+		p_existencia
+	);
+
+	SELECT
+		LAST_INSERT_ID() AS id,
+		'Existencia registrada correctamente' AS message;
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertPagoProveedor`(
+    IN p_id_compra INT UNSIGNED,
+    IN p_id_forma_pago INT,
+    IN p_importe DECIMAL(18,2)
+)
+    MODIFIES SQL DATA
+    COMMENT 'Registra un pago asociado a una compra sin exceder su saldo pendiente'
+BEGIN
+    DECLARE v_existe_compra INT DEFAULT 0;
+    DECLARE v_existe_forma_pago INT DEFAULT 0;
+    DECLARE v_id_pago INT UNSIGNED DEFAULT 0;
+    DECLARE v_tipo_compra BOOLEAN;
+
+    DECLARE v_total_compra DECIMAL(18,2) DEFAULT 0;
+    DECLARE v_total_pagado DECIMAL(18,2) DEFAULT 0;
+    DECLARE v_saldo_pendiente DECIMAL(18,2) DEFAULT 0;
+
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_errno INT;
+    DECLARE v_text TEXT
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_errno = MYSQL_ERRNO,
+            v_text = MESSAGE_TEXT;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+    END;
+
+    IF p_id_compra IS NULL OR p_id_compra <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El articulo no es valido';
+            SET MESSAGE_TEXT = 'La compra es obligatoria';
     END IF;
 
-    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+    IF p_id_forma_pago IS NULL OR p_id_forma_pago <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La sucursal no es valida';
+            SET MESSAGE_TEXT = 'La forma de pago es obligatoria';
     END IF;
 
-    IF p_existencia IS NULL OR p_existencia < 0 THEN
+    IF p_importe IS NULL OR p_importe <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La existencia no es valida';
+            SET MESSAGE_TEXT = 'El importe del pago debe ser mayor a cero';
     END IF;
 
     SELECT COUNT(*)
-    INTO v_existe_articulo
-    FROM kath_erp.articulo
-    WHERE id_articulo = p_id_articulo;
+    INTO v_existe_compra
+    FROM kath_erp.compras
+    WHERE id_compra = p_id_compra
+      AND activo = TRUE;
 
-    IF v_existe_articulo = 0 THEN
+    IF v_existe_compra = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El articulo no existe';
+            SET MESSAGE_TEXT =
+                'La compra indicada no existe o está inactiva';
     END IF;
 
     SELECT COUNT(*)
-    INTO v_existe_sucursal
-    FROM kath_erp.sucursal
-    WHERE id_sucursar = p_id_sucursal;
+    INTO v_existe_forma_pago
+    FROM kath_erp.formas_de_pago
+    WHERE id = p_id_forma_pago
+      AND activo = TRUE;
 
-    IF v_existe_sucursal = 0 THEN
+    IF v_existe_forma_pago = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La sucursal no existe';
+            SET MESSAGE_TEXT =
+                'La forma de pago indicada no existe o está inactiva';
     END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_relacion
-    FROM kath_erp.existencia_x_sucursal
-    WHERE id_articulo = p_id_articulo
-      AND id_sucursal = p_id_sucursal;
-
-    IF v_existe_relacion > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La existencia del articulo ya existe para esta sucursal';
-    END IF;
-
-    INSERT INTO kath_erp.existencia_x_sucursal (
-        id_articulo,
-        id_sucursal,
-        existencia
-    ) VALUES (
-        p_id_articulo,
-        p_id_sucursal,
-        p_existencia
-    );
+    /*
+     * Se bloquea la compra durante el cálculo del saldo.
+     * Esto también serializa pagos concurrentes sobre la
+     * misma compra.
+     */
+    SELECT
+        tipo_compra,
+        ROUND(
+            CAST(subtotal AS DECIMAL(18,2))
+            + CAST(iva AS DECIMAL(18,2)),
+            2
+        )
+    INTO
+        v_tipo_compra,
+        v_total_compra
+    FROM kath_erp.compras
+    WHERE id_compra = p_id_compra
+    LIMIT 1
+    FOR UPDATE;
 
     SELECT
-        LAST_INSERT_ID() AS id,
-        'Existencia registrada correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertPrecioArticuloTipoCliente(
-    IN p_id_articulo INT UNSIGNED,
-    IN p_id_tipo_cliente INT,
-    IN p_precio DECIMAL(18,2),
-    IN p_precio_especial DECIMAL(18,2),
-    IN p_cantidad_precio_especial INT
+        ROUND(
+            COALESCE(
+                SUM(CAST(importe AS DECIMAL(18,2))),
+                0
+            ),
+            2
+        )
+    INTO v_total_pagado
+    FROM kath_erp.pago_proveedor
+    WHERE id_compra = p_id_compra;
+
+    SET v_saldo_pendiente =
+        ROUND(v_total_compra - v_total_pagado, 2);
+
+    IF v_saldo_pendiente <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La compra ya se encuentra completamente pagada';
+    END IF;
+
+    IF p_importe > v_saldo_pendiente THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El pago supera el saldo pendiente de la compra';
+    END IF;
+
+    /*
+     * Contrato actual:
+     *
+     * FALSE = Contado
+     * TRUE  = Crédito
+     *
+     * Una compra de contado debe quedar totalmente
+     * liquidada mediante su pago inicial.
+     */
+    IF v_tipo_compra = FALSE
+       AND (
+            v_total_pagado > 0
+            OR ROUND(p_importe, 2) <> v_total_compra
+       ) THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La compra de contado debe liquidarse en un solo pago por el importe total';
+    END IF;
+
+    INSERT INTO kath_erp.pago_proveedor (
+        id_compra,
+        id_forma_pago,
+        importe
+    )
+    VALUES (
+        p_id_compra,
+        p_id_forma_pago,
+        p_importe
+    );
+
+    SET v_id_pago = LAST_INSERT_ID();
+
+    SELECT
+        v_id_pago AS id,
+        'Pago a proveedor registrado correctamente' AS message;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertPagoVenta`(
+    IN p_id_venta INT UNSIGNED,
+    IN p_id_forma_pago INT,
+    IN p_importe DECIMAL(18,2)
+)
+    MODIFIES SQL DATA
+    COMMENT 'Registra un pago asociado a una venta'
+BEGIN
+
+    DECLARE v_existe_venta INT DEFAULT 0;
+    DECLARE v_existe_forma_pago INT DEFAULT 0;
+
+    DECLARE v_id_pago INT UNSIGNED DEFAULT 0;
+
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_errno INT;
+    DECLARE v_text TEXT
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_errno = MYSQL_ERRNO,
+            v_text = MESSAGE_TEXT;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+
+    END;
+
+
+    IF p_id_venta IS NULL OR p_id_venta <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La venta es obligatoria';
+    END IF;
+
+
+    IF p_id_forma_pago IS NULL
+       OR p_id_forma_pago <= 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La forma de pago es obligatoria';
+    END IF;
+
+
+    IF p_importe IS NULL OR p_importe <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El importe del pago debe ser mayor a cero';
+    END IF;
+
+
+    SELECT COUNT(*)
+    INTO v_existe_venta
+    FROM kath_erp.ventas
+    WHERE id_venta = p_id_venta
+      AND status_venta = TRUE;
+
+    IF v_existe_venta = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta indicada no existe o está cancelada';
+    END IF;
+
+
+    SELECT COUNT(*)
+    INTO v_existe_forma_pago
+    FROM kath_erp.formas_de_pago
+    WHERE id = p_id_forma_pago
+      AND activo = TRUE;
+
+    IF v_existe_forma_pago = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La forma de pago no existe o está inactiva';
+    END IF;
+
+
+    INSERT INTO kath_erp.pagos_x_venta (
+        id_venta,
+        id_forma_pago,
+        importe
+    )
+    VALUES (
+        p_id_venta,
+        p_id_forma_pago,
+        p_importe
+    );
+
+
+    SET v_id_pago = LAST_INSERT_ID();
+
+
+    SELECT
+        v_id_pago AS id,
+        'Pago registrado correctamente' AS message;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
+	IN p_id_articulo INT UNSIGNED,
+	IN p_id_tipo_cliente INT,
+	IN p_precio DECIMAL(18,2),
+	IN p_precio_especial DECIMAL(18,2),
+	IN p_cantidad_precio_especial INT
 )
     MODIFIES SQL DATA
     COMMENT 'Inserta precio de articulo por tipo de cliente'
 BEGIN
-    DECLARE v_existe_articulo INT DEFAULT 0;
-    DECLARE v_existe_tipo_cliente INT DEFAULT 0;
-    DECLARE v_existe_relacion INT DEFAULT 0;
+	DECLARE v_existe_articulo INT DEFAULT 0;
+	DECLARE v_existe_tipo_cliente INT DEFAULT 0;
+	DECLARE v_existe_relacion INT DEFAULT 0;
 
-    IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El articulo no es valido';
-    END IF;
+	IF p_id_articulo IS NULL OR p_id_articulo <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El articulo no es valido';
+	END IF;
 
-    IF p_id_tipo_cliente IS NULL OR p_id_tipo_cliente <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de cliente no es valido';
-    END IF;
+	IF p_id_tipo_cliente IS NULL OR p_id_tipo_cliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de cliente no es valido';
+	END IF;
 
-    IF p_precio IS NULL OR p_precio < 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El precio no es valido';
-    END IF;
+	IF p_precio IS NULL OR p_precio < 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El precio no es valido';
+	END IF;
 
-    IF p_precio_especial IS NOT NULL AND p_precio_especial < 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El precio especial no es valido';
-    END IF;
+	IF p_precio_especial IS NOT NULL AND p_precio_especial < 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El precio especial no es valido';
+	END IF;
 
-    IF p_cantidad_precio_especial IS NOT NULL AND p_cantidad_precio_especial <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cantidad minima para precio especial no es valida';
-    END IF;
+	IF p_cantidad_precio_especial IS NOT NULL AND p_cantidad_precio_especial <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cantidad minima para precio especial no es valida';
+	END IF;
 
-    IF p_precio_especial IS NULL AND p_cantidad_precio_especial IS NOT NULL THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No debe existir cantidad minima si no existe precio especial';
-    END IF;
+	IF p_precio_especial IS NULL AND p_cantidad_precio_especial IS NOT NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No debe existir cantidad minima si no existe precio especial';
+	END IF;
 
-    IF p_precio_especial IS NOT NULL AND p_cantidad_precio_especial IS NULL THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Debe existir cantidad minima si existe precio especial';
-    END IF;
+	IF p_precio_especial IS NOT NULL AND p_cantidad_precio_especial IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Debe existir cantidad minima si existe precio especial';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_articulo
-    FROM kath_erp.articulo
-    WHERE id_articulo = p_id_articulo;
+	SELECT COUNT(*)
+	INTO v_existe_articulo
+	FROM kath_erp.articulo
+	WHERE id_articulo = p_id_articulo;
 
-    IF v_existe_articulo = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El articulo no existe';
-    END IF;
+	IF v_existe_articulo = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El articulo no existe';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_tipo_cliente
-    FROM kath_erp.tipo_cliente
-    WHERE id = p_id_tipo_cliente
-      AND activo = 1;
+	SELECT COUNT(*)
+	INTO v_existe_tipo_cliente
+	FROM kath_erp.tipo_cliente
+	WHERE id = p_id_tipo_cliente
+	  AND activo = 1;
 
-    IF v_existe_tipo_cliente = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de cliente no existe o esta inactivo';
-    END IF;
+	IF v_existe_tipo_cliente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de cliente no existe o esta inactivo';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_relacion
-    FROM kath_erp.precios_x_tipocliente
-    WHERE id_articulo = p_id_articulo
-      AND id_tipoCliente = p_id_tipo_cliente;
+	SELECT COUNT(*)
+	INTO v_existe_relacion
+	FROM kath_erp.precios_x_tipocliente
+	WHERE id_articulo = p_id_articulo
+	  AND id_tipoCliente = p_id_tipo_cliente;
 
-    IF v_existe_relacion > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El articulo ya tiene precio para este tipo de cliente';
-    END IF;
+	IF v_existe_relacion > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El articulo ya tiene precio para este tipo de cliente';
+	END IF;
 
-    INSERT INTO kath_erp.precios_x_tipocliente (
-        id_articulo,
-        id_tipoCliente,
-        precio,
-        precios_especial,
-        cant_p_precioEspecial
-    ) VALUES (
-        p_id_articulo,
-        p_id_tipo_cliente,
-        p_precio,
-        p_precio_especial,
-        p_cantidad_precio_especial
-    );
+	INSERT INTO kath_erp.precios_x_tipocliente (
+		id_articulo,
+		id_tipoCliente,
+		precio,
+		precios_especial,
+		cant_p_precioEspecial
+	) VALUES (
+		p_id_articulo,
+		p_id_tipo_cliente,
+		p_precio,
+		p_precio_especial,
+		p_cantidad_precio_especial
+	);
 
-    SELECT
-        LAST_INSERT_ID() AS id,
-        'Precio registrado correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertProveedor(
-    IN p_id_cuenta_contable INT,
+	SELECT
+		LAST_INSERT_ID() AS id,
+		'Precio registrado correctamente' AS message;
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertProveedor`(
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_correo_electronico VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_correo_electronico VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_estado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_ciudad VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_direccion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_codigo_postal VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     MODIFIES SQL DATA
-    COMMENT 'Registra un nuevo proveedor'
+    COMMENT 'Registra un nuevo proveedor sin dependencias contables'
 BEGIN
-
-    DECLARE v_id_proveedor INT UNSIGNED DEFAULT 0;
-    DECLARE v_existe_cuenta INT DEFAULT 0;
-    DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_cuenta_ultimo_nivel BOOLEAN DEFAULT FALSE;
     DECLARE v_existe_rfc INT DEFAULT 0;
-    DECLARE v_cuenta_asignada INT DEFAULT 0;
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
@@ -2928,11 +3960,6 @@ BEGIN
     END;
 
     START TRANSACTION;
-
-    IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable del proveedor es obligatoria';
-    END IF;
 
     IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
         SIGNAL SQLSTATE '45000'
@@ -2950,57 +3977,16 @@ BEGIN
     END IF;
 
     SELECT COUNT(*)
-    INTO v_existe_cuenta
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta_contable;
-
-    IF v_existe_cuenta = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable indicada no existe';
-    END IF;
-
-    SELECT
-        activa,
-        ultimo_nivel
-    INTO
-        v_cuenta_activa,
-        v_cuenta_ultimo_nivel
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta_contable
-    FOR UPDATE;
-
-    IF v_cuenta_activa = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable indicada se encuentra inactiva';
-    END IF;
-
-    IF v_cuenta_ultimo_nivel = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable indicada no es de ultimo nivel';
-    END IF;
-
-    SELECT COUNT(*)
     INTO v_existe_rfc
-    FROM proveedor
-    WHERE rfc COLLATE utf8mb4_general_ci = TRIM(p_rfc);
+    FROM kath_erp.proveedor
+    WHERE rfc COLLATE utf8mb4_general_ci = UPPER(TRIM(p_rfc));
 
     IF v_existe_rfc > 0 THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Ya existe un proveedor registrado con el RFC indicado';
     END IF;
 
-    SELECT COUNT(*)
-    INTO v_cuenta_asignada
-    FROM proveedor
-    WHERE id_cuenta_contable = p_id_cuenta_contable;
-
-    IF v_cuenta_asignada > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable indicada ya se encuentra asignada a un proveedor';
-    END IF;
-
-    INSERT INTO proveedor (
-        id_cuenta_contable,
+    INSERT INTO kath_erp.proveedor (
         rfc,
         nombre,
         descripcion,
@@ -3011,7 +3997,6 @@ BEGIN
         codigo_postal,
         activo
     ) VALUES (
-        p_id_cuenta_contable,
         UPPER(TRIM(p_rfc)),
         TRIM(p_nombre),
         NULLIF(TRIM(p_descripcion), ''),
@@ -3023,32 +4008,15 @@ BEGIN
         TRUE
     );
 
-    SET v_id_proveedor = LAST_INSERT_ID();
-
     COMMIT;
 
     SELECT
         200 AS id,
         'Proveedor registrado correctamente' AS message;
+END;
 
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertSucursal(
-    IN nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+CREATE PROCEDURE `kath_erp`.`insertSucursal`(
+	IN nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -3060,491 +4028,596 @@ CREATE PROCEDURE insertSucursal(
     MODIFIES SQL DATA
     COMMENT 'Registra una nueva sucurlar junto con su respectivo catalogo de productos'
 BEGIN
-
+	
     DECLARE v_id_ultima_sucursal INT;
-
+    
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
     DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        GET DIAGNOSTICS CONDITION 1
-        v_sqlstate = RETURNED_SQLSTATE,
-        v_errno = MYSQL_ERRNO,
-        v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', `v_errno`,' (', `v_sqlstate`, '): ', `v_text`) AS message;
-
-        ROLLBACK;
+	    GET DIAGNOSTICS CONDITION 1
+	    v_sqlstate = RETURNED_SQLSTATE,
+	    v_errno = MYSQL_ERRNO,
+	    v_text = MESSAGE_TEXT;
+    
+    	SELECT
+    		500 AS id,
+    		CONCAT('Error ', `v_errno`,' (', `v_sqlstate`, '): ', `v_text`) AS message;
+    
+		ROLLBACK;        
     END;
-
+    
     START TRANSACTION;
-
+		
         INSERT INTO kath_erp.sucursal(
-            nombre,
-            descripcion,
-            telefono,
-            email,
-            estado,
-            ciudad,
-            direccion,
-            codigo_postal,
+			nombre,
+			descripcion,
+			telefono,
+			email,
+			estado,
+			ciudad,
+			direccion,
+			codigo_postal,
             activo
-        )VALUES(
-            nombre,
-            descripcion,
-            telefono,
-            email,
-            estado,
-            ciudad,
-            direccion,
-            codigo_postal,
+		)VALUES(
+			nombre,
+			descripcion,
+			telefono,
+			email,
+			estado,
+			ciudad,
+			direccion,
+			codigo_postal,
             1
-        );
-
+		);
+        
         SELECT
-            s,id_sucursar
-        INTO
-            v_id_ultima_sucursal
-        FROM kath_erp.sucursal AS s
+			s,id_sucursar
+		INTO
+			v_id_ultima_sucursal
+		FROM kath_erp.sucursal AS s
         ORDER BY s.id_sucursar DESC LIMIT 1;
-
+        
         INSERT INTO kath_erp.existencia_x_sucursal(
-            id_articulo,
+			id_articulo,
             id_sucursal,
             existencia
         )
         SELECT id_articulo, v_id_ultima_sucursal,0 FROM kath_erp.articulo;
-
+        
     COMMIT;
-
+    
     SELECT 200 AS id, 'Sucursal registrada existosamente' AS message;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertTelefonoCliente(
-    IN p_id_cliente INT UNSIGNED,
-    IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+CREATE PROCEDURE `kath_erp`.`insertTelefonoCliente`(
+	IN p_id_cliente INT UNSIGNED,
+	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     MODIFIES SQL DATA
     COMMENT 'Registra un telefono asociado a un cliente'
 BEGIN
+	
+	DECLARE v_id_telefono INT DEFAULT 0;
+	DECLARE v_existe_cliente INT DEFAULT 0;
+	DECLARE v_existe_telefono INT DEFAULT 0;
 
-    DECLARE v_id_telefono INT DEFAULT 0;
-    DECLARE v_existe_cliente INT DEFAULT 0;
-    DECLARE v_existe_telefono INT DEFAULT 0;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+		ROLLBACK;
 
-        ROLLBACK;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
+	START TRANSACTION;
 
-    START TRANSACTION;
+	IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del cliente no es valido';
+	END IF;
 
-    IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del cliente no es valido';
-    END IF;
+	IF p_telefono IS NULL OR TRIM(p_telefono) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono es obligatorio';
+	END IF;
 
-    IF p_telefono IS NULL OR TRIM(p_telefono) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono es obligatorio';
-    END IF;
+	IF CHAR_LENGTH(TRIM(p_telefono)) <> 10 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono debe contener 10 digitos';
+	END IF;
 
-    IF CHAR_LENGTH(TRIM(p_telefono)) <> 10 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono debe contener 10 digitos';
-    END IF;
+	IF TRIM(p_telefono) NOT REGEXP '^[0-9]{10}$' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono solo debe contener numeros';
+	END IF;
 
-    IF TRIM(p_telefono) NOT REGEXP '^[0-9]{10}$' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono solo debe contener numeros';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_existe_cliente
+	FROM cliente
+	WHERE id_cliente = p_id_cliente;
 
-    SELECT COUNT(*)
-    INTO v_existe_cliente
-    FROM cliente
-    WHERE id_cliente = p_id_cliente;
+	IF v_existe_cliente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El cliente indicado no existe';
+	END IF;
 
-    IF v_existe_cliente = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El cliente indicado no existe';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_existe_telefono
+	FROM telefono_x_cliente
+	WHERE telefono = TRIM(p_telefono);
 
-    SELECT COUNT(*)
-    INTO v_existe_telefono
-    FROM telefono_x_cliente
-    WHERE telefono = TRIM(p_telefono);
+	IF v_existe_telefono > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono indicado ya se encuentra registrado';
+	END IF;
 
-    IF v_existe_telefono > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono indicado ya se encuentra registrado';
-    END IF;
+	INSERT INTO telefono_x_cliente (
+		id_cliente,
+		telefono
+	) VALUES (
+		p_id_cliente,
+		TRIM(p_telefono)
+	);
 
-    INSERT INTO telefono_x_cliente (
-        id_cliente,
-        telefono
-    ) VALUES (
-        p_id_cliente,
-        TRIM(p_telefono)
-    );
+	SET v_id_telefono = LAST_INSERT_ID();
 
-    SET v_id_telefono = LAST_INSERT_ID();
+	COMMIT;
 
-    COMMIT;
+	SELECT
+		200 AS id,
+		'Telefono registrado correctamente' AS message;
+	
+END;
 
-    SELECT
-        200 AS id,
-        'Telefono registrado correctamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertTelefonoEmpleado(
-    IN p_id_empleado INT,
-    IN p_telefono_empleado VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+CREATE PROCEDURE `kath_erp`.`insertTelefonoEmpleado`(
+	IN p_id_empleado INT,
+	IN p_telefono_empleado VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci 
 )
     MODIFIES SQL DATA
     COMMENT 'Registra un nuevo numero telefonico asociado a un empleado'
 BEGIN
+	
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;		
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+		
+	INSERT INTO kath_erp.telefono_x_empleado (
+		id_empleado,
+		telefono 
+	)VALUES(
+		p_id_empleado,
+		p_telefono_empleado
+	);
+		
+	SELECT 200 AS id, 'Numero registrado exitosamente' AS message;
+	
+END;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
-
-    INSERT INTO kath_erp.telefono_x_empleado (
-        id_empleado,
-        telefono
-    )VALUES(
-        p_id_empleado,
-        p_telefono_empleado
-    );
-
-    SELECT 200 AS id, 'Numero registrado exitosamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insertTelefonoProveedor(
-    IN p_id_proveedor INT UNSIGNED,
-    IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+CREATE PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
+	IN p_id_proveedor INT UNSIGNED,
+	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     MODIFIES SQL DATA
     COMMENT 'Registra un telefono asociado a un proveedor'
 BEGIN
+	
+	DECLARE v_id_telefono INT DEFAULT 0;
+	DECLARE v_existe_proveedor INT DEFAULT 0;
+	DECLARE v_existe_telefono INT DEFAULT 0;
 
-    DECLARE v_id_telefono INT DEFAULT 0;
-    DECLARE v_existe_proveedor INT DEFAULT 0;
-    DECLARE v_existe_telefono INT DEFAULT 0;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
+
+		ROLLBACK;
+
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+
+	START TRANSACTION;
+
+	IF p_id_proveedor IS NULL OR p_id_proveedor <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del proveedor no es valido';
+	END IF;
+
+	IF p_telefono IS NULL OR TRIM(p_telefono) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono es obligatorio';
+	END IF;
+
+	IF CHAR_LENGTH(TRIM(p_telefono)) <> 10 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono debe contener 10 digitos';
+	END IF;
+
+	IF TRIM(p_telefono) NOT REGEXP '^[0-9]{10}$' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono solo debe contener numeros';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_proveedor
+	FROM proveedor
+	WHERE id_proveedor = p_id_proveedor;
+
+	IF v_existe_proveedor = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El proveedor indicado no existe';
+	END IF;
+
+	SELECT COUNT(*)
+	INTO v_existe_telefono
+	FROM telefono_x_proveedor
+	WHERE telefono COLLATE utf8mb4_general_ci = TRIM(p_telefono);
+
+	IF v_existe_telefono > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El telefono indicado ya se encuentra registrado';
+	END IF;
+
+	INSERT INTO telefono_x_proveedor (
+		id_proveedor,
+		telefono
+	) VALUES (
+		p_id_proveedor,
+		TRIM(p_telefono)
+	);
+
+	SET v_id_telefono = LAST_INSERT_ID();
+
+	COMMIT;
+
+	SELECT
+		200 AS id,
+		'Telefono registrado correctamente' AS message;
+	
+END;
+
+CREATE PROCEDURE `kath_erp`.`insertVenta`(
+    IN p_id_empleado INT UNSIGNED,
+    IN p_id_cliente INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_fecha DATE
+)
+    MODIFIES SQL DATA
+    COMMENT 'Crea la cabecera provisional de una venta'
+BEGIN
+
+    DECLARE v_id_venta INT UNSIGNED DEFAULT 0;
+
+    DECLARE v_existe_empleado INT DEFAULT 0;
+    DECLARE v_existe_cliente INT DEFAULT 0;
+    DECLARE v_existe_sucursal INT DEFAULT 0;
+
+    DECLARE v_sucursal_empleado BIGINT UNSIGNED DEFAULT 0;
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+    DECLARE v_text TEXT
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
+
         GET DIAGNOSTICS CONDITION 1
             v_sqlstate = RETURNED_SQLSTATE,
             v_errno = MYSQL_ERRNO,
             v_text = MESSAGE_TEXT;
 
-        ROLLBACK;
-
         SELECT
             500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+
     END;
 
-    START TRANSACTION;
 
-    IF p_id_proveedor IS NULL OR p_id_proveedor <= 0 THEN
+    IF p_id_empleado IS NULL OR p_id_empleado <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del proveedor no es valido';
+            SET MESSAGE_TEXT = 'El empleado es obligatorio';
     END IF;
 
-    IF p_telefono IS NULL OR TRIM(p_telefono) = '' THEN
+
+    IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono es obligatorio';
+            SET MESSAGE_TEXT = 'El cliente es obligatorio';
     END IF;
 
-    IF CHAR_LENGTH(TRIM(p_telefono)) <> 10 THEN
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono debe contener 10 digitos';
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
     END IF;
 
-    IF TRIM(p_telefono) NOT REGEXP '^[0-9]{10}$' THEN
+
+    IF p_fecha IS NULL THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono solo debe contener numeros';
+            SET MESSAGE_TEXT = 'La fecha de venta es obligatoria';
     END IF;
+
+
+    /* Empleado activo */
 
     SELECT COUNT(*)
-    INTO v_existe_proveedor
-    FROM proveedor
-    WHERE id_proveedor = p_id_proveedor;
+    INTO v_existe_empleado
+    FROM kath_erp.empleados
+    WHERE id_empleado = p_id_empleado
+      AND activo = TRUE;
 
-    IF v_existe_proveedor = 0 THEN
+    IF v_existe_empleado = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El proveedor indicado no existe';
+            SET MESSAGE_TEXT =
+                'El empleado indicado no existe o está inactivo';
     END IF;
+
+
+    SELECT id_sucursal
+    INTO v_sucursal_empleado
+    FROM kath_erp.empleados
+    WHERE id_empleado = p_id_empleado
+    LIMIT 1;
+
+
+    IF v_sucursal_empleado <> p_id_sucursal THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El empleado no pertenece a la sucursal de la venta';
+    END IF;
+
+
+    /* Cliente activo */
 
     SELECT COUNT(*)
-    INTO v_existe_telefono
-    FROM telefono_x_proveedor
-    WHERE telefono COLLATE utf8mb4_general_ci = TRIM(p_telefono);
+    INTO v_existe_cliente
+    FROM kath_erp.cliente
+    WHERE id_cliente = p_id_cliente
+      AND activo = TRUE;
 
-    IF v_existe_telefono > 0 THEN
+    IF v_existe_cliente = 0 THEN
         SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El telefono indicado ya se encuentra registrado';
+            SET MESSAGE_TEXT =
+                'El cliente indicado no existe o está inactivo';
     END IF;
 
-    INSERT INTO telefono_x_proveedor (
-        id_proveedor,
-        telefono
-    ) VALUES (
-        p_id_proveedor,
-        TRIM(p_telefono)
+
+    /* Sucursal activa */
+
+    SELECT COUNT(*)
+    INTO v_existe_sucursal
+    FROM kath_erp.sucursal
+    WHERE id_sucursar = p_id_sucursal
+      AND activo = TRUE;
+
+    IF v_existe_sucursal = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La sucursal indicada no existe o está inactiva';
+    END IF;
+
+
+    /*
+     * tipo_venta queda provisionalmente en Crédito.
+     *
+     * subtotal, iva e importe_total se calculan posteriormente
+     * mediante finalizarVenta().
+     *
+     * Ninguno de estos valores debe provenir de la UI.
+     */
+
+    INSERT INTO kath_erp.ventas (
+        id_empleado,
+        id_cliente,
+        id_sucursal,
+        fecha,
+        tipo_venta,
+        subtotal,
+        iva,
+        importe_total,
+        status_venta
+    )
+    VALUES (
+        p_id_empleado,
+        p_id_cliente,
+        p_id_sucursal,
+        p_fecha,
+        FALSE,
+        0,
+        0,
+        0,
+        TRUE
     );
 
-    SET v_id_telefono = LAST_INSERT_ID();
 
-    COMMIT;
+    SET v_id_venta = LAST_INSERT_ID();
+
 
     SELECT
-        200 AS id,
-        'Telefono registrado correctamente' AS message;
+        v_id_venta AS id,
+        'Cabecera de venta registrada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_cuenta_contable(
-    IN p_id_cuenta_padre INT,
-    IN p_id_rubro INT,
-    IN p_clave VARCHAR(25)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(255)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_descripcion VARCHAR(555)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_ultimo_nivel BOOLEAN
+END;
+
+CREATE PROCEDURE `kath_erp`.`insert_cuenta_contable`(
+	IN p_id_cuenta_padre INT,
+	IN p_id_rubro INT,
+	IN p_clave VARCHAR(25)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre VARCHAR(255)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(555)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ultimo_nivel BOOLEAN
 )
     MODIFIES SQL DATA
     COMMENT 'Creacion de una nueva cuenta contable'
-BEGIN
+BEGIN 
 
 DECLARE v_cuenta_existente INT DEFAULT 0;
-    DECLARE v_rubro_existente INT DEFAULT 0;
-    DECLARE v_nivel TINYINT DEFAULT 1;
-    DECLARE v_padre_ultimo_nivel BOOLEAN DEFAULT FALSE;
-    DECLARE v_padre_existente INT DEFAULT 0;
-    DECLARE v_id_cuenta INT DEFAULT 0;
+	DECLARE v_rubro_existente INT DEFAULT 0;
+	DECLARE v_nivel TINYINT DEFAULT 1;
+	DECLARE v_padre_ultimo_nivel BOOLEAN DEFAULT FALSE;
+	DECLARE v_padre_existente INT DEFAULT 0;
+	DECLARE v_id_cuenta INT DEFAULT 0;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            @sqlstate = RETURNED_SQLSTATE,
-            @errno = MYSQL_ERRNO,
-            @text = MESSAGE_TEXT;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			@sqlstate = RETURNED_SQLSTATE,
+			@errno = MYSQL_ERRNO,
+			@text = MESSAGE_TEXT;
 
-        ROLLBACK;
+		ROLLBACK;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', @errno, ' (', @sqlstate, '): ', @text) AS message;
-    END;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', @errno, ' (', @sqlstate, '): ', @text) AS message;
+	END;
 
-    START TRANSACTION;
+	START TRANSACTION;
 
-    IF p_clave IS NULL OR TRIM(p_clave) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La clave contable es obligatoria';
-    END IF;
+	IF p_clave IS NULL OR TRIM(p_clave) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La clave contable es obligatoria';
+	END IF;
 
-    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre de la cuenta es obligatorio';
-    END IF;
+	IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre de la cuenta es obligatorio';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_cuenta_existente
-    FROM cuentas_contables
-    WHERE clave = TRIM(p_clave);
+	SELECT COUNT(*)
+	INTO v_cuenta_existente
+	FROM cuentas_contables
+	WHERE clave = TRIM(p_clave);
 
-    IF v_cuenta_existente > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable ya existe';
-    END IF;
+	IF v_cuenta_existente > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable ya existe';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_rubro_existente
-    FROM rubro_cuenta_contable
-    WHERE id_rubro = p_id_rubro;
+	SELECT COUNT(*)
+	INTO v_rubro_existente
+	FROM rubro_cuenta_contable
+	WHERE id_rubro = p_id_rubro;
 
-    IF v_rubro_existente = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El rubro contable no existe';
-    END IF;
+	IF v_rubro_existente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El rubro contable no existe';
+	END IF;
 
-    IF p_id_cuenta_padre IS NOT NULL THEN
+	IF p_id_cuenta_padre IS NOT NULL THEN
 
-        SELECT COUNT(*)
-        INTO v_padre_existente
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_padre;
+		SELECT COUNT(*)
+		INTO v_padre_existente
+		FROM cuentas_contables
+		WHERE id_cuenta = p_id_cuenta_padre;
 
-        IF v_padre_existente = 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La cuenta superior no existe';
-        END IF;
+		IF v_padre_existente = 0 THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'La cuenta superior no existe';
+		END IF;
 
-        SELECT
-            nivel,
-            ultimo_nivel
-        INTO
-            v_nivel,
-            v_padre_ultimo_nivel
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_padre
-        FOR UPDATE;
+		SELECT
+			nivel,
+			ultimo_nivel
+		INTO
+			v_nivel,
+			v_padre_ultimo_nivel
+		FROM cuentas_contables
+		WHERE id_cuenta = p_id_cuenta_padre
+		FOR UPDATE;
 
-        IF v_padre_ultimo_nivel = TRUE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La cuenta superior es de detalle y no admite subcuentas';
-        END IF;
+		IF v_padre_ultimo_nivel = TRUE THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'La cuenta superior es de detalle y no admite subcuentas';
+		END IF;
 
-        SET v_nivel = v_nivel + 1;
+		SET v_nivel = v_nivel + 1;
 
-    ELSE
-        SET v_nivel = 1;
-    END IF;
+	ELSE
+		SET v_nivel = 1;
+	END IF;
 
-    INSERT INTO cuentas_contables (
-        id_cuenta_padre,
-        fk_id_rubro,
-        clave,
-        nombre,
-        descripcion,
-        nivel,
-        ultimo_nivel,
-        cargo,
-        abono,
-        activa,
-        fecha_modificacion
-    ) VALUES (
-        p_id_cuenta_padre,
-        p_id_rubro,
-        TRIM(p_clave),
-        TRIM(p_nombre),
-        NULLIF(TRIM(p_descripcion), ''),
-        v_nivel,
-        p_ultimo_nivel,
-        0,
-        0,
-        TRUE,
-        CURDATE()
-    );
+	INSERT INTO cuentas_contables (
+		id_cuenta_padre,
+		fk_id_rubro,
+		clave,
+		nombre,
+		descripcion,
+		nivel,
+		ultimo_nivel,
+		cargo,
+		abono,
+		activa,
+		fecha_modificacion
+	) VALUES (
+		p_id_cuenta_padre,
+		p_id_rubro,
+		TRIM(p_clave),
+		TRIM(p_nombre),
+		NULLIF(TRIM(p_descripcion), ''),
+		v_nivel,
+		p_ultimo_nivel,
+		0,
+		0,
+		TRUE,
+		CURDATE()
+	);
 
-    SET v_id_cuenta = LAST_INSERT_ID();
+	SET v_id_cuenta = LAST_INSERT_ID();
 
-    COMMIT;
+	COMMIT;
 
-    SELECT
-        v_id_cuenta AS id,
-        'Cuenta contable registrada correctamente' AS message;
+	SELECT
+		v_id_cuenta AS id,
+		'Cuenta contable registrada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_empleado(
-    IN p_id_cuenta_contable INT,
+END;
+
+CREATE PROCEDURE `kath_erp`.`insert_empleado`(
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_rfc VARCHAR(13)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -3572,10 +4645,6 @@ CREATE PROCEDURE insert_empleado(
     COMMENT 'Registra un empleado con contraseña hasheada desde Java'
 BEGIN
     DECLARE v_id_empleado INT DEFAULT 0;
-    DECLARE v_existe_cuenta INT DEFAULT 0;
-    DECLARE v_cuenta_asignada INT DEFAULT 0;
-    DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
     DECLARE v_existe_sucursal INT DEFAULT 0;
     DECLARE v_rfc_duplicado INT DEFAULT 0;
     DECLARE v_curp_duplicada INT DEFAULT 0;
@@ -3601,11 +4670,6 @@ BEGIN
     END;
 
     START TRANSACTION;
-
-    IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable es obligatoria';
-    END IF;
 
     IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
         SIGNAL SQLSTATE '45000'
@@ -3663,42 +4727,6 @@ BEGIN
     END IF;
 
     SELECT COUNT(*)
-    INTO v_existe_cuenta
-    FROM kath_erp.cuentas_contables
-    WHERE id_cuenta = p_id_cuenta_contable;
-
-    IF v_existe_cuenta = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable indicada no existe';
-    END IF;
-
-    SELECT activa, ultimo_nivel
-    INTO v_cuenta_activa, v_ultimo_nivel
-    FROM kath_erp.cuentas_contables
-    WHERE id_cuenta = p_id_cuenta_contable
-    FOR UPDATE;
-
-    IF v_cuenta_activa = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable se encuentra inactiva';
-    END IF;
-
-    IF v_ultimo_nivel = FALSE THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta del empleado debe ser una cuenta de detalle';
-    END IF;
-
-    SELECT COUNT(*)
-    INTO v_cuenta_asignada
-    FROM kath_erp.empleados
-    WHERE id_cuenta_contable = p_id_cuenta_contable;
-
-    IF v_cuenta_asignada > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable ya está asignada a otro empleado';
-    END IF;
-
-    SELECT COUNT(*)
     INTO v_rfc_duplicado
     FROM kath_erp.empleados
     WHERE rfc = UPPER(TRIM(p_rfc));
@@ -3729,7 +4757,6 @@ BEGIN
     END IF;
 
     INSERT INTO kath_erp.empleados (
-        id_cuenta_contable,
         id_sucursal,
         rfc,
         curp,
@@ -3744,7 +4771,6 @@ BEGIN
         contrasenia,
         activo
     ) VALUES (
-        p_id_cuenta_contable,
         p_id_sucursal,
         UPPER(TRIM(p_rfc)),
         UPPER(TRIM(p_curp)),
@@ -3767,98 +4793,22 @@ BEGIN
     SELECT
         v_id_empleado AS id,
         'Empleado registrado correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_forma_de_pago(
-    IN forma_pago VARCHAR(18)
+END;
+
+CREATE PROCEDURE `kath_erp`.`insert_forma_de_pago`(
+	IN forma_pago VARCHAR(18)
 )
 BEGIN
-    INSERT INTO formas_de_pago(
-        tipo_de_pago,
+	INSERT INTO formas_de_pago(
+		tipo_de_pago,
         activo
     )VALUES(
-        forma_pago,
+		forma_pago,
         1
     );
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_nueva_venta(
-    idSucursal INT,
-    fechaVenta DATE,
-    ventaContado BOOLEAN,
-    idEmpleado INT,
-    idCliente INT,
-    subTotal DOUBLE,
-    iva DOUBLE,
-    total DOUBLE,
-    statusVenta BOOLEAN
-)
-BEGIN
+END;
 
-    INSERT INTO ventas(
-        id_sucursal,
-        fecha,
-        tipo_venta,
-        id_empleado,
-        id_cliente,
-        subtotal,
-        iva,
-        importe_total,
-        status_venta
-    )VALUES(
-        idSucursal,
-        fechaVenta,
-        ventaContado,
-        idEmpleado,
-        idCliente,
-        subTotal,
-        iva,
-        total,
-        statusVenta
-    );
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_nuevo_categoria(
+CREATE PROCEDURE `kath_erp`.`insert_nuevo_categoria`(
   IN `nombre_m` VARCHAR(60),
   IN `descripcion_m` VARCHAR(255)
 )
@@ -3866,245 +4816,149 @@ CREATE PROCEDURE insert_nuevo_categoria(
 BEGIN
 INSERT INTO categoria_producto(nombre, descripcion)
 VALUES(nombre_m, descripcion_m);
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_nuevo_empleado(
-  IN id_sucursal INT,
-  IN rfc_e VARCHAR(13),
-  IN curp_e VARCHAR(18),
-  IN nombre_completo_e VARCHAR(30),
-  IN nombre_corto_e VARCHAR(10),
-  IN fecha_nac_e DATE,
-  IN correo_electronico_e VARCHAR(30),
-  IN estado_e VARCHAR(30),
-  IN ciudad_e VARCHAR(40),
-  IN direccion_e TEXT,
-  IN codigo_postal_e VARCHAR(6)
-)
-BEGIN
-INSERT INTO empleados(
-    id_sucursal,
-    rfc,
-    curp,
-    nombre_completo,
-    nombre_corto,
-    fecha_nac,
-    correo_electronico,
-    estado,
-    ciudad,
-    direccion,
-    codigo_postal,
-    activo
-  )
-VALUES(
-    id_sucursal,
-    rfc_e,
-    curp_e,
-    nombre_completo_e,
-    nombre_corto_e,
-    fecha_nac_e,
-    correo_electronico_e,
-    estado_e,
-    ciudad_e,
-    direccion_e,
-    codigo_postal_e,
-    1
-  );
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE insert_nuevo_tipoCliente(
-    IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+END;
+
+CREATE PROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
+	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     MODIFIES SQL DATA
     COMMENT 'Registra un nuevo tipo de cliente o categoria de cliente'
 BEGIN
+	
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;		
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
-
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
+	
     INSERT INTO tipo_cliente(
-        nombre,
+		nombre,
         descripcion,
         activo
     )VALUES(
-        nombre_t,
+		nombre_t,
         descripcion_t,
         1
     );
-
+    
     SELECT 200 AS id, 'Tipo de cliente registrado con exito' AS message;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listArticulos(
-    IN p_id_sucursal BIGINT UNSIGNED,
-    IN p_tipo_busqueda VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_ordenar_por VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_texto_busqueda VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_id_tipo_cliente INT
+CREATE PROCEDURE `kath_erp`.`listArticulos`(
+	IN p_id_sucursal BIGINT UNSIGNED,
+	IN p_tipo_busqueda VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ordenar_por VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_texto_busqueda VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_id_tipo_cliente INT
 )
     READS SQL DATA
     COMMENT 'Lista articulos registrados con precio por tipo de cliente y existencia por sucursal'
 BEGIN
-
+	
     DECLARE v_tipo_busqueda VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-    DECLARE v_ordenar_por VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-    DECLARE v_texto_busqueda VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE v_ordenar_por VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE v_texto_busqueda VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    SET v_tipo_busqueda = UPPER(TRIM(COALESCE(p_tipo_busqueda, 'TODOS')));
-    SET v_ordenar_por = UPPER(TRIM(COALESCE(p_ordenar_por, 'NOMBRE')));
-    SET v_texto_busqueda = TRIM(COALESCE(p_texto_busqueda, ''));
+	SET v_tipo_busqueda = UPPER(TRIM(COALESCE(p_tipo_busqueda, 'TODOS')));
+	SET v_ordenar_por = UPPER(TRIM(COALESCE(p_ordenar_por, 'NOMBRE')));
+	SET v_texto_busqueda = TRIM(COALESCE(p_texto_busqueda, ''));
 
-    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador de la sucursal no es valido';
-    END IF;
+	IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador de la sucursal no es valido';
+	END IF;
 
-    IF p_id_tipo_cliente IS NULL OR p_id_tipo_cliente <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del tipo de cliente no es valido';
-    END IF;
+	IF p_id_tipo_cliente IS NULL OR p_id_tipo_cliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del tipo de cliente no es valido';
+	END IF;
 
-    IF v_tipo_busqueda NOT IN ('TODOS', 'CODIGO', 'NOMBRE', 'PROVEEDOR', 'CATEGORIA', 'DESCRIPCION') THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de busqueda no es valido';
-    END IF;
+	IF v_tipo_busqueda NOT IN ('TODOS', 'CODIGO', 'NOMBRE', 'PROVEEDOR', 'CATEGORIA', 'DESCRIPCION') THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de busqueda no es valido';
+	END IF;
 
-    IF v_ordenar_por NOT IN ('CODIGO', 'NOMBRE', 'PROVEEDOR', 'CATEGORIA') THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El criterio de ordenamiento no es valido';
-    END IF;
+	IF v_ordenar_por NOT IN ('CODIGO', 'NOMBRE', 'PROVEEDOR', 'CATEGORIA') THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El criterio de ordenamiento no es valido';
+	END IF;
 
-    SELECT
-        art.id_articulo,
-        prv.nombre AS nombre_proveedor,
-        cat.nombre AS nombre_categoria,
-        art.codigo_articulo,
-        art.nombre,
-        art.es_exento,
-        art.costo_unitario,
-        pxc.precio,
-        COALESCE(exs.existencia, 0) AS existencia,
-        art.activo
-    FROM articulo AS art
-    INNER JOIN proveedor AS prv
-        ON prv.id_proveedor = art.id_proveedor
-    INNER JOIN categoria_producto AS cat
-        ON cat.id_categoria = art.id_categoria
-    LEFT JOIN precios_x_tipocliente AS pxc
-        ON pxc.id_articulo = art.id_articulo
-       AND pxc.id_tipoCliente = p_id_tipo_cliente
-    LEFT JOIN existencia_x_sucursal AS exs
-        ON exs.id_articulo = art.id_articulo
-       AND exs.id_sucursal = p_id_sucursal
-    WHERE
-        v_texto_busqueda = ''
-        OR (
-            v_tipo_busqueda = 'TODOS'
-            AND (
-                art.codigo_articulo COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-                OR art.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-                OR prv.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-                OR cat.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-                OR art.descripcion COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-            )
-        )
-        OR (
-            v_tipo_busqueda = 'CODIGO'
-            AND art.codigo_articulo COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-        )
-        OR (
-            v_tipo_busqueda = 'NOMBRE'
-            AND art.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-        )
-        OR (
-            v_tipo_busqueda = 'PROVEEDOR'
-            AND prv.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-        )
-        OR (
-            v_tipo_busqueda = 'CATEGORIA'
-            AND cat.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-        )
-        OR (
-            v_tipo_busqueda = 'DESCRIPCION'
-            AND art.descripcion COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
-        )
-    ORDER BY
-        CASE WHEN v_ordenar_por = 'CODIGO' THEN art.codigo_articulo END ASC,
-        CASE WHEN v_ordenar_por = 'NOMBRE' THEN art.nombre END ASC,
-        CASE WHEN v_ordenar_por = 'PROVEEDOR' THEN prv.nombre END ASC,
-        CASE WHEN v_ordenar_por = 'CATEGORIA' THEN cat.nombre END ASC,
-        art.nombre ASC;
+	SELECT
+		art.id_articulo,
+		prv.nombre AS nombre_proveedor,
+		cat.nombre AS nombre_categoria,
+		art.codigo_articulo,
+		art.nombre,
+		art.es_exento,
+		art.costo_unitario,
+		pxc.precio,
+		COALESCE(exs.existencia, 0) AS existencia,
+		art.activo
+	FROM articulo AS art
+	INNER JOIN proveedor AS prv
+		ON prv.id_proveedor = art.id_proveedor
+	INNER JOIN categoria_producto AS cat
+		ON cat.id_categoria = art.id_categoria
+	LEFT JOIN precios_x_tipocliente AS pxc
+		ON pxc.id_articulo = art.id_articulo
+	   AND pxc.id_tipoCliente = p_id_tipo_cliente
+	LEFT JOIN existencia_x_sucursal AS exs
+		ON exs.id_articulo = art.id_articulo
+	   AND exs.id_sucursal = p_id_sucursal
+	WHERE
+		v_texto_busqueda = ''
+		OR (
+			v_tipo_busqueda = 'TODOS'
+			AND (
+				art.codigo_articulo COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+				OR art.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+				OR prv.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+				OR cat.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+				OR art.descripcion COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+			)
+		)
+		OR (
+			v_tipo_busqueda = 'CODIGO'
+			AND art.codigo_articulo COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+		)
+		OR (
+			v_tipo_busqueda = 'NOMBRE'
+			AND art.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+		)
+		OR (
+			v_tipo_busqueda = 'PROVEEDOR'
+			AND prv.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+		)
+		OR (
+			v_tipo_busqueda = 'CATEGORIA'
+			AND cat.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+		)
+		OR (
+			v_tipo_busqueda = 'DESCRIPCION'
+			AND art.descripcion COLLATE utf8mb4_general_ci LIKE CONCAT('%', v_texto_busqueda, '%')
+		)
+	ORDER BY
+		CASE WHEN v_ordenar_por = 'CODIGO' THEN art.codigo_articulo END ASC,
+		CASE WHEN v_ordenar_por = 'NOMBRE' THEN art.nombre END ASC,
+		CASE WHEN v_ordenar_por = 'PROVEEDOR' THEN prv.nombre END ASC,
+		CASE WHEN v_ordenar_por = 'CATEGORIA' THEN cat.nombre END ASC,
+		art.nombre ASC;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listArticulosCompraById(
+CREATE PROCEDURE `kath_erp`.`listArticulosCompraById`(
     IN p_id_compra INT UNSIGNED
 )
     READS SQL DATA
@@ -4128,146 +4982,95 @@ BEGIN
         ON axc.id_articulo = a.id_articulo
     WHERE axc.id_compra = p_id_compra
     ORDER BY axc.id ASC;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listCategoriaProducto(
-    IN p_nombre_categoria VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`listCategoriaProducto`(
+	IN p_nombre_categoria VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
     COMMENT 'Lista categorias de productos filtradas por nombre'
 BEGIN
 
-    SELECT
-        cp.id_categoria,
-        cp.nombre,
-        cp.descripcion,
-        cp.activo
-    FROM categoria_producto AS cp
-    WHERE
-        p_nombre_categoria IS NULL
-        OR TRIM(p_nombre_categoria) = ''
-        OR cp.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_categoria), '%')
-    ORDER BY cp.nombre ASC;
+	SELECT
+		cp.id_categoria,
+		cp.nombre,
+		cp.descripcion,
+		cp.activo
+	FROM categoria_producto AS cp
+	WHERE
+		p_nombre_categoria IS NULL
+		OR TRIM(p_nombre_categoria) = ''
+		OR cp.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_categoria), '%')
+	ORDER BY cp.nombre ASC;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listClientes(
-    IN `nombre_c` VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`listClientes`(
+	IN `nombre_c` VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
-    COMMENT 'listado de clientes registrados filtrado por nombre del cliente'
+    COMMENT 'Listado de clientes registrados filtrado por nombre del cliente'
 BEGIN
-SELECT
-    cliente.id_cliente,
-    cliente.rfc,
-    tipo_cliente.nombre,
-    cuentas_contables.clave,
-    cliente.nombre_completo,
-    cliente.nombre_corto,
-    cliente.correo_electronico,
-    cliente.estado,
-    cliente.ciudad,
-    cliente.direccion,
-    cliente.codigo_postal,
-    cliente.activo
-FROM
-    cliente
-    INNER JOIN cuentas_contables ON cuentas_contables.id_cuenta = cliente.id_cuenta_contable
-    INNER JOIN tipo_cliente ON tipo_cliente.id = cliente.id_tipoCliente
-WHERE
-    cliente.nombre_completo LIKE CONCAT('%', nombre_c, '%'); END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listCmbCategoriaProducto()
+
+	SELECT
+		c.id_cliente,
+		c.rfc,
+		tc.nombre,
+		c.nombre_completo,
+		c.nombre_corto,
+		c.correo_electronico,
+		c.estado,
+		c.ciudad,
+		c.direccion,
+		c.codigo_postal,
+		c.activo
+	FROM kath_erp.cliente AS c
+	INNER JOIN kath_erp.tipo_cliente AS tc
+		ON tc.id = c.id_tipoCliente
+	WHERE c.nombre_completo LIKE CONCAT('%', nombre_c, '%');
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`listCmbCategoriaProducto`()
     READS SQL DATA
     COMMENT 'Lista categorias activas para combo'
 BEGIN
 
-    SELECT
-        cp.id_categoria,
-        cp.nombre
-    FROM categoria_producto AS cp
-    WHERE cp.activo = TRUE
-    ORDER BY cp.nombre ASC;
+	SELECT
+		cp.id_categoria,
+		cp.nombre
+	FROM categoria_producto AS cp
+	WHERE cp.activo = TRUE
+	ORDER BY cp.nombre ASC;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listCmbProveeodor()
+END;
+
+CREATE PROCEDURE `kath_erp`.`listCmbClientes`()
+    READS SQL DATA
+    COMMENT 'Listado de nombre cortos de clientes para ComboBox'
 BEGIN
+	
+	SELECT
+		c.id_cliente AS id,
+		c.nombre_corto AS nombre
+	FROM
+		kath_erp.cliente AS c;
+	
+END;
 
-    SELECT
-        p.id_proveedor AS id,
-        p.nombre
+CREATE PROCEDURE `kath_erp`.`listCmbProveeodor`()
+BEGIN
+	
+    SELECT 
+    	p.id_proveedor AS id,
+    	p.nombre 
     FROM kath_erp.proveedor  AS p
     WHERE p.activo = true;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listCompras(
+CREATE PROCEDURE `kath_erp`.`listCompras`(
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
     IN p_fecha_factura_inicio DATE,
@@ -4338,84 +5141,45 @@ BEGIN
         c.fecha_compra DESC,
         c.id_compra DESC;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listCuentasContablesEnDialog(
-    IN nombre_cuenta VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+END;
+
+CREATE PROCEDURE `kath_erp`.`listCuentasContablesEnDialog`(
+	IN nombre_cuenta VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
     COMMENT 'Muestra un listado reducido de columnas para ser consultado desde un dialog de seleccion rapida'
 BEGIN
+	
+	SELECT 
+		cc.id_cuenta,
+		cc.clave,
+		cc.nombre
+	FROM
+		cuentas_contables AS cc
+	WHERE
+		cc.nombre LIKE CONCAT('%',nombre_cuenta,'%') AND cc.ultimo_nivel = 1;
+	
+END;
 
-    SELECT
-        cc.id_cuenta,
-        cc.clave,
-        cc.nombre
-    FROM
-        cuentas_contables AS cc
-    WHERE
-        cc.nombre LIKE CONCAT('%',nombre_cuenta,'%') AND cc.ultimo_nivel = 1;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listExistenciaGlobalArticulo(
-    IN p_id_articulo INT UNSIGNED
+CREATE PROCEDURE `kath_erp`.`listExistenciaGlobalArticulo`(
+	IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
     COMMENT 'CONSULTA LA EXISTENCIA DE UN ARTICULO EN TODAS LAS SUCURSALES REGISTRADAS'
 BEGIN
+	
+	SELECT 
+		s.id_sucursar,
+		s.nombre,
+		s.direccion,
+		exs.existencia 
+	FROM kath_erp.existencia_x_sucursal AS exs
+	INNER JOIN kath_erp.sucursal AS s on exs.id_sucursal = s.id_sucursar 
+	WHERE exs.id_articulo = p_id_articulo;
+		
+END;
 
-    SELECT
-        s.id_sucursar,
-        s.nombre,
-        s.direccion,
-        exs.existencia
-    FROM kath_erp.existencia_x_sucursal AS exs
-    INNER JOIN kath_erp.sucursal AS s on exs.id_sucursal = s.id_sucursar
-    WHERE exs.id_articulo = p_id_articulo;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listPreciosArticuloTipoCliente(
+CREATE PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
@@ -4427,41 +5191,25 @@ BEGIN
         tc.nombre AS tipo_cliente,
         patc.precio,
         patc.precios_especial,
-        patc.cant_p_precioEspecial
+        patc.cant_p_precioEspecial 
     FROM kath_erp.precios_x_tipocliente AS patc
-    INNER JOIN kath_erp.tipo_cliente AS tc ON patc.id_tipoCliente  = tc.id
+    INNER JOIN kath_erp.tipo_cliente AS tc ON patc.id_tipoCliente  = tc.id 
     WHERE patc.id_articulo = p_id_articulo
       AND tc.activo = 1
     ORDER BY tc.nombre ASC;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listProveedores(
+END;
+
+CREATE PROCEDURE `kath_erp`.`listProveedores`(
     IN p_nombre_proveedor VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
-    COMMENT 'Lista proveedores por nombre'
+    COMMENT 'Lista proveedores por nombre o RFC'
 BEGIN
-
-
-     SELECT
+    SELECT
         p.id_proveedor,
         p.rfc,
         p.nombre,
-        cc.clave,
         p.descripcion,
         p.correo_electronico,
         p.estado,
@@ -4469,225 +5217,419 @@ BEGIN
         p.direccion,
         p.codigo_postal,
         p.activo
-    FROM proveedor AS p
-    INNER JOIN cuentas_contables AS cc
-        ON cc.id_cuenta = p.id_cuenta_contable
+    FROM kath_erp.proveedor AS p
     WHERE
-        (
-            p_nombre_proveedor IS NULL
-            OR TRIM(p_nombre_proveedor) = ''
-            OR p.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
-            OR p.rfc COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
-        )
+        p_nombre_proveedor IS NULL
+        OR TRIM(p_nombre_proveedor) = ''
+        OR p.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
+        OR p.rfc COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
     ORDER BY p.nombre ASC;
+END;
 
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listTelefonoProveedor(
-    IN p_id_proveedor INT UNSIGNED
+CREATE PROCEDURE `kath_erp`.`listTelefonoProveedor`(
+	IN p_id_proveedor INT UNSIGNED
 )
     READS SQL DATA
     COMMENT 'Lista los telefonos asociados a un proveedor'
 BEGIN
+	
+	SELECT
+		txp.id_telefono,
+		txp.telefono
+	FROM telefono_x_proveedor AS txp
+	WHERE txp.id_proveedor = p_id_proveedor
+	ORDER BY txp.id_telefono ASC;
+	
+END;
 
-    SELECT
-        txp.id_telefono,
-        txp.telefono
-    FROM telefono_x_proveedor AS txp
-    WHERE txp.id_proveedor = p_id_proveedor
-    ORDER BY txp.id_telefono ASC;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listTelefonosCliente(
-    IN p_id_cliente INT UNSIGNED
+CREATE PROCEDURE `kath_erp`.`listTelefonosCliente`(
+	IN p_id_cliente INT UNSIGNED
 )
     READS SQL DATA
     COMMENT 'Lista los telefonos asociados a un cliente'
 BEGIN
+	
+	SELECT
+		txc.id_telefono,		
+		txc.telefono
+	FROM telefono_x_cliente AS txc
+	WHERE txc.id_cliente = p_id_cliente
+	ORDER BY txc.id_telefono ASC;
+	
+END;
 
-    SELECT
-        txc.id_telefono,
-        txc.telefono
-    FROM telefono_x_cliente AS txc
-    WHERE txc.id_cliente = p_id_cliente
-    ORDER BY txc.id_telefono ASC;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE listTelefonosDeEmpleadoByID(
-    IN id_empleado INT
+CREATE PROCEDURE `kath_erp`.`listTelefonosDeEmpleadoByID`(
+	IN id_empleado INT
 )
     READS SQL DATA
     COMMENT 'EMPLEADO PARA VER LOS TELEFONOS ASOCIADOS A UN EMPLEADO AL MOMENTO DE VISUALIZAR SUS DATOS EN FORMULARIO'
 BEGIN
+	
+	SELECT 
+		txe.id_telefono,
+		txe.telefono 
+	FROM
+		kath_erp.telefono_x_empleado AS txe
+	WHERE 
+		txe.id_empleado = id_empleado;
+	
+END;
+
+CREATE PROCEDURE `kath_erp`.`listVentas`(
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_tipo_busqueda VARCHAR(20)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_texto_busqueda VARCHAR(255)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_ordenar_por VARCHAR(20)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_fecha_inicial DATE,
+    IN p_fecha_final DATE
+)
+    READS SQL DATA
+    COMMENT 'Lista las ventas de una sucursal con búsqueda, ordenamiento y rango de fechas'
+BEGIN
+
+    DECLARE v_tipo_busqueda VARCHAR(20)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+    DECLARE v_texto_busqueda VARCHAR(255)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+    DECLARE v_ordenar_por VARCHAR(20)
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+    DECLARE v_existe_sucursal INT DEFAULT 0;
+
+
+    SET v_tipo_busqueda =
+        UPPER(TRIM(COALESCE(p_tipo_busqueda, 'TODOS')));
+
+    SET v_texto_busqueda =
+        TRIM(COALESCE(p_texto_busqueda, ''));
+
+    SET v_ordenar_por =
+        UPPER(TRIM(COALESCE(p_ordenar_por, 'FECHA')));
+
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+    END IF;
+
+
+    SELECT COUNT(*)
+    INTO v_existe_sucursal
+    FROM kath_erp.sucursal
+    WHERE id_sucursar = p_id_sucursal;
+
+    IF v_existe_sucursal = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal indicada no existe';
+    END IF;
+
+
+    IF v_tipo_busqueda NOT IN (
+        'TODOS',
+        'EMPLEADO',
+        'CLIENTE'
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El criterio de búsqueda no es válido';
+    END IF;
+
+
+    IF v_tipo_busqueda <> 'TODOS'
+       AND v_texto_busqueda = '' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'Debe indicar un texto para realizar la búsqueda';
+    END IF;
+
+
+    IF v_ordenar_por NOT IN (
+        'EMPLEADO',
+        'CLIENTE',
+        'TIPO',
+        'FECHA',
+        'STATUS'
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El criterio de ordenamiento no es válido';
+    END IF;
+
+
+    IF p_fecha_inicial IS NOT NULL
+       AND p_fecha_final IS NOT NULL
+       AND p_fecha_inicial > p_fecha_final THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La fecha inicial no puede ser posterior a la fecha final';
+    END IF;
+
 
     SELECT
-        txe.id_telefono,
-        txe.telefono
-    FROM
-        kath_erp.telefono_x_empleado AS txe
-    WHERE
-        txe.id_empleado = id_empleado;
+        v.id_venta AS folio,
+        v.fecha,
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE list_cmbGrupoContable()
+        CASE
+            WHEN v.tipo_venta = TRUE THEN 'Contado'
+            ELSE 'Crédito'
+        END AS tipo,
+
+        emp.nombre_completo AS atendio,
+        cli.nombre_completo AS cliente,
+
+        v.subtotal,
+        v.iva,
+        v.importe_total AS total,
+
+        CASE
+            WHEN v.status_venta = TRUE THEN 'Vigente'
+            ELSE 'Cancelada'
+        END AS vigente
+
+    FROM kath_erp.ventas AS v
+
+    INNER JOIN kath_erp.empleados AS emp
+        ON v.id_empleado = emp.id_empleado
+
+    INNER JOIN kath_erp.cliente AS cli
+        ON v.id_cliente = cli.id_cliente
+
+    WHERE
+        v.id_sucursal = p_id_sucursal
+
+        AND (
+            v_tipo_busqueda = 'TODOS'
+
+            OR (
+                v_tipo_busqueda = 'EMPLEADO'
+                AND (
+                    emp.nombre_completo LIKE
+                        CONCAT('%', v_texto_busqueda, '%')
+
+                    OR emp.nombre_corto LIKE
+                        CONCAT('%', v_texto_busqueda, '%')
+                )
+            )
+
+            OR (
+                v_tipo_busqueda = 'CLIENTE'
+                AND (
+                    cli.nombre_completo LIKE
+                        CONCAT('%', v_texto_busqueda, '%')
+
+                    OR cli.nombre_corto LIKE
+                        CONCAT('%', v_texto_busqueda, '%')
+                )
+            )
+        )
+
+        AND (
+            p_fecha_inicial IS NULL
+            OR v.fecha >= p_fecha_inicial
+        )
+
+        AND (
+            p_fecha_final IS NULL
+            OR v.fecha <= p_fecha_final
+        )
+
+    ORDER BY
+
+        CASE
+            WHEN v_ordenar_por = 'EMPLEADO'
+            THEN emp.nombre_completo
+        END ASC,
+
+        CASE
+            WHEN v_ordenar_por = 'CLIENTE'
+            THEN cli.nombre_completo
+        END ASC,
+
+        CASE
+            WHEN v_ordenar_por = 'TIPO'
+            THEN v.tipo_venta
+        END DESC,
+
+        CASE
+            WHEN v_ordenar_por = 'FECHA'
+            THEN v.fecha
+        END DESC,
+
+        CASE
+            WHEN v_ordenar_por = 'STATUS'
+            THEN v.status_venta
+        END DESC,
+
+        v.fecha DESC,
+        v.id_venta DESC;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`list_cmbGrupoContable`()
     READS SQL DATA
     COMMENT 'Listado de todos los grupos contables registrados para un ComboBox'
 BEGIN
+	
+	SELECT 
+		gc.id_grupo,
+		gc.nombre_grupo 
+	FROM
+		kath_erp.grupo_contable AS gc;
+	
+END;
 
-    SELECT
-        gc.id_grupo,
-        gc.nombre_grupo
-    FROM
-        kath_erp.grupo_contable AS gc;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE list_cmbRubroCuentasContables(
-    IN `id_grupo_contable` INT
+CREATE PROCEDURE `kath_erp`.`list_cmbRubroCuentasContables`(
+	IN `id_grupo_contable` INT
 )
     COMMENT 'LISTADO DE RUBROS CONTABLES PARA UN COMBOBOX'
 BEGIN
+	
+	SELECT
+		rcc.id_rubro,
+		rcc.nombre 
+	FROM
+		kath_erp.rubro_cuenta_contable AS rcc
+	WHERE rcc.fk_id_grupo_contable = `id_grupo_contable`;
+	
+END;
 
-    SELECT
-        rcc.id_rubro,
-        rcc.nombre
-    FROM
-        kath_erp.rubro_cuenta_contable AS rcc
-    WHERE rcc.fk_id_grupo_contable = `id_grupo_contable`;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE sp_consultarEmpleadoPorRFC(IN `rfc` VARCHAR(13) CHARSET utf8)
+CREATE PROCEDURE `kath_erp`.`restarExistenciaSucursalVenta`(
+    IN p_id_detalle_venta INT UNSIGNED
+)
+    MODIFIES SQL DATA
+    COMMENT 'Descuenta de la sucursal la existencia correspondiente a un detalle de venta'
 BEGIN
 
+    DECLARE v_existe_detalle INT DEFAULT 0;
+
+    DECLARE v_id_articulo INT UNSIGNED;
+    DECLARE v_id_sucursal BIGINT UNSIGNED;
+    DECLARE v_cantidad INT;
+
+    DECLARE v_id_existencia INT;
+    DECLARE v_existencia_actual INT DEFAULT 0;
+
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_errno INT;
+    DECLARE v_text TEXT
+        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_errno = MYSQL_ERRNO,
+            v_text = MESSAGE_TEXT;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_text
+            ) AS message;
+
+    END;
+
+
+    IF p_id_detalle_venta IS NULL
+       OR p_id_detalle_venta <= 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El detalle de venta es obligatorio';
+    END IF;
+
+
+    SELECT COUNT(*)
+    INTO v_existe_detalle
+    FROM kath_erp.articulo_x_venta AS axv
+
+    INNER JOIN kath_erp.ventas AS v
+        ON axv.id_venta = v.id_venta
+
+    INNER JOIN kath_erp.articulo AS a
+        ON axv.id_articulo = a.id_articulo
+
+    WHERE axv.id = p_id_detalle_venta
+      AND v.status_venta = TRUE
+      AND a.activo = TRUE;
+
+
+    IF v_existe_detalle = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El detalle no existe, la venta está cancelada o el artículo está inactivo';
+    END IF;
+
+
     SELECT
+        axv.id_articulo,
+        v.id_sucursal,
+        axv.cantidad
+    INTO
+        v_id_articulo,
+        v_id_sucursal,
+        v_cantidad
+    FROM kath_erp.articulo_x_venta AS axv
 
-        empleados.curp,
+    INNER JOIN kath_erp.ventas AS v
+        ON axv.id_venta = v.id_venta
 
-        empleados.nombre_completo,
+    WHERE axv.id = p_id_detalle_venta
+    LIMIT 1;
 
-        empleados.nombre_corto,
 
-        empleados.fecha_nac,
+    SELECT
+        id,
+        COALESCE(existencia, 0)
+    INTO
+        v_id_existencia,
+        v_existencia_actual
+    FROM kath_erp.existencia_x_sucursal
 
-        empleados.correo_electronico,
+    WHERE id_articulo = v_id_articulo
+      AND id_sucursal = v_id_sucursal
 
-        empleados.estado,
+    LIMIT 1
+    FOR UPDATE;
 
-        empleados.ciudad,
 
-        empleados.direccion,
+    IF v_id_existencia IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'No existe registro de existencia para el artículo y sucursal';
+    END IF;
 
-        empleados.codigo_postal,
 
-        empleados.contrasenia
+    IF v_existencia_actual < v_cantidad THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La venta dejaría la existencia del artículo en negativo';
+    END IF;
 
-    FROM
 
-        empleados
+    UPDATE kath_erp.existencia_x_sucursal
+    SET existencia = v_existencia_actual - v_cantidad
+    WHERE id = v_id_existencia;
 
-    WHERE
 
-        empleados.rfc = rfc;
+    SELECT
+        p_id_detalle_venta AS id,
+        'Existencia actualizada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE sumarExistenciaSucursalCompra(
+END;
+
+CREATE PROCEDURE `kath_erp`.`sumarExistenciaSucursalCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_articulo INT UNSIGNED,
     IN p_cantidad INT
@@ -4807,23 +5749,10 @@ BEGIN
         200 AS id,
         'Existencia actualizada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateArticulo(
-    IN p_id_articulo INT UNSIGNED,
+END;
+
+CREATE PROCEDURE `kath_erp`.`updateArticulo`(
+	IN p_id_articulo INT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
     IN p_id_categoria INT UNSIGNED,
     IN p_codigo_articulo VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -4838,7 +5767,7 @@ CREATE PROCEDURE updateArticulo(
     MODIFIES SQL DATA
     COMMENT 'Actualiza los datos generales de un artículo existente'
 BEGIN
-
+	
     IF NOT EXISTS (
         SELECT 1
         FROM kath_erp.articulo AS a
@@ -4881,23 +5810,10 @@ BEGIN
             'Artículo actualizado correctamente' AS message;
 
     END IF;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateArticuloCompra(
+CREATE PROCEDURE `kath_erp`.`updateArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED,
     IN p_cantidad INT,
     IN p_subtotal DOUBLE
@@ -5104,391 +6020,296 @@ BEGIN
         p_id_detalle_compra AS id,
         'Artículo de compra actualizado correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateCategoriaProducto(
-    IN p_id_categoria INT UNSIGNED,
-    IN p_nombre VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_activo BOOLEAN
+END;
+
+CREATE PROCEDURE `kath_erp`.`updateCategoriaProducto`(
+	IN p_id_categoria INT UNSIGNED,
+	IN p_nombre VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_activo BOOLEAN
 )
     MODIFIES SQL DATA
     COMMENT 'Actualiza una categoria de producto'
 BEGIN
+	
+	
+	DECLARE v_existe_categoria INT DEFAULT 0;
+	DECLARE v_existe_nombre INT DEFAULT 0;
 
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE v_existe_categoria INT DEFAULT 0;
-    DECLARE v_existe_nombre INT DEFAULT 0;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+		ROLLBACK;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+		SELECT
+			500 AS id,
+			CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
+	END;
 
-        ROLLBACK;
+	START TRANSACTION;
 
-        SELECT
-            500 AS id,
-            CONCAT('Error ', v_errno, ' (', v_sqlstate, '): ', v_text) AS message;
-    END;
+	IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador de la categoria no es valido';
+	END IF;
 
-    START TRANSACTION;
+	IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre de la categoria es obligatorio';
+	END IF;
 
-    IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador de la categoria no es valido';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_existe_categoria
+	FROM categoria_producto
+	WHERE id_categoria = p_id_categoria;
 
-    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre de la categoria es obligatorio';
-    END IF;
+	IF v_existe_categoria = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La categoria indicada no existe';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_categoria
-    FROM categoria_producto
-    WHERE id_categoria = p_id_categoria;
+	SELECT COUNT(*)
+	INTO v_existe_nombre
+	FROM categoria_producto
+	WHERE nombre COLLATE utf8mb4_general_ci = TRIM(p_nombre)
+	  AND id_categoria <> p_id_categoria;
 
-    IF v_existe_categoria = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La categoria indicada no existe';
-    END IF;
+	IF v_existe_nombre > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Ya existe otra categoria con el nombre indicado';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_existe_nombre
-    FROM categoria_producto
-    WHERE nombre COLLATE utf8mb4_general_ci = TRIM(p_nombre)
-      AND id_categoria <> p_id_categoria;
+	UPDATE categoria_producto
+	SET
+		nombre = TRIM(p_nombre),
+		descripcion = NULLIF(TRIM(p_descripcion), ''),
+		activo = COALESCE(p_activo, TRUE)
+	WHERE id_categoria = p_id_categoria;
 
-    IF v_existe_nombre > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Ya existe otra categoria con el nombre indicado';
-    END IF;
+	COMMIT;
 
-    UPDATE categoria_producto
-    SET
-        nombre = TRIM(p_nombre),
-        descripcion = NULLIF(TRIM(p_descripcion), ''),
-        activo = COALESCE(p_activo, TRUE)
-    WHERE id_categoria = p_id_categoria;
+	SELECT
+		200 AS id,
+		'Categoria actualizada correctamente' AS message;
+	
+	
+END;
 
-    COMMIT;
-
-    SELECT
-        200 AS id,
-        'Categoria actualizada correctamente' AS message;
-
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateCliente(
-    IN p_id_cliente INT UNSIGNED,
-    IN p_id_tipoCliente INT,
-    IN p_id_cuenta_contable INT,
-    IN p_rfc VARCHAR(13)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre_completo VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre_corto VARCHAR(10)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_fecha_nac DATE,
-    IN p_correo_electronico VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_estado VARCHAR(30)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_ciudad VARCHAR(40)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_direccion TEXT
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_codigo_postal VARCHAR(6)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_activo BOOLEAN
+CREATE PROCEDURE `kath_erp`.`updateCliente`(
+	IN p_id_cliente INT UNSIGNED,
+	IN p_id_tipoCliente INT,
+	IN p_rfc VARCHAR(13)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_completo VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre_corto VARCHAR(10)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_fecha_nac DATE,
+	IN p_correo_electronico VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_estado VARCHAR(30)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ciudad VARCHAR(40)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_direccion TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_codigo_postal VARCHAR(6)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_activo BOOLEAN
 )
     MODIFIES SQL DATA
-    COMMENT 'Actualiza y valida los datos de un cliente existente, si la cuenta contable presenta saldos el registro contable no puede ser modificado'
+    COMMENT 'Actualiza y valida los datos operativos de un cliente sin dependencias contables'
 BEGIN
 
-    DECLARE v_existe_cliente INT DEFAULT 0;
-    DECLARE v_existe_tipo_cliente INT DEFAULT 0;
-    DECLARE v_cuenta_actual INT DEFAULT 0;
-    DECLARE v_existe_cuenta INT DEFAULT 0;
-    DECLARE v_cuenta_asignada INT DEFAULT 0;
-    DECLARE v_rfc_duplicado INT DEFAULT 0;
+	DECLARE v_existe_cliente INT DEFAULT 0;
+	DECLARE v_existe_tipo_cliente INT DEFAULT 0;
+	DECLARE v_rfc_duplicado INT DEFAULT 0;
+	DECLARE v_cliente_activo BOOLEAN DEFAULT FALSE;
+	DECLARE v_saldo_pendiente DECIMAL(20,2) DEFAULT 0;
 
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_saldo DOUBLE DEFAULT 0;
+	DECLARE v_sqlstate CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-    DECLARE v_sqlstate CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+		ROLLBACK;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+		SELECT
+			500 AS id,
+			CONCAT(
+				'Error ',
+				v_errno,
+				' (',
+				v_sqlstate,
+				'): ',
+				v_text
+			) AS message;
+	END;
 
-        ROLLBACK;
+	START TRANSACTION;
 
-        SELECT
-            500 AS id,
-            CONCAT(
-                'Error ',
-                v_errno,
-                ' (',
-                v_sqlstate,
-                '): ',
-                v_text
-            ) AS message;
-    END;
+	IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador del cliente no es válido';
+	END IF;
 
-    START TRANSACTION;
+	SELECT COUNT(*)
+	INTO v_existe_cliente
+	FROM kath_erp.cliente
+	WHERE id_cliente = p_id_cliente;
 
+	IF v_existe_cliente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El cliente indicado no existe';
+	END IF;
 
-    IF p_id_cliente IS NULL OR p_id_cliente <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador del cliente no es válido';
-    END IF;
+	SELECT activo
+	INTO v_cliente_activo
+	FROM kath_erp.cliente
+	WHERE id_cliente = p_id_cliente
+	FOR UPDATE;
 
-    SELECT COUNT(*)
-    INTO v_existe_cliente
-    FROM cliente
-    WHERE id_cliente = p_id_cliente;
+	IF p_id_tipoCliente IS NULL OR p_id_tipoCliente <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de cliente es obligatorio';
+	END IF;
 
-    IF v_existe_cliente = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El cliente indicado no existe';
-    END IF;
+	IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC es obligatorio';
+	END IF;
 
+	IF p_nombre_completo IS NULL
+			OR TRIM(p_nombre_completo) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre completo es obligatorio';
+	END IF;
 
-    SELECT id_cuenta_contable
-    INTO v_cuenta_actual
-    FROM cliente
-    WHERE id_cliente = p_id_cliente
-    FOR UPDATE;
+	IF p_nombre_corto IS NULL
+			OR TRIM(p_nombre_corto) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre corto es obligatorio';
+	END IF;
 
+	IF p_fecha_nac IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La fecha de nacimiento es obligatoria';
+	END IF;
 
-    IF p_id_tipoCliente IS NULL OR p_id_tipoCliente <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de cliente es obligatorio';
-    END IF;
+	IF p_fecha_nac > CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La fecha de nacimiento no es válida';
+	END IF;
 
-    IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable es obligatoria';
-    END IF;
+	IF p_correo_electronico IS NULL
+			OR TRIM(p_correo_electronico) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
+	END IF;
 
-    IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El RFC es obligatorio';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_existe_tipo_cliente
+	FROM kath_erp.tipo_cliente
+	WHERE id = p_id_tipoCliente;
 
-    IF p_nombre_completo IS NULL
-            OR TRIM(p_nombre_completo) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre completo es obligatorio';
-    END IF;
+	IF v_existe_tipo_cliente = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El tipo de cliente indicado no existe';
+	END IF;
 
-    IF p_nombre_corto IS NULL
-            OR TRIM(p_nombre_corto) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre corto es obligatorio';
-    END IF;
+	SELECT COUNT(*)
+	INTO v_rfc_duplicado
+	FROM kath_erp.cliente
+	WHERE rfc = UPPER(TRIM(p_rfc))
+	  AND id_cliente <> p_id_cliente;
 
-    IF p_fecha_nac IS NULL THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La fecha de nacimiento es obligatoria';
-    END IF;
+	IF v_rfc_duplicado > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El RFC ya pertenece a otro cliente';
+	END IF;
 
-    IF p_fecha_nac > CURDATE() THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La fecha de nacimiento no es válida';
-    END IF;
+	/*
+	 * La desactivación no puede utilizarse para evadir la regla de cobranza.
+	 * Si updateCliente intenta pasar un cliente activo a inactivo, se aplica
+	 * la misma validación de saldo insoluto que en deleteCliente.
+	 */
+	IF v_cliente_activo = TRUE AND p_activo = FALSE THEN
 
-    IF p_correo_electronico IS NULL
-            OR TRIM(p_correo_electronico) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El correo electrónico es obligatorio';
-    END IF;
+		SELECT
+			ROUND(
+				COALESCE(
+					SUM(
+						GREATEST(
+							CAST(v.importe_total AS DECIMAL(18,2))
+							- COALESCE((
+								SELECT SUM(CAST(pxv.importe AS DECIMAL(18,2)))
+								FROM kath_erp.pagos_x_venta AS pxv
+								WHERE pxv.id_venta = v.id_venta
+							), 0)
+							- COALESCE((
+								SELECT SUM(CAST(cc.total AS DECIMAL(18,2)))
+								FROM kath_erp.cobro_clientes AS cc
+								WHERE cc.id_venta = v.id_venta
+							), 0),
+							0
+						)
+					),
+					0
+				),
+				2
+			)
+		INTO v_saldo_pendiente
+		FROM kath_erp.ventas AS v
+		WHERE v.id_cliente = p_id_cliente
+		  AND v.status_venta = TRUE
+		  AND v.tipo_venta = FALSE;
 
-    /*
-     * Validación del tipo de cliente.
-     */
-    SELECT COUNT(*)
-    INTO v_existe_tipo_cliente
-    FROM tipo_cliente
-    WHERE id = p_id_tipoCliente;
+		IF v_saldo_pendiente > 0 THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'No se puede desactivar el cliente porque tiene saldo pendiente en ventas a crédito';
+		END IF;
 
-    IF v_existe_tipo_cliente = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El tipo de cliente indicado no existe';
-    END IF;
+	END IF;
 
-    /*
-     * Validación de RFC duplicado.
-     */
-    SELECT COUNT(*)
-    INTO v_rfc_duplicado
-    FROM cliente
-    WHERE rfc = UPPER(TRIM(p_rfc))
-      AND id_cliente <> p_id_cliente;
+	UPDATE kath_erp.cliente
+	SET
+		id_tipoCliente = p_id_tipoCliente,
+		rfc = UPPER(TRIM(p_rfc)),
+		nombre_completo = TRIM(p_nombre_completo),
+		nombre_corto = TRIM(p_nombre_corto),
+		fecha_nac = p_fecha_nac,
+		correo_electronico = LOWER(TRIM(p_correo_electronico)),
+		estado = NULLIF(TRIM(p_estado), ''),
+		ciudad = NULLIF(TRIM(p_ciudad), ''),
+		direccion = NULLIF(TRIM(p_direccion), ''),
+		codigo_postal = NULLIF(TRIM(p_codigo_postal), ''),
+		activo = p_activo
+	WHERE id_cliente = p_id_cliente;
 
-    IF v_rfc_duplicado > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El RFC ya pertenece a otro cliente';
-    END IF;
+	COMMIT;
 
-    /*
-     * Si cambia la cuenta contable, se valida el saldo de la cuenta actual y
-     * posteriormente se valida la nueva cuenta.
-     */
-    IF p_id_cuenta_contable <> v_cuenta_actual THEN
+	SELECT
+		200 AS id,
+		'Cliente actualizado correctamente' AS message;
 
-        SELECT
-            cargo,
-            abono
-        INTO
-            v_cargo,
-            v_abono
-        FROM cuentas_contables
-        WHERE id_cuenta = v_cuenta_actual
-        FOR UPDATE;
+END;
 
-        SET v_saldo = ROUND(
-            COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-            2
-        );
-
-        IF v_saldo <> 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'No se puede cambiar la cuenta contable porque tiene saldo pendiente';
-        END IF;
-
-        SELECT COUNT(*)
-        INTO v_existe_cuenta
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_contable;
-
-        IF v_existe_cuenta = 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable no existe';
-        END IF;
-
-        SELECT
-            activa,
-            ultimo_nivel
-        INTO
-            v_cuenta_activa,
-            v_ultimo_nivel
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_contable
-        FOR UPDATE;
-
-        IF v_cuenta_activa = FALSE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable se encuentra inactiva';
-        END IF;
-
-        IF v_ultimo_nivel = FALSE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta debe ser una cuenta de detalle';
-        END IF;
-
-        /*
-         * Validación de exclusividad de la nueva cuenta.
-         */
-        SELECT COUNT(*)
-        INTO v_cuenta_asignada
-        FROM cliente
-        WHERE id_cuenta_contable = p_id_cuenta_contable
-          AND id_cliente <> p_id_cliente;
-
-        IF v_cuenta_asignada > 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable ya está asignada a otro cliente';
-        END IF;
-
-    END IF;
-
-    /*
-     * Actualización del cliente.
-     */
-    UPDATE cliente
-    SET
-        id_tipoCliente = p_id_tipoCliente,
-        id_cuenta_contable = p_id_cuenta_contable,
-        rfc = UPPER(TRIM(p_rfc)),
-        nombre_completo = TRIM(p_nombre_completo),
-        nombre_corto = TRIM(p_nombre_corto),
-        fecha_nac = p_fecha_nac,
-        correo_electronico = LOWER(TRIM(p_correo_electronico)),
-        estado = NULLIF(TRIM(p_estado), ''),
-        ciudad = NULLIF(TRIM(p_ciudad), ''),
-        direccion = NULLIF(TRIM(p_direccion), ''),
-        codigo_postal = NULLIF(TRIM(p_codigo_postal), ''),
-        activo = p_activo
-    WHERE id_cliente = p_id_cliente;
-
-    COMMIT;
-
-    SELECT
-        200 AS id,
-        'Cliente actualizado correctamente' AS message;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateCompra(
+CREATE PROCEDURE `kath_erp`.`updateCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_empleado INT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
@@ -5761,22 +6582,136 @@ BEGIN
         p_id_compra AS id,
         'Compra actualizada correctamente' AS message;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updatePrecioPorTipoCliente(
+END;
+
+CREATE PROCEDURE `kath_erp`.`updateConfiguracionFiscal`(
+    IN p_id_configuracion INT UNSIGNED,
+    IN p_rfc_emisor VARCHAR(13),
+    IN p_nombre_razon_social VARCHAR(255),
+    IN p_nombre_comercial VARCHAR(255),
+    IN p_regimen_fiscal_clave CHAR(3),
+    IN p_regimen_fiscal_descripcion VARCHAR(150),
+    IN p_numero_registro_sistema VARCHAR(100)
+)
+    MODIFIES SQL DATA
+BEGIN
+
+    /*
+     * Validar identificador.
+     */
+    IF p_id_configuracion IS NULL
+       OR p_id_configuracion <= 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La configuracion fiscal no es valida';
+
+    END IF;
+
+
+    /*
+     * Validar que el registro exista y se encuentre activo.
+     */
+    IF NOT EXISTS (
+        SELECT 1
+        FROM kath_erp.configuracion_fiscal
+        WHERE id_configuracion = p_id_configuracion
+          AND activo = TRUE
+    ) THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No existe la configuracion fiscal indicada';
+
+    END IF;
+
+
+    /*
+     * RFC.
+     * Persona moral: 12 caracteres.
+     * Persona fisica: 13 caracteres.
+     */
+    IF p_rfc_emisor IS NULL
+       OR TRIM(p_rfc_emisor) = ''
+       OR CHAR_LENGTH(TRIM(p_rfc_emisor)) NOT IN (12, 13) THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El RFC del emisor debe contener 12 o 13 caracteres';
+
+    END IF;
+
+
+    /*
+     * Nombre o razon social.
+     */
+    IF p_nombre_razon_social IS NULL
+       OR TRIM(p_nombre_razon_social) = '' THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El nombre o razon social es obligatorio';
+
+    END IF;
+
+
+    /*
+     * Clave de regimen fiscal SAT.
+     */
+    IF p_regimen_fiscal_clave IS NULL
+       OR CHAR_LENGTH(TRIM(p_regimen_fiscal_clave)) <> 3 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La clave del regimen fiscal debe contener 3 caracteres';
+
+    END IF;
+
+
+    /*
+     * Descripcion del regimen.
+     */
+    IF p_regimen_fiscal_descripcion IS NULL
+       OR TRIM(p_regimen_fiscal_descripcion) = '' THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La descripcion del regimen fiscal es obligatoria';
+
+    END IF;
+
+
+    /*
+     * Actualizacion.
+     *
+     * nombre_comercial y numero_registro_sistema
+     * son opcionales.
+     */
+    UPDATE kath_erp.configuracion_fiscal
+    SET
+        rfc_emisor = UPPER(TRIM(p_rfc_emisor)),
+        nombre_razon_social = TRIM(p_nombre_razon_social),
+
+        nombre_comercial =
+            NULLIF(TRIM(p_nombre_comercial), ''),
+
+        regimen_fiscal_clave =
+            TRIM(p_regimen_fiscal_clave),
+
+        regimen_fiscal_descripcion =
+            TRIM(p_regimen_fiscal_descripcion),
+
+        numero_registro_sistema =
+            NULLIF(TRIM(p_numero_registro_sistema), '')
+
+    WHERE id_configuracion = p_id_configuracion
+      AND activo = TRUE;
+
+
+    /*
+     * Respuesta esperada por SpResponseModel.
+     */
+    SELECT
+        p_id_configuracion AS id,
+        'Configuracion fiscal actualizada correctamente' AS message;
+
+END;
+
+CREATE PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
     IN p_id_articulo INT UNSIGNED,
     IN p_id_tipoCliente INT,
     IN p_precio DECIMAL(18,2),
@@ -5787,6 +6722,9 @@ CREATE PROCEDURE updatePrecioPorTipoCliente(
     COMMENT 'Actualiza el precio de un artículo por tipo de cliente'
 BEGIN
 
+   /*
+     * Validar artículo.
+     */
     IF NOT EXISTS (
         SELECT 1
         FROM kath_erp.articulo AS a
@@ -5797,6 +6735,14 @@ BEGIN
             404 AS id,
             'No se encontró el artículo indicado' AS message;
 
+
+    /*
+     * El tipo de cliente debe existir y estar activo.
+     *
+     * Si no existe en tipo_cliente NO debemos insertar nada en
+     * precios_x_tipocliente porque estaríamos intentando crear
+     * una relación contra un registro inexistente.
+     */
     ELSEIF NOT EXISTS (
         SELECT 1
         FROM kath_erp.tipo_cliente AS tc
@@ -5808,6 +6754,14 @@ BEGIN
             404 AS id,
             'No se encontró el tipo de cliente activo indicado' AS message;
 
+
+    /*
+     * Si todavía no existe una relación entre el artículo y
+     * este tipo de cliente, se crea.
+     *
+     * Este será el caso típico cuando se acaba de registrar
+     * un nuevo tipo de cliente.
+     */
     ELSEIF NOT EXISTS (
         SELECT 1
         FROM kath_erp.precios_x_tipocliente AS pxt
@@ -5815,10 +6769,29 @@ BEGIN
           AND pxt.id_tipoCliente = p_id_tipoCliente
     ) THEN
 
-        SELECT
-            404 AS id,
-            'No se encontró el precio del artículo para el tipo de cliente indicado' AS message;
+        INSERT INTO kath_erp.precios_x_tipocliente (
+            id_articulo,
+            id_tipoCliente,
+            precio,
+            precios_especial,
+            cant_p_precioEspecial
+        )
+        VALUES (
+            p_id_articulo,
+            p_id_tipoCliente,
+            p_precio,
+            p_precios_especial,
+            p_cant_p_precioEspecial
+        );
 
+        SELECT
+            200 AS id,
+            'Precio por tipo de cliente registrado correctamente' AS message;
+
+
+    /*
+     * Si ya existe, simplemente se actualiza.
+     */
     ELSE
 
         UPDATE kath_erp.precios_x_tipocliente AS pxt
@@ -5835,51 +6808,26 @@ BEGIN
 
     END IF;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateProveedor(
+END;
 
+CREATE PROCEDURE `kath_erp`.`updateProveedor`(
     IN p_id_proveedor INT UNSIGNED,
-    IN p_id_cuenta_contable INT,
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_correo_electronico VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+    IN p_correo_electronico VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_estado VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_ciudad VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_direccion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_codigo_postal VARCHAR(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_activo BOOLEAN
-
 )
     MODIFIES SQL DATA
-    COMMENT 'Actualiza los datos de un proveedor'
+    COMMENT 'Actualiza los datos operativos de un proveedor sin dependencias contables'
 BEGIN
-
     DECLARE v_existe_proveedor INT DEFAULT 0;
-    DECLARE v_id_cuenta_actual INT DEFAULT 0;
-    DECLARE v_existe_cuenta INT DEFAULT 0;
-    DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_cuenta_ultimo_nivel BOOLEAN DEFAULT FALSE;
     DECLARE v_existe_rfc INT DEFAULT 0;
-    DECLARE v_cuenta_asignada INT DEFAULT 0;
-
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_saldo DOUBLE DEFAULT 0;
+    DECLARE v_saldo_pendiente DECIMAL(20,2) DEFAULT 0;
 
     DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
@@ -5906,11 +6854,6 @@ BEGIN
             SET MESSAGE_TEXT = 'El identificador del proveedor no es valido';
     END IF;
 
-    IF p_id_cuenta_contable IS NULL OR p_id_cuenta_contable <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable del proveedor es obligatoria';
-    END IF;
-
     IF p_rfc IS NULL OR TRIM(p_rfc) = '' THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'El RFC del proveedor es obligatorio';
@@ -5928,7 +6871,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_existe_proveedor
-    FROM proveedor
+    FROM kath_erp.proveedor
     WHERE id_proveedor = p_id_proveedor;
 
     IF v_existe_proveedor = 0 THEN
@@ -5936,117 +6879,56 @@ BEGIN
             SET MESSAGE_TEXT = 'El proveedor indicado no existe';
     END IF;
 
-    SELECT id_cuenta_contable
-    INTO v_id_cuenta_actual
-    FROM proveedor
+    SELECT id_proveedor
+    INTO v_existe_proveedor
+    FROM kath_erp.proveedor
     WHERE id_proveedor = p_id_proveedor
     FOR UPDATE;
 
     SELECT COUNT(*)
     INTO v_existe_rfc
-    FROM proveedor
-    WHERE
-        rfc COLLATE utf8mb4_general_ci = TRIM(p_rfc)
-        AND id_proveedor <> p_id_proveedor;
+    FROM kath_erp.proveedor
+    WHERE rfc COLLATE utf8mb4_general_ci = UPPER(TRIM(p_rfc))
+      AND id_proveedor <> p_id_proveedor;
 
     IF v_existe_rfc > 0 THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Ya existe otro proveedor registrado con el RFC indicado';
     END IF;
 
-    IF v_id_cuenta_actual <> p_id_cuenta_contable THEN
-
-        SELECT
-            cargo,
-            abono
-        INTO
-            v_cargo,
-            v_abono
-        FROM cuentas_contables
-        WHERE id_cuenta = v_id_cuenta_actual
-        FOR UPDATE;
-
-        SET v_saldo = ROUND(
-            COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-            2
-        );
-
-        IF v_saldo <> 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'No se puede cambiar la cuenta contable del proveedor porque la cuenta actual tiene saldo';
-        END IF;
-
-        SELECT COUNT(*)
-        INTO v_existe_cuenta
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_contable;
-
-        IF v_existe_cuenta = 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable indicada no existe';
-        END IF;
-
-        SELECT
-            activa,
-            ultimo_nivel
-        INTO
-            v_cuenta_activa,
-            v_cuenta_ultimo_nivel
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_contable
-        FOR UPDATE;
-
-        IF v_cuenta_activa = FALSE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable indicada se encuentra inactiva';
-        END IF;
-
-        IF v_cuenta_ultimo_nivel = FALSE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable indicada no es de ultimo nivel';
-        END IF;
-
-        SELECT COUNT(*)
-        INTO v_cuenta_asignada
-        FROM proveedor
-        WHERE
-            id_cuenta_contable = p_id_cuenta_contable
-            AND id_proveedor <> p_id_proveedor;
-
-        IF v_cuenta_asignada > 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable indicada ya se encuentra asignada a otro proveedor';
-        END IF;
-
-    END IF;
-
     IF p_activo = FALSE THEN
-
         SELECT
-            cargo,
-            abono
-        INTO
-            v_cargo,
-            v_abono
-        FROM cuentas_contables
-        WHERE id_cuenta = v_id_cuenta_actual
-        FOR UPDATE;
+            ROUND(
+                COALESCE(
+                    SUM(
+                        GREATEST(
+                            CAST(c.subtotal + c.iva AS DECIMAL(18,2))
+                            - COALESCE((
+                                SELECT SUM(CAST(pp.importe AS DECIMAL(18,2)))
+                                FROM kath_erp.pago_proveedor AS pp
+                                WHERE pp.id_compra = c.id_compra
+                            ), 0),
+                            0
+                        )
+                    ),
+                    0
+                ),
+                2
+            )
+        INTO v_saldo_pendiente
+        FROM kath_erp.compras AS c
+        WHERE c.id_proveedor = p_id_proveedor
+          AND c.activo = TRUE
+          AND c.tipo_compra = TRUE;
 
-        SET v_saldo = ROUND(
-            COALESCE(v_cargo, 0) - COALESCE(v_abono, 0),
-            2
-        );
-
-        IF v_saldo <> 0 THEN
+        IF v_saldo_pendiente > 0 THEN
             SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'No se puede inhabilitar el proveedor porque su cuenta contable tiene saldo';
+                SET MESSAGE_TEXT = 'No se puede inhabilitar el proveedor porque tiene saldo pendiente en compras a crédito';
         END IF;
-
     END IF;
 
-    UPDATE proveedor
+    UPDATE kath_erp.proveedor
     SET
-        id_cuenta_contable = p_id_cuenta_contable,
         rfc = UPPER(TRIM(p_rfc)),
         nombre = TRIM(p_nombre),
         descripcion = NULLIF(TRIM(p_descripcion), ''),
@@ -6055,7 +6937,7 @@ BEGIN
         ciudad = NULLIF(TRIM(p_ciudad), ''),
         direccion = NULLIF(TRIM(p_direccion), ''),
         codigo_postal = NULLIF(TRIM(p_codigo_postal), ''),
-        activo = p_activo
+        activo = TRUE
     WHERE id_proveedor = p_id_proveedor;
 
     COMMIT;
@@ -6063,25 +6945,11 @@ BEGIN
     SELECT
         200 AS id,
         'Proveedor actualizado correctamente' AS message;
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE updateSucursal(
-    IN id_sucursal INT,
-    IN nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+CREATE PROCEDURE `kath_erp`.`updateSucursal`(
+	IN id_sucursal INT,
+	IN nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -6093,27 +6961,27 @@ CREATE PROCEDURE updateSucursal(
     MODIFIES SQL DATA
     COMMENT 'Actualiza los datos de una Sucursal ya registrada'
 BEGIN
-
-    DECLARE v_sqlstate CHAR(5);
+	
+	DECLARE v_sqlstate CHAR(5);
     DECLARE v_errno INT;
     DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        GET DIAGNOSTICS CONDITION 1
-        v_sqlstate = RETURNED_SQLSTATE,
-        v_errno = MYSQL_ERRNO,
-        v_text = MESSAGE_TEXT;
-
-        SELECT
-            500 AS id,
-            CONCAT('Error ', `v_errno`,' (', `v_sqlstate`, '): ', `v_text`) AS message;
-
+	    GET DIAGNOSTICS CONDITION 1
+	    v_sqlstate = RETURNED_SQLSTATE,
+	    v_errno = MYSQL_ERRNO,
+	    v_text = MESSAGE_TEXT;
+    
+    	SELECT
+    		500 AS id,
+    		CONCAT('Error ', `v_errno`,' (', `v_sqlstate`, '): ', `v_text`) AS message;
+    		
     END;
-
-    UPDATE kath_erp.sucursal
+	
+    UPDATE kath_erp.sucursal 
     SET
-        nombre = nombre,
+		nombre = nombre,
         descripcion = descripcion,
         telefono = telefono,
         email = email,
@@ -6123,213 +6991,186 @@ BEGIN
         codigo_postal = codigo_postal,
         activo = 1
     WHERE sucursal.id_sucursar = id_sucursal;
-
+    
     SELECT 200 AS id, 'Sucursal Actualizada exitosamente' AS message;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE update_cuenta_contable(
-    IN p_id_cuenta INT,
-    IN p_clave VARCHAR(25)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_nombre VARCHAR(255)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_descripcion VARCHAR(555)
-        CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-    IN p_ultimo_nivel BOOLEAN,
-    IN p_activa BOOLEAN
+CREATE PROCEDURE `kath_erp`.`update_cuenta_contable`(
+	IN p_id_cuenta INT,
+	IN p_clave VARCHAR(25)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_nombre VARCHAR(255)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_descripcion VARCHAR(555)
+		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+	IN p_ultimo_nivel BOOLEAN,
+	IN p_activa BOOLEAN
 )
     MODIFIES SQL DATA
     COMMENT 'Actualiza datos permitidos de una cuenta contable'
 BEGIN
-    DECLARE v_cuenta_existe INT DEFAULT 0;
-    DECLARE v_clave_actual VARCHAR(25);
-    DECLARE v_ultimo_nivel_actual BOOLEAN;
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_total_hijas INT DEFAULT 0;
-    DECLARE v_hijas_activas INT DEFAULT 0;
-    DECLARE v_clave_duplicada INT DEFAULT 0;
+	DECLARE v_cuenta_existe INT DEFAULT 0;
+	DECLARE v_clave_actual VARCHAR(25);
+	DECLARE v_ultimo_nivel_actual BOOLEAN;
+	DECLARE v_cargo DOUBLE DEFAULT 0;
+	DECLARE v_abono DOUBLE DEFAULT 0;
+	DECLARE v_total_hijas INT DEFAULT 0;
+	DECLARE v_hijas_activas INT DEFAULT 0;
+	DECLARE v_clave_duplicada INT DEFAULT 0;
 
-    DECLARE v_sqlstate CHAR(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE v_sqlstate CHAR(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1
-            v_sqlstate = RETURNED_SQLSTATE,
-            v_errno = MYSQL_ERRNO,
-            v_text = MESSAGE_TEXT;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1
+			v_sqlstate = RETURNED_SQLSTATE,
+			v_errno = MYSQL_ERRNO,
+			v_text = MESSAGE_TEXT;
 
-        ROLLBACK;
+		ROLLBACK;
 
-        SELECT
-            500 AS id,
-            CONCAT(
-                'Error ',
-                v_errno,
-                ' (',
-                v_sqlstate,
-                '): ',
-                v_text
-            ) AS message;
-    END;
+		SELECT
+			500 AS id,
+			CONCAT(
+				'Error ',
+				v_errno,
+				' (',
+				v_sqlstate,
+				'): ',
+				v_text
+			) AS message;
+	END;
 
-    START TRANSACTION;
+	START TRANSACTION;
 
-    IF p_id_cuenta IS NULL OR p_id_cuenta <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El identificador de la cuenta es inválido';
-    END IF;
+	IF p_id_cuenta IS NULL OR p_id_cuenta <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El identificador de la cuenta es inválido';
+	END IF;
 
-    IF p_clave IS NULL OR TRIM(p_clave) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La clave contable es obligatoria';
-    END IF;
+	IF p_clave IS NULL OR TRIM(p_clave) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La clave contable es obligatoria';
+	END IF;
 
-    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El nombre de la cuenta es obligatorio';
-    END IF;
+	IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'El nombre de la cuenta es obligatorio';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_cuenta_existe
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta;
+	SELECT COUNT(*)
+	INTO v_cuenta_existe
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta;
 
-    IF v_cuenta_existe = 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La cuenta contable no existe';
-    END IF;
+	IF v_cuenta_existe = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La cuenta contable no existe';
+	END IF;
 
-    SELECT
-        clave,
-        ultimo_nivel,
-        cargo,
-        abono
-    INTO
-        v_clave_actual,
-        v_ultimo_nivel_actual,
-        v_cargo,
-        v_abono
-    FROM cuentas_contables
-    WHERE id_cuenta = p_id_cuenta
-    FOR UPDATE;
+	SELECT
+		clave,
+		ultimo_nivel,
+		cargo,
+		abono
+	INTO
+		v_clave_actual,
+		v_ultimo_nivel_actual,
+		v_cargo,
+		v_abono
+	FROM cuentas_contables
+	WHERE id_cuenta = p_id_cuenta
+	FOR UPDATE;
 
-    SELECT COUNT(*)
-    INTO v_clave_duplicada
-    FROM cuentas_contables
-    WHERE clave = TRIM(p_clave)
-      AND id_cuenta <> p_id_cuenta;
+	SELECT COUNT(*)
+	INTO v_clave_duplicada
+	FROM cuentas_contables
+	WHERE clave = TRIM(p_clave)
+	  AND id_cuenta <> p_id_cuenta;
 
-    IF v_clave_duplicada > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'La clave contable ya pertenece a otra cuenta';
-    END IF;
+	IF v_clave_duplicada > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'La clave contable ya pertenece a otra cuenta';
+	END IF;
 
-    SELECT COUNT(*)
-    INTO v_total_hijas
-    FROM cuentas_contables
-    WHERE id_cuenta_padre = p_id_cuenta;
+	SELECT COUNT(*)
+	INTO v_total_hijas
+	FROM cuentas_contables
+	WHERE id_cuenta_padre = p_id_cuenta;
 
-    SELECT COUNT(*)
-    INTO v_hijas_activas
-    FROM cuentas_contables
-    WHERE id_cuenta_padre = p_id_cuenta
-      AND activa = TRUE;
+	SELECT COUNT(*)
+	INTO v_hijas_activas
+	FROM cuentas_contables
+	WHERE id_cuenta_padre = p_id_cuenta
+	  AND activa = TRUE;
 
-    /*
-     * Una cuenta con movimientos no puede cambiar de clave.
-     */
-    IF TRIM(p_clave) <> v_clave_actual
-       AND (v_cargo <> 0 OR v_abono <> 0) THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede modificar la clave de una cuenta con movimientos';
-    END IF;
+	/*
+	 * Una cuenta con movimientos no puede cambiar de clave.
+	 */
+	IF TRIM(p_clave) <> v_clave_actual
+	   AND (v_cargo <> 0 OR v_abono <> 0) THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede modificar la clave de una cuenta con movimientos';
+	END IF;
 
-    /*
-     * Una cuenta con subcuentas no puede convertirse en cuenta de detalle.
-     */
-    IF p_ultimo_nivel = TRUE
-       AND v_total_hijas > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Una cuenta con subcuentas no puede convertirse en cuenta de detalle';
-    END IF;
+	/*
+	 * Una cuenta con subcuentas no puede convertirse en cuenta de detalle.
+	 */
+	IF p_ultimo_nivel = TRUE
+	   AND v_total_hijas > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Una cuenta con subcuentas no puede convertirse en cuenta de detalle';
+	END IF;
 
-    /*
-     * Una cuenta con movimientos no puede cambiar su tipo operativo.
-     */
-    IF p_ultimo_nivel <> v_ultimo_nivel_actual
-       AND (v_cargo <> 0 OR v_abono <> 0) THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede modificar el tipo de una cuenta con movimientos';
-    END IF;
+	/*
+	 * Una cuenta con movimientos no puede cambiar su tipo operativo.
+	 */
+	IF p_ultimo_nivel <> v_ultimo_nivel_actual
+	   AND (v_cargo <> 0 OR v_abono <> 0) THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede modificar el tipo de una cuenta con movimientos';
+	END IF;
 
-    /*
-     * No se puede desactivar una cuenta con saldo.
-     */
-    IF p_activa = FALSE
-       AND (v_cargo - v_abono) <> 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede desactivar una cuenta con saldo distinto de cero';
-    END IF;
+	/*
+	 * No se puede desactivar una cuenta con saldo.
+	 */
+	IF p_activa = FALSE
+	   AND (v_cargo - v_abono) <> 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede desactivar una cuenta con saldo distinto de cero';
+	END IF;
 
-    /*
-     * No se puede desactivar una cuenta con subcuentas activas.
-     */
-    IF p_activa = FALSE
-       AND v_hijas_activas > 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede desactivar una cuenta con subcuentas activas';
-    END IF;
+	/*
+	 * No se puede desactivar una cuenta con subcuentas activas.
+	 */
+	IF p_activa = FALSE
+	   AND v_hijas_activas > 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'No se puede desactivar una cuenta con subcuentas activas';
+	END IF;
 
-    UPDATE cuentas_contables
-    SET
-        clave = TRIM(p_clave),
-        nombre = TRIM(p_nombre),
-        descripcion = NULLIF(TRIM(p_descripcion), ''),
-        ultimo_nivel = p_ultimo_nivel,
-        activa = p_activa,
-        fecha_modificacion = CURDATE()
-    WHERE id_cuenta = p_id_cuenta;
+	UPDATE cuentas_contables
+	SET
+		clave = TRIM(p_clave),
+		nombre = TRIM(p_nombre),
+		descripcion = NULLIF(TRIM(p_descripcion), ''),
+		ultimo_nivel = p_ultimo_nivel,
+		activa = p_activa,
+		fecha_modificacion = CURDATE()
+	WHERE id_cuenta = p_id_cuenta;
 
-    COMMIT;
+	COMMIT;
 
-    SELECT
-        p_id_cuenta AS id,
-        'Cuenta contable actualizada correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE update_empleado(
+	SELECT
+		p_id_cuenta AS id,
+		'Cuenta contable actualizada correctamente' AS message;
+END;
+
+CREATE PROCEDURE `kath_erp`.`update_empleado`(
     IN p_id_empleado INT UNSIGNED,
-    IN p_id_cuenta_contable INT,
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_rfc VARCHAR(13)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -6358,13 +7199,6 @@ CREATE PROCEDURE update_empleado(
     COMMENT 'Actualiza los datos permitidos de un empleado'
 BEGIN
     DECLARE v_existe_empleado INT DEFAULT 0;
-    DECLARE v_cuenta_actual INT DEFAULT 0;
-    DECLARE v_cargo DOUBLE DEFAULT 0;
-    DECLARE v_abono DOUBLE DEFAULT 0;
-    DECLARE v_existe_cuenta INT DEFAULT 0;
-    DECLARE v_cuenta_asignada INT DEFAULT 0;
-    DECLARE v_cuenta_activa BOOLEAN DEFAULT FALSE;
-    DECLARE v_ultimo_nivel BOOLEAN DEFAULT FALSE;
     DECLARE v_existe_sucursal INT DEFAULT 0;
     DECLARE v_rfc_duplicado INT DEFAULT 0;
     DECLARE v_curp_duplicada INT DEFAULT 0;
@@ -6390,9 +7224,14 @@ BEGIN
 
     START TRANSACTION;
 
+    IF p_id_empleado IS NULL OR p_id_empleado <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El identificador del empleado no es válido';
+    END IF;
+
     SELECT COUNT(*)
     INTO v_existe_empleado
-    FROM empleados
+    FROM kath_erp.empleados
     WHERE id_empleado = p_id_empleado;
 
     IF v_existe_empleado = 0 THEN
@@ -6400,11 +7239,15 @@ BEGIN
             SET MESSAGE_TEXT = 'El empleado no existe';
     END IF;
 
-    SELECT id_cuenta_contable
-    INTO v_cuenta_actual
-    FROM empleados
+    SELECT id_empleado
+    FROM kath_erp.empleados
     WHERE id_empleado = p_id_empleado
     FOR UPDATE;
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+    END IF;
 
     IF p_rfc IS NULL OR TRIM(p_rfc) = ''
        OR p_curp IS NULL OR TRIM(p_curp) = ''
@@ -6423,7 +7266,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_existe_sucursal
-    FROM sucursal
+    FROM kath_erp.sucursal
     WHERE id_sucursar = p_id_sucursal;
 
     IF v_existe_sucursal = 0 THEN
@@ -6433,7 +7276,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_rfc_duplicado
-    FROM empleados
+    FROM kath_erp.empleados
     WHERE rfc = UPPER(TRIM(p_rfc))
       AND id_empleado <> p_id_empleado;
 
@@ -6444,7 +7287,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_curp_duplicada
-    FROM empleados
+    FROM kath_erp.empleados
     WHERE curp = UPPER(TRIM(p_curp))
       AND id_empleado <> p_id_empleado;
 
@@ -6453,60 +7296,8 @@ BEGIN
             SET MESSAGE_TEXT = 'La CURP ya pertenece a otro empleado';
     END IF;
 
-    IF p_id_cuenta_contable <> v_cuenta_actual THEN
-
-        SELECT cargo, abono
-        INTO v_cargo, v_abono
-        FROM cuentas_contables
-        WHERE id_cuenta = v_cuenta_actual
-        FOR UPDATE;
-
-        IF v_cargo <> 0 OR v_abono <> 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'No se puede cambiar la cuenta de un empleado con movimientos contables';
-        END IF;
-
-        SELECT COUNT(*)
-        INTO v_existe_cuenta
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_contable;
-
-        IF v_existe_cuenta = 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable no existe';
-        END IF;
-
-        SELECT activa, ultimo_nivel
-        INTO v_cuenta_activa, v_ultimo_nivel
-        FROM cuentas_contables
-        WHERE id_cuenta = p_id_cuenta_contable
-        FOR UPDATE;
-
-        IF v_cuenta_activa = FALSE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta contable se encuentra inactiva';
-        END IF;
-
-        IF v_ultimo_nivel = FALSE THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta debe ser una cuenta de detalle';
-        END IF;
-
-        SELECT COUNT(*)
-        INTO v_cuenta_asignada
-        FROM empleados
-        WHERE id_cuenta_contable = p_id_cuenta_contable
-          AND id_empleado <> p_id_empleado;
-
-        IF v_cuenta_asignada > 0 THEN
-            SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'La nueva cuenta ya está asignada a otro empleado';
-        END IF;
-    END IF;
-
-    UPDATE empleados
+    UPDATE kath_erp.empleados
     SET
-        id_cuenta_contable = p_id_cuenta_contable,
         id_sucursal = p_id_sucursal,
         rfc = UPPER(TRIM(p_rfc)),
         curp = UPPER(TRIM(p_curp)),
@@ -6525,101 +7316,62 @@ BEGIN
     COMMIT;
 
     SELECT
-        p_id_empleado AS id,
+        200 AS id,
         'Empleado actualizado correctamente' AS message;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE update_forma_de_pago(
-    IN id_forma_pago INT,
-    IN forma_pago VARCHAR(18)
+END;
+
+CREATE PROCEDURE `kath_erp`.`update_forma_de_pago`(
+	IN id_forma_pago INT,
+	IN forma_pago VARCHAR(18)
 )
 BEGIN
 
-    UPDATE formas_de_pago
+	UPDATE formas_de_pago
     SET
-        tipo_de_pago = forma_pago,
+		tipo_de_pago = forma_pago,
         activo = 1
-    WHERE id = id_forma_pago;
+	WHERE id = id_forma_pago;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE update_tipoCliente(
-    IN id_tipoCliente INT,
-    IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+CREATE PROCEDURE `kath_erp`.`update_tipoCliente`(
+	IN id_tipoCliente INT,
+	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     MODIFIES SQL DATA
     COMMENT 'Actualiza los datos de un tipo de cliente ya registrado'
 BEGIN
-
-    DECLARE v_sqlState CHAR(5);
-    DECLARE v_errno INT;
-    DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-
-        GET DIAGNOSTICS CONDITION 1
-        v_sqlState = RETURNED_SQLSTATE,
-        v_errno = MYSQL_ERRNO,
-        v_text = MESSAGE_TEXT;
-
-        SELECT 500 AS id,
-        CONCAT('Error ', v_errno, ' (', v_sqlState, ' ):', v_text) AS message;
-
-    END;
-
-
+	
+	DECLARE v_sqlState CHAR(5);
+	DECLARE v_errno INT;
+	DECLARE v_text TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+	
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+	BEGIN
+		
+		GET DIAGNOSTICS CONDITION 1
+		v_sqlState = RETURNED_SQLSTATE,
+		v_errno = MYSQL_ERRNO,
+		v_text = MESSAGE_TEXT;
+		
+		SELECT 500 AS id,
+		CONCAT('Error ', v_errno, ' (', v_sqlState, ' ):', v_text) AS message;
+		
+	END;
+	
+	
     UPDATE tipo_cliente SET
-        nombre = nombre_t,
+		nombre = nombre_t,
         descripcion = descripcion_t,
         activo = 1
     WHERE id = id_tipoCliente;
-
+    
     SELECT 200 AS id, 'Tipo cliente actualizado exitosamente' AS message;
+        
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE validar_entrada(IN `nombre_c` VARCHAR(10) CHARSET utf8, IN `contra_c` VARCHAR(15) CHARSET utf8)
+CREATE PROCEDURE `kath_erp`.`validar_entrada`(IN `nombre_c` VARCHAR(10) CHARSET utf8, IN `contra_c` VARCHAR(15) CHARSET utf8)
 BEGIN
 
 
@@ -6634,30 +7386,17 @@ SELECT @contra := empleados.contrasenia AS pswd FROM empleados WHERE empleados.n
 
 IF(@contra != contra_c) THEN
 
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Contraseña incorrecta';
+	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Contraseña incorrecta';
 
 END IF;
 
 
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_articulos(
-    IN `id_sucursal` INT,
-    IN `id_tipoCliente_a` INT
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_articulos`(
+	IN `id_sucursal` INT,
+	IN `id_tipoCliente_a` INT
 )
 BEGIN
 SELECT articulo.id_articulo,
@@ -6681,336 +7420,167 @@ WHERE existencia_x_sucursal.id_sucursal = id_sucursal
   AND precios_x_tipoCliente.id_tipoCliente = id_tipoCliente_a
 ORDER BY id_articulo;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_cliente_por_rfc(
-    IN rfc_cl VARCHAR(13)
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
+	IN rfc_cl VARCHAR(13)
 )
+    READS SQL DATA
+    COMMENT 'Consulta un cliente por RFC sin dependencias contables'
 BEGIN
 
-    SELECT
-        cliente.id_cliente,
-        cliente.rfc,
-        sub_cuentas_tercer_nivel.clave,
-        sub_cuentas_tercer_nivel.descripcion,
-        cliente.nombre_completo,
-        cliente.nombre_corto,
-        cliente.fecha_nac,
-        cliente.correo_electronico,
-        cliente.estado,
-        cliente.ciudad,
-        cliente.direccion,
-        cliente.codigo_postal
-    FROM cliente
-    INNER JOIN sub_cuentas_tercer_nivel ON cliente.id_cuenta_contable = sub_cuentas_tercer_nivel.id_cuenta
-    WHERE cliente.rfc = rfc_cl;
+	SELECT
+		c.id_cliente,
+		c.rfc,
+		c.nombre_completo,
+		c.nombre_corto,
+		c.fecha_nac,
+		c.correo_electronico,
+		c.estado,
+		c.ciudad,
+		c.direccion,
+		c.codigo_postal
+	FROM kath_erp.cliente AS c
+	WHERE c.rfc = UPPER(TRIM(rfc_cl));
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_cmbRubroCuentasContables()
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_cmbRubroCuentasContables`()
 BEGIN
+	
+	SELECT 
+		_rc.id_rubro,
+		_rc.nombre,
+		_rc.descripcion,
+		_rc.naturaleza
+	FROM rubro_cuenta_contable AS _rc;
+	
+END;
 
-    SELECT
-        _rc.id_rubro,
-        _rc.nombre,
-        _rc.descripcion,
-        _rc.naturaleza
-    FROM rubro_cuenta_contable AS _rc;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_codigos_articulos()
+CREATE PROCEDURE `kath_erp`.`ver_codigos_articulos`()
 BEGIN
-
+	
     SELECT articulo.codigo_articulo
     FROM articulo;
+    
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_cuentas_contables(
-    IN `nombre_cta_contable` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+CREATE PROCEDURE `kath_erp`.`ver_cuentas_contables`(
+	IN `nombre_cta_contable` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     COMMENT 'LISTA EL CATALOGO COMPLETO DE CUENTAS CONTABLES'
-BEGIN
-    SELECT
-        cc.id_cuenta,
-        cc.clave,
-        cc.nombre,
-        cc2.nombre AS 'cuenta_padre',
-        rcc.nombre AS 'rubro',
-        cc.nivel,
-        cc.ultimo_nivel,
-        cc.cargo,
-        cc.abono,
-        cc.cargo - cc.abono AS 'saldo',
-        cc.activa
-    FROM cuentas_contables AS cc
-    LEFT JOIN cuentas_contables cc2 ON cc.id_cuenta_padre = cc2.id_cuenta
-    INNER JOIN rubro_cuenta_contable AS rcc ON cc.fk_id_rubro = rcc.id_rubro
-    WHERE cc.nombre LIKE CONCAT('%',nombre_cta_contable,'%') COLLATE utf8mb4_general_ci;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_formas_de_pago()
-BEGIN
-    SELECT
-        fp.id,
+BEGIN            
+	SELECT
+		cc.id_cuenta,
+		cc.clave,
+		cc.nombre,
+		cc2.nombre AS 'cuenta_padre',
+		rcc.nombre AS 'rubro',
+		cc.nivel,
+		cc.ultimo_nivel,
+		cc.cargo,
+		cc.abono,
+		cc.cargo - cc.abono AS 'saldo',
+		cc.activa 
+	FROM cuentas_contables AS cc
+	LEFT JOIN cuentas_contables cc2 ON cc.id_cuenta_padre = cc2.id_cuenta
+	INNER JOIN rubro_cuenta_contable AS rcc ON cc.fk_id_rubro = rcc.id_rubro
+	WHERE cc.nombre LIKE CONCAT('%',nombre_cta_contable,'%') COLLATE utf8mb4_general_ci;
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_formas_de_pago`()
+BEGIN	
+    SELECT 
+		fp.id,
         fp.tipo_de_pago,
         fp.activo
     FROM formas_de_pago AS fp;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_indices_categorias()
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_indices_categorias`()
 BEGIN
 
+	
 
+	SELECT categoria_producto.id_categoria FROM categoria_producto;
 
-    SELECT categoria_producto.id_categoria FROM categoria_producto;
+END;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_indice_venta_actual()
+CREATE PROCEDURE `kath_erp`.`ver_indice_venta_actual`()
 BEGIN
 
     SELECT
-        ventas.id_venta
-    FROM ventas
+		ventas.id_venta
+	FROM ventas
     ORDER BY ventas.id_venta DESC LIMIT 1;
 
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_nombres_sucursal()
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_nombres_sucursal`()
 BEGIN
+	
+	SELECT
+		id_sucursar,
+		nombre
+	FROM sucursal ORDER BY id_sucursar;
+    
+END;
 
-    SELECT
-        id_sucursar,
-        nombre
-    FROM sucursal ORDER BY id_sucursar;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_proveedor_por_rfc(
+CREATE PROCEDURE `kath_erp`.`ver_proveedor_por_rfc`(
     IN rfc_p VARCHAR(13)
 )
-BEGIN
-
-    SELECT
-        proveedor.id_proveedor,
-        proveedor.id_cuenta_contable,
-        sub_cuentas_tercer_nivel.clave,
-        proveedor.nombre,
-        proveedor.descripcion,
-        proveedor.correo_electronico,
-        proveedor.estado,
-        proveedor.ciudad,
-        proveedor.direccion,
-        proveedor.codigo_postal
-    FROM proveedor
-    INNER JOIN sub_cuentas_tercer_nivel ON proveedor.id_cuenta_contable = sub_cuentas_tercer_nivel.id_cuenta
-    WHERE proveedor.rfc = rfc_p;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_rfcProveedores()
-BEGIN
-    select
-        proveedor.rfc
-    from proveedor;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_rfc_clientes()
+    READS SQL DATA
+    COMMENT 'Consulta un proveedor por RFC sin dependencias contables'
 BEGIN
     SELECT
-        cliente.id_cliente,
-        cliente.rfc
-    FROM cliente
+        p.id_proveedor,
+        p.rfc,
+        p.nombre,
+        p.descripcion,
+        p.correo_electronico,
+        p.estado,
+        p.ciudad,
+        p.direccion,
+        p.codigo_postal,
+        p.activo
+    FROM kath_erp.proveedor AS p
+    WHERE p.rfc = UPPER(TRIM(rfc_p));
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_rfcProveedores`()
+BEGIN
+	select
+		proveedor.rfc
+	from proveedor;
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_rfc_clientes`()
+BEGIN
+	SELECT
+		cliente.id_cliente,
+		cliente.rfc
+	FROM cliente 
     ORDER BY id_cliente ASC;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_rfc_empleado_por_sucursal(
-    IN id_sucursal INT
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_rfc_empleado_por_sucursal`(
+	IN id_sucursal INT
 )
-BEGIN
+    READS SQL DATA
+    COMMENT 'Consulta el alias de los empleados, usado para JCombobox u objetos de tipo lista desplegable'
+BEGIN	
     SELECT
-        empleados.id_empleado,
-        empleados.nombre_corto
-    FROM empleados
+    	empleados.id_empleado,
+		empleados.nombre_corto
+	FROM empleados
     WHERE empleados.id_sucursal = id_sucursal;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_sucursales()
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_sucursales`()
 BEGIN
-    SELECT
-        id_sucursar,
-        nombre,
+	SELECT
+		id_sucursar,
+		nombre,
         descripcion,
         telefono,
         email,
@@ -7019,182 +7589,31 @@ BEGIN
         direccion,
         codigo_postal,
         activo
-    FROM sucursal;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_sucursales_nombres()
+	FROM sucursal;
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_sucursales_nombres`()
     COMMENT 'Procedimeinto para el listado de las sucursales en un combobox'
 BEGIN
-    SELECT
-        sucursal.id_sucursar AS id,
+	SELECT 
+		sucursal.id_sucursar AS id,
         sucursal.nombre
-    FROM sucursal ORDER BY id_sucursar;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_tipo_clientes(
-    IN nombre_tipo_cliente VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+	FROM sucursal ORDER BY id_sucursar;
+END;
+
+CREATE PROCEDURE `kath_erp`.`ver_tipo_clientes`(
+	IN nombre_tipo_cliente VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
     COMMENT 'LISTADO COMPLETO DE TODAS LAS CATEGORIAS DE CLIENTES REGISTRADAS, FILTRADO POR NOMBRE'
 BEGIN
-
+	
     SELECT
-        tipo_cliente.id,
+		tipo_cliente.id,
         tipo_cliente.nombre,
         tipo_cliente.descripcion,
         tipo_cliente.activo
     FROM tipo_cliente
     WHERE tipo_cliente.nombre LIKE CONCAT('%',nombre_tipo_cliente,'%');
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO' */ ;
-DELIMITER ;;
-CREATE PROCEDURE ver_ventas(
-    IN `opcion` INT,
-    IN `sucursal` INT
-)
-BEGIN
-
-    IF opcion = 1 THEN
-
-      SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-      WHERE ventas.id_sucursal = sucursal
-        ORDER BY ventas.id_venta;
-
-    END IF;
-
-    IF opcion = 2 THEN
-
-        SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE ventas.id_sucursal = sucursal
-        ORDER BY empleados.nombre_corto;
-
-    END IF;
-
-    IF opcion = 3 THEN
-        SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE ventas.id_sucursal = sucursal
-        ORDER BY cliente.nombre_corto;
-    END IF;
-
-    IF opcion = 4 THEN
-        SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE ventas.id_sucursal = sucursal
-        ORDER BY ventas.status_venta;
-    END IF;
-
-    IF opcion = 5 THEN
-        SELECT
-            ventas.id_venta,
-            ventas.fecha,
-            ventas.tipo_venta,
-            empleados.nombre_corto,
-            cliente.nombre_corto,
-            ventas.subtotal,
-            ventas.iva,
-            ventas.importe_total,
-            ventas.status_venta
-        FROM ventas
-        INNER JOIN empleados ON empleados.id_empleado = ventas.id_empleado
-        INNER JOIN cliente ON cliente.id_cliente = ventas.id_cliente
-        WHERE ventas.id_sucursal = sucursal
-        ORDER BY ventas.tipo_venta;
-    END IF;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+    
+END;
