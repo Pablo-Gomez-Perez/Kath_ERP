@@ -9,6 +9,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Arrays;
+import java.sql.SQLException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,12 +23,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
 import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.Conexion;
+import com.kathsoft.kathpos.app.view.configuracion.Fr_ConfiguracionConexionDB;
 
 public class Fr_LogIn extends JFrame {
 
@@ -38,6 +44,8 @@ public class Fr_LogIn extends JFrame {
 	private JButton btn_cancelar = new JButton("Cancelar");
 	private JButton btn_ingresar = new JButton("Ingresar");
 	private Sucursal sucursal;
+	private boolean configuracionAbierta;
+	private boolean comprobandoConexion;
 
 	private JPanel panelImagen = new JPanel() {
 		private static final long serialVersionUID = -7434112987658880465L;
@@ -172,6 +180,70 @@ public class Fr_LogIn extends JFrame {
 		verticalBox.add(verticalStrut_3);
 
 		this.pack();
+		// Mantiene el layout existente. La conexión se comprueba después de
+		// que App muestre el JFrame, sin bloquear el hilo de eventos Swing.
+		this.btn_ingresar.setEnabled(false);
+		EventQueue.invokeLater(this::verificarConexionAlIniciar);
+	}
+
+	/**
+	 * Localiza la configuración al iniciarse la aplicación. Si el archivo no
+	 * existe, está dañado o la BD es inaccesible, abre el instalador gráfico.
+	 * La verificación JDBC se realiza fuera del hilo de eventos Swing.
+	 */
+	private void verificarConexionAlIniciar() {
+		if (comprobandoConexion || configuracionAbierta) {
+			return;
+		}
+		if (!Conexion.hayConfiguracionDisponible()) {
+			btn_ingresar.setEnabled(false);
+			abrirConfiguracionConexion();
+			return;
+		}
+		comprobandoConexion = true;
+		btn_ingresar.setEnabled(false);
+		new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				Conexion.verificarConexionInicial();
+				return null;
+			}
+			@Override
+			protected void done() {
+				comprobandoConexion = false;
+				try {
+					get();
+					btn_ingresar.setEnabled(true);
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(Fr_LogIn.this,
+							"No fue posible establecer la conexión con la base de datos. Revise la configuración.",
+							"Configuración de conexión", JOptionPane.WARNING_MESSAGE);
+					abrirConfiguracionConexion();
+				}
+			}
+		}.execute();
+	}
+
+	private void abrirConfiguracionConexion() {
+		if (configuracionAbierta) {
+			return;
+		}
+		configuracionAbierta = true;
+		Fr_ConfiguracionConexionDB configuracion = new Fr_ConfiguracionConexionDB(() -> {
+			configuracionAbierta = false;
+			verificarConexionAlIniciar();
+		});
+		configuracion.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent event) {
+				configuracionAbierta = false;
+				// Cancelar sólo cierra el formulario y permite reabrirlo al
+				// intentar iniciar sesión; no altera la configuración guardada.
+				btn_ingresar.setEnabled(true);
+			}
+		});
+		configuracion.setLocationRelativeTo(this);
+		configuracion.setVisible(true);
 	}
 
 	private void logIngFrPrincipal() {
@@ -179,6 +251,10 @@ public class Fr_LogIn extends JFrame {
 		char[] contrasenia = this.pswfContrasenia.getPassword();
 
 		try {
+			if (!Conexion.hayConfiguracionDisponible()) {
+				abrirConfiguracionConexion();
+				return;
+			}
 			if (usuario == null || usuario.isBlank()) {
 				JOptionPane.showMessageDialog(this, "Debe capturar el usuario", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -186,6 +262,16 @@ public class Fr_LogIn extends JFrame {
 
 			if (contrasenia == null || contrasenia.length == 0 || new String(contrasenia).isBlank()) {
 				JOptionPane.showMessageDialog(this, "Debe capturar la contraseña", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			try {
+				Conexion.verificarConexionInicial();
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(this,
+						"No existe una conexión válida con la base de datos. Actualice sus parámetros.",
+						"Conexión no disponible", JOptionPane.WARNING_MESSAGE);
+				abrirConfiguracionConexion();
 				return;
 			}
 
