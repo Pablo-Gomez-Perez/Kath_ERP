@@ -17,37 +17,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mysql.MySQLContainer;
-import org.testcontainers.utility.MountableFile;
 
-@Testcontainers
-class CompraStoredProcedureIT {
+class CompraStoredProcedureIT extends CompraDatabaseIT {
 
-    private static final String DATABASE_NAME = "kath_erp";
     private static final int ID_EMPLEADO = 1;
     private static final int ID_PROVEEDOR = 1;
     private static final long ID_SUCURSAL = 1L;
     private static final int ID_ARTICULO = 100;
-
-    @Container
-    private static final MySQLContainer MYSQL = new MySQLContainer("mysql:8.0.46")
-            .withDatabaseName(DATABASE_NAME)
-            .withUsername("kath_test")
-            .withPassword("kath_test")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/schema.sql"),
-                    "/docker-entrypoint-initdb.d/01-schema.sql")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/procedures/procedures_articulos.sql"),
-                    "/docker-entrypoint-initdb.d/02-procedures-articulos.sql")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/init/procedures/procedures_compras.sql"),
-                    "/docker-entrypoint-initdb.d/03-procedures-compras.sql")
-            .withCopyFileToContainer(
-                    MountableFile.forClasspathResource("db/fixtures/compra_minima.sql"),
-                    "/docker-entrypoint-initdb.d/04-compra-minima.sql");
 
     @BeforeEach
     void limpiarOperacionesDeCompra() throws SQLException {
@@ -193,7 +169,7 @@ class CompraStoredProcedureIT {
     }
 
     private Connection nuevaConexion() throws SQLException {
-        return DriverManager.getConnection(MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
+        return DriverManager.getConnection(jdbcUrl(), username(), password());
     }
 
     private ProcedureResponse insertarCompra(Connection connection, String folio) throws SQLException {
