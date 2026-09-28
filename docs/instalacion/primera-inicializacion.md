@@ -72,7 +72,7 @@ reutilizar `root` en producción.
 
 El SP derivará estado/ciudad/dirección/CP del administrador de la
 sucursal elegida; son los valores obligatorios que el esquema espera
-para su primer empleado. No se inventa RFC, CURP ni fecha de nacimiento.
+para su primer empleado. No se inventa RFC, CURP ni fecha de nacimiento. Debido a que el esquema\nde `empleados` sólo admite estado de 30 y ciudad de 40 caracteres, el\nasistente valida esos límites también para la primera sucursal y rechaza\nsucursales existentes cuyos valores no quepan, en lugar de truncarlos.
 
 **Advertencia:** si más tarde se agregan filas nuevas al catálogo
 `permisos`, la asignación del primer administrador NO se actualiza sola.
