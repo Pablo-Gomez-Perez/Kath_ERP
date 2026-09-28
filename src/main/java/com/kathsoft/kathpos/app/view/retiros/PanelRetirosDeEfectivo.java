@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
@@ -545,13 +546,34 @@ public class PanelRetirosDeEfectivo extends JPanel {
             return;
         }
 
+        // La tabla muestra el nombre a efectos informativos; la identidad
+        // real del empleado responsable se recupera en el controlador mediante
+        // getRetiroDeEfectivoById y se valida contra su contraseña.
+        int fila = tableRetiros.convertRowIndexToModel(tableRetiros.getSelectedRow());
+        String empleadoResponsable = String.valueOf(modelTablaRetiros.getValueAt(fila, 3));
+        char[] contrasenia = DialogoContraseniaRetiro.solicitar(
+                this, empleadoResponsable, "inhabilitar este retiro");
+        if (contrasenia == null) {
+            return;
+        }
+        if (contrasenia.length == 0) {
+            Arrays.fill(contrasenia, '\0');
+            MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
+                    this, "Debe proporcionar la contraseña del empleado responsable");
+            return;
+        }
+
         btnInhabilitar.setEnabled(false);
         final long sucursalOperacion = idSucursalActual;
         new SwingWorker<SpResponseModel, Void>() {
             @Override
             protected SpResponseModel doInBackground() {
-                return AppContext.retiroDeEfectivoController
-                        .inhabilitarRetiro(id, sucursalOperacion);
+                try {
+                    return AppContext.retiroDeEfectivoController
+                            .inhabilitarRetiro(id, sucursalOperacion, contrasenia);
+                } finally {
+                    Arrays.fill(contrasenia, '\0');
+                }
             }
 
             @Override
