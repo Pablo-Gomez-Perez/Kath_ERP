@@ -368,12 +368,14 @@ public class Fr_InicializacionSistema extends JFrame {
         char[] confirmacion = pswfConfirmacion.getPassword();
         try {
             if (!Arrays.equals(clave, confirmacion)) {
+                Arrays.fill(clave, '\0');
                 JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden",
                         "Datos inválidos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             SpResponseModel validacion = AppContext.inicializacionSistemaController.validar(datos, clave);
             if (validacion != null) {
+                Arrays.fill(clave, '\0');
                 JOptionPane.showMessageDialog(this, validacion.message(),
                         "Datos inválidos", JOptionPane.WARNING_MESSAGE);
                 return;
