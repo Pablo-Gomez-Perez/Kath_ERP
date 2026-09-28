@@ -1,3 +1,7 @@
+SET NAMES utf8mb4;
+
+DELIMITER $$
+
 CREATE PROCEDURE `kath_erp`.`deleteArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED
 )
@@ -41,7 +45,7 @@ BEGIN
         axc.id_articulo,
         axc.cantidad,
         c.fecha_compra,
-        emp.id_sucursal
+        c.id_sucursal
     INTO
         v_id_compra,
         v_id_articulo,
@@ -51,8 +55,6 @@ BEGIN
     FROM kath_erp.articulo_x_compra AS axc
     INNER JOIN kath_erp.compras AS c
         ON axc.id_compra = c.id_compra
-    INNER JOIN kath_erp.empleados AS emp
-        ON c.id_empleado = emp.id_empleado
     WHERE axc.id = p_id_detalle_compra
       AND c.activo = TRUE
     LIMIT 1
@@ -68,10 +70,8 @@ BEGIN
     FROM kath_erp.articulo_x_venta AS axv
     INNER JOIN kath_erp.ventas AS v
         ON axv.id_venta = v.id_venta
-    INNER JOIN kath_erp.empleados AS emp_venta
-        ON v.id_empleado = emp_venta.id_empleado
     WHERE axv.id_articulo = v_id_articulo
-      AND emp_venta.id_sucursal = v_id_sucursal
+      AND v.id_sucursal = v_id_sucursal
       AND v.fecha > v_fecha_compra
       AND v.status_venta = TRUE;
 
@@ -119,7 +119,7 @@ BEGIN
     SELECT
         p_id_detalle_compra AS id,
         'Artículo eliminado de la compra correctamente' AS message;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`deleteCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -531,7 +531,7 @@ BEGIN
         p_id_compra AS id,
         'Compra cancelada correctamente' AS message;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`deleteProveedor`(
     IN idProveedor INT UNSIGNED
@@ -631,7 +631,7 @@ BEGIN
     SELECT
         200 AS id,
         'Proveedor inhabilitado correctamente' AS message;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`getCompraById`(
     IN p_id_compra INT UNSIGNED
@@ -649,7 +649,7 @@ BEGIN
         c.id_empleado,
         emp.nombre_completo AS nombre_empleado,
         emp.nombre_corto AS nombre_corto_empleado,
-        emp.id_sucursal,
+        c.id_sucursal,
         c.id_proveedor,
         c.folio_factura,
         c.fecha_factura,
@@ -668,7 +668,7 @@ BEGIN
         ON c.id_empleado = emp.id_empleado
     WHERE c.id_compra = p_id_compra
     LIMIT 1;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`getIdUltimaCompra`()
     READS SQL DATA
@@ -682,7 +682,7 @@ BEGIN
 	ORDER BY
 		c.id_compra DESC LIMIT 1;
 	
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`insertArticuloCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -785,7 +785,7 @@ BEGIN
     SELECT
         v_id_detalle AS id,
         'Artículo agregado a la compra correctamente' AS message;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`insertCompra`(
     IN p_id_empleado INT UNSIGNED,
@@ -975,7 +975,7 @@ BEGIN
         v_id_compra AS id,
         'Compra registrada correctamente' AS message;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`insertPagoProveedor`(
     IN p_id_compra INT UNSIGNED,
@@ -1141,7 +1141,7 @@ BEGIN
         v_id_pago AS id,
         'Pago a proveedor registrado correctamente' AS message;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`listArticulosCompraById`(
     IN p_id_compra INT UNSIGNED
@@ -1167,7 +1167,7 @@ BEGIN
         ON axc.id_articulo = a.id_articulo
     WHERE axc.id_compra = p_id_compra
     ORDER BY axc.id ASC;
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`listCompras`(
     IN p_id_sucursal BIGINT UNSIGNED,
@@ -1240,7 +1240,7 @@ BEGIN
         c.fecha_compra DESC,
         c.id_compra DESC;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`sumarExistenciaSucursalCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -1362,7 +1362,7 @@ BEGIN
         200 AS id,
         'Existencia actualizada correctamente' AS message;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`updateArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED,
@@ -1475,10 +1475,7 @@ BEGIN
 
 
     /*
-     * Esta parte sigue dependiendo de cómo ventas determina su sucursal.
-     *
-     * Por ahora se mantiene porque no me compartiste una relación directa
-     * ventas -> sucursal.
+     * Las ventas conservan explícitamente su sucursal histórica.
      */
 
     SELECT COUNT(*)
@@ -1486,10 +1483,8 @@ BEGIN
     FROM kath_erp.articulo_x_venta AS axv
     INNER JOIN kath_erp.ventas AS v
         ON axv.id_venta = v.id_venta
-    INNER JOIN kath_erp.empleados AS emp_venta
-        ON v.id_empleado = emp_venta.id_empleado
     WHERE axv.id_articulo = v_id_articulo
-      AND emp_venta.id_sucursal = v_id_sucursal
+      AND v.id_sucursal = v_id_sucursal
       AND v.fecha > v_fecha_compra
       AND v.status_venta = TRUE;
 
@@ -1571,7 +1566,7 @@ BEGIN
         p_id_detalle_compra AS id,
         'Artículo de compra actualizado correctamente' AS message;
 
-END;
+END $$
 
 CREATE PROCEDURE `kath_erp`.`updateCompra`(
     IN p_id_compra INT UNSIGNED,
@@ -1846,4 +1841,6 @@ BEGIN
         p_id_compra AS id,
         'Compra actualizada correctamente' AS message;
 
-END;
+END $$
+
+DELIMITER ;

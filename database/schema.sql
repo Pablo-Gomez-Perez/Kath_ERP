@@ -1,3 +1,14 @@
+-- kath_erp.categoria_de_gasto definition
+
+CREATE TABLE `categoria_de_gasto` (
+  `id_categoria` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `descripcion` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ACTIVO` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usada para clasificar los gastos efectuados por la empresa en el desarrollo de sus actividades';
+
+
 -- kath_erp.categoria_producto definition
 
 CREATE TABLE `categoria_producto` (
@@ -186,6 +197,28 @@ CREATE TABLE `existencia_x_sucursal` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
+-- kath_erp.gastos definition
+
+CREATE TABLE `gastos` (
+  `id_gasto` int unsigned NOT NULL AUTO_INCREMENT,
+  `id_categoria` int NOT NULL,
+  `id_empleado` int unsigned NOT NULL,
+  `id_sucursal` bigint unsigned NOT NULL,
+  `fecha_operacion` date NOT NULL,
+  `descripcion` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `importe` double NOT NULL,
+  `iva` double NOT NULL,
+  `activo` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id_gasto`),
+  KEY `id_empleado` (`id_empleado`),
+  KEY `Fk_categoria_x_gasto` (`id_categoria`),
+  KEY `gastos_sucursal_FK` (`id_sucursal`),
+  CONSTRAINT `Fk_categoria_x_gasto` FOREIGN KEY (`id_categoria`) REFERENCES `categoria_de_gasto` (`id_categoria`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `gastos_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE,
+  CONSTRAINT `gastos_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 -- kath_erp.permiso_x_empleado definition
 
 CREATE TABLE `permiso_x_empleado` (
@@ -365,7 +398,7 @@ CREATE TABLE `compras` (
   CONSTRAINT `compras_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `Fk_Empleado_x_Compra` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE,
   CONSTRAINT `Fk_Proveedor_x_Compra` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedor` (`id_proveedor`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- kath_erp.cuentas_contables definition
@@ -406,25 +439,6 @@ CREATE TABLE `factura` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
--- kath_erp.gastos definition
-
-CREATE TABLE `gastos` (
-  `id_gasto` int unsigned NOT NULL AUTO_INCREMENT,
-  `fecha_operacion` date NOT NULL,
-  `id_empleado` int unsigned NOT NULL,
-  `descripcion` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `id_cuenta_contable` int NOT NULL,
-  `importe` double NOT NULL,
-  `iva` double NOT NULL,
-  `activo` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id_gasto`),
-  UNIQUE KEY `id_cuenta_contable` (`id_cuenta_contable`),
-  KEY `id_empleado` (`id_empleado`),
-  CONSTRAINT `fk_gastos_x_cuenta_contable` FOREIGN KEY (`id_cuenta_contable`) REFERENCES `cuentas_contables` (`id_cuenta`) ON UPDATE CASCADE,
-  CONSTRAINT `gastos_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
 -- kath_erp.pago_proveedor definition
 
 CREATE TABLE `pago_proveedor` (
@@ -437,7 +451,7 @@ CREATE TABLE `pago_proveedor` (
   KEY `id_forma_pago` (`id_forma_pago`),
   CONSTRAINT `pago_proveedor_ibfk_1` FOREIGN KEY (`id_compra`) REFERENCES `compras` (`id_compra`) ON UPDATE CASCADE,
   CONSTRAINT `pago_proveedor_ibfk_2` FOREIGN KEY (`id_forma_pago`) REFERENCES `formas_de_pago` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- kath_erp.pagos_x_cobro definition
@@ -483,4 +497,4 @@ CREATE TABLE `articulo_x_compra` (
   KEY `id_articulo` (`id_articulo`),
   CONSTRAINT `Fk_Articulo_x_Compra` FOREIGN KEY (`id_articulo`) REFERENCES `articulo` (`id_articulo`) ON UPDATE CASCADE,
   CONSTRAINT `Fk_Compra_x_Articulo` FOREIGN KEY (`id_compra`) REFERENCES `compras` (`id_compra`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -36,6 +36,7 @@ import com.kathsoft.kathpos.app.view.configuracion.Fr_ConfiguracionFiscal;
 import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
 import com.kathsoft.kathpos.app.view.formas_pago.PanelFormasDePago;
+import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
@@ -125,6 +126,7 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionCerrarSesion;
 	private JMenuItem opcionSalirDelSistema;
 	private PanelSucursales panelSucursales;
+	private PanelCategoriaDeGasto panelCategoriaDeGasto;
 	private JMenuItem opcionSucursales;
 	private PanelFormasDePago panelFormasDePago;
 	private JMenuItem opcionFormasDePago;
@@ -159,6 +161,7 @@ public class Fr_principal extends JFrame {
 	private JMenu menuConfiguracion;
 	private JMenuItem mntmFiscal;
 	private JMenuItem mntmBaseDeDatos;
+	private JMenuItem opcionCategoriaGasto;
 
 	/**
 	 * Create the frame.
@@ -315,6 +318,20 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		menuConsultar.add(opcionFormasDePago);
+		
+		opcionCategoriaGasto = new JMenuItem("Categoria de gastos");
+		opcionCategoriaGasto.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelCategoriaDeGasto");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+			
+		});
+		menuConsultar.add(opcionCategoriaGasto);
 
 		separator = new JSeparator();
 		menuConsultar.add(separator);
@@ -600,6 +617,15 @@ public class Fr_principal extends JFrame {
 		panelFormasDePago = new PanelFormasDePago();
 		panelPrincipalContenedor.add(panelFormasDePago, "panelFormasDePago");
 
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		
+		this.panelCategoriaDeGasto = new PanelCategoriaDeGasto();
+		this.panelPrincipalContenedor.add(panelCategoriaDeGasto, "panelCategoriaDeGasto");
+		
+		
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================

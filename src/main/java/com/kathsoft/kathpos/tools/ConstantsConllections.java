@@ -71,6 +71,14 @@ public class ConstantsConllections implements java.io.Serializable{
 			150 // activo o inactivo
 	};
 	
+	// Cuatro columnas retornadas por listCategoriasDeGasto: id, nombre, descripción y activo.
+	public static final int[] tablaCategoriasDeGastoColumnsWidth = {
+			50,  // Id
+			240, // Nombre
+			400, // Descripción
+			110  // Activo / Inactivo
+	};
+
 	// Array que define el ancho de cada columna de la tabla de categoría
 	public static final int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	
@@ -96,6 +104,11 @@ public class ConstantsConllections implements java.io.Serializable{
 			90, // Accion
 	};
 	
+	/** Folio, fecha, empleado, categoría, forma de pago, descripción, importe, IVA, total y estado. */
+	public static final int[] tablaGastosColumnsWidth = {
+			65, 120, 190, 180, 150, 320, 120, 100, 120, 110
+	};
+
 	public static final int[] tablaComprasColumnsWidth = { 50, // id compra
 			120, // empleado
 			120, // proveedor
