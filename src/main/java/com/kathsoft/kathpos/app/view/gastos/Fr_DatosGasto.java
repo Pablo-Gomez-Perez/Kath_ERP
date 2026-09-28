@@ -330,6 +330,10 @@ public class Fr_DatosGasto extends JFrame {
 
                     if (datos.detalle() != null) {
                         cargarGastoExistente(datos.detalle());
+                        if (!datos.detalle().activo()) {
+                            // La inhabilitación es definitiva para edición: sólo lectura.
+                            return;
+                        }
                     }
 
                     if (datos.categorias().isEmpty() || datos.empleados().isEmpty()
@@ -357,7 +361,6 @@ public class Fr_DatosGasto extends JFrame {
         if (!gasto.activo()) {
             MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
                     this, "El gasto está inhabilitado y no puede actualizarse");
-            return;
         }
         txfFecha.setText(gasto.fechaOperacion() == null
                 ? "Sin fecha" : gasto.fechaOperacion().format(FORMATO_FECHA));
