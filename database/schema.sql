@@ -6,7 +6,7 @@ CREATE TABLE `categoria_de_gasto` (
   `descripcion` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `ACTIVO` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_categoria`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usada para clasificar los gastos efectuados por la empresa en el desarrollo de sus actividades';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Usada para clasificar los gastos efectuados por la empresa en el desarrollo de sus actividades';
 
 
 -- kath_erp.categoria_producto definition
@@ -203,6 +203,7 @@ CREATE TABLE `gastos` (
   `id_gasto` int unsigned NOT NULL AUTO_INCREMENT,
   `id_categoria` int NOT NULL,
   `id_empleado` int unsigned NOT NULL,
+  `id_sucursal` bigint unsigned NOT NULL,
   `fecha_operacion` date NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `importe` double NOT NULL,
@@ -211,8 +212,10 @@ CREATE TABLE `gastos` (
   PRIMARY KEY (`id_gasto`),
   KEY `id_empleado` (`id_empleado`),
   KEY `Fk_categoria_x_gasto` (`id_categoria`),
+  KEY `gastos_sucursal_FK` (`id_sucursal`),
   CONSTRAINT `Fk_categoria_x_gasto` FOREIGN KEY (`id_categoria`) REFERENCES `categoria_de_gasto` (`id_categoria`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `gastos_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE
+  CONSTRAINT `gastos_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE,
+  CONSTRAINT `gastos_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
