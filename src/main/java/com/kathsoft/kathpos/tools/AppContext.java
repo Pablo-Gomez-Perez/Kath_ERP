@@ -8,6 +8,7 @@ import com.kathsoft.kathpos.app.controller.CompraController;
 import com.kathsoft.kathpos.app.controller.CuentaContableController;
 import com.kathsoft.kathpos.app.controller.EmpleadoController;
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
+import com.kathsoft.kathpos.app.controller.GastoController;
 import com.kathsoft.kathpos.app.controller.LoginController;
 import com.kathsoft.kathpos.app.controller.PagoProveedorController;
 import com.kathsoft.kathpos.app.controller.ProveedorController;
@@ -33,6 +34,7 @@ public class AppContext implements java.io.Serializable{
 	public static ClientesController clientesController = new ClientesController();
 	public static CategoriaController categoriaController = new CategoriaController();
 	public static CategoriaDeGastoController categoriaDeGastoController = new CategoriaDeGastoController();
+	public static GastoController gastoController = new GastoController();
 	public static EmpleadoController empleadoController = new EmpleadoController();
 	public static LoginController loginController = new LoginController();
 	public static ProveedorController proveedorController = new ProveedorController();
