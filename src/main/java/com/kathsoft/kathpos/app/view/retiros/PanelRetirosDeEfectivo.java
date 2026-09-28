@@ -15,6 +15,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -104,18 +105,26 @@ public class PanelRetirosDeEfectivo extends JPanel {
         flowLayout.setAlignment(FlowLayout.RIGHT);
 
         btnAgregar = new JButton("Agregar");
+        btnAgregar.setIcon(new ImageIcon(PanelRetirosDeEfectivo.class.getResource(
+                "/com/kathsoft/kathpos/app/assets/agregar_ico.png")));
         btnAgregar.setBackground(new Color(144, 238, 144));
         panelSuperiorBotones.add(btnAgregar);
 
         btnVerDetalle = new JButton("Ver detalles");
+        btnVerDetalle.setIcon(new ImageIcon(PanelRetirosDeEfectivo.class.getResource(
+                "/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
         btnVerDetalle.setBackground(new Color(144, 238, 144));
         panelSuperiorBotones.add(btnVerDetalle);
 
         btnInhabilitar = new JButton("Inhabilitar");
+        btnInhabilitar.setIcon(new ImageIcon(PanelRetirosDeEfectivo.class.getResource(
+                "/com/kathsoft/kathpos/app/assets/nwCancel.png")));
         btnInhabilitar.setBackground(new Color(255, 51, 0));
         panelSuperiorBotones.add(btnInhabilitar);
 
         btnExportarExcel = new JButton("Exportar Excel");
+        btnExportarExcel.setIcon(new ImageIcon(PanelRetirosDeEfectivo.class.getResource(
+                "/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
         btnExportarExcel.setBackground(new Color(102, 205, 170));
         panelSuperiorBotones.add(btnExportarExcel);
 
@@ -177,6 +186,8 @@ public class PanelRetirosDeEfectivo extends JPanel {
         formattedTextFieldFechaFinal.setToolTipText("dd/MM/aaaa");
 
         btnBuscar = new JButton("Buscar");
+        btnBuscar.setIcon(new ImageIcon(PanelRetirosDeEfectivo.class.getResource(
+                "/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
         btnBuscar.setFont(new Font("Dialog", Font.BOLD, 13));
         btnBuscar.setBackground(new Color(184, 134, 11));
 
@@ -526,7 +537,7 @@ public class PanelRetirosDeEfectivo extends JPanel {
             return;
         }
         int confirmacion = JOptionPane.showConfirmDialog(this,
-                "¿Desea inhabilitar el retiro con folio " + id
+                "¿Desea inhabilitar el retiro con ID " + id
                     + "? Sólo se permite durante el día de registro.",
                 "Inhabilitar retiro", JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
