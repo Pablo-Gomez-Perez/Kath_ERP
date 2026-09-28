@@ -15,19 +15,26 @@ public record GastoFiltro(
         Orden orden) {
 
     public enum Orden {
-        FECHA_RECIENTE(1),
-        FECHA_ANTIGUA(2),
-        EMPLEADO(3),
-        CATEGORIA(4);
+        FECHA_RECIENTE(1, "Fecha más reciente"),
+        FECHA_ANTIGUA(2, "Fecha más antigua"),
+        EMPLEADO(3, "Empleado"),
+        CATEGORIA(4, "Categoría de gasto");
 
         private final int codigoSql;
+        private final String etiqueta;
 
-        Orden(int codigoSql) {
+        Orden(int codigoSql, String etiqueta) {
             this.codigoSql = codigoSql;
+            this.etiqueta = etiqueta;
         }
 
         public int codigoSql() {
             return codigoSql;
+        }
+
+        @Override
+        public String toString() {
+            return etiqueta;
         }
     }
 

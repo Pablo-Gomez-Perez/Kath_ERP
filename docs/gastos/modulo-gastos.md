@@ -139,4 +139,92 @@ empleado; cuatro ordenamientos; edición del día actual; rechazo de
 edición al día siguiente y tras inhabilitación; baja lógica; edición de un
 registro histórico sin forma de pago; y verificación en Eclipse WindowBuilder.
 
-Esta PR no incluye `PanelGastos` ni escrituras a ficheros `.sql`.
+La implementación inicial no incluía `PanelGastos`. La ampliación posterior lo integra funcionalmente manteniendo su diseño visual, sin modificar ficheros `.sql`.
+
+
+## Ampliación: PanelGastos funcional
+
+La rama `feat/modulo-gastos` se actualizó mediante avance rápido al último
+`dev` tras haberse fusionado la PR inicial. El usuario creó
+`PanelGastos` con Eclipse WindowBuilder; la ampliación conecta todos sus
+componentes existentes **sin modificar ni reordenar su GroupLayout**.
+
+- `PanelGastos(Sucursal sucursal)`: constructor de ejecución recomendado,
+  equivalente al de `PanelVentas`. Se conserva `PanelGastos()` para
+  WindowBuilder; cuando se use ese constructor, el módulo padre debe llamar
+  a `establecerSucursalActual(sucursal)` antes de mostrar el panel.
+  En ningún caso se debe permitir que el usuario elija una sucursal en el
+  propio panel.
+- Tabla de 10 columnas, en el mismo orden de
+  `GastoController.verGastosEnTabla`: Folio, Fecha, Empleado, Categoría,
+  Forma de pago, Descripción, Importe, IVA, Total, Activo.
+  `DefaultTableModel.isCellEditable()` siempre devuelve `false`; además
+  se usa `DataTools.removerEditorDeTabla`. Los diez anchos se definen en
+  `ConstantsConllections.tablaGastosColumnsWidth` y se aplican mediante
+  `DataTools.definirTamanioDeColumnas`.
+- Filtro de empleados: `GastoController.listCmbEmpleadosFiltroGastos(idSucursal)`,
+  precedido por la opción «Todos». Reutiliza el procedimiento existente
+  `ver_rfc_empleado_por_sucursal(?)`, que incluye empleados **activos e
+  inactivos de la sucursal**, de modo que también permite localizar sus gastos
+  históricos. El formulario de registro y edición conserva
+  `listCmbEmpleadosGasto(idSucursal)`, que presenta sólo empleados activos.
+- Filtro de categorías: se consulta
+  `CategoriaDeGastoController.listarCategorias("")`, que devuelve **todas
+  las categorías, incluidas las inactivas**; así se pueden filtrar los gastos
+  históricos. También se agrega «Todos».
+- Ordenamiento: reutiliza `GastoFiltro.Orden` con los cuatro códigos
+  del SP (fecha reciente, fecha antigua, empleado y categoría). El enum
+  incorpora etiquetas legibles sin cambiar sus códigos.
+- Rango de fechas: los dos `JFormattedTextField` conservan las posiciones
+  originales del layout y reciben máscara `##/##/####`, separadores fijos y
+  marcadores `_`. La conversión usa `LocalDate` con
+  `ResolverStyle.STRICT`, admite ambos extremos opcionales y rechaza
+  fechas imposibles e intervalos invertidos antes de consultar.
+- `btnBuscarGasto` compone `GastoFiltro` y llama a
+  `GastoController.verGastosEnTabla`. Si todos los controles están en
+  «Todos», con fechas vacías, lista **todos** los registros de la sucursal.
+  La consulta se ejecuta en `SwingWorker` para no bloquear el EDT;
+  el modelo anterior se conserva si falla la consulta. Una marca de
+  versión evita sobrescrituras de resultados por consultas anteriores.
+- Agregar y Modificar abren `Fr_DatosGasto` con la sucursal actual
+  y el ID seleccionado. El listener `windowClosed` se registra antes
+  de mostrar el formulario. **Sólo se refresca la tabla si
+  `isOperacionEjecutada()` es verdadero**. Los gastos inactivos no
+  pueden abrirse en edición; la regla de fecha de edición sigue siendo
+  responsabilidad de `updateGasto` en MySQL, por posibles diferencias de
+  huso horario entre el cliente y el servidor.
+- Eliminar solicita confirmación explícita e invoca
+  `GastoController.eliminarGasto(idGasto,idSucursal)`. Sólo ante
+  `SpResponseModel.id()==200` refresca el listado conservando los
+  filtros vigentes. La operación también se realiza en segundo plano.
+- Exportar Excel reutiliza `DataTools.exportarTablaExcel`, que genera
+  **CSV compatible con Excel**, exactamente con las filas visibles de
+  la última consulta exitosa.
+- `PanelGastosTest` incluye pruebas para máscara/parseo, encabezados y
+  anchos, estado no editable, ordenamientos y selección correcta con
+  `convertRowIndexToModel`.
+
+### Dependencia SQL detectada en el dump
+
+**Advertencia:** a pesar de que `GastoController.getGastoByID` exige el SP
+`getGastoByID(id_gasto,id_sucursal)`, la revisión de
+`database/procedures/procedures_gastos.sql` y de
+`database/procedures.sql` en el `dev` actualizado mostró que **ninguno
+incluye ese procedimiento**. No se agregó porque el usuario reservó para sí
+la incorporación de SQL. Sin instalarlo en el ambiente en ejecución,
+`Fr_DatosGasto` no podrá precargar un registro para su edición, aunque
+el resto del panel pueda funcionar. La definición SQL debe añadirse al
+dump por el responsable del repositorio y desplegarse previamente.
+
+### Verificación
+
+```bash
+./mvnw -Dtest=PanelGastosTest,GastoControllerTest test
+```
+
+Realizar además pruebas manuales con datos reales: carga inicial,
+«Todos» sin fechas, filtro combinado y límites abiertos de fecha,
+los cuatro ordenamientos, agregar, editar hoy, rechazo de edición fuera
+de fecha, inhabilitar y verificar que no reaparezca como activo.
+Validar `PanelGastos` visualmente en Eclipse WindowBuilder y comprobar
+que el módulo padre inyecta la `Sucursal` autenticada.

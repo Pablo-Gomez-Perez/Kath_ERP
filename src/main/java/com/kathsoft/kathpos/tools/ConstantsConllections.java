@@ -104,6 +104,11 @@ public class ConstantsConllections implements java.io.Serializable{
 			90, // Accion
 	};
 	
+	/** Folio, fecha, empleado, categoría, forma de pago, descripción, importe, IVA, total y estado. */
+	public static final int[] tablaGastosColumnsWidth = {
+			65, 120, 190, 180, 150, 320, 120, 100, 120, 110
+	};
+
 	public static final int[] tablaComprasColumnsWidth = { 50, // id compra
 			120, // empleado
 			120, // proveedor
