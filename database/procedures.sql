@@ -1,4 +1,4 @@
-CREATE PROCEDURE `kath_erp`.`actualizarPassWordEmpleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`actualizarPassWordEmpleado`(
     IN rfcEmpl VARCHAR(13),
     IN passwordE VARCHAR(255)
 )
@@ -10,7 +10,7 @@ BEGIN
     WHERE rfc = rfcEmpl;
 END;
 
-CREATE PROCEDURE `kath_erp`.`bucar_forma_pago_por_id`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`bucar_forma_pago_por_id`(
 	IN idFormaDePago INT
 )
 BEGIN
@@ -19,7 +19,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_categoria_por_nombre`(IN `nombre` VARCHAR(60))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_categoria_por_nombre`(IN `nombre` VARCHAR(60))
 BEGIN
     SELECT 
 		categoria_producto.id_categoria,
@@ -29,7 +29,7 @@ BEGIN
     FROM categoria_producto WHERE categoria_producto.nombre LIKE CONCAT('%',nombre,'%');
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_cliente_por_nombre`(
 	IN `nombre` VARCHAR(30)
 )
     READS SQL DATA
@@ -52,7 +52,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_cuenta_x_clave`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_cuenta_x_clave`(
 	IN `clave_cuenta` VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
@@ -76,7 +76,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_cuenta_x_id`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_cuenta_x_id`(
 	IN `id_cuenta` INT
 )
 BEGIN
@@ -100,7 +100,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_empleado`(
 	IN nombre_e VARCHAR(30)
 )
 BEGIN
@@ -120,7 +120,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_empleado_por_nombre`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_empleado_por_nombre`(
 	IN nombre VARCHAR(10)
 )
 BEGIN
@@ -132,7 +132,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_proveedor_por_nombre`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_proveedor_por_nombre`(
 	IN nombre_prov VARCHAR(30)
 )
 BEGIN
@@ -155,7 +155,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_sucursal_por_id`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_sucursal_por_id`(
 	IN `id_sucursal` INT
 )
 BEGIN
@@ -174,7 +174,7 @@ WHERE sucursal.id_sucursar = id_sucursal;
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_tipoCliente_por_id`(
 	IN id_tipoCliente INT
 )
 BEGIN	
@@ -186,7 +186,7 @@ BEGIN
     WHERE tipo_cliente.id = id_tipoCliente;
 END;
 
-CREATE PROCEDURE `kath_erp`.`buscar_ultima_venta`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`buscar_ultima_venta`()
 BEGIN
 	
     SELECT 
@@ -195,7 +195,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`cancelVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`cancelVenta`(
     IN p_id_venta INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -438,7 +438,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`cmb_tipoCliente`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`cmb_tipoCliente`()
 BEGIN
 	SELECT
 		tipo_cliente.id,
@@ -446,7 +446,7 @@ BEGIN
 	FROM tipo_cliente;
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteArticuloCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -569,7 +569,7 @@ BEGIN
         'Artículo eliminado de la compra correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteCategoriaProducto`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteCategoriaProducto`(
 	IN p_id_categoria INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -637,7 +637,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -751,7 +751,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED
 )
@@ -1163,7 +1163,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteProveedor`(
     IN idProveedor INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -1263,7 +1263,7 @@ BEGIN
         'Proveedor inhabilitado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteTelefonoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteTelefonoCliente`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -1318,7 +1318,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteTelefonoEmpleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteTelefonoEmpleado`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -1356,7 +1356,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteTelefonoProveedor`(
 	IN p_id_telefono INT
 )
     MODIFIES SQL DATA
@@ -1411,7 +1411,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`delete_cuenta_contable`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`delete_cuenta_contable`(
 	IN p_id_cuenta INT
 )
     MODIFIES SQL DATA
@@ -1517,7 +1517,7 @@ BEGIN
 		'Cuenta contable desactivada correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`delete_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`delete_empleado`(
     IN p_id_empleado INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -1584,7 +1584,7 @@ BEGIN
         'Empleado desactivado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`eliminar_articulo`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`eliminar_articulo`(
 	IN id INT
 )
 BEGIN
@@ -1601,7 +1601,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`eliminar_forma_pago`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`eliminar_forma_pago`(
 	IN idFormaPago INT
 )
 BEGIN
@@ -1619,7 +1619,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`eliminar_sucursal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`eliminar_sucursal`(
 	IN idSucursal INT
 )
 BEGIN
@@ -1631,7 +1631,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`eliminar_tipoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`eliminar_tipoCliente`(
 	IN id_tipoCliente INT
 )
 BEGIN
@@ -1644,7 +1644,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`finalizarVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`finalizarVenta`(
     IN p_id_venta INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -1855,7 +1855,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getArticuloByCodigo`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getArticuloByCodigo`(
 	IN codigo_a VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN idSucursal INT,
     IN idTipoCliente INT
@@ -1891,7 +1891,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`getArticuloById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getArticuloById`(
 	IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
@@ -1920,7 +1920,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`getCategoriaById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getCategoriaById`(
 	IN `p_id_categoria` INT UNSIGNED
 )
     READS SQL DATA
@@ -1937,7 +1937,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getClienteById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getClienteById`(
 	IN p_idCliente INT
 )
     READS SQL DATA
@@ -1962,7 +1962,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getClienteParaVentaById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getClienteParaVentaById`(
 	IN id_cliente INT
 )
     READS SQL DATA
@@ -1990,7 +1990,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getCompraById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getCompraById`(
     IN p_id_compra INT UNSIGNED
 )
     READS SQL DATA
@@ -2027,7 +2027,7 @@ BEGIN
     LIMIT 1;
 END;
 
-CREATE PROCEDURE `kath_erp`.`getConfiguracionFiscal`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getConfiguracionFiscal`()
     READS SQL DATA
 BEGIN
 
@@ -2047,7 +2047,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getEmpleadoById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getEmpleadoById`(
     IN id_empleado INT
 )
     READS SQL DATA
@@ -2073,7 +2073,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getEmpleadoByRFC`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getEmpleadoByRFC`(
     IN rfc_empleado VARCHAR(13)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -2100,7 +2100,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getEmpleadoLogin`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getEmpleadoLogin`(
     IN p_nombre_corto VARCHAR(10)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -2136,7 +2136,7 @@ BEGIN
     LIMIT 1;
 END;
 
-CREATE PROCEDURE `kath_erp`.`getIdUltimaCompra`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getIdUltimaCompra`()
     READS SQL DATA
     COMMENT 'Obtiene el ID de la última compra que se haya efectuado'
 BEGIN
@@ -2150,7 +2150,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`getListadoEmpleados`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getListadoEmpleados`(
     IN nombre_empleado VARCHAR(30)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -2171,7 +2171,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getProveedorById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getProveedorById`(
     IN idProveedor INT UNSIGNED
 )
     READS SQL DATA
@@ -2192,7 +2192,7 @@ BEGIN
     WHERE p.id_proveedor = idProveedor;
 END;
 
-CREATE PROCEDURE `kath_erp`.`getTicketVentaById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getTicketVentaById`(
     IN p_id_venta INT UNSIGNED
 )
     READS SQL DATA
@@ -2424,7 +2424,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`getVentaById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getVentaById`(
     IN p_id_venta INT UNSIGNED
 )
     READS SQL DATA
@@ -2554,7 +2554,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertArticulo`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertArticulo`(
 	IN p_id_proveedor INT UNSIGNED,
 	IN p_id_categoria INT UNSIGNED,
 	IN p_codigo_articulo VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -2679,7 +2679,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertArticuloCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertArticuloCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_articulo INT UNSIGNED,
     IN p_cantidad INT,
@@ -2782,7 +2782,7 @@ BEGIN
         'Artículo agregado a la compra correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertArticuloVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertArticuloVenta`(
     IN p_id_venta INT UNSIGNED,
     IN p_id_articulo INT UNSIGNED,
     IN p_cantidad INT
@@ -3072,7 +3072,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertCategoriaProducto`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertCategoriaProducto`(
 	IN p_nombre VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -3138,7 +3138,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertCliente`(
 	IN p_id_tipoCliente INT,
 	IN p_rfc VARCHAR(13)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -3286,7 +3286,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertCompra`(
     IN p_id_empleado INT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED,
@@ -3476,7 +3476,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertExistenciaArticuloSucursal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertExistenciaArticuloSucursal`(
 	IN p_id_articulo INT UNSIGNED,
 	IN p_id_sucursal BIGINT UNSIGNED,
 	IN p_existencia INT
@@ -3549,7 +3549,7 @@ BEGIN
 		'Existencia registrada correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertPagoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertPagoProveedor`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_forma_pago INT,
     IN p_importe DECIMAL(18,2)
@@ -3715,7 +3715,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertPagoVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertPagoVenta`(
     IN p_id_venta INT UNSIGNED,
     IN p_id_forma_pago INT,
     IN p_importe DECIMAL(18,2)
@@ -3826,7 +3826,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertPrecioArticuloTipoCliente`(
 	IN p_id_articulo INT UNSIGNED,
 	IN p_id_tipo_cliente INT,
 	IN p_precio DECIMAL(18,2),
@@ -3926,7 +3926,7 @@ BEGIN
 		'Precio registrado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertProveedor`(
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -4015,7 +4015,7 @@ BEGIN
         'Proveedor registrado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertSucursal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertSucursal`(
 	IN nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -4093,7 +4093,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertTelefonoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertTelefonoCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -4183,7 +4183,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertTelefonoEmpleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertTelefonoEmpleado`(
 	IN p_id_empleado INT,
 	IN p_telefono_empleado VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci 
 )
@@ -4219,7 +4219,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertTelefonoProveedor`(
 	IN p_id_proveedor INT UNSIGNED,
 	IN p_telefono VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -4309,7 +4309,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`insertVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertVenta`(
     IN p_id_empleado INT UNSIGNED,
     IN p_id_cliente INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED,
@@ -4480,7 +4480,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insert_cuenta_contable`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insert_cuenta_contable`(
 	IN p_id_cuenta_padre INT,
 	IN p_id_rubro INT,
 	IN p_clave VARCHAR(25)
@@ -4617,7 +4617,7 @@ DECLARE v_cuenta_existente INT DEFAULT 0;
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`insert_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insert_empleado`(
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_rfc VARCHAR(13)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -4795,7 +4795,7 @@ BEGIN
         'Empleado registrado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`insert_forma_de_pago`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insert_forma_de_pago`(
 	IN forma_pago VARCHAR(18)
 )
 BEGIN
@@ -4808,7 +4808,7 @@ BEGIN
     );
 END;
 
-CREATE PROCEDURE `kath_erp`.`insert_nuevo_categoria`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insert_nuevo_categoria`(
   IN `nombre_m` VARCHAR(60),
   IN `descripcion_m` VARCHAR(255)
 )
@@ -4818,7 +4818,7 @@ INSERT INTO categoria_producto(nombre, descripcion)
 VALUES(nombre_m, descripcion_m);
 END;
 
-CREATE PROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insert_nuevo_tipoCliente`(
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -4856,7 +4856,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`listArticulos`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listArticulos`(
 	IN p_id_sucursal BIGINT UNSIGNED,
 	IN p_tipo_busqueda VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_ordenar_por VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -4958,7 +4958,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`listArticulosCompraById`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listArticulosCompraById`(
     IN p_id_compra INT UNSIGNED
 )
     READS SQL DATA
@@ -4984,7 +4984,7 @@ BEGIN
     ORDER BY axc.id ASC;
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCategoriaProducto`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCategoriaProducto`(
 	IN p_nombre_categoria VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
@@ -5005,7 +5005,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`listClientes`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listClientes`(
 	IN `nombre_c` VARCHAR(30)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
@@ -5032,7 +5032,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCmbCategoriaProducto`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbCategoriaProducto`()
     READS SQL DATA
     COMMENT 'Lista categorias activas para combo'
 BEGIN
@@ -5046,7 +5046,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCmbClientes`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbClientes`()
     READS SQL DATA
     COMMENT 'Listado de nombre cortos de clientes para ComboBox'
 BEGIN
@@ -5059,7 +5059,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCmbProveeodor`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbProveeodor`()
 BEGIN
 	
     SELECT 
@@ -5070,7 +5070,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCompras`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCompras`(
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
     IN p_fecha_factura_inicio DATE,
@@ -5143,7 +5143,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`listCuentasContablesEnDialog`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCuentasContablesEnDialog`(
 	IN nombre_cuenta VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
@@ -5161,7 +5161,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`listExistenciaGlobalArticulo`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listExistenciaGlobalArticulo`(
 	IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
@@ -5179,7 +5179,7 @@ BEGIN
 		
 END;
 
-CREATE PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
 )
     READS SQL DATA
@@ -5200,7 +5200,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`listProveedores`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listProveedores`(
     IN p_nombre_proveedor VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
@@ -5226,7 +5226,7 @@ BEGIN
     ORDER BY p.nombre ASC;
 END;
 
-CREATE PROCEDURE `kath_erp`.`listTelefonoProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonoProveedor`(
 	IN p_id_proveedor INT UNSIGNED
 )
     READS SQL DATA
@@ -5242,7 +5242,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`listTelefonosCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonosCliente`(
 	IN p_id_cliente INT UNSIGNED
 )
     READS SQL DATA
@@ -5258,7 +5258,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`listTelefonosDeEmpleadoByID`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonosDeEmpleadoByID`(
 	IN id_empleado INT
 )
     READS SQL DATA
@@ -5275,7 +5275,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`listVentas`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listVentas`(
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_tipo_busqueda VARCHAR(20)
         CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -5469,7 +5469,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`list_cmbGrupoContable`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`list_cmbGrupoContable`()
     READS SQL DATA
     COMMENT 'Listado de todos los grupos contables registrados para un ComboBox'
 BEGIN
@@ -5482,7 +5482,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`list_cmbRubroCuentasContables`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`list_cmbRubroCuentasContables`(
 	IN `id_grupo_contable` INT
 )
     COMMENT 'LISTADO DE RUBROS CONTABLES PARA UN COMBOBOX'
@@ -5497,7 +5497,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`restarExistenciaSucursalVenta`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`restarExistenciaSucursalVenta`(
     IN p_id_detalle_venta INT UNSIGNED
 )
     MODIFIES SQL DATA
@@ -5629,7 +5629,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`sumarExistenciaSucursalCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`sumarExistenciaSucursalCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_articulo INT UNSIGNED,
     IN p_cantidad INT
@@ -5751,7 +5751,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateArticulo`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateArticulo`(
 	IN p_id_articulo INT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
     IN p_id_categoria INT UNSIGNED,
@@ -5813,7 +5813,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateArticuloCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED,
     IN p_cantidad INT,
     IN p_subtotal DOUBLE
@@ -6022,7 +6022,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateCategoriaProducto`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateCategoriaProducto`(
 	IN p_id_categoria INT UNSIGNED,
 	IN p_nombre VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
 	IN p_descripcion VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -6103,7 +6103,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateCliente`(
 	IN p_id_cliente INT UNSIGNED,
 	IN p_id_tipoCliente INT,
 	IN p_rfc VARCHAR(13)
@@ -6309,7 +6309,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateCompra`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateCompra`(
     IN p_id_compra INT UNSIGNED,
     IN p_id_empleado INT UNSIGNED,
     IN p_id_proveedor INT UNSIGNED,
@@ -6584,7 +6584,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateConfiguracionFiscal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateConfiguracionFiscal`(
     IN p_id_configuracion INT UNSIGNED,
     IN p_rfc_emisor VARCHAR(13),
     IN p_nombre_razon_social VARCHAR(255),
@@ -6711,7 +6711,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
     IN p_id_articulo INT UNSIGNED,
     IN p_id_tipoCliente INT,
     IN p_precio DECIMAL(18,2),
@@ -6810,7 +6810,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateProveedor`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateProveedor`(
     IN p_id_proveedor INT UNSIGNED,
     IN p_rfc VARCHAR(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN p_nombre VARCHAR(65) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -6947,7 +6947,7 @@ BEGIN
         'Proveedor actualizado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`updateSucursal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateSucursal`(
 	IN id_sucursal INT,
 	IN nombre VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -6996,7 +6996,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`update_cuenta_contable`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`update_cuenta_contable`(
 	IN p_id_cuenta INT,
 	IN p_clave VARCHAR(25)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
@@ -7169,7 +7169,7 @@ BEGIN
 		'Cuenta contable actualizada correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`update_empleado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`update_empleado`(
     IN p_id_empleado INT UNSIGNED,
     IN p_id_sucursal BIGINT UNSIGNED,
     IN p_rfc VARCHAR(13)
@@ -7320,7 +7320,7 @@ BEGIN
         'Empleado actualizado correctamente' AS message;
 END;
 
-CREATE PROCEDURE `kath_erp`.`update_forma_de_pago`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`update_forma_de_pago`(
 	IN id_forma_pago INT,
 	IN forma_pago VARCHAR(18)
 )
@@ -7334,7 +7334,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`update_tipoCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`update_tipoCliente`(
 	IN id_tipoCliente INT,
 	IN nombre_t VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
     IN descripcion_t VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -7371,7 +7371,7 @@ BEGIN
         
 END;
 
-CREATE PROCEDURE `kath_erp`.`validar_entrada`(IN `nombre_c` VARCHAR(10) CHARSET utf8, IN `contra_c` VARCHAR(15) CHARSET utf8)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`validar_entrada`(IN `nombre_c` VARCHAR(10) CHARSET utf8, IN `contra_c` VARCHAR(15) CHARSET utf8)
 BEGIN
 
 
@@ -7394,7 +7394,7 @@ END IF;
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_articulos`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_articulos`(
 	IN `id_sucursal` INT,
 	IN `id_tipoCliente_a` INT
 )
@@ -7422,7 +7422,7 @@ ORDER BY id_articulo;
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_cliente_por_rfc`(
 	IN rfc_cl VARCHAR(13)
 )
     READS SQL DATA
@@ -7445,7 +7445,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_cmbRubroCuentasContables`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_cmbRubroCuentasContables`()
 BEGIN
 	
 	SELECT 
@@ -7457,7 +7457,7 @@ BEGIN
 	
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_codigos_articulos`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_codigos_articulos`()
 BEGIN
 	
     SELECT articulo.codigo_articulo
@@ -7465,7 +7465,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_cuentas_contables`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_cuentas_contables`(
 	IN `nombre_cta_contable` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     COMMENT 'LISTA EL CATALOGO COMPLETO DE CUENTAS CONTABLES'
@@ -7488,7 +7488,7 @@ BEGIN
 	WHERE cc.nombre LIKE CONCAT('%',nombre_cta_contable,'%') COLLATE utf8mb4_general_ci;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_formas_de_pago`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_formas_de_pago`()
 BEGIN	
     SELECT 
 		fp.id,
@@ -7497,7 +7497,7 @@ BEGIN
     FROM formas_de_pago AS fp;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_indices_categorias`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_indices_categorias`()
 BEGIN
 
 	
@@ -7506,7 +7506,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_indice_venta_actual`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_indice_venta_actual`()
 BEGIN
 
     SELECT
@@ -7516,7 +7516,7 @@ BEGIN
 
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_nombres_sucursal`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_nombres_sucursal`()
 BEGIN
 	
 	SELECT
@@ -7526,7 +7526,7 @@ BEGIN
     
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_proveedor_por_rfc`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_proveedor_por_rfc`(
     IN rfc_p VARCHAR(13)
 )
     READS SQL DATA
@@ -7547,14 +7547,14 @@ BEGIN
     WHERE p.rfc = UPPER(TRIM(rfc_p));
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_rfcProveedores`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_rfcProveedores`()
 BEGIN
 	select
 		proveedor.rfc
 	from proveedor;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_rfc_clientes`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_rfc_clientes`()
 BEGIN
 	SELECT
 		cliente.id_cliente,
@@ -7563,7 +7563,7 @@ BEGIN
     ORDER BY id_cliente ASC;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_rfc_empleado_por_sucursal`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_rfc_empleado_por_sucursal`(
 	IN id_sucursal INT
 )
     READS SQL DATA
@@ -7576,7 +7576,7 @@ BEGIN
     WHERE empleados.id_sucursal = id_sucursal;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_sucursales`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_sucursales`()
 BEGIN
 	SELECT
 		id_sucursar,
@@ -7592,7 +7592,7 @@ BEGIN
 	FROM sucursal;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_sucursales_nombres`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_sucursales_nombres`()
     COMMENT 'Procedimeinto para el listado de las sucursales en un combobox'
 BEGIN
 	SELECT 
@@ -7601,7 +7601,7 @@ BEGIN
 	FROM sucursal ORDER BY id_sucursar;
 END;
 
-CREATE PROCEDURE `kath_erp`.`ver_tipo_clientes`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`ver_tipo_clientes`(
 	IN nombre_tipo_cliente VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 )
     READS SQL DATA
