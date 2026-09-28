@@ -162,10 +162,12 @@ componentes existentes **sin modificar ni reordenar su GroupLayout**.
   se usa `DataTools.removerEditorDeTabla`. Los diez anchos se definen en
   `ConstantsConllections.tablaGastosColumnsWidth` y se aplican mediante
   `DataTools.definirTamanioDeColumnas`.
-- Filtro de empleados: `GastoController.listCmbEmpleadosGasto(idSucursal)`,
-  precedido por la opción «Todos». Este procedimiento devuelve **empleados
-  activos** de la sucursal. Para filtrar por empleados históricos dados de
-  baja deberá ampliarse posteriormente el contrato SQL, si se requiere.
+- Filtro de empleados: `GastoController.listCmbEmpleadosFiltroGastos(idSucursal)`,
+  precedido por la opción «Todos». Reutiliza el procedimiento existente
+  `ver_rfc_empleado_por_sucursal(?)`, que incluye empleados **activos e
+  inactivos de la sucursal**, de modo que también permite localizar sus gastos
+  históricos. El formulario de registro y edición conserva
+  `listCmbEmpleadosGasto(idSucursal)`, que presenta sólo empleados activos.
 - Filtro de categorías: se consulta
   `CategoriaDeGastoController.listarCategorias("")`, que devuelve **todas
   las categorías, incluidas las inactivas**; así se pueden filtrar los gastos
