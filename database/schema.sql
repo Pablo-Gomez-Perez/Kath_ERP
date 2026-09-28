@@ -203,6 +203,7 @@ CREATE TABLE `gastos` (
   `id_gasto` int unsigned NOT NULL AUTO_INCREMENT,
   `id_categoria` int NOT NULL,
   `id_empleado` int unsigned NOT NULL,
+  `id_forma_pago` int NOT NULL,
   `id_sucursal` bigint unsigned NOT NULL,
   `fecha_operacion` date NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
@@ -213,10 +214,12 @@ CREATE TABLE `gastos` (
   KEY `id_empleado` (`id_empleado`),
   KEY `Fk_categoria_x_gasto` (`id_categoria`),
   KEY `gastos_sucursal_FK` (`id_sucursal`),
+  KEY `gastos_formas_de_pago_FK` (`id_forma_pago`),
   CONSTRAINT `Fk_categoria_x_gasto` FOREIGN KEY (`id_categoria`) REFERENCES `categoria_de_gasto` (`id_categoria`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `gastos_formas_de_pago_FK` FOREIGN KEY (`id_forma_pago`) REFERENCES `formas_de_pago` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `gastos_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE,
   CONSTRAINT `gastos_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- kath_erp.permiso_x_empleado definition
@@ -255,6 +258,7 @@ CREATE TABLE `precios_x_tipocliente` (
 
 CREATE TABLE `retiros_de_efectivo` (
   `id_retiro` int unsigned NOT NULL AUTO_INCREMENT,
+  `id_sucursal` bigint unsigned NOT NULL,
   `id_empleado` int unsigned NOT NULL,
   `folio` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
   `fecha` date NOT NULL,
@@ -264,7 +268,9 @@ CREATE TABLE `retiros_de_efectivo` (
   PRIMARY KEY (`id_retiro`),
   UNIQUE KEY `Unq_folio_retiro` (`folio`) USING BTREE,
   KEY `id_empleado` (`id_empleado`),
-  CONSTRAINT `retiros_de_efectivo_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE
+  KEY `retiros_de_efectivo_sucursal_FK` (`id_sucursal`),
+  CONSTRAINT `retiros_de_efectivo_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE,
+  CONSTRAINT `retiros_de_efectivo_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
