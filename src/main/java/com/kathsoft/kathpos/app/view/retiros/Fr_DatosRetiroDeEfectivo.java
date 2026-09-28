@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Vector;
@@ -384,6 +385,22 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
             return;
         }
 
+        // La contraseña corresponde exactamente al empleado seleccionado.
+        // Si se cancela o se deja vacía no se ejecuta ningún SP de escritura.
+        JComboboxDataViewModel empleadoAutorizante =
+                (JComboboxDataViewModel) cmbEmpleado.getSelectedItem();
+        char[] contrasenia = DialogoContraseniaRetiro.solicitar(
+                this, empleadoAutorizante.nombre(), "registrar este retiro");
+        if (contrasenia == null) {
+            return;
+        }
+        if (contrasenia.length == 0) {
+            Arrays.fill(contrasenia, '\0');
+            MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
+                    this, "Debe proporcionar la contraseña del empleado");
+            return;
+        }
+
         procesando = true;
         btnGuardar.setEnabled(false);
         btnCancelar.setEnabled(false);
@@ -391,7 +408,12 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         new SwingWorker<SpResponseModel, Void>() {
             @Override
             protected SpResponseModel doInBackground() {
-                return AppContext.retiroDeEfectivoController.registrarRetiro(retiro);
+                try {
+                    return AppContext.retiroDeEfectivoController
+                            .registrarRetiro(retiro, contrasenia);
+                } finally {
+                    Arrays.fill(contrasenia, '\0');
+                }
             }
 
             @Override

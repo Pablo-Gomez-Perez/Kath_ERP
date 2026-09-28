@@ -158,3 +158,68 @@ el importe ni elimina la información histórica.
 
 Se requiere además inspección visual con Eclipse WindowBuilder para
 validar que el diseñador puede abrir ambos nuevos componentes.
+
+
+## Reautenticación obligatoria antes de los movimientos
+
+A partir de la ampliación de esta rama, **registrar e inhabilitar exige
+volver a introducir la contraseña del empleado responsable**. La autorización
+se comprueba en `RetiroDeEfectivoController`; no consiste únicamente en
+mostrar un diálogo visual.
+
+- **Registro:** después de validar folio, empleado, descripción e importe,
+  `Fr_DatosRetiroDeEfectivo` solicita la contraseña mediante un
+  `JPasswordField` enmascarado. El ID autorizado corresponde exactamente al
+  empleado seleccionado en el ComboBox. Cancelar o introducir una contraseña
+  vacía **no inicia ningún procedimiento almacenado de escritura**.
+- **Inhabilitación:** después de seleccionar y confirmar el retiro,
+  `PanelRetirosDeEfectivo` solicita la contraseña de quien figura como
+  **empleado responsable del retiro original**, no la de una persona
+  arbitraria que haya iniciado sesión. El controlador consulta de nuevo
+  `getRetiroDeEfectivoById(idRetiro,idSucursal)` para obtener la identidad
+  autorizante de MySQL, en lugar de confiar en el texto de una fila Swing.
+- `AutorizacionRetiroService` utiliza los procedimientos YA EXISTENTES
+  `getEmpleadoById(idEmpleado)` para resolver ID, alias, sucursal y estado,
+  y `getEmpleadoLogin(nombreCorto)` mediante `LoginController.iniciarSesion`.
+  El mecanismo de contraseña sigue siendo el mismo
+  `PasswordHashService.verifyPassword` (PBKDF2) que el inicio de sesión.
+  Compara **ID, sucursal y estado activo** después de verificar el hash.
+- `registrarRetiro(retiro,char[])` e
+  `inhabilitarRetiro(id,sucursal,char[])` reemplazan los métodos que
+  admitían ejecutar movimientos sin contraseña. La falta de contraseña
+  o una autorización fallida devuelve `SpResponseModel.id()=401` y
+  **no llega a invocar el procedimiento de escritura**. Errores de acceso
+  SQL/criptografía provocan rechazo sin realizar la operación.
+- La contraseña **no se guarda en DTO, no se convierte a `String`,
+  no se registra en logs y no se envía a la base de datos**. El diálogo
+  devuelve un arreglo `char[]`; el `SwingWorker` lo borra con
+  `Arrays.fill` tras completar la operación. Nunca se conserva una
+  contraseña para autorizar movimientos posteriores.
+- Se exige que el empleado original continúe activo para autorizar una
+  inhabilitación, como exige el SP de autenticación existente. Casos de
+  empleados dados de baja que requieran anulaciones demandan definir
+  previamente un flujo explícito de autorización de supervisores.
+
+**Límite de seguridad conocido:** la verificación se realiza en el
+controlador de la aplicación de escritorio; los cuatro SP de retiros
+permanecen sin parámetros de autorización. Una cuenta MySQL con permiso
+directo de ejecutar los procedimientos podría omitir la aplicación y
+evitar la solicitud de contraseña. Para una autorización estrictamente
+obligatoria ante clientes o usuarios que puedan conectarse directamente
+a MySQL sería necesario diseñar e implantar un control de privilegios
+y autorización del lado servidor, sujeto a aprobación SQL independiente.
+El mecanismo actual es **reautenticación de la aplicación**, no una
+garantía contra uso directo de credenciales de la BD.
+
+### Pruebas adicionales
+
+```bash
+./mvnw -Dtest=AutorizacionRetiroServiceTest,RetiroDeEfectivoControllerTest,PanelRetirosDeEfectivoTest test
+```
+
+Además de las pruebas automáticas, verificar manualmente ambos diálogos:
+cancelar, contraseña vacía, contraseña incorrecta, contraseña de otro
+empleado, empleado inactivo o de otra sucursal, contraseña correcta,
+repetición de la autorización en cada movimiento y refresco de tabla
+únicamente después de `id=200`. La regla temporal de inhabilitación
+sigue verificándose exclusivamente en MySQL con `CURDATE()`.
