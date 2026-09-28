@@ -71,7 +71,7 @@ public class PanelGastos extends JPanel {
 	 */
 	public PanelGastos() {
 		setBackground(new Color(255, 215, 0));
-		setBorder(null);
+		setBorder(null);		
 		
 		JPanel panelEtiquetaVentas = new JPanel();
 		panelEtiquetaVentas.setBackground(new Color(0, 0, 128));

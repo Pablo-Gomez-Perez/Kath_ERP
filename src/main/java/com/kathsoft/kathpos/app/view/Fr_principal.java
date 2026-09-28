@@ -37,6 +37,7 @@ import com.kathsoft.kathpos.app.view.contabilidad.PanelCuentasContables;
 import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
 import com.kathsoft.kathpos.app.view.formas_pago.PanelFormasDePago;
 import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
+import com.kathsoft.kathpos.app.view.gastos.PanelGastos;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
@@ -126,6 +127,7 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionCerrarSesion;
 	private JMenuItem opcionSalirDelSistema;
 	private PanelSucursales panelSucursales;
+	private PanelGastos panelGastos;
 	private PanelCategoriaDeGasto panelCategoriaDeGasto;
 	private JMenuItem opcionSucursales;
 	private PanelFormasDePago panelFormasDePago;
@@ -162,6 +164,9 @@ public class Fr_principal extends JFrame {
 	private JMenuItem mntmFiscal;
 	private JMenuItem mntmBaseDeDatos;
 	private JMenuItem opcionCategoriaGasto;
+	private JMenu mnGastos;
+	private JMenuItem mntmConsultarGastos;
+	private JMenuItem mntmRegistrarGasto;
 
 	/**
 	 * Create the frame.
@@ -423,6 +428,24 @@ public class Fr_principal extends JFrame {
 		
 		this.mntmRegistrar_1 = new JMenuItem("Registrar");
 		this.mnSalidas.add(this.mntmRegistrar_1);
+		
+		mnGastos = new JMenu("Gastos");
+		menuOperaciones.add(mnGastos);
+		
+		mntmConsultarGastos = new JMenuItem("Consultar");
+		mntmConsultarGastos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelGastos");
+				panelPrincipalContenedor.updateUI();
+				
+			}
+		});
+		mnGastos.add(mntmConsultarGastos);
+		
+		mntmRegistrarGasto = new JMenuItem("Registrar");
+		mnGastos.add(mntmRegistrarGasto);
 
 		menuReportes = new JMenu("Reportes");
 		menuReportes.setIcon(
@@ -625,6 +648,14 @@ public class Fr_principal extends JFrame {
 		this.panelCategoriaDeGasto = new PanelCategoriaDeGasto();
 		this.panelPrincipalContenedor.add(panelCategoriaDeGasto, "panelCategoriaDeGasto");
 		
+		
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		
+		this.panelGastos = new PanelGastos(this.sucursal);
+		this.panelPrincipalContenedor.add(panelGastos, "panelGastos");
 		
 		// =======================================================================================================================================
 		// =======================================================================================================================================
