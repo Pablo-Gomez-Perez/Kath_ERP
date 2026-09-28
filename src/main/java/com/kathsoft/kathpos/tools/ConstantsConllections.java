@@ -104,6 +104,11 @@ public class ConstantsConllections implements java.io.Serializable{
 			90, // Accion
 	};
 	
+	/** ID, folio, fecha, empleado, descripción, importe y estado del retiro. */
+	public static final int[] tablaRetirosDeEfectivoColumnsWidth = {
+			65, 120, 125, 210, 370, 140, 110
+	};
+
 	/** Folio, fecha, empleado, categoría, forma de pago, descripción, importe, IVA, total y estado. */
 	public static final int[] tablaGastosColumnsWidth = {
 			65, 120, 190, 180, 150, 320, 120, 100, 120, 110
