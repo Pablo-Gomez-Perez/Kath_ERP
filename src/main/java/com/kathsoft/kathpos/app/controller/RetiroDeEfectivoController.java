@@ -34,13 +34,37 @@ public class RetiroDeEfectivoController implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private final transient AutorizacionRetiroService autorizacion;
+
+    public RetiroDeEfectivoController() {
+        this(new AutorizacionRetiroService());
+    }
+
+    RetiroDeEfectivoController(AutorizacionRetiroService autorizacion) {
+        this.autorizacion = java.util.Objects.requireNonNull(autorizacion);
+    }
+
     /**
      * Crea un retiro de la sucursal actual, con fecha asignada por MySQL.
      */
-    public SpResponseModel registrarRetiro(RetiroDeEfectivoRegistro retiro) {
+    public SpResponseModel registrarRetiro(
+            RetiroDeEfectivoRegistro retiro, char[] contraseniaEmpleado) {
         SpResponseModel error = validarRegistro(retiro);
         if (error != null) {
             return error;
+        }
+        if (!contraseniaProporcionada(contraseniaEmpleado)) {
+            return new SpResponseModel(401, "Debe proporcionar la contraseña del empleado");
+        }
+
+        try {
+            if (!autorizacion.autorizar(
+                    retiro.idEmpleado(), retiro.idSucursal(), contraseniaEmpleado)) {
+                return new SpResponseModel(401, "Contraseña incorrecta o empleado no autorizado");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return new SpResponseModel(500, "No fue posible verificar la identidad del empleado");
         }
 
         try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
@@ -60,10 +84,34 @@ public class RetiroDeEfectivoController implements Serializable {
     /**
      * Inhabilita un retiro. El procedimiento valida sucursal, estado y fecha.
      */
-    public SpResponseModel inhabilitarRetiro(int idRetiro, long idSucursal) {
+    public SpResponseModel inhabilitarRetiro(
+            int idRetiro, long idSucursal, char[] contraseniaEmpleado) {
         if (idRetiro <= 0 || idSucursal <= 0) {
             return new SpResponseModel(500, "El retiro y la sucursal son obligatorios");
         }
+        if (!contraseniaProporcionada(contraseniaEmpleado)) {
+            return new SpResponseModel(401, "Debe proporcionar la contraseña del empleado");
+        }
+
+        // El empleado autorizado se recupera del registro actual de la BD;
+        // no se confía en la selección de una fila del JTable.
+        try {
+            RetiroDeEfectivoDetalle retiro = getRetiroDeEfectivoById(idRetiro, idSucursal);
+            if (retiro == null) {
+                return new SpResponseModel(500, "El retiro no existe en la sucursal actual");
+            }
+            if (!retiro.activo()) {
+                return new SpResponseModel(500, "El retiro ya está inhabilitado");
+            }
+            if (!autorizacion.autorizar(
+                    retiro.idEmpleado(), idSucursal, contraseniaEmpleado)) {
+                return new SpResponseModel(401, "Contraseña incorrecta o empleado no autorizado");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return new SpResponseModel(500, "No fue posible verificar la autorización del retiro");
+        }
+
         try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
                 CallableStatement stm = cn.prepareCall(
                         "CALL inhabilitarRetiroDeEfectivo(?, ?)")) {
@@ -196,6 +244,14 @@ public class RetiroDeEfectivoController implements Serializable {
             }
         }
         return empleados;
+    }
+
+    /**
+     * Evita invocar la autenticación y cualquier procedimiento de escritura
+     * cuando el diálogo no proporcionó contraseña.
+     */
+    private static boolean contraseniaProporcionada(char[] contrasenia) {
+        return contrasenia != null && contrasenia.length > 0;
     }
 
     /**
