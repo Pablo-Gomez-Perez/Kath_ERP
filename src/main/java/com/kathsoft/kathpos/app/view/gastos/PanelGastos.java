@@ -309,7 +309,7 @@ public class PanelGastos extends JPanel {
 	}
 
 	/**
-	 * Empleados activos de la sucursal y todas las categorías (incluyendo
+	 * Empleados de la sucursal (también inactivos para consulta histórica) y todas las categorías (incluyendo
 	 * inactivas para poder buscar gastos históricos).
 	 */
 	private void cargarFiltros() {
@@ -323,7 +323,7 @@ public class PanelGastos extends JPanel {
 			@Override
 			protected OpcionesFiltros doInBackground() throws Exception {
 				Vector<JComboboxDataViewModel> empleados =
-						AppContext.gastoController.listCmbEmpleadosGasto(sucursalConsulta);
+						AppContext.gastoController.listCmbEmpleadosFiltroGastos(sucursalConsulta);
 				List<CategoriaDeGasto> categorias =
 						AppContext.categoriaDeGastoController.listarCategorias("");
 				return new OpcionesFiltros(empleados, categorias);
