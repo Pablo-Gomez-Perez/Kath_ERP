@@ -359,6 +359,12 @@ public class Fr_DatosGasto extends JFrame {
 
     private void cargarGastoExistente(GastoDetalle gasto) {
         if (!gasto.activo()) {
+            cmbCategoria.setEnabled(false);
+            cmbEmpleado.setEnabled(false);
+            cmbFormaPago.setEnabled(false);
+            txaDescripcion.setEditable(false);
+            txfImporte.setEditable(false);
+            txfIva.setEditable(false);
             MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
                     this, "El gasto está inhabilitado y no puede actualizarse");
         }
