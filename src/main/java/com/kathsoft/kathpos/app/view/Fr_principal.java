@@ -159,6 +159,7 @@ public class Fr_principal extends JFrame {
 	private JMenu menuConfiguracion;
 	private JMenuItem mntmFiscal;
 	private JMenuItem mntmBaseDeDatos;
+	private JMenuItem opcionCategoriaGasto;
 
 	/**
 	 * Create the frame.
@@ -315,6 +316,16 @@ public class Fr_principal extends JFrame {
 			}
 		});
 		menuConsultar.add(opcionFormasDePago);
+		
+		opcionCategoriaGasto = new JMenuItem("Categoria de gastos");
+		opcionCategoriaGasto.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+			
+		});
+		menuConsultar.add(opcionCategoriaGasto);
 
 		separator = new JSeparator();
 		menuConsultar.add(separator);
