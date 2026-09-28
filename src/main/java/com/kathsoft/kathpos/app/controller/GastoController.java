@@ -178,6 +178,31 @@ public class GastoController implements Serializable {
     }
 
     /**
+     * Opciones del filtro histórico: incluye empleados inactivos que
+     * pertenecen a la sucursal, reutilizando el SP existente de empleados.
+     * El formulario de altas sigue usando listCmbEmpleadosGasto,
+     * que devuelve únicamente empleados activos.
+     */
+    public Vector<JComboboxDataViewModel> listCmbEmpleadosFiltroGastos(long idSucursal)
+            throws SQLException {
+        if (idSucursal <= 0 || idSucursal > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("El identificador de sucursal es inválido");
+        }
+        Vector<JComboboxDataViewModel> resultado = new Vector<>();
+        try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement stm = cn.prepareCall("CALL ver_rfc_empleado_por_sucursal(?)")) {
+            stm.setInt(1, Math.toIntExact(idSucursal));
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    resultado.add(new JComboboxDataViewModel(
+                            rs.getInt(1), rs.getString(2)));
+                }
+            }
+        }
+        return resultado;
+    }
+
+    /**
      * Reutiliza el SP de formas de pago; no depende del controlador del proveedor.
      */
     public Vector<JComboboxDataViewModel> listarFormasPagoActivas() throws SQLException {
