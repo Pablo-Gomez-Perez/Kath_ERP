@@ -193,57 +193,47 @@ public class PanelRetirosDeEfectivo extends JPanel {
 
         GroupLayout gl_panelInferiorFiltros = new GroupLayout(panelInferiorFiltros);
         gl_panelInferiorFiltros.setHorizontalGroup(
-            gl_panelInferiorFiltros.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panelInferiorFiltros.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(gl_panelInferiorFiltros.createParallelGroup(Alignment.LEADING)
-                        .addGroup(gl_panelInferiorFiltros.createSequentialGroup()
-                            .addComponent(lblEmpleado)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(comboBoxEmpleado, 0, 310, Short.MAX_VALUE)
-                            .addPreferredGap(ComponentPlacement.UNRELATED)
-                            .addComponent(lblOrdenarPor)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(comboBoxOrdenarPor, 0, 202, Short.MAX_VALUE)
-                            .addPreferredGap(ComponentPlacement.UNRELATED)
-                            .addComponent(btnBuscar, GroupLayout.PREFERRED_SIZE, 100,
-                                    GroupLayout.PREFERRED_SIZE))
-                        .addGroup(gl_panelInferiorFiltros.createSequentialGroup()
-                            .addComponent(lblDesde)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(formattedTextFieldFechaInicio,
-                                    GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.UNRELATED)
-                            .addComponent(lblHasta)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(formattedTextFieldFechaFinal,
-                                    GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap())
+        	gl_panelInferiorFiltros.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_panelInferiorFiltros.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(gl_panelInferiorFiltros.createParallelGroup(Alignment.LEADING)
+        				.addGroup(gl_panelInferiorFiltros.createSequentialGroup()
+        					.addComponent(lblEmpleado)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(comboBoxEmpleado, GroupLayout.PREFERRED_SIZE, 302, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(lblOrdenarPor)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(comboBoxOrdenarPor, 0, 54, Short.MAX_VALUE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(btnBuscar, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
+        				.addGroup(gl_panelInferiorFiltros.createSequentialGroup()
+        					.addComponent(lblDesde)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(formattedTextFieldFechaInicio, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addComponent(lblHasta)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(formattedTextFieldFechaFinal, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)))
+        			.addContainerGap())
         );
         gl_panelInferiorFiltros.setVerticalGroup(
-            gl_panelInferiorFiltros.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panelInferiorFiltros.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(gl_panelInferiorFiltros.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(lblEmpleado)
-                        .addComponent(comboBoxEmpleado, GroupLayout.PREFERRED_SIZE,
-                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblOrdenarPor)
-                        .addComponent(comboBoxOrdenarPor, GroupLayout.PREFERRED_SIZE,
-                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnBuscar, GroupLayout.PREFERRED_SIZE, 30,
-                                GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(gl_panelInferiorFiltros.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(lblDesde)
-                        .addComponent(formattedTextFieldFechaInicio,
-                                GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                                GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblHasta)
-                        .addComponent(formattedTextFieldFechaFinal,
-                                GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                                GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap())
+        	gl_panelInferiorFiltros.createParallelGroup(Alignment.LEADING)
+        		.addGroup(gl_panelInferiorFiltros.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(gl_panelInferiorFiltros.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(lblEmpleado)
+        				.addComponent(comboBoxEmpleado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lblOrdenarPor)
+        				.addComponent(comboBoxOrdenarPor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(btnBuscar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(gl_panelInferiorFiltros.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(lblDesde)
+        				.addComponent(formattedTextFieldFechaInicio, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lblHasta)
+        				.addComponent(formattedTextFieldFechaFinal, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addContainerGap())
         );
         panelInferiorFiltros.setLayout(gl_panelInferiorFiltros);
         setLayout(groupLayout);

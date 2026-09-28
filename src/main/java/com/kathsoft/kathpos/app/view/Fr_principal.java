@@ -40,6 +40,7 @@ import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
 import com.kathsoft.kathpos.app.view.gastos.PanelGastos;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
+import com.kathsoft.kathpos.app.view.retiros.PanelRetirosDeEfectivo;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
 import com.kathsoft.kathpos.app.view.ventas.PanelVentas;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -117,6 +118,7 @@ public class Fr_principal extends JFrame {
 	private PanelClientes panelClientes;
 	private PanelEmpleados panelEmpleados;
 	private PanelProveedor panelProveedor;
+	private PanelRetirosDeEfectivo panelRetirosDeEfectivo;
 	private JMenuItem opcionMarcas;
 	private PanelMarcas panelMarcas;
 	private JButton btnCalculadora;
@@ -167,6 +169,9 @@ public class Fr_principal extends JFrame {
 	private JMenu mnGastos;
 	private JMenuItem mntmConsultarGastos;
 	private JMenuItem mntmRegistrarGasto;
+	private JMenu mnRetirosDeEfectivo;
+	private JMenuItem mntmRegistrarRetiroEfectivo;
+	private JMenuItem mntmConsultarRetirosDeEfectivo;
 
 	/**
 	 * Create the frame.
@@ -446,6 +451,25 @@ public class Fr_principal extends JFrame {
 		
 		mntmRegistrarGasto = new JMenuItem("Registrar");
 		mnGastos.add(mntmRegistrarGasto);
+		
+		mnRetirosDeEfectivo = new JMenu("Retiros");
+		menuOperaciones.add(mnRetirosDeEfectivo);
+		
+		mntmRegistrarRetiroEfectivo = new JMenuItem("Registrar");
+		mnRetirosDeEfectivo.add(mntmRegistrarRetiroEfectivo);
+		
+		mntmConsultarRetirosDeEfectivo = new JMenuItem("Consultar");
+		mntmConsultarRetirosDeEfectivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();
+				cr.show(panelPrincipalContenedor, "panelRetirosDeEfectivo");
+				panelPrincipalContenedor.updateUI();
+				//"panelRetirosDeEfectivo"
+				
+			}
+		});
+		mnRetirosDeEfectivo.add(mntmConsultarRetirosDeEfectivo);
 
 		menuReportes = new JMenu("Reportes");
 		menuReportes.setIcon(
@@ -661,6 +685,15 @@ public class Fr_principal extends JFrame {
 		// =======================================================================================================================================
 		// =======================================================================================================================================
 		// =======================================================================================================================================
+		
+		this.panelRetirosDeEfectivo = new PanelRetirosDeEfectivo(this.sucursal);
+		this.panelPrincipalContenedor.add(this.panelRetirosDeEfectivo, "panelRetirosDeEfectivo");
+		
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		
 
 		panelSuperiorBotones = new JPanel();
 		panelSuperiorBotones.setBackground(new Color(255, 140, 0));
