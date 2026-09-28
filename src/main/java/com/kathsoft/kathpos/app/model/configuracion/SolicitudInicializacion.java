@@ -27,8 +27,9 @@ public record SolicitudInicializacion(
             if (!telefonoSucursal.matches("[0-9]{10}")) {
                 throw new IllegalArgumentException("El teléfono de sucursal debe tener diez dígitos");
             }
-            requerido(estadoSucursal, 60, "Estado de sucursal");
-            requerido(ciudadSucursal, 60, "Ciudad de sucursal");
+            // Se reutilizan estos datos en empleados.estado (30) y ciudad (40).
+            requerido(estadoSucursal, 30, "Estado de sucursal");
+            requerido(ciudadSucursal, 40, "Ciudad de sucursal");
             requerido(direccionSucursal, 255, "Dirección de sucursal");
             requerido(codigoPostalSucursal, 5, "Código postal de sucursal");
             if (!codigoPostalSucursal.matches("[0-9]{5}")) {
