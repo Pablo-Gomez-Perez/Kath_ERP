@@ -6,6 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.lang.reflect.Proxy;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Date;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -100,6 +105,40 @@ class RetiroDeEfectivoControllerTest {
                 registro(4, 9, "R-1", "Retiro", "12345678901234567.01")).id());
         assertNull(RetiroDeEfectivoController.validarRegistro(
                 registro(4, 9, "R-1", "Retiro", "1234567890123456.99")));
+    }
+
+    @Test
+    void mapeaCorrectamenteCorteFinalYEstadoDesdeLasColumnasDelSp() throws SQLException {
+        Map<String, Object> valores = Map.of(
+                "id_retiro", 42,
+                "id_sucursal", 9L,
+                "id_empleado", 5,
+                "empleado", "Responsable",
+                "folio", "Z-0001",
+                "fecha", Date.valueOf(LocalDate.of(2026, 9, 29)),
+                "descripcion", "Corte del día",
+                "importe", new BigDecimal("250.50"),
+                "es_retiro_final", true,
+                "activo", false);
+        ResultSet simulado = (ResultSet) Proxy.newProxyInstance(
+                ResultSet.class.getClassLoader(), new Class<?>[]{ResultSet.class},
+                (proxy, method, args) -> {
+                    String nombre = method.getName();
+                    if (nombre.equals("getInt") || nombre.equals("getLong")
+                            || nombre.equals("getString") || nombre.equals("getDate")
+                            || nombre.equals("getBigDecimal") || nombre.equals("getBoolean")) {
+                        return valores.get((String) args[0]);
+                    }
+                    throw new UnsupportedOperationException("Acceso inesperado: " + nombre);
+                });
+
+        var detalle = RetiroDeEfectivoController.mapearDetalle(simulado);
+        assertEquals(42, detalle.idRetiro());
+        assertEquals(9L, detalle.idSucursal());
+        assertEquals("Z-0001", detalle.folio());
+        assertEquals(new BigDecimal("250.50"), detalle.importe());
+        org.junit.jupiter.api.Assertions.assertTrue(detalle.esRetiroFinal());
+        org.junit.jupiter.api.Assertions.assertFalse(detalle.activo());
     }
 
     @Test
