@@ -9,16 +9,18 @@ import java.math.RoundingMode;
  *
  * @param idSucursal sucursal autenticada
  * @param idEmpleado empleado activo de la sucursal
- * @param folio folio único global de hasta diez caracteres
+ * @param folio folio único dentro de la sucursal, de hasta diez caracteres
  * @param descripcion motivo del retiro
  * @param importe cantidad retirada
+ * @param esRetiroFinal true para corte Z, false para retiro parcial
  */
 public record RetiroDeEfectivoRegistro(
         long idSucursal,
         int idEmpleado,
         String folio,
         String descripcion,
-        BigDecimal importe) {
+        BigDecimal importe,
+        boolean esRetiroFinal) {
 
     public void validar() {
         if (idSucursal <= 0 || idEmpleado <= 0) {
