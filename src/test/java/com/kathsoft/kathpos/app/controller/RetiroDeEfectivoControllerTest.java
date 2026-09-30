@@ -24,6 +24,36 @@ class RetiroDeEfectivoControllerTest {
     }
 
     @Test
+    void laCapturaDistingueRetiroParcialYCorteFinal() {
+        RetiroDeEfectivoRegistro retiro = new RetiroDeEfectivoRegistro(
+                4, 9, "R-001", "Retiro parcial", new BigDecimal("100.00"), false);
+        RetiroDeEfectivoRegistro corte = new RetiroDeEfectivoRegistro(
+                4, 9, "R-002", "Corte Z", new BigDecimal("125.50"), true);
+        assertNull(RetiroDeEfectivoController.validarRegistro(retiro));
+        assertNull(RetiroDeEfectivoController.validarRegistro(corte));
+        org.junit.jupiter.api.Assertions.assertFalse(retiro.esRetiroFinal());
+        org.junit.jupiter.api.Assertions.assertTrue(corte.esRetiroFinal());
+    }
+
+    @Test
+    void proyectaElEstadoYElTipoSinCambiarElOrdenDelListado() {
+        var fecha = LocalDate.of(2026, 9, 29);
+        var corte = new com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle(
+                15, 4, 9, "Empleado", "R-002", fecha, "Cierre",
+                new BigDecimal("125.50"), true, false);
+        var parcial = new com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle(
+                16, 4, 9, "Empleado", "R-003", fecha, "Parcial",
+                new BigDecimal("50.00"), false, true);
+        Object[] filaCorte = RetiroDeEfectivoController.proyectarFila(corte);
+        Object[] filaParcial = RetiroDeEfectivoController.proyectarFila(parcial);
+        assertEquals(8, filaCorte.length);
+        assertEquals("Corte final", filaCorte[6]);
+        assertEquals("Inactivo", filaCorte[7]);
+        assertEquals("Retiro parcial", filaParcial[6]);
+        assertEquals("Activo", filaParcial[7]);
+    }
+
+    @Test
     void sucursalYEmpleadoSonObligatorios() {
         assertEquals(500, RetiroDeEfectivoController.validarRegistro(
                 registro(0, 9, "R-00000001", "Reposición de caja", "100.00")).id());
@@ -33,7 +63,7 @@ class RetiroDeEfectivoControllerTest {
     }
 
     @Test
-    void folioGlobalEsObligatorioYDeDiezCaracteresMaximo() {
+    void folioPorSucursalEsObligatorioYDeDiezCaracteresMaximo() {
         assertEquals(500, RetiroDeEfectivoController.validarRegistro(
                 registro(4, 9, "  ", "Retiro de caja", "100.00")).id());
         assertNull(RetiroDeEfectivoController.validarRegistro(
@@ -102,6 +132,6 @@ class RetiroDeEfectivoControllerTest {
     private static RetiroDeEfectivoRegistro registro(
             long sucursal, int empleado, String folio, String descripcion, String importe) {
         return new RetiroDeEfectivoRegistro(
-                sucursal, empleado, folio, descripcion, new BigDecimal(importe));
+                sucursal, empleado, folio, descripcion, new BigDecimal(importe), false);
     }
 }
