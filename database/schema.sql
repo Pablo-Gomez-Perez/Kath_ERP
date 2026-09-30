@@ -264,14 +264,15 @@ CREATE TABLE `retiros_de_efectivo` (
   `fecha` date NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `importe` double NOT NULL,
+  `es_retiro_final` tinyint(1) NOT NULL DEFAULT '0',
   `activo` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_retiro`),
-  UNIQUE KEY `Unq_folio_retiro` (`folio`) USING BTREE,
+  UNIQUE KEY `folio_retiro_x_sucursal` (`folio`,`id_sucursal`),
   KEY `id_empleado` (`id_empleado`),
   KEY `retiros_de_efectivo_sucursal_FK` (`id_sucursal`),
   CONSTRAINT `retiros_de_efectivo_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleados` (`id_empleado`) ON UPDATE CASCADE,
   CONSTRAINT `retiros_de_efectivo_sucursal_FK` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursal` (`id_sucursar`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- kath_erp.rubro_cuenta_contable definition
