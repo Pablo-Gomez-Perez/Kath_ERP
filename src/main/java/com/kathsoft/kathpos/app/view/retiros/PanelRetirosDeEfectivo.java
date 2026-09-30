@@ -299,7 +299,7 @@ public class PanelRetirosDeEfectivo extends JPanel {
     static DefaultTableModel crearModeloTabla() {
         return new DefaultTableModel(new Object[] {
                 "ID", "Folio", "Fecha", "Empleado",
-                "Descripción", "Importe", "Activo"
+                "Descripción", "Importe", "Tipo de retiro", "Activo"
         }, 0) {
             private static final long serialVersionUID = 1L;
 
@@ -482,7 +482,7 @@ public class PanelRetirosDeEfectivo extends JPanel {
     private boolean seleccionadoActivo() {
         int fila = tableRetiros.getSelectedRow();
         return fila >= 0 && "Activo".equals(
-                modelTablaRetiros.getValueAt(tableRetiros.convertRowIndexToModel(fila), 6));
+                modelTablaRetiros.getValueAt(tableRetiros.convertRowIndexToModel(fila), 7));
     }
 
     private void abrirFormularioRetiro(int opcion, int idRetiro) {
