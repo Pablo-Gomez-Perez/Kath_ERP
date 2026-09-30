@@ -446,6 +446,143 @@ BEGIN
 	FROM tipo_cliente;
 END;
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`consultarEstadoInicializacion`()
+    READS SQL DATA
+    COMMENT 'Detecta ausencia total de empleados, incluidas cuentas inactivas'
+BEGIN
+    SELECT
+        CASE WHEN (SELECT COUNT(*) FROM empleados) = 0 THEN 1 ELSE 0 END
+            AS requiere_inicializacion,
+        (SELECT COUNT(*) FROM sucursal) AS sucursales,
+        (SELECT COUNT(*) FROM sucursal WHERE activo = 1) AS sucursales_activas;
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`createGasto`(
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_id_categoria INT,
+    IN p_id_empleado INT UNSIGNED,
+    IN p_id_forma_pago INT,
+    IN p_descripcion VARCHAR(255),
+    IN p_importe DECIMAL(18,2),
+    IN p_iva DECIMAL(18,2)
+)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE v_existe INT DEFAULT 0;
+    DECLARE v_id_gasto INT UNSIGNED;
+    DECLARE v_error TEXT;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT 500 AS id,
+               CONCAT('Error ', v_errno, ' (', v_sqlstate,
+                      '): ', v_error) AS message;
+    END;
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0
+       OR p_id_categoria IS NULL OR p_id_categoria <= 0
+       OR p_id_empleado IS NULL OR p_id_empleado <= 0
+       OR p_id_forma_pago IS NULL OR p_id_forma_pago <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La sucursal, categoría, empleado y forma de pago son obligatorios';
+    END IF;
+
+    IF p_descripcion IS NULL OR TRIM(p_descripcion) = ''
+       OR CHAR_LENGTH(TRIM(p_descripcion)) > 255 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La descripción del gasto es inválida';
+    END IF;
+
+    IF p_importe IS NULL OR p_importe <= 0
+       OR p_iva IS NULL OR p_iva < 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El importe debe ser positivo y el IVA no puede ser negativo';
+    END IF;
+
+    START TRANSACTION;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.sucursal
+    WHERE id_sucursar = p_id_sucursal AND activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal no existe o está inactiva';
+    END IF;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.empleados
+    WHERE id_empleado = p_id_empleado
+      AND id_sucursal = p_id_sucursal
+      AND activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El empleado no pertenece a la sucursal o está inactivo';
+    END IF;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.categoria_de_gasto
+    WHERE id_categoria = p_id_categoria AND ACTIVO = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La categoría no existe o está inactiva';
+    END IF;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.formas_de_pago
+    WHERE id = p_id_forma_pago AND activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La forma de pago no existe o está inactiva';
+    END IF;
+
+    INSERT INTO kath_erp.gastos (
+        id_categoria,
+        id_empleado,
+        id_sucursal,
+        id_forma_pago,
+        fecha_operacion,
+        descripcion,
+        importe,
+        iva,
+        activo
+    )
+    VALUES (
+        p_id_categoria,
+        p_id_empleado,
+        p_id_sucursal,
+        p_id_forma_pago,
+        CURDATE(),
+        TRIM(p_descripcion),
+        p_importe,
+        p_iva,
+        TRUE
+    );
+
+    SET v_id_gasto = LAST_INSERT_ID();
+
+    COMMIT;
+
+    SELECT 200 AS id,
+           CONCAT('Gasto registrado correctamente. Folio: ',
+                  v_id_gasto) AS message;
+END;
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteArticuloCompra`(
     IN p_id_detalle_compra INT UNSIGNED
 )
@@ -567,6 +704,92 @@ BEGIN
     SELECT
         p_id_detalle_compra AS id,
         'Artículo eliminado de la compra correctamente' AS message;
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteCategoriaDeGasto`(
+    IN p_id_categoria INT
+)
+    MODIFIES SQL DATA
+    COMMENT 'Inhabilita una categoría sin eliminar sus referencias históricas'
+BEGIN
+
+    DECLARE v_activo BOOLEAN DEFAULT NULL;
+
+    DECLARE v_error TEXT;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_error
+            ) AS message;
+
+    END;
+
+    -- Validar identificador
+
+    IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El identificador de categoria es invalido';
+
+    END IF;
+
+    START TRANSACTION;
+
+    -- Consultar y bloquear el registro
+
+    SELECT ACTIVO
+    INTO v_activo
+    FROM kath_erp.categoria_de_gasto
+    WHERE id_categoria = p_id_categoria
+    FOR UPDATE;
+
+    IF v_activo IS NULL THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La categoria indicada no existe';
+
+    END IF;
+
+    IF v_activo = FALSE THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La categoria ya se encuentra inactiva';
+
+    END IF;
+
+    -- Baja lógica
+
+    UPDATE kath_erp.categoria_de_gasto
+    SET ACTIVO = FALSE
+    WHERE id_categoria = p_id_categoria;
+
+    COMMIT;
+
+    SELECT
+        200 AS id,
+        'Categoria inhabilitada correctamente' AS message;
+
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteCategoriaProducto`(
@@ -1161,6 +1384,72 @@ BEGIN
         p_id_compra AS id,
         'Compra cancelada correctamente' AS message;
 
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteGasto`(
+    IN p_id_gasto INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE v_sucursal BIGINT UNSIGNED DEFAULT NULL;
+    DECLARE v_activo BOOLEAN DEFAULT NULL;
+    DECLARE v_error TEXT;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT 500 AS id,
+               CONCAT('Error ', v_errno, ' (', v_sqlstate,
+                      '): ', v_error) AS message;
+    END;
+
+    IF p_id_gasto IS NULL OR p_id_gasto <= 0
+       OR p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto y la sucursal son obligatorios';
+    END IF;
+
+    START TRANSACTION;
+
+    SELECT id_sucursal, activo
+    INTO v_sucursal, v_activo
+    FROM kath_erp.gastos
+    WHERE id_gasto = p_id_gasto
+    FOR UPDATE;
+
+    IF v_sucursal IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto indicado no existe';
+    END IF;
+
+    IF v_sucursal <> p_id_sucursal THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto no pertenece a la sucursal actual';
+    END IF;
+
+    IF v_activo = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto ya se encuentra inhabilitado';
+    END IF;
+
+    UPDATE kath_erp.gastos
+    SET activo = FALSE
+    WHERE id_gasto = p_id_gasto
+      AND id_sucursal = p_id_sucursal;
+
+    COMMIT;
+
+    SELECT 200 AS id,
+           'Gasto inhabilitado correctamente' AS message;
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`deleteProveedor`(
@@ -1937,6 +2226,23 @@ BEGIN
 
 END;
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getCategoriaGastoById`(
+    IN p_id_categoria INT
+)
+    READS SQL DATA
+    COMMENT 'Consulta los detalles de una categoría de gasto por ID'
+BEGIN
+
+    SELECT
+        c.id_categoria,
+        c.nombre,
+        c.descripcion,
+        c.ACTIVO AS activo
+    FROM kath_erp.categoria_de_gasto AS c
+    WHERE c.id_categoria = p_id_categoria;
+
+END;
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getClienteById`(
 	IN p_idCliente INT
 )
@@ -2136,6 +2442,48 @@ BEGIN
     LIMIT 1;
 END;
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getGastoByID`(
+    IN p_id_gasto INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    READS SQL DATA
+BEGIN
+    IF p_id_gasto IS NULL OR p_id_gasto <= 0
+       OR p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto y la sucursal son obligatorios';
+    END IF;
+
+    SELECT
+        g.id_gasto,
+        g.id_sucursal,
+        g.id_categoria,
+        c.nombre AS categoria,
+        g.id_empleado,
+        e.nombre_completo AS empleado,
+        g.id_forma_pago,
+        fp.tipo_de_pago AS forma_pago,
+        g.fecha_operacion,
+        g.descripcion,
+        g.importe,
+        g.iva,
+        ROUND(
+            CAST(g.importe AS DECIMAL(18,2)) +
+            CAST(g.iva AS DECIMAL(18,2)),
+            2
+        ) AS total,
+        g.activo
+    FROM kath_erp.gastos AS g
+    INNER JOIN kath_erp.categoria_de_gasto AS c
+        ON c.id_categoria = g.id_categoria
+    INNER JOIN kath_erp.empleados AS e
+        ON e.id_empleado = g.id_empleado
+    LEFT JOIN kath_erp.formas_de_pago AS fp
+        ON fp.id = g.id_forma_pago
+    WHERE g.id_gasto = p_id_gasto
+      AND g.id_sucursal = p_id_sucursal;
+END;
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getIdUltimaCompra`()
     READS SQL DATA
     COMMENT 'Obtiene el ID de la última compra que se haya efectuado'
@@ -2190,6 +2538,38 @@ BEGIN
         p.activo
     FROM kath_erp.proveedor AS p
     WHERE p.id_proveedor = idProveedor;
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getRetiroDeEfectivoById`(
+    IN p_id_retiro INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    READS SQL DATA
+BEGIN
+
+    IF p_id_retiro IS NULL OR p_id_retiro <= 0
+       OR p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El retiro y la sucursal son obligatorios';
+    END IF;
+
+    SELECT
+        r.id_retiro,
+        r.id_sucursal,
+        r.id_empleado,
+        e.nombre_completo AS empleado,
+        r.folio,
+        r.fecha,
+        r.descripcion,
+        r.importe,
+        r.activo
+    FROM kath_erp.retiros_de_efectivo AS r
+    INNER JOIN kath_erp.empleados AS e
+        ON e.id_empleado = r.id_empleado
+    WHERE r.id_retiro = p_id_retiro
+      AND r.id_sucursal = p_id_sucursal;
+
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`getTicketVentaById`(
@@ -2552,6 +2932,252 @@ BEGIN
 
     ORDER BY axv.id ASC;
 
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`inhabilitarRetiroDeEfectivo`(
+    IN p_id_retiro INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE v_sucursal BIGINT UNSIGNED DEFAULT NULL;
+    DECLARE v_fecha DATE DEFAULT NULL;
+    DECLARE v_activo BOOLEAN DEFAULT NULL;
+
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_error TEXT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ', v_errno, ' (', v_sqlstate, '): ', v_error
+            ) AS message;
+    END;
+
+    IF p_id_retiro IS NULL OR p_id_retiro <= 0
+       OR p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El retiro y la sucursal son obligatorios';
+    END IF;
+
+    START TRANSACTION;
+
+    -- Se bloquea el registro para impedir bajas concurrentes.
+    SELECT
+        r.id_sucursal,
+        r.fecha,
+        r.activo
+    INTO
+        v_sucursal,
+        v_fecha,
+        v_activo
+    FROM kath_erp.retiros_de_efectivo AS r
+    WHERE r.id_retiro = p_id_retiro
+    FOR UPDATE;
+
+    IF v_sucursal IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El retiro indicado no existe';
+    END IF;
+
+    IF v_sucursal <> p_id_sucursal THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El retiro no pertenece a la sucursal actual';
+    END IF;
+
+    IF v_activo = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El retiro ya se encuentra inhabilitado';
+    END IF;
+
+    IF v_fecha IS NULL OR v_fecha <> CURDATE() THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El retiro solo puede inhabilitarse el dia de su registro';
+    END IF;
+
+    UPDATE kath_erp.retiros_de_efectivo
+    SET activo = FALSE
+    WHERE id_retiro = p_id_retiro
+      AND id_sucursal = p_id_sucursal;
+
+    COMMIT;
+
+    SELECT
+        200 AS id,
+        'Retiro de efectivo inhabilitado correctamente' AS message;
+
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`inicializarKathErp`(
+    IN p_id_sucursal_existente BIGINT UNSIGNED,
+    IN p_nombre_sucursal VARCHAR(100),
+    IN p_descripcion_sucursal TEXT,
+    IN p_telefono_sucursal VARCHAR(10),
+    IN p_email_sucursal VARCHAR(255),
+    IN p_estado_sucursal VARCHAR(60),
+    IN p_ciudad_sucursal VARCHAR(60),
+    IN p_direccion_sucursal VARCHAR(255),
+    IN p_cp_sucursal VARCHAR(5),
+    IN p_rfc_admin VARCHAR(13),
+    IN p_curp_admin VARCHAR(18),
+    IN p_nombre_admin VARCHAR(30),
+    IN p_usuario_admin VARCHAR(10),
+    IN p_fecha_nac_admin DATE,
+    IN p_email_admin VARCHAR(30),
+    IN p_hash_admin VARCHAR(255)
+)
+    MODIFIES SQL DATA
+    COMMENT 'Crea el primer admin y opcionalmente la primera sucursal, atomicamente'
+BEGIN
+    DECLARE v_bloqueo INT DEFAULT 0;
+    DECLARE v_liberado INT DEFAULT 0;
+    DECLARE v_empleados INT DEFAULT 0;
+    DECLARE v_sucursales INT DEFAULT 0;
+    DECLARE v_valida INT DEFAULT 0;
+    DECLARE v_id_sucursal BIGINT UNSIGNED DEFAULT NULL;
+    DECLARE v_id_empleado INT UNSIGNED DEFAULT NULL;
+    DECLARE v_estado VARCHAR(60) DEFAULT NULL;
+    DECLARE v_ciudad VARCHAR(60) DEFAULT NULL;
+    DECLARE v_direccion VARCHAR(255) DEFAULT NULL;
+    DECLARE v_cp VARCHAR(5) DEFAULT NULL;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_mensaje TEXT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_mensaje = MESSAGE_TEXT;
+        ROLLBACK;
+        IF v_bloqueo = 1 THEN
+            SELECT RELEASE_LOCK('kath_erp_bootstrap_v1') INTO v_liberado;
+        END IF;
+        SELECT 500 AS id,
+               CONCAT('No fue posible inicializar (', v_errno, '/',
+                      v_sqlstate, '): ', v_mensaje) AS message,
+               NULL AS id_sucursal, NULL AS id_empleado;
+    END;
+
+    -- Protege dos asistentes que intenten instalar simultaneamente.
+    SELECT GET_LOCK('kath_erp_bootstrap_v1', 10) INTO v_bloqueo;
+    IF v_bloqueo IS NULL OR v_bloqueo <> 1 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Hay otra inicializacion en curso; reintente';
+    END IF;
+
+    START TRANSACTION;
+    SELECT COUNT(*) INTO v_empleados FROM empleados;
+    IF v_empleados > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La base de datos ya tiene empleados; no se permite repetir la inicializacion';
+    END IF;
+
+    IF p_rfc_admin IS NULL OR CHAR_LENGTH(TRIM(p_rfc_admin)) NOT IN (12, 13)
+       OR p_curp_admin IS NULL OR CHAR_LENGTH(TRIM(p_curp_admin)) <> 18
+       OR p_nombre_admin IS NULL OR TRIM(p_nombre_admin) = ''
+       OR p_fecha_nac_admin IS NULL OR p_fecha_nac_admin > CURDATE()
+       OR p_email_admin IS NULL OR TRIM(p_email_admin) = ''
+       OR p_usuario_admin IS NULL OR UPPER(TRIM(p_usuario_admin)) <> 'ADMIN'
+       OR p_hash_admin IS NULL OR p_hash_admin NOT LIKE 'PBKDF2$%' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Los datos del administrador o su hash no son validos';
+    END IF;
+
+    SELECT COUNT(*) INTO v_sucursales FROM sucursal;
+    IF v_sucursales = 0 THEN
+        IF p_id_sucursal_existente IS NOT NULL THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'La base no contiene la sucursal indicada';
+        END IF;
+        IF p_nombre_sucursal IS NULL OR TRIM(p_nombre_sucursal) = ''
+           OR p_telefono_sucursal IS NULL
+           OR p_telefono_sucursal NOT REGEXP '^[0-9]{10}$'
+           OR p_estado_sucursal IS NULL OR TRIM(p_estado_sucursal) = ''
+           OR p_ciudad_sucursal IS NULL OR TRIM(p_ciudad_sucursal) = ''
+           OR p_direccion_sucursal IS NULL OR TRIM(p_direccion_sucursal) = ''
+           OR p_cp_sucursal IS NULL OR p_cp_sucursal NOT REGEXP '^[0-9]{5}$' THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Complete los datos obligatorios de la primera sucursal';
+        END IF;
+
+        INSERT INTO sucursal (
+            nombre, descripcion, telefono, email, estado, ciudad,
+            direccion, codigo_postal, activo
+        ) VALUES (
+            TRIM(p_nombre_sucursal), NULLIF(TRIM(p_descripcion_sucursal), ''),
+            p_telefono_sucursal, NULLIF(TRIM(p_email_sucursal), ''),
+            TRIM(p_estado_sucursal), TRIM(p_ciudad_sucursal),
+            TRIM(p_direccion_sucursal), p_cp_sucursal, TRUE
+        );
+        SET v_id_sucursal = LAST_INSERT_ID();
+        SET v_estado = TRIM(p_estado_sucursal);
+        SET v_ciudad = TRIM(p_ciudad_sucursal);
+        SET v_direccion = TRIM(p_direccion_sucursal);
+        SET v_cp = p_cp_sucursal;
+    ELSE
+        IF p_id_sucursal_existente IS NULL OR p_id_sucursal_existente <= 0 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Seleccione una sucursal existente activa; no se crea otra';
+        END IF;
+        SELECT COUNT(*) INTO v_valida
+          FROM sucursal
+         WHERE id_sucursar = p_id_sucursal_existente AND activo = TRUE;
+        IF v_valida = 0 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'La sucursal seleccionada no existe o esta inactiva';
+        END IF;
+        SELECT id_sucursar, estado, ciudad, direccion, codigo_postal
+          INTO v_id_sucursal, v_estado, v_ciudad, v_direccion, v_cp
+          FROM sucursal
+         WHERE id_sucursar = p_id_sucursal_existente AND activo = TRUE
+         FOR UPDATE;
+    END IF;
+
+    -- La sucursal admite estado(60)/ciudad(60), pero empleados usa (30)/(40).
+    -- Nunca truncar silenciosamente datos del administrador.
+    IF CHAR_LENGTH(v_estado) > 30 OR CHAR_LENGTH(v_ciudad) > 40 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El estado o ciudad de la sucursal supera el limite del perfil empleado';
+    END IF;
+
+    INSERT INTO empleados (
+        id_sucursal, rfc, curp, nombre_completo, nombre_corto,
+        fecha_nac, correo_electronico, estado, ciudad, direccion,
+        codigo_postal, contrasenia, activo
+    ) VALUES (
+        v_id_sucursal, UPPER(TRIM(p_rfc_admin)), UPPER(TRIM(p_curp_admin)),
+        TRIM(p_nombre_admin), 'ADMIN', p_fecha_nac_admin,
+        TRIM(p_email_admin), v_estado, v_ciudad, v_direccion,
+        v_cp, p_hash_admin, TRUE
+    );
+    SET v_id_empleado = LAST_INSERT_ID();
+
+    -- El primer administrador obtiene todos los permisos ya catalogados.
+    -- Un catalogo de permisos vacio no se inventa desde este procedimiento.
+    INSERT INTO permiso_x_empleado (id_empleado, id_permiso, habilitado)
+        SELECT v_id_empleado, id_permiso, TRUE FROM permisos;
+
+    COMMIT;
+    SELECT RELEASE_LOCK('kath_erp_bootstrap_v1') INTO v_liberado;
+    SELECT 200 AS id, 'Primera inicializacion completada' AS message,
+           v_id_sucursal AS id_sucursal, v_id_empleado AS id_empleado;
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertArticulo`(
@@ -3069,6 +3695,109 @@ BEGIN
         v_subtotal_linea AS subtotal,
         v_iva_linea AS iva,
         v_importe_bruto AS total;
+
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`insertCategoriaDeGasto`(
+    IN p_nombre VARCHAR(255),
+    IN p_descripcion VARCHAR(550)
+)
+    MODIFIES SQL DATA
+    COMMENT 'Registra una nueva categoría de gasto activa'
+BEGIN
+
+    DECLARE v_id_categoria INT;
+    DECLARE v_duplicados INT DEFAULT 0;
+
+    DECLARE v_error TEXT;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_error
+            ) AS message;
+
+    END;
+
+    -- Validaciones
+
+    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El nombre de la categoria es obligatorio';
+
+    END IF;
+
+    IF CHAR_LENGTH(TRIM(p_nombre)) > 255
+       OR CHAR_LENGTH(COALESCE(p_descripcion, '')) > 550
+    THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La longitud de los datos supera el limite permitido';
+
+    END IF;
+
+    START TRANSACTION;
+
+    -- Evitar categorías duplicadas
+
+    SELECT COUNT(*)
+    INTO v_duplicados
+    FROM kath_erp.categoria_de_gasto AS c
+    WHERE
+        c.nombre COLLATE utf8mb4_general_ci =
+        TRIM(p_nombre) COLLATE utf8mb4_general_ci;
+
+    IF v_duplicados > 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'Ya existe una categoria con ese nombre';
+
+    END IF;
+
+    -- Inserción
+
+    INSERT INTO kath_erp.categoria_de_gasto (
+        nombre,
+        descripcion,
+        ACTIVO
+    )
+    VALUES (
+        TRIM(p_nombre),
+        NULLIF(TRIM(p_descripcion), ''),
+        TRUE
+    );
+
+    SET v_id_categoria = LAST_INSERT_ID();
+
+    COMMIT;
+
+    SELECT
+        200 AS id,
+        CONCAT(
+            'Categoria registrada correctamente. ID: ',
+            v_id_categoria
+        ) AS message;
 
 END;
 
@@ -5005,6 +5734,37 @@ BEGIN
 
 END;
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCategoriasDeGasto`(
+    IN p_nombre VARCHAR(255)
+)
+    READS SQL DATA
+    COMMENT 'Lista categorías activas e inactivas con filtro opcional por nombre'
+BEGIN
+
+    SELECT
+        c.id_categoria,
+        c.nombre,
+        c.descripcion,
+        c.ACTIVO AS activo
+    FROM kath_erp.categoria_de_gasto AS c
+    WHERE
+        p_nombre IS NULL
+
+        OR TRIM(p_nombre) = ''
+
+        OR c.nombre COLLATE utf8mb4_general_ci
+           LIKE CONCAT(
+               '%',
+               TRIM(p_nombre),
+               '%'
+           ) COLLATE utf8mb4_general_ci
+
+    ORDER BY
+        c.nombre ASC,
+        c.id_categoria ASC;
+
+END;
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listClientes`(
 	IN `nombre_c` VARCHAR(30)
 		CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
@@ -5029,6 +5789,20 @@ BEGIN
 	INNER JOIN kath_erp.tipo_cliente AS tc
 		ON tc.id = c.id_tipoCliente
 	WHERE c.nombre_completo LIKE CONCAT('%', nombre_c, '%');
+
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbCategoriaDeGasto`()
+    READS SQL DATA
+    COMMENT 'Obtiene ID y nombre de categorías activas para el ComboBox de gastos'
+BEGIN
+
+    SELECT
+        c.id_categoria AS id,
+        c.nombre
+    FROM kath_erp.categoria_de_gasto AS c
+    WHERE c.ACTIVO = TRUE
+    ORDER BY c.nombre ASC;
 
 END;
 
@@ -5057,6 +5831,25 @@ BEGIN
 	FROM
 		kath_erp.cliente AS c;
 	
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbEmpleadosGasto`(
+    IN p_id_sucursal BIGINT UNSIGNED
+)
+    READS SQL DATA
+BEGIN
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+    END IF;
+
+    SELECT
+        e.id_empleado AS id,
+        e.nombre_corto AS nombre
+    FROM kath_erp.empleados AS e
+    WHERE e.id_sucursal = p_id_sucursal
+      AND e.activo = TRUE
+    ORDER BY e.nombre_corto, e.id_empleado;
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listCmbProveeodor`()
@@ -5179,6 +5972,76 @@ BEGIN
 		
 END;
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listGastos`(
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_id_empleado INT UNSIGNED,
+    IN p_id_categoria INT,
+    IN p_fecha_inicial DATE,
+    IN p_fecha_final DATE,
+    IN p_ordenamiento TINYINT UNSIGNED
+)
+    READS SQL DATA
+BEGIN
+    DECLARE v_orden TINYINT UNSIGNED DEFAULT 1;
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La sucursal es obligatoria';
+    END IF;
+
+    IF p_fecha_inicial IS NOT NULL
+       AND p_fecha_final IS NOT NULL
+       AND p_fecha_inicial > p_fecha_final THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El rango de fechas es inválido';
+    END IF;
+
+    SET v_orden = COALESCE(p_ordenamiento, 1);
+
+    IF v_orden NOT IN (1, 2, 3, 4) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El ordenamiento solicitado es inválido';
+    END IF;
+
+    SELECT
+        g.id_gasto,
+        g.id_sucursal,
+        g.id_categoria,
+        c.nombre AS categoria,
+        g.id_empleado,
+        e.nombre_completo AS empleado,
+        g.id_forma_pago,
+        fp.tipo_de_pago AS forma_pago,
+        g.fecha_operacion,
+        g.descripcion,
+        g.importe,
+        g.iva,
+        ROUND(
+            CAST(g.importe AS DECIMAL(18,2)) +
+            CAST(g.iva AS DECIMAL(18,2)),
+            2
+        ) AS total,
+        g.activo
+    FROM kath_erp.gastos AS g
+    INNER JOIN kath_erp.categoria_de_gasto AS c
+        ON c.id_categoria = g.id_categoria
+    INNER JOIN kath_erp.empleados AS e
+        ON e.id_empleado = g.id_empleado
+    LEFT JOIN kath_erp.formas_de_pago AS fp
+        ON fp.id = g.id_forma_pago
+    WHERE g.id_sucursal = p_id_sucursal
+      AND (p_id_empleado IS NULL OR g.id_empleado = p_id_empleado)
+      AND (p_id_categoria IS NULL OR g.id_categoria = p_id_categoria)
+      AND (p_fecha_inicial IS NULL OR g.fecha_operacion >= p_fecha_inicial)
+      AND (p_fecha_final IS NULL OR g.fecha_operacion <= p_fecha_final)
+    ORDER BY
+        CASE WHEN v_orden = 1 THEN g.fecha_operacion END DESC,
+        CASE WHEN v_orden = 2 THEN g.fecha_operacion END ASC,
+        CASE WHEN v_orden = 3 THEN e.nombre_completo END ASC,
+        CASE WHEN v_orden = 4 THEN c.nombre END ASC,
+        g.id_gasto DESC;
+END;
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listPreciosArticuloTipoCliente`(
     IN p_id_articulo INT UNSIGNED
 )
@@ -5224,6 +6087,96 @@ BEGIN
         OR p.nombre COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
         OR p.rfc COLLATE utf8mb4_general_ci LIKE CONCAT('%', TRIM(p_nombre_proveedor), '%')
     ORDER BY p.nombre ASC;
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listRetirosDeEfectivo`(
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_id_empleado INT UNSIGNED,
+    IN p_fecha_inicial DATE,
+    IN p_fecha_final DATE,
+    IN p_ordenamiento TINYINT UNSIGNED
+)
+    READS SQL DATA
+BEGIN
+    DECLARE v_orden TINYINT UNSIGNED DEFAULT 1;
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La sucursal es obligatoria';
+    END IF;
+
+    IF p_id_empleado IS NOT NULL AND p_id_empleado <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El filtro de empleado es invalido';
+    END IF;
+
+    IF p_fecha_inicial IS NOT NULL
+       AND p_fecha_final IS NOT NULL
+       AND p_fecha_inicial > p_fecha_final THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El rango de fechas es invalido';
+    END IF;
+
+    SET v_orden = COALESCE(p_ordenamiento, 1);
+
+    IF v_orden NOT IN (1, 2, 3) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El criterio de ordenamiento es invalido';
+    END IF;
+
+    SELECT
+        r.id_retiro,
+        r.id_sucursal,
+        r.id_empleado,
+        e.nombre_completo AS empleado,
+        r.folio,
+        r.fecha,
+        r.descripcion,
+        r.importe,
+        r.activo
+    FROM kath_erp.retiros_de_efectivo AS r
+    INNER JOIN kath_erp.empleados AS e
+        ON e.id_empleado = r.id_empleado
+    WHERE r.id_sucursal = p_id_sucursal
+      AND (
+          p_id_empleado IS NULL
+          OR r.id_empleado = p_id_empleado
+      )
+      AND (
+          p_fecha_inicial IS NULL
+          OR r.fecha >= p_fecha_inicial
+      )
+      AND (
+          p_fecha_final IS NULL
+          OR r.fecha <= p_fecha_final
+      )
+    ORDER BY
+        CASE
+            WHEN v_orden = 1 THEN r.fecha
+        END DESC,
+        CASE
+            WHEN v_orden = 2 THEN r.fecha
+        END ASC,
+        CASE
+            WHEN v_orden = 3 THEN e.nombre_completo
+        END ASC,
+        r.id_retiro DESC;
+
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listSucursalesInicializacion`()
+    READS SQL DATA
+    COMMENT 'Ofrece sucursales existentes activas para asociar el primer empleado'
+BEGIN
+    SELECT id_sucursar AS id_sucursal, nombre, estado, ciudad, direccion,
+           codigo_postal
+      FROM sucursal
+     WHERE activo = 1
+     ORDER BY nombre, id_sucursar;
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`listTelefonoProveedor`(
@@ -5495,6 +6448,124 @@ BEGIN
 		kath_erp.rubro_cuenta_contable AS rcc
 	WHERE rcc.fk_id_grupo_contable = `id_grupo_contable`;
 	
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`registrarRetiroDeEfectivo`(
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_id_empleado INT UNSIGNED,
+    IN p_folio VARCHAR(10),
+    IN p_descripcion VARCHAR(255),
+    IN p_importe DECIMAL(18,2)
+)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE v_existe INT DEFAULT 0;
+    DECLARE v_id_retiro INT UNSIGNED;
+
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+    DECLARE v_error TEXT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ', v_errno, ' (', v_sqlstate, '): ', v_error
+            ) AS message;
+    END;
+
+    IF p_id_sucursal IS NULL OR p_id_sucursal <= 0
+       OR p_id_empleado IS NULL OR p_id_empleado <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La sucursal y el empleado son obligatorios';
+    END IF;
+
+    IF p_folio IS NULL OR TRIM(p_folio) = ''
+       OR CHAR_LENGTH(TRIM(p_folio)) > 10 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El folio es obligatorio y admite hasta 10 caracteres';
+    END IF;
+
+    IF p_descripcion IS NULL OR TRIM(p_descripcion) = ''
+       OR CHAR_LENGTH(TRIM(p_descripcion)) > 255 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La descripcion es obligatoria y admite hasta 255 caracteres';
+    END IF;
+
+    IF p_importe IS NULL OR p_importe <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El importe del retiro debe ser mayor que cero';
+    END IF;
+
+    START TRANSACTION;
+
+    SELECT COUNT(*)
+    INTO v_existe
+    FROM kath_erp.sucursal AS s
+    WHERE s.id_sucursar = p_id_sucursal
+      AND s.activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La sucursal no existe o esta inactiva';
+    END IF;
+
+    SELECT COUNT(*)
+    INTO v_existe
+    FROM kath_erp.empleados AS e
+    WHERE e.id_empleado = p_id_empleado
+      AND e.id_sucursal = p_id_sucursal
+      AND e.activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El empleado no pertenece a la sucursal o esta inactivo';
+    END IF;
+
+    -- La restriccion UNIQUE de folio en schema.sql es la que
+    -- garantiza la unicidad incluso ante registros simultaneos.
+    INSERT INTO kath_erp.retiros_de_efectivo (
+        id_sucursal,
+        id_empleado,
+        folio,
+        fecha,
+        descripcion,
+        importe,
+        activo
+    )
+    VALUES (
+        p_id_sucursal,
+        p_id_empleado,
+        TRIM(p_folio),
+        CURDATE(),
+        TRIM(p_descripcion),
+        p_importe,
+        TRUE
+    );
+
+    SET v_id_retiro = LAST_INSERT_ID();
+
+    COMMIT;
+
+    SELECT
+        200 AS id,
+        v_id_retiro AS id_retiro,
+        'Retiro de efectivo registrado correctamente' AS message;
+
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`restarExistenciaSucursalVenta`(
@@ -6019,6 +7090,126 @@ BEGIN
     SELECT
         p_id_detalle_compra AS id,
         'Artículo de compra actualizado correctamente' AS message;
+
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateCategoriaDeGasto`(
+    IN p_id_categoria INT,
+    IN p_nombre VARCHAR(255),
+    IN p_descripcion VARCHAR(550)
+)
+    MODIFIES SQL DATA
+    COMMENT 'Actualiza los datos de una categoría y establece ACTIVO = TRUE'
+BEGIN
+
+    DECLARE v_id_bloqueado INT DEFAULT NULL;
+    DECLARE v_duplicados INT DEFAULT 0;
+
+    DECLARE v_error TEXT;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT
+            500 AS id,
+            CONCAT(
+                'Error ',
+                v_errno,
+                ' (',
+                v_sqlstate,
+                '): ',
+                v_error
+            ) AS message;
+
+    END;
+
+    -- Validaciones
+
+    IF p_id_categoria IS NULL OR p_id_categoria <= 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El identificador de categoria es invalido';
+
+    END IF;
+
+    IF p_nombre IS NULL OR TRIM(p_nombre) = '' THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El nombre de la categoria es obligatorio';
+
+    END IF;
+
+    IF CHAR_LENGTH(TRIM(p_nombre)) > 255
+       OR CHAR_LENGTH(COALESCE(p_descripcion, '')) > 550
+    THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La longitud de los datos supera el limite permitido';
+
+    END IF;
+
+    START TRANSACTION;
+
+    -- Verificar y bloquear el registro
+
+    SELECT id_categoria
+    INTO v_id_bloqueado
+    FROM kath_erp.categoria_de_gasto
+    WHERE id_categoria = p_id_categoria
+    FOR UPDATE;
+
+    IF v_id_bloqueado IS NULL THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'La categoria indicada no existe';
+
+    END IF;
+
+    -- Verificar que el nombre no pertenezca a otra categoría
+
+    SELECT COUNT(*)
+    INTO v_duplicados
+    FROM kath_erp.categoria_de_gasto AS c
+    WHERE
+        c.nombre COLLATE utf8mb4_general_ci =
+        TRIM(p_nombre) COLLATE utf8mb4_general_ci
+        AND c.id_categoria <> p_id_categoria;
+
+    IF v_duplicados > 0 THEN
+
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'Ya existe otra categoria con ese nombre';
+
+    END IF;
+
+    -- Actualización y reactivación
+
+    UPDATE kath_erp.categoria_de_gasto
+    SET
+        nombre = TRIM(p_nombre),
+        descripcion = NULLIF(TRIM(p_descripcion), ''),
+        ACTIVO = TRUE
+    WHERE id_categoria = p_id_categoria;
+
+    COMMIT;
+
+    SELECT
+        200 AS id,
+        'Categoria actualizada correctamente' AS message;
 
 END;
 
@@ -6709,6 +7900,136 @@ BEGIN
         p_id_configuracion AS id,
         'Configuracion fiscal actualizada correctamente' AS message;
 
+END;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updateGasto`(
+    IN p_id_gasto INT UNSIGNED,
+    IN p_id_sucursal BIGINT UNSIGNED,
+    IN p_id_categoria INT,
+    IN p_id_empleado INT UNSIGNED,
+    IN p_id_forma_pago INT,
+    IN p_descripcion VARCHAR(255),
+    IN p_importe DECIMAL(18,2),
+    IN p_iva DECIMAL(18,2)
+)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE v_sucursal BIGINT UNSIGNED DEFAULT NULL;
+    DECLARE v_fecha DATE DEFAULT NULL;
+    DECLARE v_activo BOOLEAN DEFAULT NULL;
+    DECLARE v_existe INT DEFAULT 0;
+    DECLARE v_error TEXT;
+    DECLARE v_errno INT;
+    DECLARE v_sqlstate CHAR(5);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1
+            v_errno = MYSQL_ERRNO,
+            v_sqlstate = RETURNED_SQLSTATE,
+            v_error = MESSAGE_TEXT;
+
+        ROLLBACK;
+
+        SELECT 500 AS id,
+               CONCAT('Error ', v_errno, ' (', v_sqlstate,
+                      '): ', v_error) AS message;
+    END;
+
+    IF p_id_gasto IS NULL OR p_id_gasto <= 0
+       OR p_id_sucursal IS NULL OR p_id_sucursal <= 0
+       OR p_id_categoria IS NULL OR p_id_categoria <= 0
+       OR p_id_empleado IS NULL OR p_id_empleado <= 0
+       OR p_id_forma_pago IS NULL OR p_id_forma_pago <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Los identificadores del gasto son obligatorios';
+    END IF;
+
+    IF p_descripcion IS NULL OR TRIM(p_descripcion) = ''
+       OR CHAR_LENGTH(TRIM(p_descripcion)) > 255 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La descripción del gasto es inválida';
+    END IF;
+
+    IF p_importe IS NULL OR p_importe <= 0
+       OR p_iva IS NULL OR p_iva < 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El importe o el IVA son inválidos';
+    END IF;
+
+    START TRANSACTION;
+
+    SELECT id_sucursal, fecha_operacion, activo
+    INTO v_sucursal, v_fecha, v_activo
+    FROM kath_erp.gastos
+    WHERE id_gasto = p_id_gasto
+    FOR UPDATE;
+
+    IF v_sucursal IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto indicado no existe';
+    END IF;
+
+    IF v_sucursal <> p_id_sucursal THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El gasto no pertenece a la sucursal actual';
+    END IF;
+
+    IF v_activo = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No se puede modificar un gasto inhabilitado';
+    END IF;
+
+    IF v_fecha <> CURDATE() THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El gasto únicamente puede modificarse el día de su registro';
+    END IF;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.empleados
+    WHERE id_empleado = p_id_empleado
+      AND id_sucursal = p_id_sucursal
+      AND activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+                'El empleado no pertenece a la sucursal o está inactivo';
+    END IF;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.categoria_de_gasto
+    WHERE id_categoria = p_id_categoria AND ACTIVO = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La categoría no existe o está inactiva';
+    END IF;
+
+    SELECT COUNT(*) INTO v_existe
+    FROM kath_erp.formas_de_pago
+    WHERE id = p_id_forma_pago AND activo = TRUE;
+
+    IF v_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La forma de pago no existe o está inactiva';
+    END IF;
+
+    UPDATE kath_erp.gastos
+    SET id_categoria = p_id_categoria,
+        id_empleado = p_id_empleado,
+        id_forma_pago = p_id_forma_pago,
+        descripcion = TRIM(p_descripcion),
+        importe = p_importe,
+        iva = p_iva
+    WHERE id_gasto = p_id_gasto
+      AND id_sucursal = p_id_sucursal;
+
+    COMMIT;
+
+    SELECT 200 AS id,
+           'Gasto actualizado correctamente' AS message;
 END;
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `kath_erp`.`updatePrecioPorTipoCliente`(
