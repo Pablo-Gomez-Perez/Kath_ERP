@@ -45,7 +45,8 @@ public class RetiroDeEfectivoController implements Serializable {
     }
 
     /**
-     * Crea un retiro de la sucursal actual, con fecha asignada por MySQL.
+     * Crea un retiro parcial o un corte final por sucursal y día. La validación
+     * de unicidad del corte, incluido el escenario concurrente, reside en el SP.
      */
     public SpResponseModel registrarRetiro(
             RetiroDeEfectivoRegistro retiro, char[] contraseniaEmpleado) {
@@ -69,12 +70,13 @@ public class RetiroDeEfectivoController implements Serializable {
 
         try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
                 CallableStatement stm = cn.prepareCall(
-                        "CALL registrarRetiroDeEfectivo(?, ?, ?, ?, ?)")) {
+                        "CALL registrarRetiroDeEfectivo(?, ?, ?, ?, ?, ?)")) {
             stm.setLong(1, retiro.idSucursal());
             stm.setInt(2, retiro.idEmpleado());
             stm.setString(3, retiro.folio().trim());
             stm.setString(4, retiro.descripcion().trim());
             stm.setBigDecimal(5, retiro.importe());
+            stm.setBoolean(6, retiro.esRetiroFinal());
             return leerRespuesta(stm);
         } catch (SQLException ex) {
             return errorSql("registrar", ex);
@@ -179,7 +181,8 @@ public class RetiroDeEfectivoController implements Serializable {
 
     /**
      * Proyección del listado para el DefaultTableModel del panel.
-     * Orden: ID, folio, fecha, empleado, descripción, importe, estado.
+     * Orden: ID, folio, fecha, empleado, descripción, importe,
+     * tipo de retiro y estado.
      */
     public Vector<Object[]> verRetirosEnTabla(long idSucursal, RetiroDeEfectivoFiltro filtro)
             throws SQLException {
@@ -192,6 +195,7 @@ public class RetiroDeEfectivoController implements Serializable {
                     retiro.empleado(),
                     retiro.descripcion(),
                     retiro.importe(),
+                    retiro.esRetiroFinal() ? "Corte final" : "Retiro parcial",
                     retiro.activo() ? "Activo" : "Inactivo"
             });
         }
@@ -281,6 +285,7 @@ public class RetiroDeEfectivoController implements Serializable {
                 fecha == null ? null : fecha.toLocalDate(),
                 rs.getString("descripcion"),
                 importe == null ? null : importe.setScale(2, RoundingMode.HALF_UP),
+                rs.getBoolean("es_retiro_final"),
                 rs.getBoolean("activo"));
     }
 
