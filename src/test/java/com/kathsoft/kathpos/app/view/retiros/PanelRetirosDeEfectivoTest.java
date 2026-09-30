@@ -22,19 +22,20 @@ import com.kathsoft.kathpos.tools.ConstantsConllections;
 class PanelRetirosDeEfectivoTest {
 
     @Test
-    void modeloTieneSieteColumnasSinEditor() {
+    void modeloTieneOchoColumnasSinEditor() {
         DefaultTableModel model = PanelRetirosDeEfectivo.crearModeloTabla();
-        assertEquals(7, model.getColumnCount());
+        assertEquals(8, model.getColumnCount());
         assertEquals("ID", model.getColumnName(0));
         assertEquals("Folio", model.getColumnName(1));
         assertEquals("Fecha", model.getColumnName(2));
         assertEquals("Empleado", model.getColumnName(3));
         assertEquals("Descripción", model.getColumnName(4));
         assertEquals("Importe", model.getColumnName(5));
-        assertEquals("Activo", model.getColumnName(6));
+        assertEquals("Tipo de retiro", model.getColumnName(6));
+        assertEquals("Activo", model.getColumnName(7));
 
         model.addRow(new Object[] {1, "R-00000001", LocalDate.of(2026, 9, 28),
-                "Empleado", "Retiro", new BigDecimal("45.00"), "Activo"});
+                "Empleado", "Retiro", new BigDecimal("45.00"), "Retiro parcial", "Activo"});
         assertEquals(model.getColumnCount(),
                 ConstantsConllections.tablaRetirosDeEfectivoColumnsWidth.length);
         for (int i = 0; i < model.getColumnCount(); i++) {
@@ -67,8 +68,8 @@ class PanelRetirosDeEfectivoTest {
     @Test
     void obtieneElIdDelModeloAunqueLaVistaEsteOrdenada() {
         DefaultTableModel model = PanelRetirosDeEfectivo.crearModeloTabla();
-        model.addRow(new Object[] {10, "R-10", null, null, null, null, "Activo"});
-        model.addRow(new Object[] {2, "R-2", null, null, null, null, "Activo"});
+        model.addRow(new Object[] {10, "R-10", null, null, null, null, "Corte final", "Activo"});
+        model.addRow(new Object[] {2, "R-2", null, null, null, null, "Retiro parcial", "Activo"});
         JTable tabla = new JTable(model);
         tabla.setAutoCreateRowSorter(true);
         assertEquals(-1, PanelRetirosDeEfectivo.idRetiroSeleccionado(tabla, model));
