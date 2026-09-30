@@ -278,7 +278,7 @@ public class RetiroDeEfectivoController implements Serializable {
         }
     }
 
-    private static RetiroDeEfectivoDetalle mapearDetalle(ResultSet rs) throws SQLException {
+    static RetiroDeEfectivoDetalle mapearDetalle(ResultSet rs) throws SQLException {
         Date fecha = rs.getDate("fecha");
         BigDecimal importe = rs.getBigDecimal("importe");
         return new RetiroDeEfectivoDetalle(
