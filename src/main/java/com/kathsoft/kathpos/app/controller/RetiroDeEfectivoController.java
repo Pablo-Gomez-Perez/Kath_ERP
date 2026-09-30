@@ -188,18 +188,23 @@ public class RetiroDeEfectivoController implements Serializable {
             throws SQLException {
         Vector<Object[]> filas = new Vector<>();
         for (RetiroDeEfectivoDetalle retiro : listarRetiros(idSucursal, filtro)) {
-            filas.add(new Object[] {
-                    retiro.idRetiro(),
-                    retiro.folio(),
-                    retiro.fecha(),
-                    retiro.empleado(),
-                    retiro.descripcion(),
-                    retiro.importe(),
-                    retiro.esRetiroFinal() ? "Corte final" : "Retiro parcial",
-                    retiro.activo() ? "Activo" : "Inactivo"
-            });
+            filas.add(proyectarFila(retiro));
         }
         return filas;
+    }
+
+    /** Contrato explícito entre la proyección del controlador y el JTable. */
+    static Object[] proyectarFila(RetiroDeEfectivoDetalle retiro) {
+        return new Object[] {
+                retiro.idRetiro(),
+                retiro.folio(),
+                retiro.fecha(),
+                retiro.empleado(),
+                retiro.descripcion(),
+                retiro.importe(),
+                retiro.esRetiroFinal() ? "Corte final" : "Retiro parcial",
+                retiro.activo() ? "Activo" : "Inactivo"
+        };
     }
 
     /**
