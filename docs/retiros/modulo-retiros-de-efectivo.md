@@ -311,4 +311,8 @@ La regla definitiva es:
 - El historial conserva todos los cortes corregidos como registros inactivos.
 - La vista realiza una prevalidación con `listRetirosDeEfectivo` para mejorar
   la UX, pero `registrarRetiroDeEfectivo` vuelve a comprobar la regla dentro
-  de la transacción y es la autoridad frente a concurrencia.
+  de la transacción y es la autoridad frente a concurrencia. La prevalidación
+  distingue `ABIERTO`, `CORTE_FINAL_ACTIVO` y
+  `CORTE_FINAL_PENDIENTE_DE_REEMPLAZO`; en este último estado el formulario
+  se abre con el `JCheckBox` de corte final seleccionado y deshabilitado,
+  de modo que la corrección no puede convertirse en un retiro parcial.
