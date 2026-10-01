@@ -103,7 +103,7 @@ class AutorizacionRetiroServiceTest {
                 (alias, pass) -> { throw new AssertionError("No debe autenticarse"); });
         RetiroDeEfectivoController controller = new RetiroDeEfectivoController(servicio);
         RetiroDeEfectivoRegistro retiro = new RetiroDeEfectivoRegistro(
-                3, 7, "R-123", "Retiro autorizado", new java.math.BigDecimal("20.00"));
+                3, 7, "R-123", "Retiro autorizado", new java.math.BigDecimal("20.00"), false);
 
         assertEquals(401, controller.registrarRetiro(retiro, null).id());
         assertEquals(401, controller.registrarRetiro(retiro, new char[0]).id());
@@ -118,7 +118,7 @@ class AutorizacionRetiroServiceTest {
                 (alias, pass) -> null);
         RetiroDeEfectivoController controller = new RetiroDeEfectivoController(servicio);
         RetiroDeEfectivoRegistro retiro = new RetiroDeEfectivoRegistro(
-                3, 7, "R-123", "Retiro autorizado", new java.math.BigDecimal("20.00"));
+                3, 7, "R-123", "Retiro autorizado", new java.math.BigDecimal("20.00"), false);
 
         assertEquals(401, controller.registrarRetiro(retiro, "incorrecta".toCharArray()).id());
     }

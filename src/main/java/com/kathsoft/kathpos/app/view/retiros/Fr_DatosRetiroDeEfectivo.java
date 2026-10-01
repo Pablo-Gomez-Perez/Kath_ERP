@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,6 +57,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
     private final int idRetiro;
     private final long idSucursal;
     private final boolean vistaDisenador;
+    private final boolean corteFinalObligatorio;
     private boolean datosCargados;
     private boolean operacionEjecutada;
     private boolean procesando;
@@ -75,6 +78,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
     private JScrollPane scrollPaneDescripcion;
     private JTextArea txaDescripcion;
     private JTextField txfImporte;
+    private JCheckBox chkCorteFinal;
     private JButton btnCancelar;
     private JButton btnGuardar;
 
@@ -83,7 +87,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
      * ni permite registrar sin una sucursal autenticada.
      */
     public Fr_DatosRetiroDeEfectivo() {
-        this(OPCION_CREAR, 0, 0, true);
+        this(OPCION_CREAR, 0, 0, true, false);
     }
 
     /**
@@ -92,11 +96,22 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
      * @param idSucursal sucursal autenticada del módulo padre
      */
     public Fr_DatosRetiroDeEfectivo(int opcion, int idRetiro, long idSucursal) {
-        this(opcion, idRetiro, idSucursal, false);
+        this(opcion, idRetiro, idSucursal, false, false);
+    }
+
+    /**
+     * Variante usada al corregir un corte final inhabilitado: el único
+     * registro permitido es otro corte final, por lo que el JCheckBox
+     * aparece marcado y bloqueado.
+     */
+    public Fr_DatosRetiroDeEfectivo(
+            int opcion, int idRetiro, long idSucursal, boolean corteFinalObligatorio) {
+        this(opcion, idRetiro, idSucursal, false, corteFinalObligatorio);
     }
 
     private Fr_DatosRetiroDeEfectivo(
-            int opcion, int idRetiro, long idSucursal, boolean vistaDisenador) {
+            int opcion, int idRetiro, long idSucursal,
+            boolean vistaDisenador, boolean corteFinalObligatorio) {
         if (opcion != OPCION_CREAR && opcion != OPCION_DETALLE) {
             throw new IllegalArgumentException("La operación de retiro es inválida");
         }
@@ -109,10 +124,11 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         this.idRetiro = idRetiro;
         this.idSucursal = idSucursal;
         this.vistaDisenador = vistaDisenador;
+        this.corteFinalObligatorio = corteFinalObligatorio;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 560, 455);
-        setMinimumSize(new java.awt.Dimension(510, 415));
+        setBounds(100, 100, 560, 485);
+        setMinimumSize(new java.awt.Dimension(510, 445));
         setTitle(opcion == OPCION_CREAR ? "Registrar retiro de efectivo"
                 : "Detalle del retiro de efectivo");
 
@@ -140,7 +156,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         lblFolio = new JLabel("Folio");
         txfFolio = new JTextField();
         txfFolio.setColumns(10);
-        txfFolio.setToolTipText("Folio único, hasta 10 caracteres");
+        txfFolio.setToolTipText("Folio único por sucursal, hasta 10 caracteres");
 
         lblFecha = new JLabel("Fecha");
         txfFecha = new JTextField("Asignada por el servidor al guardar");
@@ -157,6 +173,17 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         txfImporte = new JTextField();
         txfImporte.setColumns(10);
         txfImporte.setToolTipText("Importe del retiro, con hasta dos decimales");
+
+        chkCorteFinal = new JCheckBox("Corte final del día (corte Z)");
+        chkCorteFinal.setBackground(new Color(255, 215, 0));
+        chkCorteFinal.setToolTipText(
+                "El corte final bloquea nuevos retiros; si necesita corregirlo, inhabilítelo hoy y registre otro corte final");
+        if (opcion == OPCION_CREAR && corteFinalObligatorio) {
+            chkCorteFinal.setSelected(true);
+            chkCorteFinal.setEnabled(false);
+            chkCorteFinal.setToolTipText(
+                    "El corte anterior fue inhabilitado: sólo se permite registrar el corte final de reemplazo");
+        }
 
         // Estructura literal declarativa: WindowBuilder puede reconstruir
         // todos los intervalos, sin grupos temporales creados en bucles.
@@ -191,7 +218,9 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
                                     GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(txfImporte, GroupLayout.DEFAULT_SIZE, 374,
-                                    Short.MAX_VALUE)))
+                                    Short.MAX_VALUE))
+                        .addComponent(chkCorteFinal, GroupLayout.DEFAULT_SIZE, 486,
+                                Short.MAX_VALUE))
                     .addContainerGap())
         );
         gl_panelFormulario.setVerticalGroup(
@@ -222,6 +251,8 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
                         .addComponent(lblImporte)
                         .addComponent(txfImporte, GroupLayout.PREFERRED_SIZE,
                                 GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                    .addComponent(chkCorteFinal)
                     .addContainerGap())
         );
 
@@ -279,6 +310,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         cmbEmpleado.setEnabled(false);
         txaDescripcion.setEditable(false);
         txfImporte.setEditable(false);
+        chkCorteFinal.setEnabled(false);
     }
 
     private void cargarFormulario() {
@@ -347,6 +379,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
                     txaDescripcion.setText(retiro.descripcion());
                     txfImporte.setText(retiro.importe() == null
                             ? "" : retiro.importe().toPlainString());
+                    chkCorteFinal.setSelected(retiro.esRetiroFinal());
                     activarSoloLectura();
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
@@ -378,11 +411,24 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
             }
             retiro = new RetiroDeEfectivoRegistro(
                     idSucursal, empleado.id(), txfFolio.getText().trim(),
-                    txaDescripcion.getText().trim(), importe);
+                    txaDescripcion.getText().trim(), importe, chkCorteFinal.isSelected());
             retiro.validar();
         } catch (IllegalArgumentException ex) {
             MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, ex.getMessage());
             return;
+        }
+
+        if (retiro.esRetiroFinal()) {
+            int confirmado = JOptionPane.showConfirmDialog(this,
+                    "Está por registrar el corte final del día. Después de guardarlo "
+                    + "no podrá registrar más retiros de efectivo hoy mientras el corte "
+                    + "permanezca activo. Si necesita corregir el importe, deberá "
+                    + "inhabilitarlo hoy y registrar un nuevo corte final. ¿Desea continuar?",
+                    "Confirmar corte final", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (confirmado != JOptionPane.YES_OPTION) {
+                return;
+            }
         }
 
         // La contraseña corresponde exactamente al empleado seleccionado.
