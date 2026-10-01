@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.kathsoft.kathpos.app.model.retiros.EstadoCorteDiario;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoFiltro;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoRegistro;
 
@@ -143,7 +144,7 @@ class RetiroDeEfectivoControllerTest {
     }
 
     @Test
-    void prevalidacionSoloBloqueaPorCorteFinalActivo() {
+    void estadoDiarioDistingueAbiertoCerradoYCorreccionPendiente() {
         LocalDate fecha = LocalDate.of(2026, 9, 30);
         var parcialActivo = new com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle(
                 1, 4, 9, "Empleado", "R-1", fecha, "Parcial",
@@ -155,13 +156,16 @@ class RetiroDeEfectivoControllerTest {
                 3, 4, 9, "Empleado", "Z-2", fecha, "Corte vigente",
                 new BigDecimal("125.00"), true, true);
 
-        org.junit.jupiter.api.Assertions.assertFalse(
-                RetiroDeEfectivoController.existeCorteFinalActivo(List.of()));
-        org.junit.jupiter.api.Assertions.assertFalse(
-                RetiroDeEfectivoController.existeCorteFinalActivo(
+        assertEquals(EstadoCorteDiario.ABIERTO,
+                RetiroDeEfectivoController.determinarEstadoCorteDiario(List.of()));
+        assertEquals(EstadoCorteDiario.ABIERTO,
+                RetiroDeEfectivoController.determinarEstadoCorteDiario(
+                        List.of(parcialActivo)));
+        assertEquals(EstadoCorteDiario.CORTE_FINAL_PENDIENTE_DE_REEMPLAZO,
+                RetiroDeEfectivoController.determinarEstadoCorteDiario(
                         List.of(parcialActivo, corteInactivo)));
-        org.junit.jupiter.api.Assertions.assertTrue(
-                RetiroDeEfectivoController.existeCorteFinalActivo(
+        assertEquals(EstadoCorteDiario.CORTE_FINAL_ACTIVO,
+                RetiroDeEfectivoController.determinarEstadoCorteDiario(
                         List.of(parcialActivo, corteInactivo, corteActivo)));
     }
 
