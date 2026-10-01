@@ -57,6 +57,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
     private final int idRetiro;
     private final long idSucursal;
     private final boolean vistaDisenador;
+    private final boolean corteFinalObligatorio;
     private boolean datosCargados;
     private boolean operacionEjecutada;
     private boolean procesando;
@@ -86,7 +87,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
      * ni permite registrar sin una sucursal autenticada.
      */
     public Fr_DatosRetiroDeEfectivo() {
-        this(OPCION_CREAR, 0, 0, true);
+        this(OPCION_CREAR, 0, 0, true, false);
     }
 
     /**
@@ -95,11 +96,22 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
      * @param idSucursal sucursal autenticada del módulo padre
      */
     public Fr_DatosRetiroDeEfectivo(int opcion, int idRetiro, long idSucursal) {
-        this(opcion, idRetiro, idSucursal, false);
+        this(opcion, idRetiro, idSucursal, false, false);
+    }
+
+    /**
+     * Variante usada al corregir un corte final inhabilitado: el único
+     * registro permitido es otro corte final, por lo que el JCheckBox
+     * aparece marcado y bloqueado.
+     */
+    public Fr_DatosRetiroDeEfectivo(
+            int opcion, int idRetiro, long idSucursal, boolean corteFinalObligatorio) {
+        this(opcion, idRetiro, idSucursal, false, corteFinalObligatorio);
     }
 
     private Fr_DatosRetiroDeEfectivo(
-            int opcion, int idRetiro, long idSucursal, boolean vistaDisenador) {
+            int opcion, int idRetiro, long idSucursal,
+            boolean vistaDisenador, boolean corteFinalObligatorio) {
         if (opcion != OPCION_CREAR && opcion != OPCION_DETALLE) {
             throw new IllegalArgumentException("La operación de retiro es inválida");
         }
@@ -112,6 +124,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         this.idRetiro = idRetiro;
         this.idSucursal = idSucursal;
         this.vistaDisenador = vistaDisenador;
+        this.corteFinalObligatorio = corteFinalObligatorio;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 560, 485);
@@ -165,6 +178,12 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         chkCorteFinal.setBackground(new Color(255, 215, 0));
         chkCorteFinal.setToolTipText(
                 "El corte final bloquea nuevos retiros; si necesita corregirlo, inhabilítelo hoy y registre otro corte final");
+        if (opcion == OPCION_CREAR && corteFinalObligatorio) {
+            chkCorteFinal.setSelected(true);
+            chkCorteFinal.setEnabled(false);
+            chkCorteFinal.setToolTipText(
+                    "El corte anterior fue inhabilitado: sólo se permite registrar el corte final de reemplazo");
+        }
 
         // Estructura literal declarativa: WindowBuilder puede reconstruir
         // todos los intervalos, sin grupos temporales creados en bucles.
