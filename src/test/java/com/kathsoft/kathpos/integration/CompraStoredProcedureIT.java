@@ -28,6 +28,7 @@ class CompraStoredProcedureIT extends CompraDatabaseIT {
     @BeforeEach
     void limpiarOperacionesDeCompra() throws SQLException {
         try (Connection connection = nuevaConexion(); Statement statement = connection.createStatement()) {
+            statement.executeUpdate("DELETE FROM pago_proveedor");
             statement.executeUpdate("DELETE FROM articulo_x_compra");
             statement.executeUpdate("DELETE FROM existencia_x_sucursal");
             statement.executeUpdate("DELETE FROM compras");
@@ -38,10 +39,12 @@ class CompraStoredProcedureIT extends CompraDatabaseIT {
     void cargaLosProcedimientosModularesDeArticulosYCompras() throws SQLException {
         Set<String> esperados = Set.of(
                 "deleteArticuloCompra",
+                "deleteCompra",
                 "getArticuloById",
                 "getIdUltimaCompra",
                 "insertCompra",
                 "insertArticuloCompra",
+                "insertPagoProveedor",
                 "insertArticulo",
                 "sumarExistenciaSucursalCompra",
                 "listCompras",
@@ -180,7 +183,7 @@ class CompraStoredProcedureIT extends CompraDatabaseIT {
             statement.setString(4, folio);
             statement.setDate(5, Date.valueOf("2026-08-01"));
             statement.setDate(6, Date.valueOf("2026-08-02"));
-            statement.setBoolean(7, false);
+            statement.setBoolean(7, true);
             statement.setDouble(8, 100.00);
             statement.setDouble(9, 16.00);
             return ejecutarConRespuesta(statement);
