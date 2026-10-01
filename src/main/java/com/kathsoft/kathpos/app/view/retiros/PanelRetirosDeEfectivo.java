@@ -8,7 +8,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
@@ -35,6 +34,7 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
+import com.kathsoft.kathpos.app.model.retiros.EstadoCorteDiario;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoFiltro;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
@@ -492,13 +492,19 @@ public class PanelRetirosDeEfectivo extends JPanel {
     }
 
     private void abrirFormularioRetiro(int opcion, int idRetiro) {
+        abrirFormularioRetiro(opcion, idRetiro, false);
+    }
+
+    private void abrirFormularioRetiro(
+            int opcion, int idRetiro, boolean corteFinalObligatorio) {
         if (idSucursalActual <= 0) {
             MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
                     this, "El módulo requiere la sucursal de la sesión");
             return;
         }
         Fr_DatosRetiroDeEfectivo formulario =
-                new Fr_DatosRetiroDeEfectivo(opcion, idRetiro, idSucursalActual);
+                new Fr_DatosRetiroDeEfectivo(
+                        opcion, idRetiro, idSucursalActual, corteFinalObligatorio);
         formulario.setLocationRelativeTo(this);
         formulario.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         formulario.addWindowListener(new WindowAdapter() {
@@ -531,11 +537,12 @@ public class PanelRetirosDeEfectivo extends JPanel {
         final LocalDate fechaCliente = LocalDate.now();
         btnAgregar.setEnabled(false);
 
-        new SwingWorker<Boolean, Void>() {
+        new SwingWorker<EstadoCorteDiario, Void>() {
             @Override
-            protected Boolean doInBackground() throws Exception {
+            protected EstadoCorteDiario doInBackground() throws Exception {
                 return AppContext.retiroDeEfectivoController
-                        .existeCorteFinalActivoEnFecha(sucursalConsulta, fechaCliente);
+                        .consultarEstadoCorteDiarioEnFecha(
+                                sucursalConsulta, fechaCliente);
             }
 
             @Override
@@ -545,7 +552,8 @@ public class PanelRetirosDeEfectivo extends JPanel {
                     return;
                 }
                 try {
-                    if (Boolean.TRUE.equals(get())) {
+                    EstadoCorteDiario estado = get();
+                    if (estado == EstadoCorteDiario.CORTE_FINAL_ACTIVO) {
                         MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
                                 PanelRetirosDeEfectivo.this,
                                 "Ya existe un corte final activo para el día. "
@@ -554,7 +562,21 @@ public class PanelRetirosDeEfectivo extends JPanel {
                                 + "ese corte y registre uno nuevo.");
                         return;
                     }
-                    abrirFormularioRetiro(Fr_DatosRetiroDeEfectivo.OPCION_CREAR, 0);
+                    if (estado
+                            == EstadoCorteDiario.CORTE_FINAL_PENDIENTE_DE_REEMPLAZO) {
+                        JOptionPane.showMessageDialog(
+                                PanelRetirosDeEfectivo.this,
+                                "El corte final del día fue inhabilitado. "
+                                + "La caja no se reabre para retiros parciales: "
+                                + "el siguiente registro debe ser el corte final corregido.",
+                                "Reemplazar corte final",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        abrirFormularioRetiro(
+                                Fr_DatosRetiroDeEfectivo.OPCION_CREAR, 0, true);
+                        return;
+                    }
+                    abrirFormularioRetiro(
+                            Fr_DatosRetiroDeEfectivo.OPCION_CREAR, 0, false);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     mostrarError("Se interrumpió la validación del corte final");
