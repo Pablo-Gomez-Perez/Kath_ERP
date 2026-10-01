@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -177,6 +178,37 @@ public class RetiroDeEfectivoController implements Serializable {
             }
         }
         return registros;
+    }
+
+    /**
+     * Prevalidación para la UI: consulta por SP los retiros de la sucursal
+     * en una fecha concreta y determina si existe un corte final activo.
+     *
+     * <p>No sustituye a registrarRetiroDeEfectivo: entre esta consulta y
+     * el alta puede existir concurrencia y el día de MySQL puede diferir
+     * del reloj del cliente. El SP de registro conserva la autoridad.</p>
+     */
+    public boolean existeCorteFinalActivoEnFecha(long idSucursal, LocalDate fecha)
+            throws SQLException {
+        if (fecha == null) {
+            throw new IllegalArgumentException("La fecha es obligatoria");
+        }
+        RetiroDeEfectivoFiltro filtro = new RetiroDeEfectivoFiltro(
+                null, fecha, fecha, RetiroDeEfectivoFiltro.Orden.FECHA_RECIENTE);
+        return existeCorteFinalActivo(listarRetiros(idSucursal, filtro));
+    }
+
+    /**
+     * Permite probar la regla sin conexión JDBC.
+     */
+    static boolean existeCorteFinalActivo(List<RetiroDeEfectivoDetalle> retiros) {
+        if (retiros == null || retiros.isEmpty()) {
+            return false;
+        }
+        return retiros.stream()
+                .anyMatch(retiro -> retiro != null
+                        && retiro.activo()
+                        && retiro.esRetiroFinal());
     }
 
     /**
