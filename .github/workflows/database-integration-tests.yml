@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Validate purchase create and update flows
+    name: Validate purchase create, update, payment, and cancellation flows
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
