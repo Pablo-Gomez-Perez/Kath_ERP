@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
@@ -249,8 +250,7 @@ public class PanelRetirosDeEfectivo extends JPanel {
         comboBoxEmpleado.addItem(OPCION_TODOS);
         cargarOrdenamientos();
 
-        btnAgregar.addActionListener(event ->
-                abrirFormularioRetiro(Fr_DatosRetiroDeEfectivo.OPCION_CREAR, 0));
+        btnAgregar.addActionListener(event -> validarNuevoRetiroAntesDeAbrir());
         btnVerDetalle.addActionListener(event -> verDetalleSeleccionado());
         btnInhabilitar.addActionListener(event -> inhabilitarSeleccionado());
         btnExportarExcel.addActionListener(event -> exportarListado());
@@ -479,6 +479,12 @@ public class PanelRetirosDeEfectivo extends JPanel {
         return id;
     }
 
+    private boolean seleccionadoEsCorteFinal() {
+        int fila = tableRetiros.getSelectedRow();
+        return fila >= 0 && "Corte final".equals(
+                modelTablaRetiros.getValueAt(tableRetiros.convertRowIndexToModel(fila), 6));
+    }
+
     private boolean seleccionadoActivo() {
         int fila = tableRetiros.getSelectedRow();
         return fila >= 0 && "Activo".equals(
@@ -506,6 +512,60 @@ public class PanelRetirosDeEfectivo extends JPanel {
         formulario.setVisible(true);
     }
 
+    /**
+     * Prevalidación de UX. Consulta siempre la sucursal completa para la fecha
+     * actual, independientemente de los filtros visibles del JTable.
+     *
+     * <p>El SP registrarRetiroDeEfectivo vuelve a validar con CURDATE()
+     * dentro de la transacción, por lo que esta comprobación no se usa como
+     * autoridad frente a concurrencia.</p>
+     */
+    private void validarNuevoRetiroAntesDeAbrir() {
+        if (idSucursalActual <= 0) {
+            MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
+                    this, "El módulo requiere la sucursal de la sesión");
+            return;
+        }
+
+        final long sucursalConsulta = idSucursalActual;
+        final LocalDate fechaCliente = LocalDate.now();
+        btnAgregar.setEnabled(false);
+
+        new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                return AppContext.retiroDeEfectivoController
+                        .existeCorteFinalActivoEnFecha(sucursalConsulta, fechaCliente);
+            }
+
+            @Override
+            protected void done() {
+                btnAgregar.setEnabled(true);
+                if (sucursalConsulta != idSucursalActual) {
+                    return;
+                }
+                try {
+                    if (Boolean.TRUE.equals(get())) {
+                        MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE,
+                                PanelRetirosDeEfectivo.this,
+                                "Ya existe un corte final activo para el día. "
+                                + "No se pueden registrar más retiros. "
+                                + "Si el importe del corte es incorrecto, inhabilite "
+                                + "ese corte y registre uno nuevo.");
+                        return;
+                    }
+                    abrirFormularioRetiro(Fr_DatosRetiroDeEfectivo.OPCION_CREAR, 0);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    mostrarError("Se interrumpió la validación del corte final");
+                } catch (ExecutionException ex) {
+                    mostrarError("No fue posible validar el estado del corte final: "
+                            + causa(ex));
+                }
+            }
+        }.execute();
+    }
+
     private void verDetalleSeleccionado() {
         int id = obtenerSeleccion();
         if (id > 0) {
@@ -527,11 +587,15 @@ public class PanelRetirosDeEfectivo extends JPanel {
                     this, "El retiro seleccionado ya se encuentra inhabilitado");
             return;
         }
+        String mensajeConfirmacion = seleccionadoEsCorteFinal()
+                ? "¿Desea inhabilitar el corte final con ID " + id
+                    + "? Sólo se permite durante el día de registro. "
+                    + "Después podrá registrar un nuevo corte final para corregir el importe."
+                : "¿Desea inhabilitar el retiro con ID " + id
+                    + "? Sólo se permite durante el día de registro.";
         int confirmacion = JOptionPane.showConfirmDialog(this,
-                "¿Desea inhabilitar el retiro con ID " + id
-                    + "? Sólo se permite durante el día de registro.",
-                "Inhabilitar retiro", JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
+                mensajeConfirmacion, "Inhabilitar retiro",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirmacion != JOptionPane.YES_OPTION) {
             return;
         }
