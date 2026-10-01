@@ -16,5 +16,6 @@ public record RetiroDeEfectivoDetalle(
         LocalDate fecha,
         String descripcion,
         BigDecimal importe,
+        boolean esRetiroFinal,
         boolean activo) {
 }

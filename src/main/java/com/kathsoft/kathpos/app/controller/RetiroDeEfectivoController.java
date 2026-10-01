@@ -10,10 +10,12 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import com.kathsoft.kathpos.app.model.retiros.EstadoCorteDiario;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoFiltro;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoRegistro;
@@ -45,7 +47,8 @@ public class RetiroDeEfectivoController implements Serializable {
     }
 
     /**
-     * Crea un retiro de la sucursal actual, con fecha asignada por MySQL.
+     * Crea un retiro parcial o un corte final por sucursal y día. La validación
+     * de unicidad del corte, incluido el escenario concurrente, reside en el SP.
      */
     public SpResponseModel registrarRetiro(
             RetiroDeEfectivoRegistro retiro, char[] contraseniaEmpleado) {
@@ -69,12 +72,13 @@ public class RetiroDeEfectivoController implements Serializable {
 
         try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
                 CallableStatement stm = cn.prepareCall(
-                        "CALL registrarRetiroDeEfectivo(?, ?, ?, ?, ?)")) {
+                        "CALL registrarRetiroDeEfectivo(?, ?, ?, ?, ?, ?)")) {
             stm.setLong(1, retiro.idSucursal());
             stm.setInt(2, retiro.idEmpleado());
             stm.setString(3, retiro.folio().trim());
             stm.setString(4, retiro.descripcion().trim());
             stm.setBigDecimal(5, retiro.importe());
+            stm.setBoolean(6, retiro.esRetiroFinal());
             return leerRespuesta(stm);
         } catch (SQLException ex) {
             return errorSql("registrar", ex);
@@ -178,24 +182,74 @@ public class RetiroDeEfectivoController implements Serializable {
     }
 
     /**
+     * Prevalidación para la UI: consulta por SP los retiros de la sucursal
+     * en una fecha concreta y clasifica el estado operativo del día.
+     *
+     * <p>No sustituye a registrarRetiroDeEfectivo: entre esta consulta y
+     * el alta puede existir concurrencia y el día de MySQL puede diferir
+     * del reloj del cliente. El SP de registro conserva la autoridad.</p>
+     */
+    public EstadoCorteDiario consultarEstadoCorteDiarioEnFecha(
+            long idSucursal, LocalDate fecha) throws SQLException {
+        if (fecha == null) {
+            throw new IllegalArgumentException("La fecha es obligatoria");
+        }
+        RetiroDeEfectivoFiltro filtro = new RetiroDeEfectivoFiltro(
+                null, fecha, fecha, RetiroDeEfectivoFiltro.Orden.FECHA_RECIENTE);
+        return determinarEstadoCorteDiario(listarRetiros(idSucursal, filtro));
+    }
+
+    /**
+     * Regla pura y testeable del estado diario.
+     */
+    static EstadoCorteDiario determinarEstadoCorteDiario(
+            List<RetiroDeEfectivoDetalle> retiros) {
+        if (retiros == null || retiros.isEmpty()) {
+            return EstadoCorteDiario.ABIERTO;
+        }
+
+        boolean existeCorteFinalInactivo = false;
+        for (RetiroDeEfectivoDetalle retiro : retiros) {
+            if (retiro == null || !retiro.esRetiroFinal()) {
+                continue;
+            }
+            if (retiro.activo()) {
+                return EstadoCorteDiario.CORTE_FINAL_ACTIVO;
+            }
+            existeCorteFinalInactivo = true;
+        }
+
+        return existeCorteFinalInactivo
+                ? EstadoCorteDiario.CORTE_FINAL_PENDIENTE_DE_REEMPLAZO
+                : EstadoCorteDiario.ABIERTO;
+    }
+
+    /**
      * Proyección del listado para el DefaultTableModel del panel.
-     * Orden: ID, folio, fecha, empleado, descripción, importe, estado.
+     * Orden: ID, folio, fecha, empleado, descripción, importe,
+     * tipo de retiro y estado.
      */
     public Vector<Object[]> verRetirosEnTabla(long idSucursal, RetiroDeEfectivoFiltro filtro)
             throws SQLException {
         Vector<Object[]> filas = new Vector<>();
         for (RetiroDeEfectivoDetalle retiro : listarRetiros(idSucursal, filtro)) {
-            filas.add(new Object[] {
-                    retiro.idRetiro(),
-                    retiro.folio(),
-                    retiro.fecha(),
-                    retiro.empleado(),
-                    retiro.descripcion(),
-                    retiro.importe(),
-                    retiro.activo() ? "Activo" : "Inactivo"
-            });
+            filas.add(proyectarFila(retiro));
         }
         return filas;
+    }
+
+    /** Contrato explícito entre la proyección del controlador y el JTable. */
+    static Object[] proyectarFila(RetiroDeEfectivoDetalle retiro) {
+        return new Object[] {
+                retiro.idRetiro(),
+                retiro.folio(),
+                retiro.fecha(),
+                retiro.empleado(),
+                retiro.descripcion(),
+                retiro.importe(),
+                retiro.esRetiroFinal() ? "Corte final" : "Retiro parcial",
+                retiro.activo() ? "Activo" : "Inactivo"
+        };
     }
 
     /**
@@ -269,7 +323,7 @@ public class RetiroDeEfectivoController implements Serializable {
         }
     }
 
-    private static RetiroDeEfectivoDetalle mapearDetalle(ResultSet rs) throws SQLException {
+    static RetiroDeEfectivoDetalle mapearDetalle(ResultSet rs) throws SQLException {
         Date fecha = rs.getDate("fecha");
         BigDecimal importe = rs.getBigDecimal("importe");
         return new RetiroDeEfectivoDetalle(
@@ -281,6 +335,7 @@ public class RetiroDeEfectivoController implements Serializable {
                 fecha == null ? null : fecha.toLocalDate(),
                 rs.getString("descripcion"),
                 importe == null ? null : importe.setScale(2, RoundingMode.HALF_UP),
+                rs.getBoolean("es_retiro_final"),
                 rs.getBoolean("activo"));
     }
 

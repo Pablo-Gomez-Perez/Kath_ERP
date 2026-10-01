@@ -2,18 +2,20 @@
 
 ## Origen del contrato
 
-La implementación se basa en `database/schema.sql` de la rama `dev`
-vigente al crear la rama:
+La implementación sigue el `database/schema.sql` vigente: el folio tiene
+unicidad por sucursal y la tabla distingue los cortes finales de los retiros
+parciales mediante `es_retiro_final`.
 
 | Columna | Tipo | Uso |
 |---|---|---|
 | `id_retiro` | INT UNSIGNED AUTO_INCREMENT | Identificador interno |
 | `id_sucursal` | BIGINT UNSIGNED | Sucursal autenticada |
 | `id_empleado` | INT UNSIGNED | Empleado responsable |
-| `folio` | VARCHAR(10) UNIQUE | Folio único global obligatorio |
+| `folio` | VARCHAR(10) | Único dentro de cada sucursal mediante `UNIQUE(folio,id_sucursal)` |
 | `fecha` | DATE | La asigna el servidor MySQL |
 | `descripcion` | VARCHAR(255) | Motivo obligatorio |
 | `importe` | DOUBLE | Importe del retiro |
+| `es_retiro_final` | TINYINT(1) DEFAULT 0 NOT NULL | TRUE para corte Z del día; FALSE para retiro parcial |
 | `activo` | TINYINT(1) | TRUE al registrar; FALSE al inhabilitar |
 
 Las claves foráneas relacionan retiro con `empleados.id_empleado` y
@@ -31,10 +33,10 @@ manualmente a MySQL y al dump versionado, por el propietario:
 
 | SP | Parámetros | Respuesta |
 |---|---|---|
-| `registrarRetiroDeEfectivo` | `p_id_sucursal BIGINT UNSIGNED, p_id_empleado INT UNSIGNED, p_folio VARCHAR(10), p_descripcion VARCHAR(255), p_importe DECIMAL(18,2)` | `id=200/500, id_retiro (alta exitosa), message` |
+| `registrarRetiroDeEfectivo` | `p_id_sucursal BIGINT UNSIGNED, p_id_empleado INT UNSIGNED, p_folio VARCHAR(10), p_descripcion VARCHAR(255), p_importe DECIMAL(18,2), p_es_retiro_final BOOLEAN` | `id=200/500, id_retiro (alta exitosa), message` |
 | `inhabilitarRetiroDeEfectivo` | `p_id_retiro INT UNSIGNED, p_id_sucursal BIGINT UNSIGNED` | `id=200/500, message` |
-| `getRetiroDeEfectivoById` | `p_id_retiro INT UNSIGNED, p_id_sucursal BIGINT UNSIGNED` | `id_retiro, id_sucursal, id_empleado, empleado, folio, fecha, descripcion, importe, activo` |
-| `listRetirosDeEfectivo` | `p_id_sucursal BIGINT UNSIGNED, p_id_empleado INT UNSIGNED nullable, p_fecha_inicial DATE nullable, p_fecha_final DATE nullable, p_ordenamiento TINYINT UNSIGNED` | Mismas nueve columnas de detalle |
+| `getRetiroDeEfectivoById` | `p_id_retiro INT UNSIGNED, p_id_sucursal BIGINT UNSIGNED` | `id_retiro, id_sucursal, id_empleado, empleado, folio, fecha, descripcion, importe, es_retiro_final, activo` |
+| `listRetirosDeEfectivo` | `p_id_sucursal BIGINT UNSIGNED, p_id_empleado INT UNSIGNED nullable, p_fecha_inicial DATE nullable, p_fecha_final DATE nullable, p_ordenamiento TINYINT UNSIGNED` | Mismas diez columnas de detalle |
 
 Se reutilizan SP ya instalados en otros módulos:
 
@@ -43,16 +45,31 @@ Se reutilizan SP ya instalados en otros módulos:
 - `ver_rfc_empleado_por_sucursal(idSucursal)`: empleados de la sucursal,
   incluidos inactivos, para el **filtro histórico del panel**.
 
-**Importante:** `folio` es único en TODA la tabla, no únicamente
-dentro de la sucursal. El formulario lo exige, pero no genera una
-secuencia porque el esquema no define una regla de numeración. La
-restricción UNIQUE de MySQL garantiza la unicidad incluso si dos
-sucursales intentan registrar simultáneamente el mismo folio.
+**Importante:** la clave compuesta del esquema es
+`UNIQUE(folio,id_sucursal)`: permite repetir un folio en **sucursales
+distintas** y rechaza duplicados en una misma sucursal, independientemente
+de fecha o estado. El formulario solicita el folio; no inventa un
+generador de secuencias ajeno al modelo actual.
 
 ### Reglas operativas
 
 - Alta sólo si sucursal activa, empleado activo de esa misma sucursal,
   folio y descripción válidos, e importe positivo de hasta dos decimales.
+- `p_es_retiro_final=FALSE`: retiro parcial; `TRUE`: corte final (Z).
+  **Un único corte final ACTIVO por fecha y sucursal**: el SP
+  `registrarRetiroDeEfectivo` bloquea la fila de la sucursal con `FOR UPDATE`,
+  determina `CURDATE()` después de adquirir el bloqueo y comprueba si existe
+  un corte final activo. Mientras exista, rechaza cualquier retiro nuevo.
+  Si ese corte se inhabilita durante el mismo día, permite registrar un nuevo
+  corte final de reemplazo.
+- Después de que exista cualquier corte final del día, aunque el anterior
+  ya esté inhabilitado, **no se permiten nuevos retiros parciales**. La única
+  operación de alta permitida tras inhabilitar el corte es registrar un
+  nuevo corte final de reemplazo. Esto conserva el significado de cierre Z.
+- **Inhabilitar un corte final sí permite corregir su importe**: el registro
+  anterior conserva su historia como inactivo y puede registrarse un nuevo
+  corte final el mismo día. Mientras el corte final vigente esté activo,
+  cualquier alta adicional queda bloqueada.
 - `fecha=CURDATE()` desde la sesión MySQL; no se acepta una fecha
   suministrada por el cliente ni se permite la edición del retiro.
 - Un retiro **sólo puede inhabilitarse durante el día de registro**.
@@ -78,22 +95,23 @@ separada.
 
 ## Implementación Java
 
-- `RetiroDeEfectivoRegistro`: comando inmutable de registro; no expone
-  id, fecha ni estado editables y valida longitudes e importe.
-- `RetiroDeEfectivoDetalle`: record completo de los nueve campos del
-  ResultSet, incluida la identidad de sucursal y el estado histórico.
+- `RetiroDeEfectivoRegistro`: comando inmutable de registro; incluye el
+  booleano `esRetiroFinal`, no expone ID, fecha ni estado editables y
+  valida longitudes e importe.
+- `RetiroDeEfectivoDetalle`: record completo de los diez campos del
+  ResultSet, incluido `esRetiroFinal`, sucursal y estado histórico.
 - `RetiroDeEfectivoFiltro`: record de criterios con rango válido y
   enum `Orden`, etiquetas legibles y códigos SQL.
 - `RetiroDeEfectivoController`: llama exclusivamente a los cuatro
   procedimientos de negocio y reutiliza los dos procedimientos de
-  empleados. También ofrece la proyección de siete columnas
+  empleados. También ofrece la proyección de ocho columnas
   `verRetirosEnTabla` para el panel.
 - `AppContext.retiroDeEfectivoController`: acceso compartido.
 - `PanelRetirosDeEfectivo`: mantiene la distribución visual de
   `PanelGastos` (encabezado azul oscuro, barra dorada de botones,
   tabla central con scroll y barra inferior azul).
-  `DefaultTableModel` de siete columnas no editables:
-  **ID, Folio, Fecha, Empleado, Descripción, Importe y Activo**.
+  `DefaultTableModel` de ocho columnas no editables:
+  **ID, Folio, Fecha, Empleado, Descripción, Importe, Tipo de retiro y Activo**.
   Se aplica `DataTools.removerEditorDeTabla` y
   `DataTools.definirTamanioDeColumnas` con
   `ConstantsConllections.tablaRetirosDeEfectivoColumnsWidth`.
@@ -103,10 +121,12 @@ separada.
   (dd/MM/aaaa) y validación calendárica estricta.
 - `Fr_DatosRetiroDeEfectivo`: un `JFrame` compatible con Eclipse
   WindowBuilder, con `GroupLayout` explícito. Modo registro:
-  folio, empleado, descripción e importe; muestra que la fecha se
-  asignará automáticamente en el servidor. Modo detalle: consulta por ID
-  y sucursal; todos los controles son de **solo lectura**, sin opción
-  de actualización.
+  folio, empleado, descripción e importe; agrega un
+  `JCheckBox` explícito «Corte final del día (corte Z)». Si se marca,
+  solicita confirmación **antes** de solicitar la contraseña del empleado;
+  los retiros parciales mantienen su flujo habitual. La fecha la
+  asigna el servidor. En modo detalle muestra el tipo de retiro en
+  el mismo checkbox **deshabilitado**, sin posibilidad de actualización.
 - Ambos componentes cargan datos usando `SwingWorker` en
   `windowOpened` / primera visualización. El constructor vacío no
   ejecuta JDBC en WindowBuilder.
@@ -148,7 +168,8 @@ no se añade soporte XLSX ni se modifica esa utilidad.
 ```
 
 Pruebas funcionales pendientes de instalar los cuatro SP manualmente:
-alta en cada sucursal, intento de folio duplicado entre sucursales,
+alta en cada sucursal, folio repetido aceptado en sucursales distintas
+pero rechazado en la misma sucursal,
 empleado de otra sucursal, importe inválido, detalle histórico,
 listado sin filtros, filtro por empleado activo e inactivo,
 fechas abiertas/cerradas, los tres ordenamientos,
@@ -223,3 +244,75 @@ empleado, empleado inactivo o de otra sucursal, contraseña correcta,
 repetición de la autorización en cada movimiento y refresco de tabla
 únicamente después de `id=200`. La regla temporal de inhabilitación
 sigue verificándose exclusivamente en MySQL con `CURDATE()`.
+
+## Ampliación: corte final diario (Z)
+
+Este cambio añade `es_retiro_final` al DTO de alta, al DTO de detalle,
+al mapeo JDBC, al listado, al `DefaultTableModel` y al `JCheckBox` del
+formulario. **El nombre real de la columna es `es_retiro_final`** según
+`schema.sql`, a pesar de que en la petición se mencionó
+`es_corte_final`. El formulario de detalle presenta el estado del check
+sin ofrecer edición. El nuevo ancho de columnas en
+`ConstantsConllections.tablaRetirosDeEfectivoColumnsWidth` tiene ocho
+entradas; la columna de estado se desplaza del índice 6 al 7 y el
+control de inhabilitación se adapta al nuevo índice. La contraseña del
+empleado sigue siendo obligatoria tanto en altas como en bajas.
+
+### Contrato SQL de la ampliación
+
+Instalar manualmente las cuatro nuevas definiciones entregadas en la
+conversación, reemplazando los procedimientos del dump. **No se toca
+ningún fichero SQL versionado.** `registrarRetiroDeEfectivo` ahora
+requiere **seis** parámetros; el sexto es `p_es_retiro_final BOOLEAN`.
+`getRetiroDeEfectivoById` y `listRetirosDeEfectivo` ahora devuelven
+diez columnas, con `es_retiro_final` inmediatamente antes de `activo`.
+`inhabilitarRetiroDeEfectivo` conserva su contrato y permite dar de
+baja el cierre final únicamente durante el día del registro, sin borrar la
+clasificación. Una vez inhabilitado, el día permanece cerrado para retiros
+parciales, pero puede registrarse un nuevo corte final de reemplazo.
+
+### Matriz de pruebas funcionales con MySQL
+
+1. Dos retiros parciales en la misma sucursal y fecha: permitidos, con
+   folios distintos.
+2. Primer corte final de la sucursal hoy: permitido.
+3. Segundo corte final ACTIVO de la misma sucursal hoy: rechazado. Si el
+   primero se inhabilita ese mismo día, se permite un nuevo corte final de
+   reemplazo.
+4. Primer corte final de otra sucursal hoy: permitido.
+5. Después de un corte final activo: cualquier retiro parcial o segundo corte
+   final se rechaza. Tras inhabilitar el corte, sigue rechazándose un retiro
+   parcial y únicamente se acepta otro corte final. Mismo folio en sucursales
+   distintas: permitido; mismo folio en una sucursal: rechazado.
+6. Dos solicitudes simultáneas de corte final en una sucursal: sólo
+   una debe confirmar `id=200`; la otra debe recibir error.
+7. Dos fechas distintas: se permite un cierre por cada fecha.
+8. Bajas lógicas y contraseña: conservar rechazo de contraseña incorrecta,
+   empleado de otra sucursal, fecha anterior y retiro ya inactivo.
+9. Listado y detalle: ambos reflejan el nuevo booleano, para registros
+   parciales y finales, activos e inactivos.
+10. Abrir ambas vistas en WindowBuilder; comprobar el checkbox, las ocho
+    columnas y la selección de la columna de estado al inhabilitar.
+
+**Limitación:** el esquema actual `importe DOUBLE` no garantiza precisión
+contable en almacenamiento, y esta ampliación no modifica movimientos
+de caja o cuentas contables. `CURDATE()` usa la zona horaria configurada
+en la conexión MySQL. Antes de usar el módulo en múltiples husos horarios,
+se requiere definir el día comercial por sucursal.
+
+### Corrección del corte Z
+
+La regla definitiva es:
+
+- Antes del primer corte Z del día: se permiten retiros parciales y el corte final.
+- Con un corte Z activo: no se permite ninguna nueva alta de retiro.
+- Si el corte Z se inhabilita el mismo día: se permite únicamente otro corte Z;
+  no se reabre la posibilidad de retiros parciales.
+- El historial conserva todos los cortes corregidos como registros inactivos.
+- La vista realiza una prevalidación con `listRetirosDeEfectivo` para mejorar
+  la UX, pero `registrarRetiroDeEfectivo` vuelve a comprobar la regla dentro
+  de la transacción y es la autoridad frente a concurrencia. La prevalidación
+  distingue `ABIERTO`, `CORTE_FINAL_ACTIVO` y
+  `CORTE_FINAL_PENDIENTE_DE_REEMPLAZO`; en este último estado el formulario
+  se abre con el `JCheckBox` de corte final seleccionado y deshabilitado,
+  de modo que la corrección no puede convertirse en un retiro parcial.
