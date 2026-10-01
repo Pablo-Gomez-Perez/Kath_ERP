@@ -56,17 +56,20 @@ generador de secuencias ajeno al modelo actual.
 - Alta sólo si sucursal activa, empleado activo de esa misma sucursal,
   folio y descripción válidos, e importe positivo de hasta dos decimales.
 - `p_es_retiro_final=FALSE`: retiro parcial; `TRUE`: corte final (Z).
-  **Un único corte final por fecha y sucursal**, incluso si se inhabilita:
-  el SP `registrarRetiroDeEfectivo` bloquea la fila de la sucursal con
-  `FOR UPDATE`, determina `CURDATE()` después de adquirir el bloqueo y
-  comprueba todos los cortes finales del día, activos e inactivos, antes
-  de crear el nuevo registro. Evita dos cierres finales concurrentes.
-- Los retiros parciales posteriores al corte final siguen admitiéndose
-  porque el alcance solicitado mantiene las reglas de operación previas.
-  Si deben prohibirse, se necesitará otra autorización funcional.
-- **Inhabilitar un corte final no permite repetir el cierre del mismo día**.
-  Un cierre mal capturado requiere un proceso correctivo expresamente
-  definido en lugar de eliminar su historia.
+  **Un único corte final ACTIVO por fecha y sucursal**: el SP
+  `registrarRetiroDeEfectivo` bloquea la fila de la sucursal con `FOR UPDATE`,
+  determina `CURDATE()` después de adquirir el bloqueo y comprueba si existe
+  un corte final activo. Mientras exista, rechaza cualquier retiro nuevo.
+  Si ese corte se inhabilita durante el mismo día, permite registrar un nuevo
+  corte final de reemplazo.
+- Después de que exista cualquier corte final del día, aunque el anterior
+  ya esté inhabilitado, **no se permiten nuevos retiros parciales**. La única
+  operación de alta permitida tras inhabilitar el corte es registrar un
+  nuevo corte final de reemplazo. Esto conserva el significado de cierre Z.
+- **Inhabilitar un corte final sí permite corregir su importe**: el registro
+  anterior conserva su historia como inactivo y puede registrarse un nuevo
+  corte final el mismo día. Mientras el corte final vigente esté activo,
+  cualquier alta adicional queda bloqueada.
 - `fecha=CURDATE()` desde la sesión MySQL; no se acepta una fecha
   suministrada por el cliente ni se permite la edición del retiro.
 - Un retiro **sólo puede inhabilitarse durante el día de registro**.
@@ -264,19 +267,23 @@ requiere **seis** parámetros; el sexto es `p_es_retiro_final BOOLEAN`.
 `getRetiroDeEfectivoById` y `listRetirosDeEfectivo` ahora devuelven
 diez columnas, con `es_retiro_final` inmediatamente antes de `activo`.
 `inhabilitarRetiroDeEfectivo` conserva su contrato y permite dar de
-baja el cierre final únicamente durante el día del registro, sin
-borrar la clasificación y sin liberar el cupo de cierre de ese día.
+baja el cierre final únicamente durante el día del registro, sin borrar la
+clasificación. Una vez inhabilitado, el día permanece cerrado para retiros
+parciales, pero puede registrarse un nuevo corte final de reemplazo.
 
 ### Matriz de pruebas funcionales con MySQL
 
 1. Dos retiros parciales en la misma sucursal y fecha: permitidos, con
    folios distintos.
 2. Primer corte final de la sucursal hoy: permitido.
-3. Segundo corte final de la misma sucursal hoy: rechazado, con cualquier
-   empleado y folio; incluso si el primer corte se inhabilitó.
+3. Segundo corte final ACTIVO de la misma sucursal hoy: rechazado. Si el
+   primero se inhabilita ese mismo día, se permite un nuevo corte final de
+   reemplazo.
 4. Primer corte final de otra sucursal hoy: permitido.
-5. Mismo folio en sucursales distintas: permitido; mismo folio en una
-   sucursal: rechazado, incluso si uno está inhabilitado.
+5. Después de un corte final activo: cualquier retiro parcial o segundo corte
+   final se rechaza. Tras inhabilitar el corte, sigue rechazándose un retiro
+   parcial y únicamente se acepta otro corte final. Mismo folio en sucursales
+   distintas: permitido; mismo folio en una sucursal: rechazado.
 6. Dos solicitudes simultáneas de corte final en una sucursal: sólo
    una debe confirmar `id=200`; la otra debe recibir error.
 7. Dos fechas distintas: se permite un cierre por cada fecha.
@@ -292,3 +299,16 @@ contable en almacenamiento, y esta ampliación no modifica movimientos
 de caja o cuentas contables. `CURDATE()` usa la zona horaria configurada
 en la conexión MySQL. Antes de usar el módulo en múltiples husos horarios,
 se requiere definir el día comercial por sucursal.
+
+### Corrección del corte Z
+
+La regla definitiva es:
+
+- Antes del primer corte Z del día: se permiten retiros parciales y el corte final.
+- Con un corte Z activo: no se permite ninguna nueva alta de retiro.
+- Si el corte Z se inhabilita el mismo día: se permite únicamente otro corte Z;
+  no se reabre la posibilidad de retiros parciales.
+- El historial conserva todos los cortes corregidos como registros inactivos.
+- La vista realiza una prevalidación con `listRetirosDeEfectivo` para mejorar
+  la UX, pero `registrarRetiroDeEfectivo` vuelve a comprobar la regla dentro
+  de la transacción y es la autoridad frente a concurrencia.
