@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import com.kathsoft.kathpos.app.model.retiros.EstadoCorteDiario;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoFiltro;
 import com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoRegistro;
@@ -182,33 +183,45 @@ public class RetiroDeEfectivoController implements Serializable {
 
     /**
      * Prevalidación para la UI: consulta por SP los retiros de la sucursal
-     * en una fecha concreta y determina si existe un corte final activo.
+     * en una fecha concreta y clasifica el estado operativo del día.
      *
      * <p>No sustituye a registrarRetiroDeEfectivo: entre esta consulta y
      * el alta puede existir concurrencia y el día de MySQL puede diferir
      * del reloj del cliente. El SP de registro conserva la autoridad.</p>
      */
-    public boolean existeCorteFinalActivoEnFecha(long idSucursal, LocalDate fecha)
-            throws SQLException {
+    public EstadoCorteDiario consultarEstadoCorteDiarioEnFecha(
+            long idSucursal, LocalDate fecha) throws SQLException {
         if (fecha == null) {
             throw new IllegalArgumentException("La fecha es obligatoria");
         }
         RetiroDeEfectivoFiltro filtro = new RetiroDeEfectivoFiltro(
                 null, fecha, fecha, RetiroDeEfectivoFiltro.Orden.FECHA_RECIENTE);
-        return existeCorteFinalActivo(listarRetiros(idSucursal, filtro));
+        return determinarEstadoCorteDiario(listarRetiros(idSucursal, filtro));
     }
 
     /**
-     * Permite probar la regla sin conexión JDBC.
+     * Regla pura y testeable del estado diario.
      */
-    static boolean existeCorteFinalActivo(List<RetiroDeEfectivoDetalle> retiros) {
+    static EstadoCorteDiario determinarEstadoCorteDiario(
+            List<RetiroDeEfectivoDetalle> retiros) {
         if (retiros == null || retiros.isEmpty()) {
-            return false;
+            return EstadoCorteDiario.ABIERTO;
         }
-        return retiros.stream()
-                .anyMatch(retiro -> retiro != null
-                        && retiro.activo()
-                        && retiro.esRetiroFinal());
+
+        boolean existeCorteFinalInactivo = false;
+        for (RetiroDeEfectivoDetalle retiro : retiros) {
+            if (retiro == null || !retiro.esRetiroFinal()) {
+                continue;
+            }
+            if (retiro.activo()) {
+                return EstadoCorteDiario.CORTE_FINAL_ACTIVO;
+            }
+            existeCorteFinalInactivo = true;
+        }
+
+        return existeCorteFinalInactivo
+                ? EstadoCorteDiario.CORTE_FINAL_PENDIENTE_DE_REEMPLAZO
+                : EstadoCorteDiario.ABIERTO;
     }
 
     /**
