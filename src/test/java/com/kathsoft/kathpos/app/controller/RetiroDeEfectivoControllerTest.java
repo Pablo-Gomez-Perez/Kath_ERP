@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.Map;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -139,6 +140,29 @@ class RetiroDeEfectivoControllerTest {
         assertEquals(new BigDecimal("250.50"), detalle.importe());
         org.junit.jupiter.api.Assertions.assertTrue(detalle.esRetiroFinal());
         org.junit.jupiter.api.Assertions.assertFalse(detalle.activo());
+    }
+
+    @Test
+    void prevalidacionSoloBloqueaPorCorteFinalActivo() {
+        LocalDate fecha = LocalDate.of(2026, 9, 30);
+        var parcialActivo = new com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle(
+                1, 4, 9, "Empleado", "R-1", fecha, "Parcial",
+                new BigDecimal("25.00"), false, true);
+        var corteInactivo = new com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle(
+                2, 4, 9, "Empleado", "Z-1", fecha, "Corte corregible",
+                new BigDecimal("100.00"), true, false);
+        var corteActivo = new com.kathsoft.kathpos.app.model.retiros.RetiroDeEfectivoDetalle(
+                3, 4, 9, "Empleado", "Z-2", fecha, "Corte vigente",
+                new BigDecimal("125.00"), true, true);
+
+        org.junit.jupiter.api.Assertions.assertFalse(
+                RetiroDeEfectivoController.existeCorteFinalActivo(List.of()));
+        org.junit.jupiter.api.Assertions.assertFalse(
+                RetiroDeEfectivoController.existeCorteFinalActivo(
+                        List.of(parcialActivo, corteInactivo)));
+        org.junit.jupiter.api.Assertions.assertTrue(
+                RetiroDeEfectivoController.existeCorteFinalActivo(
+                        List.of(parcialActivo, corteInactivo, corteActivo)));
     }
 
     @Test
