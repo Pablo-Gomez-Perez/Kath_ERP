@@ -164,7 +164,7 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
         chkCorteFinal = new JCheckBox("Corte final del día (corte Z)");
         chkCorteFinal.setBackground(new Color(255, 215, 0));
         chkCorteFinal.setToolTipText(
-                "Una sucursal sólo puede registrar un corte final por fecha, incluso si después se inhabilita");
+                "El corte final bloquea nuevos retiros; si necesita corregirlo, inhabilítelo hoy y registre otro corte final");
 
         // Estructura literal declarativa: WindowBuilder puede reconstruir
         // todos los intervalos, sin grupos temporales creados en bucles.
@@ -401,9 +401,10 @@ public class Fr_DatosRetiroDeEfectivo extends JFrame {
 
         if (retiro.esRetiroFinal()) {
             int confirmado = JOptionPane.showConfirmDialog(this,
-                    "Está por registrar el corte final del día. No podrá registrar otro "
-                    + "corte final en esta sucursal hoy, incluso si inhabilita éste. "
-                    + "¿Desea continuar?",
+                    "Está por registrar el corte final del día. Después de guardarlo "
+                    + "no podrá registrar más retiros de efectivo hoy mientras el corte "
+                    + "permanezca activo. Si necesita corregir el importe, deberá "
+                    + "inhabilitarlo hoy y registrar un nuevo corte final. ¿Desea continuar?",
                     "Confirmar corte final", JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             if (confirmado != JOptionPane.YES_OPTION) {
