@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.sql.SQLException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -29,9 +31,12 @@ import javax.swing.border.LineBorder;
 
 import com.kathsoft.kathpos.app.model.Sucursal;
 import com.kathsoft.kathpos.app.model.empleado.EmpleadoLogin;
+import com.kathsoft.kathpos.app.model.configuracion.EstadoInicializacion;
+import com.kathsoft.kathpos.app.model.configuracion.SucursalInicial;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.Conexion;
 import com.kathsoft.kathpos.app.view.configuracion.Fr_ConfiguracionConexionDB;
+import com.kathsoft.kathpos.app.view.configuracion.Fr_InicializacionSistema;
 
 public class Fr_LogIn extends JFrame {
 
@@ -46,6 +51,8 @@ public class Fr_LogIn extends JFrame {
 	private Sucursal sucursal;
 	private boolean configuracionAbierta;
 	private boolean comprobandoConexion;
+	private boolean inicializacionVerificada;
+	private boolean asistenteInicialAbierto;
 
 	private JPanel panelImagen = new JPanel() {
 		private static final long serialVersionUID = -7434112987658880465L;
@@ -192,9 +199,10 @@ public class Fr_LogIn extends JFrame {
 	 * La verificación JDBC se realiza fuera del hilo de eventos Swing.
 	 */
 	private void verificarConexionAlIniciar() {
-		if (comprobandoConexion || configuracionAbierta) {
+		if (comprobandoConexion || configuracionAbierta || asistenteInicialAbierto) {
 			return;
 		}
+		inicializacionVerificada = false;
 		if (!Conexion.hayConfiguracionDisponible()) {
 			btn_ingresar.setEnabled(false);
 			abrirConfiguracionConexion();
@@ -202,26 +210,82 @@ public class Fr_LogIn extends JFrame {
 		}
 		comprobandoConexion = true;
 		btn_ingresar.setEnabled(false);
-		new SwingWorker<Void, Void>() {
+		new SwingWorker<DiagnosticoInicial, Void>() {
 			@Override
-			protected Void doInBackground() throws Exception {
+			protected DiagnosticoInicial doInBackground() throws Exception {
 				Conexion.verificarConexionInicial();
-				return null;
+				EstadoInicializacion estado =
+						AppContext.inicializacionSistemaController.consultarEstado();
+				List<SucursalInicial> sucursales = estado.necesitaSeleccionarSucursal()
+						? AppContext.inicializacionSistemaController.listarSucursales() : List.of();
+				return new DiagnosticoInicial(estado, sucursales);
 			}
 			@Override
 			protected void done() {
 				comprobandoConexion = false;
 				try {
-					get();
-					btn_ingresar.setEnabled(true);
-				} catch (Exception ex) {
+					DiagnosticoInicial diagnostico = get();
+					EstadoInicializacion estado = diagnostico.estado();
+					if (estado.requiereIntervencion()) {
+						JOptionPane.showMessageDialog(Fr_LogIn.this,
+								"Existen sucursales, pero ninguna está activa y tampoco hay empleados. "
+								+ "Corrija ese estado en la BD antes de inicializar.",
+								"Base de datos inconsistente", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (estado.requiereInicializacion()) {
+						abrirAsistenteInicial(estado, diagnostico.sucursales());
+					} else {
+						inicializacionVerificada = true;
+						btn_ingresar.setEnabled(true);
+					}
+				} catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
 					JOptionPane.showMessageDialog(Fr_LogIn.this,
-							"No fue posible establecer la conexión con la base de datos. Revise la configuración.",
-							"Configuración de conexión", JOptionPane.WARNING_MESSAGE);
-					abrirConfiguracionConexion();
+								"Se interrumpió la verificación inicial",
+								"Conexión no disponible", JOptionPane.ERROR_MESSAGE);
+				} catch (ExecutionException ex) {
+					Throwable causa = ex.getCause() == null ? ex : ex.getCause();
+					JOptionPane.showMessageDialog(Fr_LogIn.this,
+								"No fue posible completar la verificación de la BD. "
+								+ "Compruebe la conexión y que los procedimientos de primera "
+								+ "inicialización estén instalados.\n" + causa.getMessage(),
+								"Configuración inicial", JOptionPane.ERROR_MESSAGE);
+						// Permite reintentar desde Ingresar, sin omitir la comprobación.
+					btn_ingresar.setEnabled(true);
 				}
 			}
 		}.execute();
+	}
+
+	private void abrirAsistenteInicial(
+			EstadoInicializacion estado, List<SucursalInicial> sucursales) {
+		if (asistenteInicialAbierto) {
+			return;
+		}
+		asistenteInicialAbierto = true;
+		btn_ingresar.setEnabled(false);
+		Fr_InicializacionSistema asistente = new Fr_InicializacionSistema(estado, sucursales);
+		asistente.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent event) {
+				asistenteInicialAbierto = false;
+				if (asistente.isCompletado()) {
+					// Consulta nuevamente el estado de la base real, sin confiar
+					// únicamente en una respuesta 200 de la creación.
+					verificarConexionAlIniciar();
+				} else {
+					// Ingresar reabre el asistente tras consultar el estado.
+					btn_ingresar.setEnabled(true);
+				}
+			}
+		});
+		asistente.setLocationRelativeTo(this);
+		asistente.setVisible(true);
+	}
+
+	private record DiagnosticoInicial(
+			EstadoInicializacion estado, List<SucursalInicial> sucursales) {
 	}
 
 	private void abrirConfiguracionConexion() {
@@ -247,6 +311,10 @@ public class Fr_LogIn extends JFrame {
 	}
 
 	private void logIngFrPrincipal() {
+		if (!inicializacionVerificada) {
+			verificarConexionAlIniciar();
+			return;
+		}
 		String usuario = this.txfUsuario.getText();
 		char[] contrasenia = this.pswfContrasenia.getPassword();
 

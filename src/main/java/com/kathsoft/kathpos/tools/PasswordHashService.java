@@ -22,13 +22,40 @@ public final class PasswordHashService {
 	}
 
 	public static String hashPassword(String password) {
-		if (password == null || password.isBlank()) {
+		if (password == null) {
+			throw new IllegalArgumentException("La contraseña es obligatoria");
+		}
+		char[] caracteres = password.toCharArray();
+		try {
+			return hashPassword(caracteres);
+		} finally {
+			java.util.Arrays.fill(caracteres, '\0');
+		}
+	}
+
+	/**
+	 * Sobrecarga para la configuración inicial: evita convertir en String
+	 * la contraseña capturada por un JPasswordField.
+	 * El llamador conserva la responsabilidad de limpiar el arreglo.
+	 */
+	public static String hashPassword(char[] password) {
+		if (password == null || password.length == 0) {
+			throw new IllegalArgumentException("La contraseña es obligatoria");
+		}
+		boolean contenido = false;
+		for (char caracter : password) {
+			if (!Character.isWhitespace(caracter)) {
+				contenido = true;
+				break;
+			}
+		}
+		if (!contenido) {
 			throw new IllegalArgumentException("La contraseña es obligatoria");
 		}
 
 		byte[] salt = new byte[SALT_LENGTH_BYTES];
 		SECURE_RANDOM.nextBytes(salt);
-		byte[] hash = pbkdf2(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BITS);
+		byte[] hash = pbkdf2(password, salt, ITERATIONS, KEY_LENGTH_BITS);
 
 		return PREFIX + "$" + ITERATIONS + "$" + Base64.getEncoder().encodeToString(salt) + "$"
 				+ Base64.getEncoder().encodeToString(hash);
