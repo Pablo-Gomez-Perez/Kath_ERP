@@ -56,6 +56,7 @@ class CompraControllerIT extends CompraDatabaseIT {
     @BeforeEach
     void prepararExistenciasIniciales() throws SQLException {
         try (Connection connection = nuevaConexion(); Statement statement = connection.createStatement()) {
+            statement.executeUpdate("DELETE FROM pago_proveedor");
             statement.executeUpdate("DELETE FROM articulo_x_compra");
             statement.executeUpdate("DELETE FROM existencia_x_sucursal");
             statement.executeUpdate("DELETE FROM compras");
