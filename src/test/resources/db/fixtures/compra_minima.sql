@@ -1,68 +1,3 @@
-INSERT INTO grupo_contable (
-    id_grupo,
-    nombre_grupo
-) VALUES (
-    1,
-    'Activo de pruebas'
-);
-
-INSERT INTO rubro_cuenta_contable (
-    id_rubro,
-    fk_id_grupo_contable,
-    nombre,
-    descripcion,
-    naturaleza
-) VALUES (
-    1,
-    1,
-    'Cuentas de prueba',
-    'Rubro exclusivo para las pruebas de integración',
-    TRUE
-);
-
-INSERT INTO cuentas_contables (
-    id_cuenta,
-    id_cuenta_padre,
-    fk_id_rubro,
-    clave,
-    nombre,
-    descripcion,
-    nivel,
-    ultimo_nivel,
-    cargo,
-    abono,
-    activa,
-    fecha_modificacion
-) VALUES
-    (
-        1,
-        NULL,
-        1,
-        'IT-EMPLEADO',
-        'Empleado de pruebas',
-        'Cuenta ficticia para pruebas de integración',
-        1,
-        TRUE,
-        0,
-        0,
-        TRUE,
-        '2026-01-01'
-    ),
-    (
-        2,
-        NULL,
-        1,
-        'IT-PROVEEDOR',
-        'Proveedor de pruebas',
-        'Cuenta ficticia para pruebas de integración',
-        1,
-        TRUE,
-        0,
-        0,
-        TRUE,
-        '2026-01-01'
-    );
-
 INSERT INTO sucursal (
     id_sucursar,
     nombre,
@@ -102,7 +37,6 @@ INSERT INTO sucursal (
 
 INSERT INTO empleados (
     id_empleado,
-    id_cuenta_contable,
     id_sucursal,
     rfc,
     curp,
@@ -117,7 +51,6 @@ INSERT INTO empleados (
     contrasenia,
     activo
 ) VALUES (
-    1,
     1,
     1,
     'XEXX010101000',
@@ -136,7 +69,6 @@ INSERT INTO empleados (
 
 INSERT INTO proveedor (
     id_proveedor,
-    id_cuenta_contable,
     rfc,
     nombre,
     descripcion,
@@ -148,7 +80,6 @@ INSERT INTO proveedor (
     activo
 ) VALUES (
     1,
-    2,
     'XAXX010101000',
     'Proveedor Integración',
     'Proveedor ficticio para pruebas de integración',
@@ -211,3 +142,13 @@ INSERT INTO articulo (
         50.00,
         TRUE
     );
+
+INSERT INTO formas_de_pago (
+    id,
+    tipo_de_pago,
+    activo
+) VALUES (
+    1,
+    'Efectivo',
+    TRUE
+);
