@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -41,6 +42,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 	private JLabel lblNombre;
 	private JTextField txfNombreFormaDePago;
 	private JCheckBox chckbxEsFlujoDeEfectivo;
+	private boolean operacionEjecutada;
 
 	/**
 	 * Launch the application.
@@ -57,7 +59,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 	 */
 	public Fr_DatosFormaDePago(int opcion, int idFormaDePago) {
 		setTitle("Forma De Pago");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 400, 200);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
@@ -158,36 +160,68 @@ public class Fr_DatosFormaDePago extends JFrame {
 	}
 
 	private void consultarFormaPago(int id) {
-
-		FormasDePago fpago = this.formaDePagoController.consultarFormaDePagoPorId(id);
-		this.txfNombreFormaDePago.setText(fpago.getTipoDePago());
-		this.chckbxEsFlujoDeEfectivo.setSelected(fpago.isEsFlujoEfectivo());
-
+		try {
+			FormasDePago fpago = this.formaDePagoController.consultarFormaDePagoPorId(id);
+			if (fpago == null) {
+				JOptionPane.showMessageDialog(this,
+						"No se encontró la forma de pago seleccionada",
+						"Forma de pago", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			this.txfNombreFormaDePago.setText(fpago.getTipoDePago());
+			this.chckbxEsFlujoDeEfectivo.setSelected(fpago.isEsFlujoEfectivo());
+		} catch (SQLException | IllegalArgumentException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this,
+					"No fue posible consultar la forma de pago: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void insertarFormaDePago() {
-
 		FormasDePago fpago = new FormasDePago();
 		fpago.setTipoDePago(this.txfNombreFormaDePago.getText());
 		fpago.setEsFlujoEfectivo(this.chckbxEsFlujoDeEfectivo.isSelected());
-		this.formaDePagoController.insertarFormaDePago(fpago);
-		JOptionPane.showMessageDialog(this, "Registro Agregado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
 
+		try {
+			this.formaDePagoController.insertarFormaDePago(fpago);
+			this.operacionEjecutada = true;
+			JOptionPane.showMessageDialog(
+					this, "Registro agregado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
+			cerrarForm();
+		} catch (SQLException | IllegalArgumentException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this,
+					"No fue posible registrar la forma de pago: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void actualizarFormaDePago(int id) {
-
 		FormasDePago fpago = new FormasDePago();
 		fpago.setId(id);
 		fpago.setTipoDePago(this.txfNombreFormaDePago.getText());
 		fpago.setEsFlujoEfectivo(this.chckbxEsFlujoDeEfectivo.isSelected());
-		this.formaDePagoController.actualizarFormaDePago(fpago);
-		JOptionPane.showMessageDialog(this, "Registro actualizado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
-		cerrarForm();
 
+		try {
+			this.formaDePagoController.actualizarFormaDePago(fpago);
+			this.operacionEjecutada = true;
+			JOptionPane.showMessageDialog(
+					this, "Registro actualizado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
+			cerrarForm();
+		} catch (SQLException | IllegalArgumentException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this,
+					"No fue posible actualizar la forma de pago: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void cerrarForm() {
 		this.dispose();
+	}
+
+	public boolean isOperacionEjecutada() {
+		return this.operacionEjecutada;
 	}
 }
