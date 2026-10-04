@@ -11,6 +11,52 @@ import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
 class ConfiguracionFiscalControllerTest {
 
     @Test
+    void createRejectsNullConfigurationBeforeOpeningConnection() {
+        ConfiguracionFiscalController controller = new ConfiguracionFiscalController();
+
+        SpResponseModel response = controller.createConfiguracionFiscal(null);
+
+        assertEquals(-1, response.id());
+        assertTrue(response.message().contains("no es válida"));
+    }
+
+    @Test
+    void createRejectsInvalidFiscalDataBeforeOpeningConnection() {
+        ConfiguracionFiscalController controller = new ConfiguracionFiscalController();
+        ConfiguracionFiscal configuracion = new ConfiguracionFiscal(
+                0,
+                "RFC",
+                "",
+                "",
+                "60",
+                "",
+                "",
+                true);
+
+        SpResponseModel response = controller.createConfiguracionFiscal(configuracion);
+
+        assertEquals(-1, response.id());
+        assertTrue(response.message().contains("RFC"));
+    }
+
+    @Test
+    void commonValidationAcceptsANewConfigurationWithIdZero() {
+        ConfiguracionFiscal configuracion = new ConfiguracionFiscal(
+                0,
+                "XAXX010101000",
+                "Contribuyente de prueba",
+                "",
+                "601",
+                "General de Ley Personas Morales",
+                "",
+                true);
+
+        SpResponseModel response = ConfiguracionFiscalController.validarDatos(configuracion);
+
+        org.junit.jupiter.api.Assertions.assertNull(response);
+    }
+
+    @Test
     void updateRejectsNullConfigurationBeforeOpeningConnection() {
         ConfiguracionFiscalController controller = new ConfiguracionFiscalController();
 

@@ -202,10 +202,14 @@ public class Fr_ConfiguracionFiscal extends JFrame {
 	private void cargarConfiguracionFiscal() {
 		ConfiguracionFiscal configuracion = this.configuracionFiscalController.getConfiguracionFiscal();
 		if (configuracion == null) {
-			JOptionPane.showMessageDialog(this,
-					"No fue posible obtener la configuración fiscal activa. Verifique que exista el registro inicial en la base de datos.",
-					"Configuración fiscal", JOptionPane.WARNING_MESSAGE);
-			this.btnGuardar.setEnabled(false);
+			/*
+			 * Primera captura: no es un error que la tabla esté vacía.
+			 * ID 0 identifica únicamente el modo alta del formulario; MySQL
+			 * asignará el identificador real mediante createConfiguracionFiscal.
+			 */
+			this.idConfiguracionFiscal = 0;
+			this.limpiarFormulario();
+			this.btnGuardar.setEnabled(true);
 			return;
 		}
 
@@ -222,10 +226,13 @@ public class Fr_ConfiguracionFiscal extends JFrame {
 	private void guardarConfiguracionFiscal() {
 		try {
 			ConfiguracionFiscal configuracion = this.construirConfiguracionDesdeFormulario();
-			SpResponseModel respuesta = this.configuracionFiscalController.updateConfiguracionFiscal(configuracion);
+			boolean nuevaConfiguracion = this.idConfiguracionFiscal <= 0;
+			SpResponseModel respuesta = nuevaConfiguracion
+					? this.configuracionFiscalController.createConfiguracionFiscal(configuracion)
+					: this.configuracionFiscalController.updateConfiguracionFiscal(configuracion);
 
 			if (respuesta == null || respuesta.id() <= 0) {
-				String mensaje = respuesta == null ? "No se recibió respuesta al actualizar la configuración fiscal"
+				String mensaje = respuesta == null ? "No se recibió respuesta al guardar la configuración fiscal"
 						: respuesta.message();
 				JOptionPane.showMessageDialog(this, mensaje, "No fue posible guardar",
 						JOptionPane.ERROR_MESSAGE);
@@ -241,16 +248,12 @@ public class Fr_ConfiguracionFiscal extends JFrame {
 		} catch (Exception er) {
 			er.printStackTrace(System.err);
 			JOptionPane.showMessageDialog(this,
-					"Ha ocurrido un error al actualizar la configuración fiscal: " + er.getMessage(),
+					"Ha ocurrido un error al guardar la configuración fiscal: " + er.getMessage(),
 					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private ConfiguracionFiscal construirConfiguracionDesdeFormulario() {
-		if (this.idConfiguracionFiscal <= 0) {
-			throw new IllegalArgumentException("No existe una configuración fiscal válida para actualizar");
-		}
-
 		String rfc = this.txfRfcEmisor.getText().trim().toUpperCase();
 		String razonSocial = this.txfNombreRazonSocial.getText().trim();
 		String nombreComercial = this.txfNombreComercial.getText().trim();
@@ -283,6 +286,15 @@ public class Fr_ConfiguracionFiscal extends JFrame {
 				descripcionRegimen,
 				numeroRegistro,
 				true);
+	}
+
+	private void limpiarFormulario() {
+		this.txfRfcEmisor.setText("");
+		this.txfNombreRazonSocial.setText("");
+		this.txfNombreComercial.setText("");
+		this.txfClaveRegimenFiscal.setText("");
+		this.txfRegimenFiscalDescripcion.setText("");
+		this.textField.setText("");
 	}
 
 	private static String valor(String valor) {
