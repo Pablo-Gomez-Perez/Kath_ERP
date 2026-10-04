@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.kathsoft.kathpos.app.controller.FormasDePagoController;
+import com.kathsoft.kathpos.app.model.FormasDePago;
 import com.kathsoft.kathpos.app.controller.VentasController;
 import com.kathsoft.kathpos.app.model.venta.PagoPorVenta;
 import com.kathsoft.kathpos.app.model.venta.Venta;
@@ -31,6 +32,7 @@ import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionListener;
@@ -172,12 +174,21 @@ public class Fr_FormasDePago extends JFrame {
 	}
 
 	private void llenarTablaFormasDePago() {
-		this.modelTablaFormasDePago.getDataVector().removeAllElements();
-		this.tablaFormasDePago.updateUI();
-		this.formasDePagoController.verFormasDePagoEnTablaVentas().forEach(data -> {
-			this.modelTablaFormasDePago.addRow(data);
-		});
-		;
+		try {
+			List<FormasDePago> formas = this.formasDePagoController.listarFormasDePago();
+
+			this.modelTablaFormasDePago.setRowCount(0);
+			for (FormasDePago forma : formas) {
+				this.modelTablaFormasDePago.addRow(new Object[] {
+						forma.getId(), forma.getTipoDePago(), null
+				});
+			}
+		} catch (SQLException er) {
+			er.printStackTrace();
+			JOptionPane.showMessageDialog(this,
+					"No fue posible cargar las formas de pago: " + er.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private List<PagoPorVenta> formasDePago() {
