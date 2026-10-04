@@ -1,4 +1,4 @@
-package com.kathsoft.kathpos.app.view;
+package com.kathsoft.kathpos.app.view.reportes;
 
 import java.awt.EventQueue;
 
@@ -33,9 +33,9 @@ public class Fr_ReporteVentasTotales extends JFrame {
 	public Fr_ReporteVentasTotales() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		this.contentPane = new JPanel();
+		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(this.contentPane);
 
 	}
 

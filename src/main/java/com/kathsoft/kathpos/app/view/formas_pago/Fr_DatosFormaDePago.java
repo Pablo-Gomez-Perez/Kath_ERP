@@ -22,6 +22,10 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JCheckBox;
 
 public class Fr_DatosFormaDePago extends JFrame {
 
@@ -32,12 +36,11 @@ public class Fr_DatosFormaDePago extends JFrame {
 	private JLabel lblNewLabel;
 	private JPanel panelCentralFormulario;
 	private JPanel panelInferiorBotones;
-	private Box horizontalBox;
-	private JLabel lblNewLabel_1;
-	private Component horizontalStrut;
-	private JTextField txf_formaDePago;
 	private JButton btn_cancelar;
 	private JButton btnAgregar;
+	private JLabel lblNombre;
+	private JTextField txfNombreFormaDePago;
+	private JCheckBox chckbxEsFlujoDeEfectivo;
 
 	/**
 	 * Launch the application.
@@ -55,7 +58,7 @@ public class Fr_DatosFormaDePago extends JFrame {
 	public Fr_DatosFormaDePago(int opcion, int idFormaDePago) {
 		setTitle("Forma De Pago");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 500, 150);
+		setBounds(100, 100, 400, 200);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 215, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -82,20 +85,40 @@ public class Fr_DatosFormaDePago extends JFrame {
 		panelCentralFormulario = new JPanel();
 		panelCentralFormulario.setBackground(new Color(255, 215, 0));
 		contentPane.add(panelCentralFormulario, BorderLayout.CENTER);
-
-		horizontalBox = Box.createHorizontalBox();
-		panelCentralFormulario.add(horizontalBox);
-
-		lblNewLabel_1 = new JLabel("Forma de pago");
-		horizontalBox.add(lblNewLabel_1);
-
-		horizontalStrut = Box.createHorizontalStrut(20);
-		horizontalBox.add(horizontalStrut);
-
-		txf_formaDePago = new JTextField();
-		horizontalBox.add(txf_formaDePago);
-		txf_formaDePago.setColumns(30);
-		this.txf_formaDePago.setMaximumSize(this.txf_formaDePago.getPreferredSize());
+		
+		this.lblNombre = new JLabel("Nombre");
+		
+		this.txfNombreFormaDePago = new JTextField();
+		this.txfNombreFormaDePago.setColumns(10);
+		
+		this.chckbxEsFlujoDeEfectivo = new JCheckBox("Es base de flujo de efectivo");
+		this.chckbxEsFlujoDeEfectivo.setBackground(new Color(255, 215, 0));
+		this.chckbxEsFlujoDeEfectivo.setToolTipText("Selecciona únicamente si la forma de pago es de flujo de efectivo o equivalente");
+		GroupLayout gl_panelCentralFormulario = new GroupLayout(this.panelCentralFormulario);
+		gl_panelCentralFormulario.setHorizontalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.chckbxEsFlujoDeEfectivo)
+						.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+							.addComponent(this.lblNombre)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(this.txfNombreFormaDePago, GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)))
+					.addContainerGap())
+		);
+		gl_panelCentralFormulario.setVerticalGroup(
+			gl_panelCentralFormulario.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelCentralFormulario.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelCentralFormulario.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.lblNombre)
+						.addComponent(this.txfNombreFormaDePago, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(this.chckbxEsFlujoDeEfectivo)
+					.addContainerGap(30, Short.MAX_VALUE))
+		);
+		this.panelCentralFormulario.setLayout(gl_panelCentralFormulario);
 
 		if (opcion == 2) {
 			this.consultarFormaPago(idFormaDePago);
@@ -137,14 +160,16 @@ public class Fr_DatosFormaDePago extends JFrame {
 	private void consultarFormaPago(int id) {
 
 		FormasDePago fpago = this.formaDePagoController.consultarFormaDePagoPorId(id);
-		this.txf_formaDePago.setText(fpago.getTipoDePago());
+		this.txfNombreFormaDePago.setText(fpago.getTipoDePago());
+		this.chckbxEsFlujoDeEfectivo.setSelected(fpago.isEsFlujoEfectivo());
 
 	}
 
 	private void insertarFormaDePago() {
 
 		FormasDePago fpago = new FormasDePago();
-		fpago.setTipoDePago(this.txf_formaDePago.getText());
+		fpago.setTipoDePago(this.txfNombreFormaDePago.getText());
+		fpago.setEsFlujoEfectivo(this.chckbxEsFlujoDeEfectivo.isSelected());
 		this.formaDePagoController.insertarFormaDePago(fpago);
 		JOptionPane.showMessageDialog(this, "Registro Agregado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
 
@@ -154,7 +179,8 @@ public class Fr_DatosFormaDePago extends JFrame {
 
 		FormasDePago fpago = new FormasDePago();
 		fpago.setId(id);
-		fpago.setTipoDePago(this.txf_formaDePago.getText());
+		fpago.setTipoDePago(this.txfNombreFormaDePago.getText());
+		fpago.setEsFlujoEfectivo(this.chckbxEsFlujoDeEfectivo.isSelected());
 		this.formaDePagoController.actualizarFormaDePago(fpago);
 		JOptionPane.showMessageDialog(this, "Registro actualizado", "F pagos", JOptionPane.INFORMATION_MESSAGE);
 		cerrarForm();
@@ -164,5 +190,4 @@ public class Fr_DatosFormaDePago extends JFrame {
 	private void cerrarForm() {
 		this.dispose();
 	}
-
 }

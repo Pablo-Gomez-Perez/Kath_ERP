@@ -107,8 +107,9 @@ public class FormasDePagoController implements java.io.Serializable {
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_forma_de_pago(?);");
-			stm.setString(1, formaDePago.getTipoDePago());
+			stm = cn.prepareCall("CALL insert_forma_de_pago(?,?);");
+			stm.setString("forma_pago", formaDePago.getTipoDePago());
+			stm.setBoolean("p_es_flujo_efectivo", formaDePago.isEsFlujoEfectivo());
 			stm.execute();
 
 		} catch (SQLException er) {
@@ -126,14 +127,16 @@ public class FormasDePagoController implements java.io.Serializable {
 	}
 
 	public void actualizarFormaDePago(FormasDePago formaDePago) {
+		
 		CallableStatement stm = null;
 
 		try {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL update_forma_de_pago(?,?);");
-			stm.setInt(1, formaDePago.getId());
-			stm.setString(2, formaDePago.getTipoDePago());
+			stm = cn.prepareCall("CALL update_forma_de_pago(?,?,?);");
+			stm.setInt("id_forma_pago", formaDePago.getId());
+			stm.setString("forma_pago", formaDePago.getTipoDePago());
+			stm.setBoolean("p_es_flujo_efectivo", formaDePago.isEsFlujoEfectivo());
 			stm.execute();
 
 		} catch (SQLException er) {
@@ -155,7 +158,7 @@ public class FormasDePagoController implements java.io.Serializable {
 
 		cn = Conexion.establecerConexionLocal("kath_erp");
 		stm = cn.prepareCall("CALL eliminar_forma_pago(?);");
-		stm.setInt(1, idFormaDePago);
+		stm.setInt("idFormaPago", idFormaDePago);
 
 		stm.execute();
 
@@ -173,13 +176,15 @@ public class FormasDePagoController implements java.io.Serializable {
 
 			cn = Conexion.establecerConexionLocal("kath_erp");
 			stm = cn.prepareCall("CALL bucar_forma_pago_por_id(?);");
-			stm.setInt(1, id);
+			stm.setInt("idFormaDePago", id);			
 
 			rset = stm.executeQuery();
 
 			if (rset.next()) {
-				fpago.setId(rset.getInt(1));
-				fpago.setTipoDePago(rset.getString(2));
+				fpago.setId(rset.getInt("id"));
+				fpago.setEsFlujoEfectivo(rset.getBoolean("es_flujo_efectivo"));
+				fpago.setTipoDePago(rset.getString("tipo_de_pago"));
+				fpago.setEstaActivo(rset.getBoolean("activo"));
 			}
 
 			return fpago;
