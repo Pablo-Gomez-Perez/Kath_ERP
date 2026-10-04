@@ -8,7 +8,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.kathsoft.kathpos.app.model.FormasDePago;
 import com.kathsoft.kathpos.app.view.Fr_principal;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
@@ -129,8 +133,16 @@ public class PanelFormasDePago extends JPanel {
 				try {
 					Fr_DatosFormaDePago frame = new Fr_DatosFormaDePago(opcion, idFormaDePago);
 					frame.setLocationRelativeTo(cm);
-					frame.setVisible(true);
 					frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					frame.addWindowListener(new WindowAdapter() {
+						@Override
+						public void windowClosed(WindowEvent event) {
+							if (frame.isOperacionEjecutada()) {
+								llenarTablaFormasDePago();
+							}
+						}
+					});
+					frame.setVisible(true);
 				} catch (Exception er) {
 					er.printStackTrace();
 				}
@@ -149,20 +161,35 @@ public class PanelFormasDePago extends JPanel {
 		}
 
 		try {
-			AppContext.formasDePagoController.eliminarFormaDepAgo(
-					DataTools.getIndiceElementoSeleccionado(tablaFormasDePago, modelTablaFormasDePago, 0));
+			int idFormaPago = DataTools.getIndiceElementoSeleccionado(
+					tablaFormasDePago, modelTablaFormasDePago, 0);
+			AppContext.formasDePagoController.eliminarFormaDepAgo(idFormaPago);
 
 			MessageHandler.displayMessage(MessageHandler.DELETE_SUCCESS_MESSAGE, this, "");
-		} catch (SQLException er) {
+			llenarTablaFormasDePago();
+		} catch (SQLException | IllegalArgumentException er) {
 			er.printStackTrace();
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
 		}
 	}
 	
 	public void llenarTablaFormasDePago() {
-		this.modelTablaFormasDePago.getDataVector().removeAllElements();
-		this.tablaFormasDePago.updateUI();
-		AppContext.formasDePagoController.verFormasDePagoEnTabla(this.modelTablaFormasDePago);
+		try {
+			List<FormasDePago> formas = AppContext.formasDePagoController.listarFormasDePago();
+
+			this.modelTablaFormasDePago.setRowCount(0);
+			for (FormasDePago forma : formas) {
+				this.modelTablaFormasDePago.addRow(new Object[] {
+						forma.getId(),
+						forma.getTipoDePago(),
+						forma.isEstaActivo() ? "Activo" : "Inactivo"
+				});
+			}
+		} catch (SQLException er) {
+			er.printStackTrace();
+			MessageHandler.displayMessage(
+					MessageHandler.ERROR_MESSAGE, this, " ", er.getMessage());
+		}
 	}
 
 }

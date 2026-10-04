@@ -4,194 +4,142 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
-
-import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.kathsoft.kathpos.app.model.FormasDePago;
 import com.kathsoft.kathpos.tools.Conexion;
 
+/**
+ * Acceso a formas de pago mediante procedimientos almacenados.
+ *
+ * <p>El controlador no conoce componentes Swing ni DefaultTableModel.
+ * Las vistas reciben modelos de dominio y deciden cómo representarlos.</p>
+ */
 public class FormasDePagoController implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4738796646362834472L;
-	/**
-	 * 
-	 * 
-	 * 
-	 */
+    private static final long serialVersionUID = -4738796646362834472L;
 
-	private static Connection cn = null;
+    /**
+     * Lista las formas de pago retornadas por ver_formas_de_pago().
+     */
+    public List<FormasDePago> listarFormasDePago() throws SQLException {
+        List<FormasDePago> formas = new ArrayList<>();
 
-	public FormasDePagoController() {
+        try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement statement =
+                        connection.prepareCall("CALL ver_formas_de_pago()");
+                ResultSet result = statement.executeQuery()) {
 
-	}
+            while (result.next()) {
+                FormasDePago forma = new FormasDePago();
+                forma.setId(result.getInt("id"));
+                forma.setTipoDePago(result.getString("tipo_de_pago"));
+                forma.setEstaActivo(result.getBoolean("activo"));
+                formas.add(forma);
+            }
+        }
 
-	/**
-	 * 
-	 * @param tabla
-	 */
-	public void verFormasDePagoEnTabla(DefaultTableModel tabla) {
+        return formas;
+    }
 
-		ResultSet rset = null;
-		CallableStatement stm = null;
+    /**
+     * Registra una forma de pago. Si el procedimiento falla la SQLException
+     * se propaga a la vista; no se informa éxito antes de tiempo.
+     */
+    public void insertarFormaDePago(FormasDePago formaDePago) throws SQLException {
+        validarFormaDePago(formaDePago, false);
 
-		try {
+        try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement statement =
+                        connection.prepareCall("CALL insert_forma_de_pago(?,?)")) {
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_formas_de_pago();");
+            statement.setString(1, formaDePago.getTipoDePago().trim());
+            statement.setBoolean(2, formaDePago.isEsFlujoEfectivo());
+            statement.execute();
+        }
+    }
 
-			rset = stm.executeQuery();
+    /**
+     * Actualiza una forma de pago existente.
+     */
+    public void actualizarFormaDePago(FormasDePago formaDePago) throws SQLException {
+        validarFormaDePago(formaDePago, true);
 
-			while (rset.next()) {
-				tabla.addRow(new Object[] { rset.getInt(1), rset.getString(2),
-						rset.getShort(3) == 1 ? "Activo" : "Inactivo" });
-			}
+        try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement statement =
+                        connection.prepareCall("CALL update_forma_de_pago(?,?,?)")) {
 
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
+            statement.setInt(1, formaDePago.getId());
+            statement.setString(2, formaDePago.getTipoDePago().trim());
+            statement.setBoolean(3, formaDePago.isEsFlujoEfectivo());
+            statement.execute();
+        }
+    }
 
-	}
+    /**
+     * Inhabilita una forma de pago.
+     */
+    public void eliminarFormaDepAgo(int idFormaDePago) throws SQLException {
+        if (idFormaDePago <= 0) {
+            throw new IllegalArgumentException("Seleccione una forma de pago válida");
+        }
 
-	public Vector<Object[]> verFormasDePagoEnTablaVentas() {
-		ResultSet rset = null;
-		CallableStatement stm = null;
-		var data = new Vector<Object[]>();
+        try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement statement =
+                        connection.prepareCall("CALL eliminar_forma_pago(?)")) {
 
-		try {
+            statement.setInt(1, idFormaDePago);
+            statement.execute();
+        }
+    }
 
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL ver_formas_de_pago();");
+    /**
+     * Consulta una forma de pago por ID. Retorna null si el SP no devuelve fila.
+     */
+    public FormasDePago consultarFormaDePagoPorId(int id) throws SQLException {
+        if (id <= 0) {
+            throw new IllegalArgumentException("La forma de pago no es válida");
+        }
 
-			rset = stm.executeQuery();
+        try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement statement =
+                        connection.prepareCall("CALL bucar_forma_pago_por_id(?)")) {
 
-			while (rset.next()) {
-				data.add(new Object[] { rset.getInt(1), rset.getString(2) });
-			}
-			
-			return data;
-		} catch (SQLException er) {
-			er.printStackTrace();
-			return null;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, rset, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
-	}
+            statement.setInt(1, id);
 
-	/**
-	 * 
-	 * @param formaDePago
-	 */
-	public void insertarFormaDePago(FormasDePago formaDePago) {
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next()) {
+                    return null;
+                }
 
-		CallableStatement stm = null;
+                FormasDePago forma = new FormasDePago();
+                forma.setId(result.getInt("id"));
+                forma.setEsFlujoEfectivo(result.getBoolean("es_flujo_efectivo"));
+                forma.setTipoDePago(result.getString("tipo_de_pago"));
+                forma.setEstaActivo(result.getBoolean("activo"));
+                return forma;
+            }
+        }
+    }
 
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL insert_forma_de_pago(?);");
-			stm.setString(1, formaDePago.getTipoDePago());
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
-
-	}
-
-	public void actualizarFormaDePago(FormasDePago formaDePago) {
-		CallableStatement stm = null;
-
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL update_forma_de_pago(?,?);");
-			stm.setInt(1, formaDePago.getId());
-			stm.setString(2, formaDePago.getTipoDePago());
-			stm.execute();
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-		} catch (Exception er) {
-			er.printStackTrace();
-		} finally {
-			try {
-				Conexion.cerrarConexion(cn, stm);
-			} catch (SQLException er) {
-				er.printStackTrace();
-			}
-		}
-	}
-
-	public void eliminarFormaDepAgo(int idFormaDePago) throws SQLException {
-
-		CallableStatement stm = null;
-
-		cn = Conexion.establecerConexionLocal("kath_erp");
-		stm = cn.prepareCall("CALL eliminar_forma_pago(?);");
-		stm.setInt(1, idFormaDePago);
-
-		stm.execute();
-
-		Conexion.cerrarConexion(cn, stm);
-
-	}
-
-	public FormasDePago consultarFormaDePagoPorId(int id) {
-
-		ResultSet rset = null;
-		CallableStatement stm = null;
-		FormasDePago fpago = new FormasDePago();
-
-		try {
-
-			cn = Conexion.establecerConexionLocal("kath_erp");
-			stm = cn.prepareCall("CALL bucar_forma_pago_por_id(?);");
-			stm.setInt(1, id);
-
-			rset = stm.executeQuery();
-
-			if (rset.next()) {
-				fpago.setId(rset.getInt(1));
-				fpago.setTipoDePago(rset.getString(2));
-			}
-
-			return fpago;
-
-		} catch (SQLException er) {
-			er.printStackTrace();
-			return null;
-		} catch (Exception er) {
-			er.printStackTrace();
-			return null;
-		}
-
-	}
-
+    /**
+     * Validación simple previa a JDBC. Las reglas definitivas siguen en los SP.
+     */
+    static void validarFormaDePago(FormasDePago formaDePago, boolean requiereId) {
+        if (formaDePago == null) {
+            throw new IllegalArgumentException("La forma de pago es obligatoria");
+        }
+        if (requiereId && formaDePago.getId() <= 0) {
+            throw new IllegalArgumentException("La forma de pago no es válida");
+        }
+        String nombre = formaDePago.getTipoDePago();
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre de la forma de pago es obligatorio");
+        }
+        if (nombre.trim().length() > 18) {
+            throw new IllegalArgumentException(
+                    "El nombre de la forma de pago admite hasta 18 caracteres");
+        }
+    }
 }

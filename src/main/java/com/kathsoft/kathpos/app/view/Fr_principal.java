@@ -40,6 +40,7 @@ import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
 import com.kathsoft.kathpos.app.view.gastos.PanelGastos;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
+import com.kathsoft.kathpos.app.view.retiros.Fr_DatosRetiroDeEfectivo;
 import com.kathsoft.kathpos.app.view.retiros.PanelRetirosDeEfectivo;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
 import com.kathsoft.kathpos.app.view.ventas.PanelVentas;
@@ -136,7 +137,6 @@ public class Fr_principal extends JFrame {
 	private JMenuItem opcionFormasDePago;
 	private JMenu menuReportes;
 	private JMenu subMenuReportesExcel;
-	private JMenu subMenuReportesPDF;
 	private JMenu subMenuGraficas;
 	private JMenuItem opcionReporteExcelArticulo;
 	private JMenuItem opcionReporteExcelClientes;
@@ -172,6 +172,10 @@ public class Fr_principal extends JFrame {
 	private JMenu mnRetirosDeEfectivo;
 	private JMenuItem mntmRegistrarRetiroEfectivo;
 	private JMenuItem mntmConsultarRetirosDeEfectivo;
+	private JMenu mnReporteVentas;
+	private JMenuItem mntmReporteVentasTotales;
+	private JMenuItem mntmPorTicket;
+	private JMenuItem mntmReporteGlobal;
 
 	/**
 	 * Create the frame.
@@ -456,6 +460,9 @@ public class Fr_principal extends JFrame {
 		menuOperaciones.add(mnRetirosDeEfectivo);
 		
 		mntmRegistrarRetiroEfectivo = new JMenuItem("Registrar");
+		mntmRegistrarRetiroEfectivo.addActionListener( evt -> {
+			this.abrirFormRetiroDeEfectivo(this.sucursal.getIdSucursal());
+		});
 		mnRetirosDeEfectivo.add(mntmRegistrarRetiroEfectivo);
 		
 		mntmConsultarRetirosDeEfectivo = new JMenuItem("Consultar");
@@ -531,22 +538,36 @@ public class Fr_principal extends JFrame {
 				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/ventas.png")));
 		subMenuReportesExcel.add(opcionReporteExcelVentas);
 
-		subMenuReportesPDF = new JMenu("PDF");
-		subMenuReportesPDF
-				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/pdfLogo.jpg")));
-		menuReportes.add(subMenuReportesPDF);
-
 		subMenuGraficas = new JMenu("Analisis Grafico");
+		subMenuGraficas.setEnabled(false);
 		subMenuGraficas
 				.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/grafico.png")));
 		menuReportes.add(subMenuGraficas);
+		
+		mnReporteVentas = new JMenu("Ventas");
+		mnReporteVentas.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
+		menuReportes.add(mnReporteVentas);
+		
+		mntmReporteVentasTotales = new JMenuItem("Totales");
+		mntmReporteVentasTotales.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/reporte_totales.png")));
+		mnReporteVentas.add(mntmReporteVentasTotales);
+		
+		mntmPorTicket = new JMenuItem("Por Ticket");
+		mntmPorTicket.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/reporte_detalles.png")));
+		mnReporteVentas.add(mntmPorTicket);
+		
+		mntmReporteGlobal = new JMenuItem("Operaciones");
+		mntmReporteGlobal.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/reporte.png")));
+		menuReportes.add(mntmReporteGlobal);
 
 		menuContable = new JMenu("Contabilidad");
+		menuContable.setEnabled(false);
 		menuContable.setIcon(
 				new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/contabilidad.png")));
 		BarraMenu.add(menuContable);
 
 		this.opcionCatalogoCuentas = new JMenuItem();
+		opcionCatalogoCuentas.setEnabled(false);
 		opcionCatalogoCuentas.setIcon(new ImageIcon(
 				Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/cuentas_contables.png")));
 		opcionCatalogoCuentas.setText("Cuentas");
@@ -563,6 +584,7 @@ public class Fr_principal extends JFrame {
 		menuContable.add(opcionCatalogoCuentas);
 		
 		this.menuConfiguracion = new JMenu("Configuracion");
+		menuConfiguracion.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/configuracion_ico.png")));
 		this.BarraMenu.add(this.menuConfiguracion);
 		
 		this.mntmFiscal = new JMenuItem("Datos Fiscales");
@@ -793,6 +815,33 @@ public class Fr_principal extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	private void abrirFormRetiroDeEfectivo(int idSucursal) {
+			
+		Component cmp = this;
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					Fr_DatosRetiroDeEfectivo form = new Fr_DatosRetiroDeEfectivo(Fr_DatosRetiroDeEfectivo.OPCION_CREAR, 0, idSucursal);
+					form.setLocationRelativeTo(cmp);
+					form.setVisible(true);
+					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					
+				} catch (Exception e) {
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, e.getMessage());
+				}
+				
+			}
+			
+			
+		});
+		
 	}
 
 	private void abriFormDeConfiguracionDeBaseDeDatos() {
