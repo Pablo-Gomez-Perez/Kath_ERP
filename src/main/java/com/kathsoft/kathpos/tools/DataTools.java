@@ -109,7 +109,7 @@ public class DataTools {
 					
 					contenido.close();
 					fc.cancelSelection();
-					MessageHandler.displayMessage(MessageHandler.CREATE_SUCCESS_MESSAGE, parent, fc.getSelectedFile().getCanonicalPath());					
+					MessageHandler.displayMessage(MessageHandler.FILE_SUCCESS_MESSAGE, parent, fc.getSelectedFile().getCanonicalPath());					
 				}
 				if(optionVal == JFileChooser.ERROR_OPTION) {
 					return;
@@ -177,7 +177,7 @@ public class DataTools {
 
 		Files.writeString(ruta, generarContenidoCsv(tabla), StandardCharsets.UTF_8);
 		MessageHandler.displayMessage(
-				MessageHandler.CREATE_SUCCESS_MESSAGE,
+				MessageHandler.FILE_SUCCESS_MESSAGE,
 				parent,
 				ruta.toAbsolutePath().toString());
 	}
@@ -236,7 +236,7 @@ public class DataTools {
 				StandardCharsets.UTF_8);
 
 		MessageHandler.displayMessage(
-				MessageHandler.CREATE_SUCCESS_MESSAGE,
+				MessageHandler.FILE_SUCCESS_MESSAGE,
 				parent,
 				ruta.toAbsolutePath().toString());
 	}
