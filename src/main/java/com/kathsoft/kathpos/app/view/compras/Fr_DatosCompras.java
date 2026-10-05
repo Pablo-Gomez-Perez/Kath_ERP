@@ -62,6 +62,7 @@ import com.kathsoft.kathpos.app.model.compra.PagoProveedor;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.model.viewmodel.JComboboxDataViewModel;
 import com.kathsoft.kathpos.app.model.viewmodel.SpResponseModel;
+import com.kathsoft.kathpos.app.view.shared.ContextoSeleccionArticulo;
 import com.kathsoft.kathpos.app.view.shared.Fr_ListaArticulos;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
@@ -1055,7 +1056,8 @@ public class Fr_DatosCompras extends JFrame implements IListadoArticulosAcciones
 
 	private void abrirFormListaArticulos(String nombreArticulo) {
 		EventQueue.invokeLater(() -> {
-			Fr_ListaArticulos frame = new Fr_ListaArticulos(nombreArticulo, this.idSucursal, this);
+			Fr_ListaArticulos frame = new Fr_ListaArticulos(
+					nombreArticulo, this.idSucursal, this, ContextoSeleccionArticulo.COMPRA);
 			frame.setLocationRelativeTo(this);
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.setVisible(true);
