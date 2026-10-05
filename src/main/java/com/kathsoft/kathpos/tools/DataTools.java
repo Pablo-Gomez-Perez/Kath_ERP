@@ -243,7 +243,7 @@ public class DataTools {
 			return valor;
 		}
 
-		return '"' + valor.replace(""", """") + '"';
+		return "\"" + valor.replace("\"", "\"\"") + "\"";
 	}
 
 }
