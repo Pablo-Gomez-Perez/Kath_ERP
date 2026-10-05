@@ -73,6 +73,8 @@ public class Fr_ReporteVentasTotales extends JFrame {
 	private JTextField textField;
 	private JTable tableVentasTotales;
 	private DefaultTableModel modelTablaVentasTotales;
+	private LocalDate fechaInicioReporte;
+	private LocalDate fechaFinReporte;
 
 	/**
 	 * Launch the application.
@@ -272,6 +274,7 @@ public class Fr_ReporteVentasTotales extends JFrame {
 		DataTools.removerEditorDeTabla(this.tableVentasTotales, this.modelTablaVentasTotales);
 		this.buttonBuscar.addActionListener(e -> this.consultarVentasTotales());
 		this.mntmVerEnExcelcsv.addActionListener(e -> this.exportarTablaCsv());
+		this.mntmGenerarTxt.addActionListener(e -> this.exportarReporteTxt());
 	}
 
 	private void exportarTablaCsv() {
@@ -279,10 +282,49 @@ public class Fr_ReporteVentasTotales extends JFrame {
 			DataTools.exportarJTableCsv(this.tableVentasTotales, this);
 		} catch (IllegalArgumentException ex) {
 			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, ex.getMessage());
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
-					"No fue posible exportar el reporte: " + ex.getMessage());
+					"No fue posible exportar el reporte CSV: " + ex.getMessage());
+		}
+	}
+
+	private void exportarReporteTxt() {
+		if (this.tableVentasTotales.getRowCount() == 0) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"No existen datos a exportar");
+			return;
+		}
+
+		if (this.fechaInicioReporte == null || this.fechaFinReporte == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Debe realizar una consulta válida antes de exportar el reporte");
+			return;
+		}
+
+		String encabezado = "Reporte de ventas totales de "
+				+ this.fechaInicioReporte.format(FORMATO_FECHA)
+				+ " a "
+				+ this.fechaFinReporte.format(FORMATO_FECHA);
+
+		String ventasTotales = this.lblVentaTotal.getText() + ": "
+				+ this.textFieldVentasTotales.getText();
+		String ivaCobrado = this.lblIvaCobrado.getText() + ": "
+				+ this.textField.getText();
+
+		try {
+			DataTools.exportarJTableTxt(
+					this.tableVentasTotales,
+					this,
+					encabezado,
+					ventasTotales,
+					ivaCobrado);
+		} catch (IllegalArgumentException ex) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, ex.getMessage());
+		} catch (Exception ex) {
+			ex.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"No fue posible exportar el reporte TXT: " + ex.getMessage());
 		}
 	}
 
@@ -318,7 +360,10 @@ public class Fr_ReporteVentasTotales extends JFrame {
 			@Override
 			protected void done() {
 				try {
-					reemplazarResultados(get());
+					List<VentaTotalPorFecha> resultado = get();
+					reemplazarResultados(resultado);
+					fechaInicioReporte = fechaInicio;
+					fechaFinReporte = fechaFinal;
 				} catch (InterruptedException ex) {
 					Thread.currentThread().interrupt();
 					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE,
