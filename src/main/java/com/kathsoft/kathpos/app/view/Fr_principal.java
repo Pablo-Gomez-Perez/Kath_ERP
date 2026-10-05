@@ -40,6 +40,7 @@ import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
 import com.kathsoft.kathpos.app.view.gastos.PanelGastos;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
+import com.kathsoft.kathpos.app.view.reportes.Fr_ReporteVentasTotales;
 import com.kathsoft.kathpos.app.view.retiros.Fr_DatosRetiroDeEfectivo;
 import com.kathsoft.kathpos.app.view.retiros.PanelRetirosDeEfectivo;
 import com.kathsoft.kathpos.app.view.sucursal.PanelSucursales;
@@ -549,6 +550,7 @@ public class Fr_principal extends JFrame {
 		menuReportes.add(mnReporteVentas);
 		
 		mntmReporteVentasTotales = new JMenuItem("Totales");
+		mntmReporteVentasTotales.addActionListener(e -> this.abrirReporteVentasTotales());
 		mntmReporteVentasTotales.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/reporte_totales.png")));
 		mnReporteVentas.add(mntmReporteVentasTotales);
 		
@@ -815,6 +817,19 @@ public class Fr_principal extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	private void abrirReporteVentasTotales() {
+		if (this.sucursal == null || this.sucursal.getIdSucursal() <= 0) {
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"No existe una sucursal válida para generar el reporte");
+			return;
+		}
+
+		Fr_ReporteVentasTotales form = new Fr_ReporteVentasTotales(this.sucursal.getIdSucursal());
+		form.setLocationRelativeTo(this);
+		form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		form.setVisible(true);
 	}
 
 	private void abrirFormRetiroDeEfectivo(int idSucursal) {
