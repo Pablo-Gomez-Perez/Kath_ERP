@@ -55,6 +55,9 @@ public class MessageHandler {
 					"Eliminar Registro", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		}
 		case CREATE_SUCCESS_MESSAGE: {
+			JOptionPane.showMessageDialog(parentComponent,
+					"Archivo generado con éxito en la ruta: " + messageCompleted,
+					"Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
 			return 0;
 		}
 		default:
