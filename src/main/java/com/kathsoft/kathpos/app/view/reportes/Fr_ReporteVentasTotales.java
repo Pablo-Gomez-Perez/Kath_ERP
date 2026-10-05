@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,12 +21,14 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -32,10 +36,12 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 import com.kathsoft.kathpos.app.model.reporte.VentaTotalPorFecha;
+import com.kathsoft.kathpos.app.report.ventas.ReporteVentasTotalesPdfService;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -49,6 +55,7 @@ public class Fr_ReporteVentasTotales extends JFrame {
 			.withResolverStyle(ResolverStyle.STRICT);
 
 	private final long idSucursal;
+	private final ReporteVentasTotalesPdfService reportePdfService = new ReporteVentasTotalesPdfService();
 	private JPanel contentPane;
 	private JMenuBar menuBarPrincipal;
 	private JMenu mnArchivo;
@@ -74,6 +81,7 @@ public class Fr_ReporteVentasTotales extends JFrame {
 	private DefaultTableModel modelTablaVentasTotales;
 	private LocalDate fechaInicioReporte;
 	private LocalDate fechaFinReporte;
+	private List<VentaTotalPorFecha> ventasReporte = List.of();
 
 	/**
 	 * Launch the application.
@@ -274,6 +282,7 @@ public class Fr_ReporteVentasTotales extends JFrame {
 		this.buttonBuscar.addActionListener(e -> this.consultarVentasTotales());
 		this.mntmVerEnExcelcsv.addActionListener(e -> this.exportarTablaCsv());
 		this.mntmGenerarTxt.addActionListener(e -> this.exportarReporteTxt());
+		this.mntmGenerarPdf.addActionListener(e -> this.exportarReportePdf());
 	}
 
 	private void exportarTablaCsv() {
@@ -286,6 +295,89 @@ public class Fr_ReporteVentasTotales extends JFrame {
 			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
 					"No fue posible exportar el reporte CSV: " + ex.getMessage());
 		}
+	}
+
+
+	private void exportarReportePdf() {
+		if (this.ventasReporte.isEmpty()) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"No existen datos a exportar");
+			return;
+		}
+
+		if (this.fechaInicioReporte == null || this.fechaFinReporte == null) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this,
+					"Debe realizar una consulta válida antes de exportar el reporte");
+			return;
+		}
+
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Guardar reporte PDF");
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileFilter(new FileNameExtensionFilter("Documento PDF (*.pdf)", "pdf"));
+
+		if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+
+		Path ruta = asegurarExtensionPdf(chooser.getSelectedFile().toPath());
+
+		if (Files.exists(ruta)) {
+			int respuesta = JOptionPane.showConfirmDialog(
+					this,
+					"El archivo ya existe. ¿Desea reemplazarlo?",
+					"Confirmar reemplazo",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+
+			if (respuesta != JOptionPane.YES_OPTION) {
+				return;
+			}
+		}
+
+		List<VentaTotalPorFecha> ventas = List.copyOf(this.ventasReporte);
+		LocalDate fechaInicio = this.fechaInicioReporte;
+		LocalDate fechaFin = this.fechaFinReporte;
+		this.mntmGenerarPdf.setEnabled(false);
+
+		new SwingWorker<Path, Void>() {
+			@Override
+			protected Path doInBackground() throws Exception {
+				return reportePdfService.generarReporte(
+						ventas,
+						fechaInicio,
+						fechaFin,
+						ruta);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					Path archivo = get();
+					MessageHandler.displayMessage(
+							MessageHandler.FILE_SUCCESS_MESSAGE,
+							Fr_ReporteVentasTotales.this,
+							archivo.toString());
+				} catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteVentasTotales.this,
+							"La generación del PDF fue interrumpida");
+				} catch (ExecutionException ex) {
+					Throwable causa = ex.getCause();
+					String mensaje = causa == null || causa.getMessage() == null
+							? "No fue posible generar el reporte PDF"
+							: causa.getMessage();
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteVentasTotales.this,
+							mensaje);
+				} finally {
+					mntmGenerarPdf.setEnabled(true);
+				}
+			}
+		}.execute();
 	}
 
 	private void exportarReporteTxt() {
@@ -361,6 +453,7 @@ public class Fr_ReporteVentasTotales extends JFrame {
 				try {
 					List<VentaTotalPorFecha> resultado = get();
 					reemplazarResultados(resultado);
+					ventasReporte = resultado == null ? List.of() : List.copyOf(resultado);
 					fechaInicioReporte = fechaInicio;
 					fechaFinReporte = fechaFinal;
 				} catch (InterruptedException ex) {
@@ -409,6 +502,15 @@ public class Fr_ReporteVentasTotales extends JFrame {
 
 		this.textFieldVentasTotales.setText(totalVentas.setScale(2).toPlainString());
 		this.textField.setText(totalIva.setScale(2).toPlainString());
+	}
+
+
+	private static Path asegurarExtensionPdf(Path ruta) {
+		String nombre = ruta.getFileName().toString();
+		if (nombre.toLowerCase(Locale.ROOT).endsWith(".pdf")) {
+			return ruta;
+		}
+		return Path.of(ruta.toString() + ".pdf");
 	}
 
 	private MaskFormatter buildDateFormatter() {
