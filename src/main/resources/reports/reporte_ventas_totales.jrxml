@@ -142,6 +142,18 @@
         </band>
     </detail>
 
+    <pageFooter height="18">
+        <element kind="textField"
+                x="0"
+                y="2"
+                width="540"
+                height="14"
+                fontSize="8.0"
+                hTextAlign="Right">
+            <expression><![CDATA["Página " + $V{PAGE_NUMBER}]]></expression>
+        </element>
+    </pageFooter>
+
     <summary height="78">
         <element kind="staticText"
                 x="300"
@@ -187,17 +199,5 @@
             <expression><![CDATA[$P{IVA_COBRADO}]]></expression>
         </element>
     </summary>
-
-    <pageFooter height="18">
-        <element kind="textField"
-                x="0"
-                y="2"
-                width="540"
-                height="14"
-                fontSize="8.0"
-                hTextAlign="Right">
-            <expression><![CDATA["Página " + $V{PAGE_NUMBER}]]></expression>
-        </element>
-    </pageFooter>
 
 </jasperReport>
