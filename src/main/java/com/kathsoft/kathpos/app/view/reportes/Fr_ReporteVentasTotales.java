@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -270,6 +271,19 @@ public class Fr_ReporteVentasTotales extends JFrame {
 		this.tableVentasTotales.setModel(this.modelTablaVentasTotales);
 		DataTools.removerEditorDeTabla(this.tableVentasTotales, this.modelTablaVentasTotales);
 		this.buttonBuscar.addActionListener(e -> this.consultarVentasTotales());
+		this.mntmVerEnExcelcsv.addActionListener(e -> this.exportarTablaCsv());
+	}
+
+	private void exportarTablaCsv() {
+		try {
+			DataTools.exportarJTableCsv(this.tableVentasTotales, this);
+		} catch (IllegalArgumentException ex) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, ex.getMessage());
+		} catch (IOException ex) {
+			ex.printStackTrace(System.err);
+			MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, this,
+					"No fue posible exportar el reporte: " + ex.getMessage());
+		}
 	}
 
 	private void consultarVentasTotales() {
