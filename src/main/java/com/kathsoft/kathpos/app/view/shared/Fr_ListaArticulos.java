@@ -47,6 +47,7 @@ public class Fr_ListaArticulos extends JFrame {
 	private String nombreArticulo;
 	private int idSucursal;
 	private int idTipoCliente;
+	private ContextoSeleccionArticulo contextoSeleccion;
 
 	/**
 	 * Referencia al formulario invocador que recibirá el artículo seleccionado.
@@ -78,7 +79,17 @@ public class Fr_ListaArticulos extends JFrame {
 	 * @param frame formulario invocador que recibirá el artículo seleccionado
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, IListadoArticulosAcciones frame) {
-		this(nombreArticulo, idSucursal, ID_TIPO_CLIENTE_GENERAL, frame);
+		this(nombreArticulo, idSucursal, ID_TIPO_CLIENTE_GENERAL, frame,
+				ContextoSeleccionArticulo.VENTA);
+	}
+
+	/**
+	 * Variante para módulos que comparten el listado pero aplican reglas
+	 * distintas de disponibilidad.
+	 */
+	public Fr_ListaArticulos(String nombreArticulo, int idSucursal,
+			IListadoArticulosAcciones frame, ContextoSeleccionArticulo contextoSeleccion) {
+		this(nombreArticulo, idSucursal, ID_TIPO_CLIENTE_GENERAL, frame, contextoSeleccion);
 	}
 
 	/**
@@ -92,11 +103,19 @@ public class Fr_ListaArticulos extends JFrame {
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, int idTipoCliente,
 			IListadoArticulosAcciones frame) {
+		this(nombreArticulo, idSucursal, idTipoCliente, frame,
+				ContextoSeleccionArticulo.VENTA);
+	}
+
+	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, int idTipoCliente,
+			IListadoArticulosAcciones frame, ContextoSeleccionArticulo contextoSeleccion) {
 
 		this.nombreArticulo = nombreArticulo;
 		this.idSucursal = idSucursal;
 		this.idTipoCliente = idTipoCliente > 0 ? idTipoCliente : ID_TIPO_CLIENTE_GENERAL;
 		this.frame = frame;
+		this.contextoSeleccion = contextoSeleccion == null
+				? ContextoSeleccionArticulo.VENTA : contextoSeleccion;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 730, 450);
@@ -245,6 +264,13 @@ public class Fr_ListaArticulos extends JFrame {
 				return;
 			}
 
+			if (!permiteSeleccionarExistencia(this.contextoSeleccion, articulo.getExistencia())) {
+				JOptionPane.showMessageDialog(this,
+						"El artículo no tiene existencia disponible en la sucursal",
+						"Sin existencia", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+
 			String cantidadIngresada = JOptionPane.showInputDialog(this, "Ingrese la cantidad de articulos");
 			if (cantidadIngresada == null) {
 				return;
@@ -266,6 +292,17 @@ public class Fr_ListaArticulos extends JFrame {
 			JOptionPane.showMessageDialog(this, "No se pudo seleccionar el artículo: " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	/**
+	 * En ventas se exige existencia positiva. En compras la existencia actual
+	 * no limita la selección porque la operación incrementará el inventario.
+	 */
+	static boolean permiteSeleccionarExistencia(
+			ContextoSeleccionArticulo contexto, int existencia) {
+		ContextoSeleccionArticulo aplicado = contexto == null
+				? ContextoSeleccionArticulo.VENTA : contexto;
+		return aplicado == ContextoSeleccionArticulo.COMPRA || existencia > 0;
 	}
 
 	private int obtenerIdArticuloSeleccionado(int filaModelo) {
