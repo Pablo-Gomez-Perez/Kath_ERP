@@ -182,6 +182,107 @@ public class DataTools {
 				ruta.toAbsolutePath().toString());
 	}
 
+
+	/**
+	 * Exporta el contenido visible de un {@link JTable} a un archivo de texto,
+	 * incluyendo un encabezado descriptivo y líneas de resumen posteriores.
+	 *
+	 * @param tabla tabla cuyo contenido será exportado
+	 * @param parent componente padre para los diálogos
+	 * @param encabezado título que identifica el reporte
+	 * @param resumen líneas adicionales que se escribirán después de la tabla
+	 * @throws IOException si el archivo no puede escribirse
+	 * @throws IllegalArgumentException si la tabla está vacía o el encabezado es inválido
+	 */
+	public static void exportarJTableTxt(
+			JTable tabla,
+			Component parent,
+			String encabezado,
+			String... resumen) throws IOException {
+
+		validarTablaParaExportar(tabla);
+
+		if (encabezado == null || encabezado.isBlank()) {
+			throw new IllegalArgumentException("El encabezado del reporte es obligatorio");
+		}
+
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Guardar archivo TXT");
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileFilter(new FileNameExtensionFilter("Archivo de texto (*.txt)", "txt"));
+
+		if (chooser.showSaveDialog(parent) != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+
+		Path ruta = asegurarExtension(chooser.getSelectedFile().toPath(), ".txt");
+
+		if (Files.exists(ruta)) {
+			int respuesta = JOptionPane.showConfirmDialog(
+					parent,
+					"El archivo ya existe. ¿Desea reemplazarlo?",
+					"Confirmar reemplazo",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+
+			if (respuesta != JOptionPane.YES_OPTION) {
+				return;
+			}
+		}
+
+		Files.writeString(
+				ruta,
+				generarContenidoTxt(tabla, encabezado, resumen),
+				StandardCharsets.UTF_8);
+
+		MessageHandler.displayMessage(
+				MessageHandler.CREATE_SUCCESS_MESSAGE,
+				parent,
+				ruta.toAbsolutePath().toString());
+	}
+
+	static String generarContenidoTxt(JTable tabla, String encabezado, String... resumen) {
+		validarTablaParaExportar(tabla);
+
+		if (encabezado == null || encabezado.isBlank()) {
+			throw new IllegalArgumentException("El encabezado del reporte es obligatorio");
+		}
+
+		StringBuilder texto = new StringBuilder();
+		texto.append(encabezado.trim()).append(System.lineSeparator()).append(System.lineSeparator());
+
+		for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+			if (columna > 0) {
+				texto.append('\t');
+			}
+			texto.append(normalizarTextoPlano(tabla.getColumnName(columna)));
+		}
+		texto.append(System.lineSeparator());
+
+		for (int fila = 0; fila < tabla.getRowCount(); fila++) {
+			for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+				if (columna > 0) {
+					texto.append('\t');
+				}
+
+				Object valor = tabla.getValueAt(fila, columna);
+				texto.append(normalizarTextoPlano(valor == null ? "" : String.valueOf(valor)));
+			}
+			texto.append(System.lineSeparator());
+		}
+
+		if (resumen != null && resumen.length > 0) {
+			texto.append(System.lineSeparator());
+			for (String linea : resumen) {
+				if (linea != null && !linea.isBlank()) {
+					texto.append(linea.trim()).append(System.lineSeparator());
+				}
+			}
+		}
+
+		return texto.toString();
+	}
+
 	static String generarContenidoCsv(JTable tabla) {
 		validarTablaParaExportar(tabla);
 
@@ -222,11 +323,26 @@ public class DataTools {
 	}
 
 	private static Path asegurarExtensionCsv(Path ruta) {
+		return asegurarExtension(ruta, ".csv");
+	}
+
+	private static Path asegurarExtension(Path ruta, String extension) {
 		String nombre = ruta.getFileName().toString();
-		if (nombre.toLowerCase(Locale.ROOT).endsWith(".csv")) {
+		if (nombre.toLowerCase(Locale.ROOT).endsWith(extension.toLowerCase(Locale.ROOT))) {
 			return ruta;
 		}
-		return Path.of(ruta.toString() + ".csv");
+		return Path.of(ruta.toString() + extension);
+	}
+
+	private static String normalizarTextoPlano(String valor) {
+		if (valor == null) {
+			return "";
+		}
+
+		return valor
+				.replace('\t', ' ')
+				.replace('\r', ' ')
+				.replace('\n', ' ');
 	}
 
 	private static String escaparCsv(String valor) {
