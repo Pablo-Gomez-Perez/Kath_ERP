@@ -59,6 +59,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		initComponents();
 	}
 	private void initComponents() {
+		setBackground(new Color(255, 215, 0));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 629);
 		
@@ -85,6 +86,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		this.mntmVerEnExcelcsv.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		this.mnArchivo.add(this.mntmVerEnExcelcsv);
 		this.contentPane = new JPanel();
+		this.contentPane.setBackground(new Color(255, 215, 0));
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
 		this.contentPane.setLayout(new BorderLayout(0, 0));
@@ -99,6 +101,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		this.panelSuperiorTitulo.add(this.lblReporteDeVentas_1);
 		
 		this.panelPrincipal = new JPanel();
+		this.panelPrincipal.setBackground(new Color(255, 215, 0));
 		this.contentPane.add(this.panelPrincipal, BorderLayout.CENTER);
 		
 		this.lblFecha = new JLabel("Fecha");
@@ -110,15 +113,19 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		this.buttonBuscar.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
 		
 		this.panelContenedorTablaVentas = new JPanel();
+		this.panelContenedorTablaVentas.setBackground(new Color(255, 215, 0));
 		this.panelContenedorTablaVentas.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle de ventas del dia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		this.panelContenedorFormasDePago = new JPanel();
+		this.panelContenedorFormasDePago.setBackground(new Color(255, 215, 0));
 		this.panelContenedorFormasDePago.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle cobrado por forma de pago", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
 		
 		this.panelContenedorDetallePorEmpleado = new JPanel();
+		this.panelContenedorDetallePorEmpleado.setBackground(new Color(255, 215, 0));
 		this.panelContenedorDetallePorEmpleado.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle cobrado por empleado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		this.panelContenedorDetalleRetirosDeEfectivo = new JPanel();
+		this.panelContenedorDetalleRetirosDeEfectivo.setBackground(new Color(255, 215, 0));
 		this.panelContenedorDetalleRetirosDeEfectivo.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Retiros de efectivo", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		GroupLayout gl_panelPrincipal = new GroupLayout(this.panelPrincipal);
 		gl_panelPrincipal.setHorizontalGroup(
