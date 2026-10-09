@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kathsoft.kathpos.app.model.reporte.CobroResumenDia;
+import com.kathsoft.kathpos.app.model.reporte.RetiroEfectivoDia;
 import com.kathsoft.kathpos.app.model.reporte.VentaTotalPorFecha;
 import com.kathsoft.kathpos.tools.Conexion;
 
@@ -57,6 +59,105 @@ public class ReporteController implements Serializable {
         }
 
         return resultado;
+    }
+
+    /**
+     * Lista el importe cobrado por forma de pago en una sucursal y fecha.
+     * Incluye pagos de venta y cobros posteriores registrados ese día.
+     */
+    public List<CobroResumenDia> listDetalleCobrosPorFormaDePago(
+            long idSucursal,
+            LocalDate fecha) throws SQLException {
+
+        validarSucursalYFecha(idSucursal, fecha);
+        List<CobroResumenDia> resultado = new ArrayList<>();
+
+        try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement stm = cn.prepareCall(
+                        "CALL listDetalleCobrosPorFormaDePago(?,?)")) {
+
+            stm.setLong(1, idSucursal);
+            stm.setDate(2, Date.valueOf(fecha));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    resultado.add(new CobroResumenDia(
+                            rs.getString("nombre"),
+                            leerImporte(rs, "total")));
+                }
+            }
+        }
+
+        return resultado;
+    }
+
+    /**
+     * Lista el importe cobrado por empleado en una sucursal y fecha.
+     * La atribución usa el empleado de la venta para pagos iniciales y el
+     * empleado del cobro para abonos posteriores.
+     */
+    public List<CobroResumenDia> listDetalleCobradoVentasPorEmpleado(
+            long idSucursal,
+            LocalDate fecha) throws SQLException {
+
+        validarSucursalYFecha(idSucursal, fecha);
+        List<CobroResumenDia> resultado = new ArrayList<>();
+
+        try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement stm = cn.prepareCall(
+                        "CALL listDetalleCobradoVentasPorEmpleado(?,?)")) {
+
+            stm.setLong(1, idSucursal);
+            stm.setDate(2, Date.valueOf(fecha));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    resultado.add(new CobroResumenDia(
+                            rs.getString("nombre"),
+                            leerImporte(rs, "total")));
+                }
+            }
+        }
+
+        return resultado;
+    }
+
+    /**
+     * Lista los retiros activos realizados en una sucursal y fecha.
+     */
+    public List<RetiroEfectivoDia> listRetirosDeEfectivoDelDia(
+            long idSucursal,
+            LocalDate fecha) throws SQLException {
+
+        validarSucursalYFecha(idSucursal, fecha);
+        List<RetiroEfectivoDia> resultado = new ArrayList<>();
+
+        try (Connection cn = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+                CallableStatement stm = cn.prepareCall(
+                        "CALL listRetirosDeEfectivoDelDia(?,?)")) {
+
+            stm.setLong(1, idSucursal);
+            stm.setDate(2, Date.valueOf(fecha));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    resultado.add(new RetiroEfectivoDia(
+                            rs.getString("folio"),
+                            leerImporte(rs, "importe")));
+                }
+            }
+        }
+
+        return resultado;
+    }
+
+    static void validarSucursalYFecha(long idSucursal, LocalDate fecha) {
+        if (idSucursal <= 0) {
+            throw new IllegalArgumentException("El identificador de sucursal es inválido");
+        }
+        if (fecha == null) {
+            throw new IllegalArgumentException("Debe indicar la fecha del reporte");
+        }
     }
 
     static void validarParametros(long idSucursal, LocalDate fechaInicio, LocalDate fechaFin) {

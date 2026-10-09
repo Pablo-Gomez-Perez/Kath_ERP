@@ -1,6 +1,16 @@
 package com.kathsoft.kathpos.app.view.reportes;
 
 import java.awt.EventQueue;
+import java.sql.Date;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,17 +26,32 @@ import java.awt.Font;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.MaskFormatter;
+
+import com.kathsoft.kathpos.app.model.reporte.CobroResumenDia;
+import com.kathsoft.kathpos.app.model.reporte.RetiroEfectivoDia;
+import com.kathsoft.kathpos.app.model.venta.VentaFiltro;
+import com.kathsoft.kathpos.app.model.venta.VentaListado;
+import com.kathsoft.kathpos.tools.AppContext;
+import com.kathsoft.kathpos.tools.DataTools;
+import com.kathsoft.kathpos.tools.MessageHandler;
 
 public class Fr_ReporteDetalleVentas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private static final DateTimeFormatter FORMATO_FECHA = new DateTimeFormatterBuilder()
+			.appendPattern("dd/MM/uuuu")
+			.toFormatter(Locale.ROOT)
+			.withResolverStyle(ResolverStyle.STRICT);
+
+	private final long idSucursal;
 	private JPanel contentPane;	
 	private JMenuBar menuBarPrincipal;
 	private JMenu mnArchivo;
@@ -42,6 +67,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 	private JButton buttonBuscar;
 	private JPanel panelContenedorTablaVentas;
 	private JScrollPane scrollPaneTablaVentas;
+	private JTable tableVentas;
 	private JPanel panelContenedorFormasDePago;
 	private JScrollPane scrollPaneTablaFormasDePago;
 	private JTable tableFormasDePago;
@@ -50,17 +76,27 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 	private JTable tableDetallePorEmpleado;
 	private JPanel panelContenedorDetalleRetirosDeEfectivo;
 	private JScrollPane scrollPaneTablaRetirosDeEfectivo;
+	private JTable tableRetirosDeEfectivo;
+	private DefaultTableModel modelTablaVentas;
+	private DefaultTableModel modelTablaFormasDePago;
+	private DefaultTableModel modelTablaDetallePorEmpleado;
+	private DefaultTableModel modelTablaRetirosDeEfectivo;
 
 	/**
 	 * Create the frame.
 	 */
 	public Fr_ReporteDetalleVentas() {
+		this(0L);
+	}
 
+	public Fr_ReporteDetalleVentas(long idSucursal) {
+		this.idSucursal = idSucursal;
 		initComponents();
+		inicializarReporte();
 	}
 	private void initComponents() {
 		setBackground(new Color(255, 215, 0));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 629);
 		
 		this.menuBarPrincipal = new JMenuBar();
@@ -106,7 +142,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		
 		this.lblFecha = new JLabel("Fecha");
 		
-		this.formattedTextFieldFechaConsulta = new JFormattedTextField((AbstractFormatter) null);
+		this.formattedTextFieldFechaConsulta = new JFormattedTextField(this.buildDateFormatter());
 		this.formattedTextFieldFechaConsulta.setToolTipText("dd/MM/yyyy");
 		
 		this.buttonBuscar = new JButton("");
@@ -175,6 +211,9 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		
 		this.scrollPaneTablaRetirosDeEfectivo = new JScrollPane();
 		this.panelContenedorDetalleRetirosDeEfectivo.add(this.scrollPaneTablaRetirosDeEfectivo, BorderLayout.CENTER);
+
+		this.tableRetirosDeEfectivo = new JTable();
+		this.scrollPaneTablaRetirosDeEfectivo.setViewportView(this.tableRetirosDeEfectivo);
 		this.panelContenedorDetallePorEmpleado.setLayout(new BorderLayout(0, 0));
 		
 		this.scrollPaneTablaDetallePorEmpleado = new JScrollPane();
@@ -193,6 +232,208 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		
 		this.scrollPaneTablaVentas = new JScrollPane();
 		this.panelContenedorTablaVentas.add(this.scrollPaneTablaVentas, BorderLayout.CENTER);
+
+		this.tableVentas = new JTable();
+		this.scrollPaneTablaVentas.setViewportView(this.tableVentas);
 		this.panelPrincipal.setLayout(gl_panelPrincipal);
+	}
+
+	private void inicializarReporte() {
+		this.modelTablaVentas = crearModeloVentas();
+		this.modelTablaFormasDePago = crearModeloFormasDePago();
+		this.modelTablaDetallePorEmpleado = crearModeloDetallePorEmpleado();
+		this.modelTablaRetirosDeEfectivo = crearModeloRetiros();
+
+		this.tableVentas.setModel(this.modelTablaVentas);
+		this.tableFormasDePago.setModel(this.modelTablaFormasDePago);
+		this.tableDetallePorEmpleado.setModel(this.modelTablaDetallePorEmpleado);
+		this.tableRetirosDeEfectivo.setModel(this.modelTablaRetirosDeEfectivo);
+
+		DataTools.removerEditorDeTabla(this.tableVentas, this.modelTablaVentas);
+		DataTools.removerEditorDeTabla(this.tableFormasDePago, this.modelTablaFormasDePago);
+		DataTools.removerEditorDeTabla(this.tableDetallePorEmpleado, this.modelTablaDetallePorEmpleado);
+		DataTools.removerEditorDeTabla(this.tableRetirosDeEfectivo, this.modelTablaRetirosDeEfectivo);
+
+		this.buttonBuscar.addActionListener(e -> this.consultarDetalleDelDia());
+	}
+
+	private void consultarDetalleDelDia() {
+		final LocalDate fecha;
+
+		try {
+			if (this.idSucursal <= 0) {
+				throw new IllegalArgumentException(
+						"No existe una sucursal válida para consultar el reporte");
+			}
+			fecha = this.parseFecha();
+		} catch (IllegalArgumentException ex) {
+			MessageHandler.displayMessage(MessageHandler.WARN_MESSAGE, this, ex.getMessage());
+			return;
+		}
+
+		this.buttonBuscar.setEnabled(false);
+
+		new javax.swing.SwingWorker<DetalleVentaDiaResultado, Void>() {
+			@Override
+			protected DetalleVentaDiaResultado doInBackground() throws Exception {
+				Date fechaSql = Date.valueOf(fecha);
+				VentaFiltro filtroVentas = new VentaFiltro.VentaFiltroBuilder()
+						.tipoBusqueda("TODOS")
+						.textoBusqueda("")
+						.ordenarPor("FECHA")
+						.fechaInicial(fechaSql)
+						.fechaFinal(fechaSql)
+						.build();
+
+				List<VentaListado> ventas =
+						AppContext.ventasController.listVentas(idSucursal, filtroVentas);
+				List<CobroResumenDia> formasPago =
+						AppContext.reporteController.listDetalleCobrosPorFormaDePago(
+								idSucursal, fecha);
+				List<CobroResumenDia> cobrosEmpleado =
+						AppContext.reporteController.listDetalleCobradoVentasPorEmpleado(
+								idSucursal, fecha);
+				List<RetiroEfectivoDia> retiros =
+						AppContext.reporteController.listRetirosDeEfectivoDelDia(
+								idSucursal, fecha);
+
+				return new DetalleVentaDiaResultado(
+						ventas, formasPago, cobrosEmpleado, retiros);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					reemplazarResultados(get());
+				} catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							"La consulta del reporte fue interrumpida");
+				} catch (ExecutionException ex) {
+					Throwable causa = ex.getCause();
+					String mensaje = causa == null || causa.getMessage() == null
+							? "No fue posible consultar el detalle de ventas"
+							: causa.getMessage();
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							mensaje);
+				} finally {
+					buttonBuscar.setEnabled(true);
+				}
+			}
+		}.execute();
+	}
+
+	private void reemplazarResultados(DetalleVentaDiaResultado resultado) {
+		this.modelTablaVentas.setRowCount(0);
+		this.modelTablaFormasDePago.setRowCount(0);
+		this.modelTablaDetallePorEmpleado.setRowCount(0);
+		this.modelTablaRetirosDeEfectivo.setRowCount(0);
+
+		for (VentaListado venta : resultado.ventas()) {
+			this.modelTablaVentas.addRow(new Object[] {
+					venta.getFolio(),
+					venta.getFecha() == null ? "" : venta.getFecha().toLocalDate().format(FORMATO_FECHA),
+					venta.getTipo(),
+					venta.getAtendio(),
+					venta.getCliente(),
+					venta.getSubtotal(),
+					venta.getIva(),
+					venta.getTotal(),
+					venta.getVigente()
+			});
+		}
+
+		for (CobroResumenDia fila : resultado.formasPago()) {
+			this.modelTablaFormasDePago.addRow(new Object[] { fila.nombre(), fila.total() });
+		}
+
+		for (CobroResumenDia fila : resultado.cobrosEmpleado()) {
+			this.modelTablaDetallePorEmpleado.addRow(new Object[] { fila.nombre(), fila.total() });
+		}
+
+		for (RetiroEfectivoDia retiro : resultado.retiros()) {
+			this.modelTablaRetirosDeEfectivo.addRow(
+					new Object[] { retiro.folio(), retiro.importe() });
+		}
+	}
+
+	static DefaultTableModel crearModeloVentas() {
+		return modeloNoEditable(new Object[] {
+				"Folio", "Fecha", "Tipo", "Atendió", "Cliente",
+				"Sub total", "IVA", "Total", "Estado"
+		});
+	}
+
+	static DefaultTableModel crearModeloFormasDePago() {
+		return modeloNoEditable(new Object[] { "Forma de pago", "Total" });
+	}
+
+	static DefaultTableModel crearModeloDetallePorEmpleado() {
+		return modeloNoEditable(new Object[] { "Empleado", "Total" });
+	}
+
+	static DefaultTableModel crearModeloRetiros() {
+		return modeloNoEditable(new Object[] { "Folio", "Importe" });
+	}
+
+	private static DefaultTableModel modeloNoEditable(Object[] columnas) {
+		return new DefaultTableModel(columnas, 0) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+	}
+
+	private MaskFormatter buildDateFormatter() {
+		try {
+			MaskFormatter formatter = new MaskFormatter("##/##/####");
+			formatter.setPlaceholderCharacter('_');
+			formatter.setValidCharacters("0123456789");
+			return formatter;
+		} catch (ParseException ex) {
+			ex.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	private LocalDate parseFecha() {
+		String texto = this.formattedTextFieldFechaConsulta.getText() == null
+				? ""
+				: this.formattedTextFieldFechaConsulta.getText().trim();
+
+		if (texto.isEmpty() || "__/__/____".equals(texto)) {
+			throw new IllegalArgumentException("Debe indicar la fecha del reporte");
+		}
+		if (texto.contains("_")) {
+			throw new IllegalArgumentException("La fecha del reporte está incompleta");
+		}
+
+		try {
+			return LocalDate.parse(texto, FORMATO_FECHA);
+		} catch (DateTimeParseException ex) {
+			throw new IllegalArgumentException(
+					"Formato de fecha inválido. Usa dd/MM/yyyy", ex);
+		}
+	}
+
+	private record DetalleVentaDiaResultado(
+			List<VentaListado> ventas,
+			List<CobroResumenDia> formasPago,
+			List<CobroResumenDia> cobrosEmpleado,
+			List<RetiroEfectivoDia> retiros) {
+
+		private DetalleVentaDiaResultado {
+			ventas = ventas == null ? List.of() : List.copyOf(ventas);
+			formasPago = formasPago == null ? List.of() : List.copyOf(formasPago);
+			cobrosEmpleado = cobrosEmpleado == null ? List.of() : List.copyOf(cobrosEmpleado);
+			retiros = retiros == null ? List.of() : List.copyOf(retiros);
+		}
 	}
 }
