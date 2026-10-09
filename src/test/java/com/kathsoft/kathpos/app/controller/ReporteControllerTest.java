@@ -8,6 +8,8 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
+import com.kathsoft.kathpos.app.model.reporte.CobroResumenDia;
+import com.kathsoft.kathpos.app.model.reporte.RetiroEfectivoDia;
 import com.kathsoft.kathpos.app.model.reporte.VentaTotalPorFecha;
 
 class ReporteControllerTest {
@@ -50,6 +52,34 @@ class ReporteControllerTest {
                         1L,
                         LocalDate.of(2026, 10, 5),
                         LocalDate.of(2026, 10, 4)));
+    }
+
+    @Test
+    void detalleDiarioValidaSucursalYFecha() {
+        ReporteController.validarSucursalYFecha(
+                1L,
+                LocalDate.of(2026, 10, 7));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> ReporteController.validarSucursalYFecha(
+                        0L,
+                        LocalDate.of(2026, 10, 7)));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> ReporteController.validarSucursalYFecha(1L, null));
+    }
+
+    @Test
+    void modelosDeDetalleNormalizanImportes() {
+        CobroResumenDia cobro = new CobroResumenDia(
+                "Efectivo",
+                new BigDecimal("125.555"));
+        RetiroEfectivoDia retiro = new RetiroEfectivoDia(
+                "RET-001",
+                new BigDecimal("80"));
+
+        assertEquals(new BigDecimal("125.56"), cobro.total());
+        assertEquals(new BigDecimal("80.00"), retiro.importe());
     }
 
     @Test
