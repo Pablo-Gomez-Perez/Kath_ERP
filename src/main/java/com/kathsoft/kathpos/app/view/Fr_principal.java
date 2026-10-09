@@ -40,6 +40,7 @@ import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
 import com.kathsoft.kathpos.app.view.gastos.PanelGastos;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
+import com.kathsoft.kathpos.app.view.reportes.Fr_ReporteDetalleVentas;
 import com.kathsoft.kathpos.app.view.reportes.Fr_ReporteVentasTotales;
 import com.kathsoft.kathpos.app.view.retiros.Fr_DatosRetiroDeEfectivo;
 import com.kathsoft.kathpos.app.view.retiros.PanelRetirosDeEfectivo;
@@ -555,6 +556,9 @@ public class Fr_principal extends JFrame {
 		mnReporteVentas.add(mntmReporteVentasTotales);
 		
 		mntmPorTicket = new JMenuItem("Por Ticket");
+		this.mntmPorTicket.addActionListener(evt -> {
+			this.abrirReporteVentasDetalle();
+		});
 		mntmPorTicket.setIcon(new ImageIcon(Fr_principal.class.getResource("/com/kathsoft/kathpos/app/assets/reporte_detalles.png")));
 		mnReporteVentas.add(mntmPorTicket);
 		
@@ -817,6 +821,32 @@ public class Fr_principal extends JFrame {
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	private void abrirReporteVentasDetalle() {
+		
+		Component cmp = this;
+		SwingUtilities.invokeLater( new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					Fr_ReporteDetalleVentas form = new Fr_ReporteDetalleVentas(sucursal.getIdSucursal());
+					form.setLocationRelativeTo(cmp);
+					form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					form.setVisible(true);
+					
+				}catch (Exception e) {
+					e.printStackTrace();
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, cmp, e.getMessage());
+				}
+				
+			}
+			
+		});
+		
 	}
 
 	private void abrirReporteVentasTotales() {
