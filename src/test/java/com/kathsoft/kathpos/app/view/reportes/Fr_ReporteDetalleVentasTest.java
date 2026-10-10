@@ -13,20 +13,15 @@ class Fr_ReporteDetalleVentasTest {
     void modeloVentasTieneContratoEsperadoYNoEsEditable() {
         DefaultTableModel modelo = Fr_ReporteDetalleVentas.crearModeloVentas();
 
-        assertEquals(9, modelo.getColumnCount());
+        assertEquals(5, modelo.getColumnCount());
         assertEquals("Folio", modelo.getColumnName(0));
-        assertEquals("Fecha", modelo.getColumnName(1));
-        assertEquals("Tipo", modelo.getColumnName(2));
-        assertEquals("Atendió", modelo.getColumnName(3));
-        assertEquals("Cliente", modelo.getColumnName(4));
-        assertEquals("Sub total", modelo.getColumnName(5));
-        assertEquals("IVA", modelo.getColumnName(6));
-        assertEquals("Total", modelo.getColumnName(7));
-        assertEquals("Estado", modelo.getColumnName(8));
+        assertEquals("Sub total", modelo.getColumnName(1));
+        assertEquals("IVA", modelo.getColumnName(2));
+        assertEquals("Total", modelo.getColumnName(3));
+        assertEquals("Estado", modelo.getColumnName(4));
 
         modelo.addRow(new Object[] {
-                1, "07/10/2026", "Contado", "Empleado", "Cliente",
-                100.00, 16.00, 116.00, "Vigente"
+                1, 100.00, 16.00, 116.00, "Vigente"
         });
 
         for (int columna = 0; columna < modelo.getColumnCount(); columna++) {
