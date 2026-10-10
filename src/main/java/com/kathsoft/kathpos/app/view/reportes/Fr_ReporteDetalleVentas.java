@@ -2,6 +2,8 @@ package com.kathsoft.kathpos.app.view.reportes;
 
 import java.awt.EventQueue;
 import java.sql.Date;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,8 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenuBar;
@@ -32,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
@@ -39,6 +44,8 @@ import com.kathsoft.kathpos.app.model.reporte.CobroResumenDia;
 import com.kathsoft.kathpos.app.model.reporte.RetiroEfectivoDia;
 import com.kathsoft.kathpos.app.model.venta.VentaFiltro;
 import com.kathsoft.kathpos.app.model.venta.VentaListado;
+import com.kathsoft.kathpos.app.report.ventas.detalle.ReporteDetalleVentasExportService;
+import com.kathsoft.kathpos.app.report.ventas.detalle.ReporteDetalleVentasSeccion;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -50,6 +57,8 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 			.toFormatter(Locale.ROOT).withResolverStyle(ResolverStyle.STRICT);
 
 	private final long idSucursal;
+	private final ReporteDetalleVentasExportService exportService = new ReporteDetalleVentasExportService();
+	private LocalDate fechaReporte;
 	private JPanel contentPane;
 	private JMenuBar menuBarPrincipal;
 	private JMenu mnArchivo;
@@ -271,6 +280,9 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		DataTools.removerEditorDeTabla(this.tableRetirosDeEfectivo, this.modelTablaRetirosDeEfectivo);
 
 		this.buttonBuscar.addActionListener(e -> this.consultarDetalleDelDia());
+		this.mntmGenerarPdf.addActionListener(e -> this.exportarPdf());
+		this.mntmGenerarTxt.addActionListener(e -> this.exportarTxt());
+		this.mntmVerEnExcelcsv.addActionListener(e -> this.exportarCsv());
 	}
 
 	private void consultarDetalleDelDia() {
@@ -310,7 +322,9 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 			@Override
 			protected void done() {
 				try {
-					reemplazarResultados(get());
+					DetalleVentaDiaResultado resultado = get();
+					reemplazarResultados(resultado);
+					fechaReporte = fecha;
 				} catch (InterruptedException ex) {
 					Thread.currentThread().interrupt();
 					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, Fr_ReporteDetalleVentas.this,
@@ -377,6 +391,220 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 				return false;
 			}
 		};
+	}
+
+
+	private void exportarPdf() {
+		ReporteExportacionActual reporte = obtenerReporteActual();
+		if (reporte == null) {
+			return;
+		}
+
+		exportarArchivo(
+				this.mntmGenerarPdf,
+				"Guardar reporte PDF",
+				".pdf",
+				"Documento PDF (*.pdf)",
+				ruta -> this.exportService.generarPdf(
+						reporte.fecha(),
+						reporte.secciones(),
+						ruta));
+	}
+
+	private void exportarTxt() {
+		ReporteExportacionActual reporte = obtenerReporteActual();
+		if (reporte == null) {
+			return;
+		}
+
+		exportarArchivo(
+				this.mntmGenerarTxt,
+				"Guardar reporte TXT",
+				".txt",
+				"Archivo de texto (*.txt)",
+				ruta -> this.exportService.generarTxt(
+						reporte.fecha(),
+						reporte.secciones(),
+						ruta));
+	}
+
+	private void exportarCsv() {
+		ReporteExportacionActual reporte = obtenerReporteActual();
+		if (reporte == null) {
+			return;
+		}
+
+		exportarArchivo(
+				this.mntmVerEnExcelcsv,
+				"Guardar reporte CSV",
+				".csv",
+				"Archivo CSV (*.csv)",
+				ruta -> this.exportService.generarCsv(
+						reporte.fecha(),
+						reporte.secciones(),
+						ruta));
+	}
+
+	private ReporteExportacionActual obtenerReporteActual() {
+		if (this.fechaReporte == null) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"Debe realizar una consulta válida antes de exportar el reporte");
+			return null;
+		}
+
+		List<ReporteDetalleVentasSeccion> secciones = List.of(
+				crearSeccion("Detalle de ventas del dia", this.tableVentas),
+				crearSeccion("Detalle por forma de pago", this.tableFormasDePago),
+				crearSeccion("Detalle por empleados", this.tableDetallePorEmpleado),
+				crearSeccion("Retiros de efectivo", this.tableRetirosDeEfectivo));
+
+		boolean existenDatos = secciones.stream()
+				.anyMatch(ReporteDetalleVentasSeccion::tieneDatos);
+
+		if (!existenDatos) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"No existen datos a exportar");
+			return null;
+		}
+
+		return new ReporteExportacionActual(this.fechaReporte, secciones);
+	}
+
+	private static ReporteDetalleVentasSeccion crearSeccion(String titulo, JTable tabla) {
+		List<String> columnas = new java.util.ArrayList<>();
+		List<List<String>> filas = new java.util.ArrayList<>();
+
+		for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+			columnas.add(tabla.getColumnName(columna));
+		}
+
+		for (int fila = 0; fila < tabla.getRowCount(); fila++) {
+			List<String> valores = new java.util.ArrayList<>();
+			for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+				Object valor = tabla.getValueAt(fila, columna);
+				valores.add(valor == null ? "" : String.valueOf(valor));
+			}
+			filas.add(List.copyOf(valores));
+		}
+
+		return new ReporteDetalleVentasSeccion(
+				titulo,
+				List.copyOf(columnas),
+				List.copyOf(filas));
+	}
+
+	private void exportarArchivo(
+			JMenuItem itemMenu,
+			String tituloSelector,
+			String extension,
+			String descripcionFiltro,
+			OperacionExportacion operacion) {
+
+		Path ruta = seleccionarRuta(
+				tituloSelector,
+				extension,
+				descripcionFiltro);
+
+		if (ruta == null) {
+			return;
+		}
+
+		itemMenu.setEnabled(false);
+
+		new javax.swing.SwingWorker<Path, Void>() {
+			@Override
+			protected Path doInBackground() throws Exception {
+				return operacion.ejecutar(ruta);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					Path archivo = get();
+					MessageHandler.displayMessage(
+							MessageHandler.FILE_SUCCESS_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							archivo.toString());
+				} catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							"La exportación del reporte fue interrumpida");
+				} catch (ExecutionException ex) {
+					Throwable causa = ex.getCause();
+					String mensaje = causa == null || causa.getMessage() == null
+							? "No fue posible exportar el reporte"
+							: causa.getMessage();
+
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							mensaje);
+				} finally {
+					itemMenu.setEnabled(true);
+				}
+			}
+		}.execute();
+	}
+
+	private Path seleccionarRuta(
+			String tituloSelector,
+			String extension,
+			String descripcionFiltro) {
+
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle(tituloSelector);
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileFilter(new FileNameExtensionFilter(
+				descripcionFiltro,
+				extension.substring(1)));
+
+		if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+			return null;
+		}
+
+		Path ruta = asegurarExtension(chooser.getSelectedFile().toPath(), extension);
+
+		if (Files.exists(ruta)) {
+			int respuesta = JOptionPane.showConfirmDialog(
+					this,
+					"El archivo ya existe. ¿Desea reemplazarlo?",
+					"Confirmar reemplazo",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+
+			if (respuesta != JOptionPane.YES_OPTION) {
+				return null;
+			}
+		}
+
+		return ruta;
+	}
+
+	private static Path asegurarExtension(Path ruta, String extension) {
+		String nombre = ruta.getFileName().toString();
+
+		if (nombre.toLowerCase(Locale.ROOT)
+				.endsWith(extension.toLowerCase(Locale.ROOT))) {
+			return ruta;
+		}
+
+		return Path.of(ruta.toString() + extension);
+	}
+
+	@FunctionalInterface
+	private interface OperacionExportacion {
+		Path ejecutar(Path ruta) throws Exception;
+	}
+
+	private record ReporteExportacionActual(
+			LocalDate fecha,
+			List<ReporteDetalleVentasSeccion> secciones) {
 	}
 
 	private MaskFormatter buildDateFormatter() {
