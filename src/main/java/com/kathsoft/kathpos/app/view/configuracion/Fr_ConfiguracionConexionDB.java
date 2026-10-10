@@ -259,7 +259,7 @@ public class Fr_ConfiguracionConexionDB extends JFrame {
                 registrar("La contraseña se almacena cifrada, pero no sustituye un gestor de secretos del SO.");
             }
         });
-
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     private void cargarValoresGuardados() {

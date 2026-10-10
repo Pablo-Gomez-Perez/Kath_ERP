@@ -1,0 +1,174 @@
+<jasperReport name="ReporteDetalleVentas"
+        language="java"
+        pageWidth="612"
+        pageHeight="792"
+        columnWidth="540"
+        leftMargin="36"
+        rightMargin="36"
+        topMargin="36"
+        bottomMargin="36"
+        uuid="4252cd7f-8347-47d3-9cdf-e48a9e8afd5b">
+
+    <property name="net.sf.jasperreports.export.pdf.metadata.title" value="Reporte de ventas a detalle"/>
+
+    <style name="Base" default="true" fontName="SansSerif" fontSize="9.0"/>
+
+    <parameter name="TITULO" class="java.lang.String"/>
+
+    <field name="tipoFila" class="java.lang.String"/>
+    <field name="columna1" class="java.lang.String"/>
+    <field name="columna2" class="java.lang.String"/>
+    <field name="columna3" class="java.lang.String"/>
+    <field name="columna4" class="java.lang.String"/>
+    <field name="columna5" class="java.lang.String"/>
+
+    <title height="62">
+        <element kind="textField"
+                x="0"
+                y="0"
+                width="540"
+                height="42"
+                bold="true"
+                fontSize="25.0"
+                hTextAlign="Center"
+                vTextAlign="Middle">
+            <expression><![CDATA[$P{TITULO}]]></expression>
+        </element>
+    </title>
+
+    <detail>
+
+        <band height="30" splitType="Prevent">
+            <printWhenExpression><![CDATA[$F{tipoFila}.equals("SECCION")]]></printWhenExpression>
+            <element kind="textField"
+                    x="0"
+                    y="5"
+                    width="540"
+                    height="20"
+                    bold="true"
+                    fontSize="12.0"
+                    vTextAlign="Middle">
+                <expression><![CDATA[$F{columna1}]]></expression>
+            </element>
+        </band>
+
+        <band height="26" splitType="Prevent">
+            <printWhenExpression><![CDATA[$F{tipoFila}.equals("CABECERA_5")]]></printWhenExpression>
+
+            <element kind="textField" x="0" y="0" width="80" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    hTextAlign="Center" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna1}]]></expression>
+            </element>
+
+            <element kind="textField" x="80" y="0" width="115" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna2}]]></expression>
+            </element>
+
+            <element kind="textField" x="195" y="0" width="90" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna3}]]></expression>
+            </element>
+
+            <element kind="textField" x="285" y="0" width="115" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna4}]]></expression>
+            </element>
+
+            <element kind="textField" x="400" y="0" width="140" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    hTextAlign="Center" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna5}]]></expression>
+            </element>
+        </band>
+
+        <band height="23" splitType="Prevent">
+            <printWhenExpression><![CDATA[$F{tipoFila}.equals("DATO_5")]]></printWhenExpression>
+
+            <element kind="textField" x="0" y="1" width="80" height="20"
+                    hTextAlign="Center" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna1}]]></expression>
+            </element>
+
+            <element kind="textField" x="80" y="1" width="115" height="20"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna2}]]></expression>
+            </element>
+
+            <element kind="textField" x="195" y="1" width="90" height="20"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna3}]]></expression>
+            </element>
+
+            <element kind="textField" x="285" y="1" width="115" height="20"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna4}]]></expression>
+            </element>
+
+            <element kind="textField" x="400" y="1" width="140" height="20"
+                    hTextAlign="Center" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna5}]]></expression>
+            </element>
+        </band>
+
+        <band height="26" splitType="Prevent">
+            <printWhenExpression><![CDATA[$F{tipoFila}.equals("CABECERA_2")]]></printWhenExpression>
+
+            <element kind="textField" x="0" y="0" width="360" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    vTextAlign="Middle">
+                <expression><![CDATA[$F{columna1}]]></expression>
+            </element>
+
+            <element kind="textField" x="360" y="0" width="180" height="24"
+                    mode="Opaque" backcolor="#E6E6E6" bold="true"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna2}]]></expression>
+            </element>
+        </band>
+
+        <band height="23" splitType="Prevent">
+            <printWhenExpression><![CDATA[$F{tipoFila}.equals("DATO_2")]]></printWhenExpression>
+
+            <element kind="textField" x="0" y="1" width="360" height="20"
+                    vTextAlign="Middle">
+                <expression><![CDATA[$F{columna1}]]></expression>
+            </element>
+
+            <element kind="textField" x="360" y="1" width="180" height="20"
+                    hTextAlign="Right" vTextAlign="Middle">
+                <expression><![CDATA[$F{columna2}]]></expression>
+            </element>
+        </band>
+
+        <band height="18" splitType="Prevent">
+            <printWhenExpression><![CDATA[$F{tipoFila}.equals("SEPARADOR")]]></printWhenExpression>
+            <element kind="staticText"
+                    x="0"
+                    y="2"
+                    width="540"
+                    height="12"
+                    hTextAlign="Center">
+                <text><![CDATA[------------------------------------------------------------]]></text>
+            </element>
+        </band>
+
+    </detail>
+
+    <pageFooter height="18">
+        <element kind="textField"
+                x="0"
+                y="2"
+                width="540"
+                height="14"
+                fontSize="8.0"
+                hTextAlign="Right">
+            <expression><![CDATA["Página " + $V{PAGE_NUMBER}]]></expression>
+        </element>
+    </pageFooter>
+
+</jasperReport>

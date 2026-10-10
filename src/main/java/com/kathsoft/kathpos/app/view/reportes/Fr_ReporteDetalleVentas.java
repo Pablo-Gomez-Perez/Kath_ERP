@@ -2,6 +2,8 @@ package com.kathsoft.kathpos.app.view.reportes;
 
 import java.awt.EventQueue;
 import java.sql.Date;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,8 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenuBar;
@@ -32,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
@@ -39,6 +44,8 @@ import com.kathsoft.kathpos.app.model.reporte.CobroResumenDia;
 import com.kathsoft.kathpos.app.model.reporte.RetiroEfectivoDia;
 import com.kathsoft.kathpos.app.model.venta.VentaFiltro;
 import com.kathsoft.kathpos.app.model.venta.VentaListado;
+import com.kathsoft.kathpos.app.report.ventas.detalle.ReporteDetalleVentasExportService;
+import com.kathsoft.kathpos.app.report.ventas.detalle.ReporteDetalleVentasSeccion;
 import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.DataTools;
 import com.kathsoft.kathpos.tools.MessageHandler;
@@ -46,13 +53,13 @@ import com.kathsoft.kathpos.tools.MessageHandler;
 public class Fr_ReporteDetalleVentas extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final DateTimeFormatter FORMATO_FECHA = new DateTimeFormatterBuilder()
-			.appendPattern("dd/MM/uuuu")
-			.toFormatter(Locale.ROOT)
-			.withResolverStyle(ResolverStyle.STRICT);
+	private static final DateTimeFormatter FORMATO_FECHA = new DateTimeFormatterBuilder().appendPattern("dd/MM/uuuu")
+			.toFormatter(Locale.ROOT).withResolverStyle(ResolverStyle.STRICT);
 
 	private final long idSucursal;
-	private JPanel contentPane;	
+	private final ReporteDetalleVentasExportService exportService = new ReporteDetalleVentasExportService();
+	private LocalDate fechaReporte;
+	private JPanel contentPane;
 	private JMenuBar menuBarPrincipal;
 	private JMenu mnArchivo;
 	private JMenuItem mntmImprimir;
@@ -94,142 +101,160 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		initComponents();
 		inicializarReporte();
 	}
+
 	private void initComponents() {
 		setBackground(new Color(255, 215, 0));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 629);
-		
+
 		this.menuBarPrincipal = new JMenuBar();
 		setJMenuBar(this.menuBarPrincipal);
-		
+
 		this.mnArchivo = new JMenu("Archivo");
-		this.mnArchivo.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/folder.png")));
+		this.mnArchivo.setIcon(new ImageIcon(
+				Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/folder.png")));
 		this.menuBarPrincipal.add(this.mnArchivo);
-		
+
 		this.mntmImprimir = new JMenuItem("Imprimir");
 		this.mntmImprimir.setEnabled(false);
 		this.mnArchivo.add(this.mntmImprimir);
-		
+
 		this.mntmGenerarPdf = new JMenuItem("Generar PDF");
-		this.mntmGenerarPdf.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/pdfLogo.jpg")));
+		this.mntmGenerarPdf.setIcon(new ImageIcon(
+				Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/pdfLogo.jpg")));
 		this.mnArchivo.add(this.mntmGenerarPdf);
-		
+
 		this.mntmGenerarTxt = new JMenuItem("Generar TXT");
-		this.mntmGenerarTxt.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/txt.png")));
+		this.mntmGenerarTxt.setIcon(
+				new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/txt.png")));
 		this.mnArchivo.add(this.mntmGenerarTxt);
-		
+
 		this.mntmVerEnExcelcsv = new JMenuItem("Ver en excel(CSV)");
-		this.mntmVerEnExcelcsv.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
+		this.mntmVerEnExcelcsv.setIcon(new ImageIcon(
+				Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/excelLogo.jpg")));
 		this.mnArchivo.add(this.mntmVerEnExcelcsv);
 		this.contentPane = new JPanel();
 		this.contentPane.setBackground(new Color(255, 215, 0));
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
 		this.contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		this.panelSuperiorTitulo = new JPanel();
 		this.panelSuperiorTitulo.setBackground(new Color(25, 25, 112));
 		this.contentPane.add(this.panelSuperiorTitulo, BorderLayout.NORTH);
-		
+
 		this.lblReporteDeVentas_1 = new JLabel("Reporte de Ventas a detalle");
 		this.lblReporteDeVentas_1.setForeground(Color.WHITE);
 		this.lblReporteDeVentas_1.setFont(new Font("Dialog", Font.BOLD, 14));
 		this.panelSuperiorTitulo.add(this.lblReporteDeVentas_1);
-		
+
 		this.panelPrincipal = new JPanel();
 		this.panelPrincipal.setBackground(new Color(255, 215, 0));
 		this.contentPane.add(this.panelPrincipal, BorderLayout.CENTER);
-		
+
 		this.lblFecha = new JLabel("Fecha");
-		
+
 		this.formattedTextFieldFechaConsulta = new JFormattedTextField(this.buildDateFormatter());
 		this.formattedTextFieldFechaConsulta.setToolTipText("dd/MM/yyyy");
-		
+
 		this.buttonBuscar = new JButton("");
-		this.buttonBuscar.setIcon(new ImageIcon(Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
-		
+		this.buttonBuscar.setIcon(new ImageIcon(
+				Fr_ReporteDetalleVentas.class.getResource("/com/kathsoft/kathpos/app/assets/buscar_ico.png")));
+
 		this.panelContenedorTablaVentas = new JPanel();
 		this.panelContenedorTablaVentas.setBackground(new Color(255, 215, 0));
-		this.panelContenedorTablaVentas.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle de ventas del dia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		
+		this.panelContenedorTablaVentas.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true),
+				"Detalle de ventas del dia", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+
 		this.panelContenedorFormasDePago = new JPanel();
 		this.panelContenedorFormasDePago.setBackground(new Color(255, 215, 0));
-		this.panelContenedorFormasDePago.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle cobrado por forma de pago", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		
+		this.panelContenedorFormasDePago.setBorder(
+				new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle cobrado por forma de pago",
+						TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+
 		this.panelContenedorDetallePorEmpleado = new JPanel();
 		this.panelContenedorDetallePorEmpleado.setBackground(new Color(255, 215, 0));
-		this.panelContenedorDetallePorEmpleado.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Detalle cobrado por empleado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		
+		this.panelContenedorDetallePorEmpleado.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true),
+				"Detalle cobrado por empleado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+
 		this.panelContenedorDetalleRetirosDeEfectivo = new JPanel();
 		this.panelContenedorDetalleRetirosDeEfectivo.setBackground(new Color(255, 215, 0));
-		this.panelContenedorDetalleRetirosDeEfectivo.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Retiros de efectivo", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		this.panelContenedorDetalleRetirosDeEfectivo
+				.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0), 1, true), "Retiros de efectivo",
+						TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		GroupLayout gl_panelPrincipal = new GroupLayout(this.panelPrincipal);
-		gl_panelPrincipal.setHorizontalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelPrincipal.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, gl_panelPrincipal.createSequentialGroup()
-							.addComponent(this.panelContenedorTablaVentas, GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-							.addContainerGap())
-						.addGroup(Alignment.TRAILING, gl_panelPrincipal.createSequentialGroup()
-							.addComponent(this.lblFecha)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(this.formattedTextFieldFechaConsulta, GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(this.buttonBuscar, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
-							.addGap(153))
-						.addGroup(Alignment.TRAILING, gl_panelPrincipal.createSequentialGroup()
-							.addComponent(this.panelContenedorFormasDePago, GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-							.addContainerGap())
-						.addGroup(Alignment.TRAILING, gl_panelPrincipal.createSequentialGroup()
-							.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
-								.addComponent(this.panelContenedorDetalleRetirosDeEfectivo, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-								.addComponent(this.panelContenedorDetallePorEmpleado, GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE))
-							.addContainerGap())))
-		);
-		gl_panelPrincipal.setVerticalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelPrincipal.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
+		gl_panelPrincipal
+				.setHorizontalGroup(gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelPrincipal.createSequentialGroup().addContainerGap()
+								.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+										.addGroup(Alignment.TRAILING, gl_panelPrincipal.createSequentialGroup()
+												.addComponent(this.panelContenedorTablaVentas, GroupLayout.DEFAULT_SIZE,
+														416, Short.MAX_VALUE)
+												.addContainerGap())
+										.addGroup(Alignment.TRAILING,
+												gl_panelPrincipal.createSequentialGroup().addComponent(this.lblFecha)
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(this.formattedTextFieldFechaConsulta,
+																GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+														.addPreferredGap(ComponentPlacement.UNRELATED)
+														.addComponent(this.buttonBuscar, GroupLayout.PREFERRED_SIZE, 54,
+																GroupLayout.PREFERRED_SIZE)
+														.addGap(153))
+										.addGroup(
+												Alignment.TRAILING,
+												gl_panelPrincipal.createSequentialGroup()
+														.addComponent(this.panelContenedorFormasDePago,
+																GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+														.addContainerGap())
+										.addGroup(Alignment.TRAILING, gl_panelPrincipal.createSequentialGroup()
+												.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
+														.addComponent(this.panelContenedorDetalleRetirosDeEfectivo,
+																Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 416,
+																Short.MAX_VALUE)
+														.addComponent(this.panelContenedorDetallePorEmpleado,
+																GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE))
+												.addContainerGap()))));
+		gl_panelPrincipal.setVerticalGroup(gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelPrincipal.createSequentialGroup().addContainerGap().addGroup(gl_panelPrincipal
+						.createParallelGroup(Alignment.TRAILING)
 						.addComponent(this.buttonBuscar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.BASELINE)
-							.addComponent(this.lblFecha)
-							.addComponent(this.formattedTextFieldFechaConsulta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelContenedorTablaVentas, GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelContenedorFormasDePago, GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelContenedorDetallePorEmpleado, GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(this.panelContenedorDetalleRetirosDeEfectivo, GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
-					.addContainerGap())
-		);
+						.addGroup(gl_panelPrincipal.createParallelGroup(Alignment.BASELINE).addComponent(this.lblFecha)
+								.addComponent(this.formattedTextFieldFechaConsulta, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.panelContenedorTablaVentas, GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.panelContenedorFormasDePago, GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.panelContenedorDetallePorEmpleado, GroupLayout.DEFAULT_SIZE, 95,
+								Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(this.panelContenedorDetalleRetirosDeEfectivo, GroupLayout.DEFAULT_SIZE, 79,
+								Short.MAX_VALUE)
+						.addContainerGap()));
 		this.panelContenedorDetalleRetirosDeEfectivo.setLayout(new BorderLayout(0, 0));
-		
+
 		this.scrollPaneTablaRetirosDeEfectivo = new JScrollPane();
 		this.panelContenedorDetalleRetirosDeEfectivo.add(this.scrollPaneTablaRetirosDeEfectivo, BorderLayout.CENTER);
 
 		this.tableRetirosDeEfectivo = new JTable();
 		this.scrollPaneTablaRetirosDeEfectivo.setViewportView(this.tableRetirosDeEfectivo);
 		this.panelContenedorDetallePorEmpleado.setLayout(new BorderLayout(0, 0));
-		
+
 		this.scrollPaneTablaDetallePorEmpleado = new JScrollPane();
 		this.panelContenedorDetallePorEmpleado.add(this.scrollPaneTablaDetallePorEmpleado, BorderLayout.CENTER);
-		
+
 		this.tableDetallePorEmpleado = new JTable();
 		this.scrollPaneTablaDetallePorEmpleado.setViewportView(this.tableDetallePorEmpleado);
 		this.panelContenedorFormasDePago.setLayout(new BorderLayout(0, 0));
-		
+
 		this.scrollPaneTablaFormasDePago = new JScrollPane();
 		this.panelContenedorFormasDePago.add(this.scrollPaneTablaFormasDePago, BorderLayout.CENTER);
-		
+
 		this.tableFormasDePago = new JTable();
 		this.scrollPaneTablaFormasDePago.setViewportView(this.tableFormasDePago);
 		this.panelContenedorTablaVentas.setLayout(new BorderLayout(0, 0));
-		
+
 		this.scrollPaneTablaVentas = new JScrollPane();
 		this.panelContenedorTablaVentas.add(this.scrollPaneTablaVentas, BorderLayout.CENTER);
 
@@ -255,6 +280,9 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		DataTools.removerEditorDeTabla(this.tableRetirosDeEfectivo, this.modelTablaRetirosDeEfectivo);
 
 		this.buttonBuscar.addActionListener(e -> this.consultarDetalleDelDia());
+		this.mntmGenerarPdf.addActionListener(e -> this.exportarPdf());
+		this.mntmGenerarTxt.addActionListener(e -> this.exportarTxt());
+		this.mntmVerEnExcelcsv.addActionListener(e -> this.exportarCsv());
 	}
 
 	private void consultarDetalleDelDia() {
@@ -262,8 +290,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 
 		try {
 			if (this.idSucursal <= 0) {
-				throw new IllegalArgumentException(
-						"No existe una sucursal válida para consultar el reporte");
+				throw new IllegalArgumentException("No existe una sucursal válida para consultar el reporte");
 			}
 			fecha = this.parseFecha();
 		} catch (IllegalArgumentException ex) {
@@ -274,52 +301,40 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		this.buttonBuscar.setEnabled(false);
 
 		new javax.swing.SwingWorker<DetalleVentaDiaResultado, Void>() {
+
 			@Override
 			protected DetalleVentaDiaResultado doInBackground() throws Exception {
 				Date fechaSql = Date.valueOf(fecha);
-				VentaFiltro filtroVentas = new VentaFiltro.VentaFiltroBuilder()
-						.tipoBusqueda("TODOS")
-						.textoBusqueda("")
-						.ordenarPor("FECHA")
-						.fechaInicial(fechaSql)
-						.fechaFinal(fechaSql)
-						.build();
+				VentaFiltro filtroVentas = new VentaFiltro.VentaFiltroBuilder().tipoBusqueda("TODOS").textoBusqueda("")
+						.ordenarPor("FECHA").fechaInicial(fechaSql).fechaFinal(fechaSql).build();
 
-				List<VentaListado> ventas =
-						AppContext.ventasController.listVentas(idSucursal, filtroVentas);
-				List<CobroResumenDia> formasPago =
-						AppContext.reporteController.listDetalleCobrosPorFormaDePago(
-								idSucursal, fecha);
-				List<CobroResumenDia> cobrosEmpleado =
-						AppContext.reporteController.listDetalleCobradoVentasPorEmpleado(
-								idSucursal, fecha);
-				List<RetiroEfectivoDia> retiros =
-						AppContext.reporteController.listRetirosDeEfectivoDelDia(
-								idSucursal, fecha);
+				List<VentaListado> ventas = AppContext.ventasController.listVentas(idSucursal, filtroVentas);
+				List<CobroResumenDia> formasPago = AppContext.reporteController
+						.listDetalleCobrosPorFormaDePago(idSucursal, fecha);
+				List<CobroResumenDia> cobrosEmpleado = AppContext.reporteController
+						.listDetalleCobradoVentasPorEmpleado(idSucursal, fecha);
+				List<RetiroEfectivoDia> retiros = AppContext.reporteController.listRetirosDeEfectivoDelDia(idSucursal,
+						fecha);
 
-				return new DetalleVentaDiaResultado(
-						ventas, formasPago, cobrosEmpleado, retiros);
+				return new DetalleVentaDiaResultado(ventas, formasPago, cobrosEmpleado, retiros);
 			}
 
 			@Override
 			protected void done() {
 				try {
-					reemplazarResultados(get());
+					DetalleVentaDiaResultado resultado = get();
+					reemplazarResultados(resultado);
+					fechaReporte = fecha;
 				} catch (InterruptedException ex) {
 					Thread.currentThread().interrupt();
-					MessageHandler.displayMessage(
-							MessageHandler.ERROR_MESSAGE,
-							Fr_ReporteDetalleVentas.this,
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, Fr_ReporteDetalleVentas.this,
 							"La consulta del reporte fue interrumpida");
 				} catch (ExecutionException ex) {
 					Throwable causa = ex.getCause();
 					String mensaje = causa == null || causa.getMessage() == null
 							? "No fue posible consultar el detalle de ventas"
 							: causa.getMessage();
-					MessageHandler.displayMessage(
-							MessageHandler.ERROR_MESSAGE,
-							Fr_ReporteDetalleVentas.this,
-							mensaje);
+					MessageHandler.displayMessage(MessageHandler.ERROR_MESSAGE, Fr_ReporteDetalleVentas.this, mensaje);
 				} finally {
 					buttonBuscar.setEnabled(true);
 				}
@@ -334,17 +349,8 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		this.modelTablaRetirosDeEfectivo.setRowCount(0);
 
 		for (VentaListado venta : resultado.ventas()) {
-			this.modelTablaVentas.addRow(new Object[] {
-					venta.getFolio(),
-					venta.getFecha() == null ? "" : venta.getFecha().toLocalDate().format(FORMATO_FECHA),
-					venta.getTipo(),
-					venta.getAtendio(),
-					venta.getCliente(),
-					venta.getSubtotal(),
-					venta.getIva(),
-					venta.getTotal(),
-					venta.getVigente()
-			});
+			this.modelTablaVentas.addRow(new Object[] { venta.getFolio(), venta.getSubtotal(), venta.getIva(),
+					venta.getTotal(), venta.getVigente() });
 		}
 
 		for (CobroResumenDia fila : resultado.formasPago()) {
@@ -356,16 +362,12 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		}
 
 		for (RetiroEfectivoDia retiro : resultado.retiros()) {
-			this.modelTablaRetirosDeEfectivo.addRow(
-					new Object[] { retiro.folio(), retiro.importe() });
+			this.modelTablaRetirosDeEfectivo.addRow(new Object[] { retiro.folio(), retiro.importe() });
 		}
 	}
 
 	static DefaultTableModel crearModeloVentas() {
-		return modeloNoEditable(new Object[] {
-				"Folio", "Fecha", "Tipo", "Atendió", "Cliente",
-				"Sub total", "IVA", "Total", "Estado"
-		});
+		return modeloNoEditable(new Object[] { "Folio", "Sub total", "IVA", "Total", "Estado" });
 	}
 
 	static DefaultTableModel crearModeloFormasDePago() {
@@ -391,6 +393,220 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		};
 	}
 
+
+	private void exportarPdf() {
+		ReporteExportacionActual reporte = obtenerReporteActual();
+		if (reporte == null) {
+			return;
+		}
+
+		exportarArchivo(
+				this.mntmGenerarPdf,
+				"Guardar reporte PDF",
+				".pdf",
+				"Documento PDF (*.pdf)",
+				ruta -> this.exportService.generarPdf(
+						reporte.fecha(),
+						reporte.secciones(),
+						ruta));
+	}
+
+	private void exportarTxt() {
+		ReporteExportacionActual reporte = obtenerReporteActual();
+		if (reporte == null) {
+			return;
+		}
+
+		exportarArchivo(
+				this.mntmGenerarTxt,
+				"Guardar reporte TXT",
+				".txt",
+				"Archivo de texto (*.txt)",
+				ruta -> this.exportService.generarTxt(
+						reporte.fecha(),
+						reporte.secciones(),
+						ruta));
+	}
+
+	private void exportarCsv() {
+		ReporteExportacionActual reporte = obtenerReporteActual();
+		if (reporte == null) {
+			return;
+		}
+
+		exportarArchivo(
+				this.mntmVerEnExcelcsv,
+				"Guardar reporte CSV",
+				".csv",
+				"Archivo CSV (*.csv)",
+				ruta -> this.exportService.generarCsv(
+						reporte.fecha(),
+						reporte.secciones(),
+						ruta));
+	}
+
+	private ReporteExportacionActual obtenerReporteActual() {
+		if (this.fechaReporte == null) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"Debe realizar una consulta válida antes de exportar el reporte");
+			return null;
+		}
+
+		List<ReporteDetalleVentasSeccion> secciones = List.of(
+				crearSeccion("Detalle de ventas del dia", this.tableVentas),
+				crearSeccion("Detalle por forma de pago", this.tableFormasDePago),
+				crearSeccion("Detalle por empleados", this.tableDetallePorEmpleado),
+				crearSeccion("Retiros de efectivo", this.tableRetirosDeEfectivo));
+
+		boolean existenDatos = secciones.stream()
+				.anyMatch(ReporteDetalleVentasSeccion::tieneDatos);
+
+		if (!existenDatos) {
+			MessageHandler.displayMessage(
+					MessageHandler.WARN_MESSAGE,
+					this,
+					"No existen datos a exportar");
+			return null;
+		}
+
+		return new ReporteExportacionActual(this.fechaReporte, secciones);
+	}
+
+	private static ReporteDetalleVentasSeccion crearSeccion(String titulo, JTable tabla) {
+		List<String> columnas = new java.util.ArrayList<>();
+		List<List<String>> filas = new java.util.ArrayList<>();
+
+		for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+			columnas.add(tabla.getColumnName(columna));
+		}
+
+		for (int fila = 0; fila < tabla.getRowCount(); fila++) {
+			List<String> valores = new java.util.ArrayList<>();
+			for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+				Object valor = tabla.getValueAt(fila, columna);
+				valores.add(valor == null ? "" : String.valueOf(valor));
+			}
+			filas.add(List.copyOf(valores));
+		}
+
+		return new ReporteDetalleVentasSeccion(
+				titulo,
+				List.copyOf(columnas),
+				List.copyOf(filas));
+	}
+
+	private void exportarArchivo(
+			JMenuItem itemMenu,
+			String tituloSelector,
+			String extension,
+			String descripcionFiltro,
+			OperacionExportacion operacion) {
+
+		Path ruta = seleccionarRuta(
+				tituloSelector,
+				extension,
+				descripcionFiltro);
+
+		if (ruta == null) {
+			return;
+		}
+
+		itemMenu.setEnabled(false);
+
+		new javax.swing.SwingWorker<Path, Void>() {
+			@Override
+			protected Path doInBackground() throws Exception {
+				return operacion.ejecutar(ruta);
+			}
+
+			@Override
+			protected void done() {
+				try {
+					Path archivo = get();
+					MessageHandler.displayMessage(
+							MessageHandler.FILE_SUCCESS_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							archivo.toString());
+				} catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							"La exportación del reporte fue interrumpida");
+				} catch (ExecutionException ex) {
+					Throwable causa = ex.getCause();
+					String mensaje = causa == null || causa.getMessage() == null
+							? "No fue posible exportar el reporte"
+							: causa.getMessage();
+
+					MessageHandler.displayMessage(
+							MessageHandler.ERROR_MESSAGE,
+							Fr_ReporteDetalleVentas.this,
+							mensaje);
+				} finally {
+					itemMenu.setEnabled(true);
+				}
+			}
+		}.execute();
+	}
+
+	private Path seleccionarRuta(
+			String tituloSelector,
+			String extension,
+			String descripcionFiltro) {
+
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle(tituloSelector);
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileFilter(new FileNameExtensionFilter(
+				descripcionFiltro,
+				extension.substring(1)));
+
+		if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+			return null;
+		}
+
+		Path ruta = asegurarExtension(chooser.getSelectedFile().toPath(), extension);
+
+		if (Files.exists(ruta)) {
+			int respuesta = JOptionPane.showConfirmDialog(
+					this,
+					"El archivo ya existe. ¿Desea reemplazarlo?",
+					"Confirmar reemplazo",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+
+			if (respuesta != JOptionPane.YES_OPTION) {
+				return null;
+			}
+		}
+
+		return ruta;
+	}
+
+	private static Path asegurarExtension(Path ruta, String extension) {
+		String nombre = ruta.getFileName().toString();
+
+		if (nombre.toLowerCase(Locale.ROOT)
+				.endsWith(extension.toLowerCase(Locale.ROOT))) {
+			return ruta;
+		}
+
+		return Path.of(ruta.toString() + extension);
+	}
+
+	@FunctionalInterface
+	private interface OperacionExportacion {
+		Path ejecutar(Path ruta) throws Exception;
+	}
+
+	private record ReporteExportacionActual(
+			LocalDate fecha,
+			List<ReporteDetalleVentasSeccion> secciones) {
+	}
+
 	private MaskFormatter buildDateFormatter() {
 		try {
 			MaskFormatter formatter = new MaskFormatter("##/##/####");
@@ -404,8 +620,7 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 	}
 
 	private LocalDate parseFecha() {
-		String texto = this.formattedTextFieldFechaConsulta.getText() == null
-				? ""
+		String texto = this.formattedTextFieldFechaConsulta.getText() == null ? ""
 				: this.formattedTextFieldFechaConsulta.getText().trim();
 
 		if (texto.isEmpty() || "__/__/____".equals(texto)) {
@@ -418,16 +633,12 @@ public class Fr_ReporteDetalleVentas extends JFrame {
 		try {
 			return LocalDate.parse(texto, FORMATO_FECHA);
 		} catch (DateTimeParseException ex) {
-			throw new IllegalArgumentException(
-					"Formato de fecha inválido. Usa dd/MM/yyyy", ex);
+			throw new IllegalArgumentException("Formato de fecha inválido. Usa dd/MM/yyyy", ex);
 		}
 	}
 
-	private record DetalleVentaDiaResultado(
-			List<VentaListado> ventas,
-			List<CobroResumenDia> formasPago,
-			List<CobroResumenDia> cobrosEmpleado,
-			List<RetiroEfectivoDia> retiros) {
+	private record DetalleVentaDiaResultado(List<VentaListado> ventas, List<CobroResumenDia> formasPago,
+			List<CobroResumenDia> cobrosEmpleado, List<RetiroEfectivoDia> retiros) {
 
 		private DetalleVentaDiaResultado {
 			ventas = ventas == null ? List.of() : List.copyOf(ventas);
