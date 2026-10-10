@@ -98,11 +98,11 @@ class ReporteDetalleVentasExportServiceTest {
                 ReporteDetalleVentasExportService.construirFilasPdf(seccionesEjemplo());
 
         assertEquals(16, filas.size());
-        assertEquals(ReporteDetalleVentasPdfRow.SECCION, filas.get(0).tipoFila());
-        assertEquals(ReporteDetalleVentasPdfRow.CABECERA_5, filas.get(1).tipoFila());
-        assertEquals(ReporteDetalleVentasPdfRow.DATO_5, filas.get(2).tipoFila());
-        assertEquals(ReporteDetalleVentasPdfRow.SEPARADOR, filas.get(3).tipoFila());
-        assertEquals(ReporteDetalleVentasPdfRow.CABECERA_2, filas.get(5).tipoFila());
+        assertEquals(ReporteDetalleVentasPdfRow.SECCION, filas.get(0).getTipoFila());
+        assertEquals(ReporteDetalleVentasPdfRow.CABECERA_5, filas.get(1).getTipoFila());
+        assertEquals(ReporteDetalleVentasPdfRow.DATO_5, filas.get(2).getTipoFila());
+        assertEquals(ReporteDetalleVentasPdfRow.SEPARADOR, filas.get(3).getTipoFila());
+        assertEquals(ReporteDetalleVentasPdfRow.CABECERA_2, filas.get(5).getTipoFila());
     }
 
     private static List<ReporteDetalleVentasSeccion> seccionesEjemplo() {
