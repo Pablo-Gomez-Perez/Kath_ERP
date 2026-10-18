@@ -68,7 +68,7 @@ public class Fr_DatosCategoriaSalidaDeInventario extends JFrame {
         this.idCategoria = idCategoria;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 500, 360);
+        setBounds(100, 100, 506, 300);
         setTitle(opcion == OPCION_CREAR
                 ? "Nueva categoría de salida de inventario"
                 : "Actualizar categoría de salida de inventario");
