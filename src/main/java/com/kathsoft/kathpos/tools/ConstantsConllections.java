@@ -79,6 +79,14 @@ public class ConstantsConllections implements java.io.Serializable{
 			110  // Activo / Inactivo
 	};
 
+	/** Id, nombre, descripción y estado de las categorías de salida de inventario. */
+	public static final int[] tablaCategoriaSalidaInventarioColumnsWidth = {
+			50,
+			240,
+			400,
+			110
+	};
+
 	// Array que define el ancho de cada columna de la tabla de categoría
 	public static final int[] tablaCategoriaColumnsWidth = { 40, 180, 400 };
 	

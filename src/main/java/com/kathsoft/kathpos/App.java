@@ -4,8 +4,11 @@ import java.awt.EventQueue;
 
 import com.kathsoft.kathpos.app.view.Fr_LogIn;
 
+/**
+ * punto de acceso global
+ */
 public class App {
-
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

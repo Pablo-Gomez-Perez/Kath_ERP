@@ -38,6 +38,7 @@ import com.kathsoft.kathpos.app.view.empleados.PanelEmpleados;
 import com.kathsoft.kathpos.app.view.formas_pago.PanelFormasDePago;
 import com.kathsoft.kathpos.app.view.gastos.PanelCategoriaDeGasto;
 import com.kathsoft.kathpos.app.view.gastos.PanelGastos;
+import com.kathsoft.kathpos.app.view.inventario.PanelCategoriaSalidaDeINventario;
 import com.kathsoft.kathpos.app.view.marcas.PanelMarcas;
 import com.kathsoft.kathpos.app.view.proveedor.PanelProveedor;
 import com.kathsoft.kathpos.app.view.reportes.Fr_ReporteDetalleVentas;
@@ -134,6 +135,7 @@ public class Fr_principal extends JFrame {
 	private PanelSucursales panelSucursales;
 	private PanelGastos panelGastos;
 	private PanelCategoriaDeGasto panelCategoriaDeGasto;
+	private PanelCategoriaSalidaDeINventario panelCategoriaSalidaDeINventario;
 	private JMenuItem opcionSucursales;
 	private PanelFormasDePago panelFormasDePago;
 	private JMenuItem opcionFormasDePago;
@@ -435,6 +437,13 @@ public class Fr_principal extends JFrame {
 		this.menuOperaciones.add(this.mnSalidas);
 		
 		this.mntmConsultar = new JMenuItem("Consultar");
+		mntmConsultar.addActionListener( evt -> {
+			
+			CardLayout cr = (CardLayout) panelPrincipalContenedor.getLayout();			
+			cr.show(panelPrincipalContenedor, "panelCategoriaSalidaDeINventario");
+			this.panelPrincipalContenedor.updateUI();
+			
+		});
 		this.mnSalidas.add(this.mntmConsultar);
 		
 		this.mntmRegistrar_1 = new JMenuItem("Registrar");
@@ -716,6 +725,14 @@ public class Fr_principal extends JFrame {
 		
 		this.panelRetirosDeEfectivo = new PanelRetirosDeEfectivo(this.sucursal);
 		this.panelPrincipalContenedor.add(this.panelRetirosDeEfectivo, "panelRetirosDeEfectivo");
+		
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		// =======================================================================================================================================
+		
+		this.panelCategoriaSalidaDeINventario = new PanelCategoriaSalidaDeINventario();
+		this.panelPrincipalContenedor.add(this.panelCategoriaSalidaDeINventario, "panelCategoriaSalidaDeINventario");
 		
 		// =======================================================================================================================================
 		// =======================================================================================================================================
