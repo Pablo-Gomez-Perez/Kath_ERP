@@ -21,7 +21,6 @@ import com.kathsoft.kathpos.tools.Conexion;
 public class ArticuloController implements java.io.Serializable {
 
 	private static final long serialVersionUID = 8759492279100460054L;
-	private static final int ID_TIPO_CLIENTE_GENERAL = 1;
 	private static Connection cn = null;
 
 	public Vector<Object[]> verArticulosEnTabla(int idSucursal, int idTipoCliente) {
@@ -321,7 +320,15 @@ public class ArticuloController implements java.io.Serializable {
 	}
 
 	public ArticuloByCodigo consultarArticuloPorCodigo(String codigo, int idSucursal) throws SQLException, Exception {
-		return this.consultarArticuloPorCodigo(codigo, idSucursal, ID_TIPO_CLIENTE_GENERAL);
+		int idTipoCliente = new TipoClienteController().getIdTipoClientePublicoGeneral();
+
+		if (idTipoCliente <= 0) {
+			throw new IllegalStateException(
+					"No existe un tipo de cliente activo con clave "
+							+ TipoClienteController.CLAVE_PUBLICO_GENERAL);
+		}
+
+		return this.consultarArticuloPorCodigo(codigo, idSucursal, idTipoCliente);
 	}
 
 	public ArticuloByCodigo consultarArticuloPorCodigo(String codigo, int idSucursal, int idTipoCliente)
