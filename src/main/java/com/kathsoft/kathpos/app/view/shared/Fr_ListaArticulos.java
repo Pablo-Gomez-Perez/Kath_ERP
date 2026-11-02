@@ -35,12 +35,12 @@ import com.kathsoft.kathpos.app.model.articulo.Articulo;
 import com.kathsoft.kathpos.app.model.articulo.ArticuloByCodigo;
 import com.kathsoft.kathpos.app.model.interfaces.IListadoArticulosAcciones;
 import com.kathsoft.kathpos.app.view.articulo.Fr_DatosArticulo;
+import com.kathsoft.kathpos.tools.AppContext;
 import com.kathsoft.kathpos.tools.ConstantsConllections;
 
 public class Fr_ListaArticulos extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int ID_TIPO_CLIENTE_GENERAL = 1;
 
 	private DefaultTableModel modelTablaArticulos;
 	private ArticuloController articuloController = new ArticuloController();
@@ -79,7 +79,7 @@ public class Fr_ListaArticulos extends JFrame {
 	 * @param frame formulario invocador que recibirá el artículo seleccionado
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal, IListadoArticulosAcciones frame) {
-		this(nombreArticulo, idSucursal, ID_TIPO_CLIENTE_GENERAL, frame,
+		this(nombreArticulo, idSucursal, 0, frame,
 				ContextoSeleccionArticulo.VENTA);
 	}
 
@@ -89,7 +89,7 @@ public class Fr_ListaArticulos extends JFrame {
 	 */
 	public Fr_ListaArticulos(String nombreArticulo, int idSucursal,
 			IListadoArticulosAcciones frame, ContextoSeleccionArticulo contextoSeleccion) {
-		this(nombreArticulo, idSucursal, ID_TIPO_CLIENTE_GENERAL, frame, contextoSeleccion);
+		this(nombreArticulo, idSucursal, 0, frame, contextoSeleccion);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class Fr_ListaArticulos extends JFrame {
 
 		this.nombreArticulo = nombreArticulo;
 		this.idSucursal = idSucursal;
-		this.idTipoCliente = idTipoCliente > 0 ? idTipoCliente : ID_TIPO_CLIENTE_GENERAL;
+		this.idTipoCliente = idTipoCliente;
 		this.frame = frame;
 		this.contextoSeleccion = contextoSeleccion == null
 				? ContextoSeleccionArticulo.VENTA : contextoSeleccion;
@@ -229,9 +229,22 @@ public class Fr_ListaArticulos extends JFrame {
 	}
 
 	private void llenarTablaArticulos(String nombreArticulo) {
-		this.modelTablaArticulos.setRowCount(0);
-		this.articuloController.verArticulosEnTabla(this.idSucursal, nombreArticulo, this.idTipoCliente)
-				.forEach(this.modelTablaArticulos::addRow);
+		try {
+			int tipoCliente = this.resolverIdTipoCliente();
+			var articulos = this.articuloController.verArticulosEnTabla(
+					this.idSucursal, nombreArticulo, tipoCliente);
+
+			this.modelTablaArticulos.setRowCount(0);
+			articulos.forEach(this.modelTablaArticulos::addRow);
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(
+					this,
+					"No fue posible determinar el tipo de cliente PUBLICO_GENERAL: "
+							+ er.getMessage(),
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public void setModelTablaArticulos() {
@@ -256,8 +269,9 @@ public class Fr_ListaArticulos extends JFrame {
 			int filaModelo = this.tablaArticulos.convertRowIndexToModel(articuloSeleccionado);
 			int idArticulo = this.obtenerIdArticuloSeleccionado(filaModelo);
 			String codigoArticulo = String.valueOf(this.modelTablaArticulos.getValueAt(filaModelo, 1));
-			ArticuloByCodigo articulo = this.articuloController.consultarArticuloPorCodigo(codigoArticulo,
-					this.idSucursal, this.idTipoCliente);
+			int tipoCliente = this.resolverIdTipoCliente();
+			ArticuloByCodigo articulo = this.articuloController.consultarArticuloPorCodigo(
+					codigoArticulo, this.idSucursal, tipoCliente);
 
 			if (articulo == null || articulo.getIdArticulo() <= 0) {
 				this.manejarArticuloNoDisponible(idArticulo);
@@ -292,6 +306,37 @@ public class Fr_ListaArticulos extends JFrame {
 			JOptionPane.showMessageDialog(this, "No se pudo seleccionar el artículo: " + er.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private int resolverIdTipoCliente() throws Exception {
+		if (this.idTipoCliente > 0) {
+			return this.idTipoCliente;
+		}
+
+		int tipoPublicoGeneral =
+				AppContext.tipoClienteController.getIdTipoClientePublicoGeneral();
+
+		this.idTipoCliente = seleccionarIdTipoCliente(
+				this.idTipoCliente,
+				tipoPublicoGeneral);
+
+		return this.idTipoCliente;
+	}
+
+	static int seleccionarIdTipoCliente(
+			int idTipoClienteSolicitado,
+			int idTipoClientePublicoGeneral) {
+
+		if (idTipoClienteSolicitado > 0) {
+			return idTipoClienteSolicitado;
+		}
+
+		if (idTipoClientePublicoGeneral > 0) {
+			return idTipoClientePublicoGeneral;
+		}
+
+		throw new IllegalStateException(
+				"No existe un tipo de cliente activo con clave PUBLICO_GENERAL");
 	}
 
 	/**
