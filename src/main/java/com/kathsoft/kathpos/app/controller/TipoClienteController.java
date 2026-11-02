@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Vector;
 
 import com.kathsoft.kathpos.app.model.cliente.TipoCliente;
@@ -12,10 +13,50 @@ import com.kathsoft.kathpos.tools.Conexion;
 
 public class TipoClienteController {
 
+	public static final String CLAVE_PUBLICO_GENERAL = "PUBLICO_GENERAL";
 	private static Connection cn = null;
 
 	public Vector<TipoCliente> cmbTipoCliente() {
 		return this.listarTipoClienteActivosParaPrecios("");
+	}
+
+	/**
+	 * Obtiene el identificador de un tipo de cliente activo mediante su clave
+	 * funcional única.
+	 *
+	 * @param clave clave funcional registrada en tipo_cliente.clave
+	 * @return identificador del tipo de cliente, o 0 si no existe un registro
+	 *         activo con esa clave
+	 * @throws SQLException si falla la consulta al procedimiento almacenado
+	 * @throws Exception si no es posible establecer la conexión
+	 */
+	public int getIdTipoClienteByClave(String clave) throws SQLException, Exception {
+		if (clave == null || clave.isBlank()) {
+			throw new IllegalArgumentException("La clave del tipo de cliente es obligatoria");
+		}
+
+		String claveNormalizada = clave.trim().toUpperCase(Locale.ROOT);
+
+		try (Connection connection = Conexion.establecerConexionLocal(Conexion.DATA_BASE);
+				CallableStatement stm = connection.prepareCall("CALL getIdTipoClienteByClave(?)")) {
+
+			stm.setString(1, claveNormalizada);
+
+			try (ResultSet rset = stm.executeQuery()) {
+				if (rset.next()) {
+					return rset.getInt("id");
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Resuelve dinámicamente el tipo de cliente reservado para público general.
+	 */
+	public int getIdTipoClientePublicoGeneral() throws SQLException, Exception {
+		return this.getIdTipoClienteByClave(CLAVE_PUBLICO_GENERAL);
 	}
 
 	public Vector<Object[]> listarTipoCliente(String nombre) {
